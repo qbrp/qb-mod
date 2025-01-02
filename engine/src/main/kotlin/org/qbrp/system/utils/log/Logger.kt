@@ -21,7 +21,7 @@ class Logger(val enabled: Boolean = true, vararg key: String) {
                 LogType.INFO -> logger.info(formattedMessage)
                 LogType.WARN -> logger.info("${ConsoleColors.ORANGE}$formattedMessage")
                 LogType.ERROR -> logger.error(formattedMessage)
-                LogType.SUCCESS -> logger.info("${ConsoleColors.GREEN}$formattedMessage") // Для успеха используем INFO
+                LogType.SUCCESS -> logger.info("${ConsoleColors.GREEN}$formattedMessage")
             }
         }
     }
