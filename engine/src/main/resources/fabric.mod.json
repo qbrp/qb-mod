@@ -13,6 +13,9 @@
     "client": [
       "org.qbrp.engine.client.EngineClient"
     ],
+    "server": [
+      "org.qbrp.core.Core"
+    ],
     "main": [
       "org.qbrp.engine.Engine"
     ]
