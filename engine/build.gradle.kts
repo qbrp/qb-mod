@@ -51,6 +51,24 @@ dependencies {
     include(implementation("com.github.codeborne.klite:klite-server:${project.property("klite_version")}")!!)
     include(implementation("com.github.codeborne.klite:klite-core:${project.property("klite_version")}")!!)
 
+    include(implementation("org.mongodb:mongodb-driver-sync:5.2.1")!!)
+    implementation("org.mongodb:mongodb-driver-core:5.2.1")
+    include(implementation("org.mongodb:bson:5.2.1")!!)
+    include(implementation("org.mongodb:bson-record-codec:5.2.1")!!)
+    include(implementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")!!)
+    include(implementation("com.fasterxml.jackson.core:jackson-core:2.17.1")!!)
+    include(implementation("com.fasterxml.jackson.core:jackson-annotations:2.17.1")!!)
+    include(implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")!!)
+    include(implementation("org.litote.kmongo:kmongo-core:5.1.0")!!)
+    include(implementation("org.litote.jackson:jackson-module-loader:0.4.0")!!)
+    include(implementation("org.litote.kmongo:kmongo-data:5.1.0")!!)
+    include(implementation("org.litote.kmongo:kmongo-id:5.1.0")!!)
+    include(implementation("org.litote.kmongo:kmongo-id-jackson:5.1.0")!!)
+    include(implementation("org.litote.kmongo:kmongo-jackson-mapping:5.1.0")!!)
+    include(implementation("org.litote.kmongo:kmongo-property:5.1.0")!!)
+    include(implementation("org.litote.kmongo:kmongo-shared:5.1.0")!!)
+    include(implementation("de.undercouch:bson4jackson:2.15.1")!!)
+
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_version")}")
 }
 

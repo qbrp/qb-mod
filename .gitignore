@@ -2,3 +2,4 @@
 /engine/.kotlin/
 /engine/.gradle/
 /engine/build/
+/engine/src/main/kotlin/org/qbrp/system/secrets/

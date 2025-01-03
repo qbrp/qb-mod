@@ -8,6 +8,9 @@ object Loggers {
 
     init {
         register(Logger(enabled = true,"resources"))
+        register(Logger(enabled = true,"database"))
+        register(Logger(enabled = true,"network", "sending"))
+        register(Logger(enabled = true,"network", "receiving"))
         register(Logger(enabled = false,"resources", "debug"))
         register(Logger(enabled = false,"items", "mechanics"))
     }
