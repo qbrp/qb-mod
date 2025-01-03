@@ -6,9 +6,9 @@ import org.qbrp.system.utils.log.LogType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class Logger(val enabled: Boolean = true, vararg key: String) {
-    val key = LoggerKey(key.toList())
-    private val logger: Logger = LoggerFactory.getLogger("qbrp / ${key.toString()}}")
+class Logger(val enabled: Boolean = true, vararg loggerKey: String) {
+    val key = LoggerKey(loggerKey.toList())
+    private val logger: Logger = LoggerFactory.getLogger("qbrp/$key")
 
     fun warn(message: String) { log(message, LogType.WARN) }
     fun error(message: String) { log(message, LogType.ERROR) }

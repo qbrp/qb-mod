@@ -3,7 +3,7 @@ package org.qbrp.system.utils.keys
 class LoggerKey(val categories: List<String>) {
 
     override fun toString(): String {
-        return "${categories.joinToString(" / ")}"
+        return categories.joinToString("/") { it.replaceFirstChar { char -> char.uppercaseChar() } }
     }
 
     override fun equals(other: Any?): Boolean {

@@ -15,6 +15,6 @@ object Loggers {
     fun register(logger: Logger) { loggers[logger.key] = logger }
     fun get(vararg categories: String): Logger {
         val key = LoggerKey(categories.toList())  // Создаем ключ с переданными категориями
-        return loggers[key] ?: throw IllegalArgumentException("'${categories.joinToString(" / ")}' не найден в реестре")
+        return loggers[key] ?: throw IllegalArgumentException("'${categories.joinToString("/")}' не найден в реестре")
     }
 }
