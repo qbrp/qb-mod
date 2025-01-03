@@ -16,8 +16,6 @@ import kotlin.io.path.pathString
 class ModelBundle(
     model: ModelData,
     directory: Path,
-    key: String = UUID.randomUUID().toString(),
-    modelType: String = "unset",
     val packStructure: PackStructure
 ) {
     val customModelData = PackContent.genCustomModelData()
@@ -40,7 +38,6 @@ class ModelBundle(
 
     fun loadTextures(model: ModelData, modelPath: String): List<String> {
         return model.textures.values.map { texture ->
-            val key = Key(texture.split(":").last())
             val textureUnit = packStructure.addTexture(
                 Paths.get(
                     ServerResources.root.itemResource.path.pathString,

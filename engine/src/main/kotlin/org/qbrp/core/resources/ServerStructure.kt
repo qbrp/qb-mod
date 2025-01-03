@@ -14,6 +14,7 @@ import java.io.File
 
 class ServerStructure: Structure(File("qbrp")) {
 
+    val records = addBranch("records")
     val resources = addStructure("resources")
     val items = addStructure("item")
     val blocks = addStructure("block")

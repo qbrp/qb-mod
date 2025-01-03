@@ -11,8 +11,8 @@ import kotlin.io.path.pathString
 class PackContent(val packStructure: PackStructure) {
     private val modelBundles = mutableMapOf<String, ModelBundle>()
 
-    fun addModelBundle(data: ModelData, path: Path, key: String = UUID.randomUUID().toString()) {
-        modelBundles[path.pathString] = (ModelBundle(data, path, key, path.getModelType(), packStructure))
+    fun addModelBundle(data: ModelData, path: Path) {
+        modelBundles[path.pathString] = (ModelBundle(data, path, packStructure))
     }
 
     fun getModelBundle(path: String): ModelBundle? {
