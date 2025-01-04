@@ -23,7 +23,7 @@ class DatabaseManager(private val url: String, private val dbName: String) {
         false
     }
 
-    fun disconnect() = client?.close().also { println("Соединение закрыто.") }
+    fun disconnect() = client?.close().also { logger.log("Соединение закрыто.") }
 
     fun updateField(document: String, query: Map<String, Any>, field: String, value: Any): Boolean = try {
         db?.getCollection(document)?.updateOne(

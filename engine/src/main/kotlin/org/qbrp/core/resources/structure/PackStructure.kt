@@ -7,7 +7,6 @@ import org.qbrp.core.resources.data.pack.ModelData
 import org.qbrp.core.resources.data.config.ServerConfigData.Resources.Pack
 import org.qbrp.core.resources.data.pack.PredicatesData
 import org.qbrp.core.resources.data.pack.TextureData
-import org.qbrp.core.resources.structure.integrated.Branches
 import org.qbrp.core.resources.structure.integrated.Parents
 import java.io.File
 import java.nio.file.Path
