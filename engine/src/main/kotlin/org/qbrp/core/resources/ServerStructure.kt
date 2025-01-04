@@ -33,14 +33,6 @@ class ServerStructure: Structure(File("qbrp")) {
         packMcMeta = config.resources.packMcMeta,
         icon = path.resolve("icon.png").toFile(),)
 
-//    init {
-//        items.parse(ParserBuilder()
-//            .setClass(ItemConfigData::class.java)
-//            .addFilter(ExtensionFilter(setOf("json")))
-//            .setNaming { file -> Key("item_config_" + file.nameWithoutExtension) }
-//            .build())
-//    }
-
     fun printData() {
         logger.log("<<Предметы:>> ${items.contentRegistry.size}")
     }

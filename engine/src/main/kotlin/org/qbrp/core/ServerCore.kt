@@ -15,6 +15,7 @@ class ServerCore : DedicatedServerModInitializer {
 
     override fun onInitializeServer() {
         ServerResources.buildResources()
+
         ServerReceiver("packet", JsonContent::class) { message, context, receiver ->
             receiver.response(Message(
                 "packet",
@@ -22,6 +23,7 @@ class ServerCore : DedicatedServerModInitializer {
                     .apply { json = JsonObject() }),
                 context)
         }.register()
+
         webServer = WebServer().also { it.start() }
         ServerLifecycleEvents.SERVER_STARTED.register { server -> }
         ServerLifecycleEvents.SERVER_STOPPED.register { server ->

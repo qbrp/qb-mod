@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import org.qbrp.core.resources.ISavable
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.units.ContentUnit
-import org.qbrp.core.resources.units.ResourceUnit
+import org.qbrp.core.resources.units.Unit
 import org.qbrp.core.resources.data.Data
 import org.qbrp.core.resources.parsing.Parser
 import org.qbrp.system.utils.format.getExtension
@@ -22,9 +22,9 @@ open class Branch(
     path: Path,
     val name: String = path.name,
     val clear: Boolean = false
-) : ResourceUnit(path) {
+) : Unit(path) {
     val logger = ServerResources.getLogger()
-    val children: MutableList<ResourceUnit> = mutableListOf()
+    val children: MutableList<Unit> = mutableListOf()
 
     init {
         if (clear) {
@@ -68,7 +68,7 @@ open class Branch(
     fun addUnit(data: Data, name: String, extension: String): ContentUnit {
         val clazz = data.unit.kotlin
         val constructor = clazz.primaryConstructor ?: throw IllegalArgumentException("Конструктор не найден")
-        return add(constructor.call(path, name, extension, data) as ResourceUnit) as ContentUnit
+        return add(constructor.call(path, name, extension, data) as Unit) as ContentUnit
     }
 
     fun addStructure(name: String): Structure {
@@ -101,7 +101,7 @@ open class Branch(
         return addUnit(data, filename.removeExtensions(), filename.getExtension())
     }
 
-    fun add(unit: ResourceUnit, log: Boolean = true): ResourceUnit {
+    fun add(unit: Unit, log: Boolean = true): Unit {
         if (log) { logger.log("<<[+]>> ${unit.path} <<(${unit.javaClass.simpleName})>>") }
         return unit.handle().also { children.add(it)
         }

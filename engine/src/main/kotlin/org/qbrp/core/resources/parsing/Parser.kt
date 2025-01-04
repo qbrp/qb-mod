@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import org.qbrp.system.utils.keys.Key
 import org.qbrp.core.resources.parsing.filters.FileFilter
 import org.qbrp.core.resources.structure.Branch
-import org.qbrp.core.resources.units.ResourceUnit
+import org.qbrp.core.resources.units.Unit
 import java.io.File
 
 class Parser(
@@ -14,7 +14,7 @@ class Parser(
     private val clazz: Class<*>,
     private val naming: (File) -> Key // Лямбда для генерации UnitKey на основе файла
 ) {
-    fun parse(path: File): MutableList<ResourceUnit> {
+    fun parse(path: File): MutableList<Unit> {
         val rootBranch = Branch(path.toPath())
         parseDirectory(path, rootBranch, 0)
         return rootBranch.children

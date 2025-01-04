@@ -8,9 +8,9 @@ open class ContentUnit(
     name: String,
     extension: String,
     open val data: Data
-) : ResourceUnit(path.resolve("$name.$extension") as Path), ISavable {
+) : Unit(path.resolve("$name.$extension") as Path), ISavable {
 
-    override fun handle(): ResourceUnit {
+    override fun handle(): Unit {
         val filePath = this.path.toFile()
         if (!filePath.exists()) {
             try { filePath.createNewFile()
