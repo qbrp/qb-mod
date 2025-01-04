@@ -1,4 +1,4 @@
 package org.qbrp.core.game.events
 
-class Handlers {
+object Handlers {
 }
