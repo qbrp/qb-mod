@@ -12,7 +12,7 @@ object Loggers {
         register(Logger(enabled = true,"network", "sending"))
         register(Logger(enabled = true,"network", "receiving"))
         register(Logger(enabled = false,"resources", "debug"))
-        register(Logger(enabled = false,"items", "mechanics"))
+        register(Logger(enabled = true,"items", "mechanics"))
     }
 
     fun register(logger: Logger) { loggers[logger.key] = logger }

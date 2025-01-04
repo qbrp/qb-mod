@@ -14,10 +14,11 @@
       "org.qbrp.engine.client.EngineClient"
     ],
     "server": [
-      "org.qbrp.core.Core"
+      "org.qbrp.core.ServerCore"
     ],
     "main": [
-      "org.qbrp.engine.Engine"
+      "org.qbrp.engine.Engine",
+      "org.qbrp.core.Core"
     ]
   },
   "mixins": [

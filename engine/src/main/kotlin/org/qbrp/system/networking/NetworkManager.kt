@@ -1,20 +1,16 @@
-package org.imperial_hell.qbrp.Networking
+package org.qbrp.system.networking
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.util.Identifier
-import org.qbrp.core.Core
-import org.qbrp.system.networking.Message
 import org.qbrp.system.utils.log.Loggers
 
 object NetworkManager {
     val logger = Loggers.get("network", "sending")
 
     fun sendMessage(target: ServerPlayerEntity?, message: Message) {
-        val packetId = Identifier(Core.MOD_ID, message.id)
         val data = message.content.writeByteBuf()
-        ServerPlayNetworking.send(target, packetId, data)
-        logger.log("${target?.name?.string} <-- <<$packetId>> (${message.content})")
+        ServerPlayNetworking.send(target, message.minecraftIdentifier, data)
+        logger.log("${target?.name?.string} <-- <<${message.identifier}>> (${message.content})")
     }
 
     fun broadcastRadius(player: ServerPlayerEntity, message: Message, radius: Double) {
