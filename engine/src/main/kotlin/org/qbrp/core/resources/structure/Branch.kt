@@ -43,9 +43,7 @@ open class Branch(
 
     override fun handle(): Branch {
         try {
-            if (Files.notExists(path)) {
-                Files.createDirectories(path) // Создаёт директории, если их нет
-            }
+            if (Files.notExists(path)) { Files.createDirectories(path) }
         } catch (e: Exception) {
             throw IllegalStateException("Не удалось создать директорию: $path", e)
         }
@@ -120,7 +118,6 @@ open class Branch(
                 zipOut.closeEntry()
             }
         }
-        println("Архив создан: ${outputZip.absolutePath}")
     }
 
     // Не рекомендую использовать

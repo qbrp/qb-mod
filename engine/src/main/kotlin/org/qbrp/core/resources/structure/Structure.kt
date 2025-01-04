@@ -20,6 +20,5 @@ open class Structure(path: File, clear: Boolean = false): Branch(path.toPath(), 
     }
 
     fun registry(key: Key): Branch { return branchesRegistry[key]!! }
-
     fun content(key: Key): ContentUnit { return contentRegistry[key]!! }
 }
