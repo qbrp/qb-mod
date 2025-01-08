@@ -2,6 +2,7 @@ package org.qbrp.core.resources
 
 import com.google.gson.JsonObject
 import org.qbrp.core.game.Game
+import org.qbrp.core.resources.data.StringData
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.core.resources.data.pack.ItemConfigData
 import org.qbrp.core.resources.data.pack.ModelData
@@ -15,6 +16,7 @@ import java.io.File
 class ServerStructure: Structure(File("qbrp")) {
 
     val records = addBranch("records")
+    val music = addBranch("music")
     val resources = addStructure("resources")
     val items = addStructure("item")
     val blocks = addStructure("block")
@@ -26,6 +28,8 @@ class ServerStructure: Structure(File("qbrp")) {
     val itemResource = resources.addBranch("item_resource")
     val blockResource = resources.addBranch("block_resource")
     val packOverride = resources.addBranch("overrides")
+
+    val youtubeToken = music.open("token.youtube-token", StringData::class.java)
 
     val config = open("config.json", ServerConfigData::class.java).data as ServerConfigData
     val pack = ResourcePack(

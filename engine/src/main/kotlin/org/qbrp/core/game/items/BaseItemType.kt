@@ -1,4 +1,4 @@
-package org.imperial_hell.qbrp.client.Items
+package org.qbrp.core.game.items
 
 import net.minecraft.item.Item
 

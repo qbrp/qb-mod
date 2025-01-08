@@ -2,7 +2,6 @@ package org.qbrp.core.game.items
 
 import net.minecraft.item.Item
 import net.minecraft.util.Identifier
-import org.imperial_hell.qbrp.client.Items.BaseItemType
 import org.qbrp.core.Core.Companion.MOD_ID
 import org.qbrp.core.resources.structure.integrated.Parents
 

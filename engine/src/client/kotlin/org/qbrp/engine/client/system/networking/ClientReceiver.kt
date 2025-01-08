@@ -5,6 +5,8 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayNetworkHandler
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.Identifier
+import org.qbrp.system.networking.messages.Message
+import org.qbrp.system.networking.messages.MessageContent
 import org.qbrp.system.utils.log.Loggers
 import kotlin.reflect.KClass
 
@@ -16,7 +18,7 @@ class ClientReceiver(
     private val logger = Loggers.get("network", "receiving")
 
     fun register() {
-        ClientPlayNetworking.registerReceiver(Identifier("qbrp", messageId)) { client, handler, buf, responseSender ->
+        ClientPlayNetworking.registerGlobalReceiver(Identifier("qbrp", messageId)) { client, handler, buf, responseSender ->
             val context = ClientReceiverContext(client, handler)
             try {
                 val messageType = createMessageType(buf)
