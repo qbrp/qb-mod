@@ -1,31 +1,28 @@
 package org.qbrp.core
 
-import com.google.gson.JsonObject
 import net.fabricmc.api.DedicatedServerModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
+import org.qbrp.core.game.events.Handlers
+import org.qbrp.core.game.events.ServerReceivers
 import org.qbrp.core.resources.ServerResources
-import org.qbrp.system.networking.JsonContent
-import org.qbrp.system.networking.Message
-import org.qbrp.system.networking.NetworkManager
-import org.qbrp.system.networking.ServerReceiver
+import org.qbrp.plasmo.Addon
 import org.qbrp.system.networking.http.WebServer
+import su.plo.voice.api.server.PlasmoVoiceServer
 
 class ServerCore : DedicatedServerModInitializer {
+    companion object { lateinit var plasmoAddon: Addon }
     lateinit var webServer: WebServer
 
     override fun onInitializeServer() {
         ServerResources.buildResources()
-
-        ServerReceiver("packet", JsonContent::class) { message, context, receiver ->
-            receiver.response(Message(
-                "packet",
-                JsonContent()
-                    .apply { json = JsonObject() }),
-                context)
-        }.register()
-
         webServer = WebServer().also { it.start() }
-        ServerLifecycleEvents.SERVER_STARTED.register { server -> }
+        Handlers.registerServerEvents()
+        Handlers.registerBaseEvents()
+        ServerReceivers.register()
+        ServerLifecycleEvents.SERVER_STARTED.register { server ->
+            plasmoAddon = Addon(server)
+            PlasmoVoiceServer.getAddonsLoader().load(plasmoAddon)
+        }
         ServerLifecycleEvents.SERVER_STOPPED.register { server ->
             webServer.stop()
         }
