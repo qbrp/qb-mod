@@ -8,7 +8,9 @@ data class ZipData(
 ) : Data(unit = DownloadedUnit::class.java) {
     override fun toFile(): String = destinationPath
 
-    fun fromFile(file: File): ZipData {
-        return ZipData(file.path)
+    companion object {
+        fun fromFile(file: File): ZipData {
+            return ZipData(file.path)
+        }
     }
 }

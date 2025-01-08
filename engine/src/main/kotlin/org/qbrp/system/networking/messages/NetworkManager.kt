@@ -1,4 +1,4 @@
-package org.qbrp.system.networking
+package org.qbrp.system.networking.messages
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld

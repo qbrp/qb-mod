@@ -1,4 +1,4 @@
-package org.qbrp.system.networking
+package org.qbrp.system.networking.messages
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
@@ -19,6 +19,7 @@ class ServerReceiver(
     private val logger = Loggers.get("network", "receiving")
 
     fun register() {
+        logger.log("Зарегистрирован ресивер: <<${Identifier("qbrp", messageId)}>>")
         ServerPlayNetworking.registerGlobalReceiver(Identifier("qbrp", messageId)) { server, player, handler, buf, responseSender ->
             try {
                 val messageType = createMessageType(buf)
@@ -32,9 +33,14 @@ class ServerReceiver(
         }
     }
 
-    fun response(message: Message, context: ServerReceiverContext) {
-        val markedMessage = message.content.apply { messageId = context.id }
-        NetworkManager.sendMessage(context.player, Message(messageId, markedMessage))
+    fun response(content: MessageContent, context: ServerReceiverContext, name: String) {
+        val markedMessage = Message(name,content.apply { messageId = context.id })
+        NetworkManager.sendMessage(context.player, markedMessage)
+    }
+
+    fun response(content: MessageContent, context: ServerReceiverContext) {
+        val markedMessage = Message(messageId,content.apply { messageId = context.id })
+        NetworkManager.sendMessage(context.player, markedMessage)
     }
 
     private fun createMessageType(buf: PacketByteBuf): Any {

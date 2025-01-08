@@ -1,4 +1,4 @@
-package org.qbrp.system.networking
+package org.qbrp.system.networking.messages
 
 import com.google.gson.JsonObject
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
@@ -15,12 +15,12 @@ abstract class MessageContent {
         return buf
     }
 
-    fun convertByteBuf(buf: PacketByteBuf): JsonObject {
+    fun convertByteBuf(buf: PacketByteBuf): MessageContent {
         messageId = buf.readString()
         return convert(buf)
     }
 
-    abstract fun write(buf: PacketByteBuf)
-    abstract fun convert(buf: PacketByteBuf): JsonObject
+    protected abstract fun write(buf: PacketByteBuf)
+    protected abstract fun convert(buf: PacketByteBuf): MessageContent
 }
 

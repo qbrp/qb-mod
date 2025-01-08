@@ -7,10 +7,17 @@ object Loggers {
     private val loggers = mutableMapOf<LoggerKey, Logger>()
 
     init {
+        register(Logger(enabled = true,"plasmo"))
+        register(Logger(enabled = true,"plasmo", "playback"))
+        register(Logger(enabled = true,"plasmo", "controller"))
+        register(Logger(enabled = true,"plasmo", "audioManager"))
+        register(Logger(enabled = false,"visualData", "storage"))
+        register(Logger(enabled = false,"visualData", "loader"))
         register(Logger(enabled = true,"resources"))
+        register(Logger(enabled = true,"timers"))
         register(Logger(enabled = true,"database"))
-        register(Logger(enabled = true,"network", "sending"))
-        register(Logger(enabled = true,"network", "receiving"))
+        register(Logger(enabled = false,"network", "sending"))
+        register(Logger(enabled = false,"network", "receiving"))
         register(Logger(enabled = false,"resources", "debug"))
         register(Logger(enabled = true,"items", "mechanics"))
     }

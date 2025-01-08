@@ -1,4 +1,4 @@
-package org.qbrp.system.networking
+package org.qbrp.system.networking.messages
 
 import net.minecraft.util.Identifier
 import org.qbrp.core.Core

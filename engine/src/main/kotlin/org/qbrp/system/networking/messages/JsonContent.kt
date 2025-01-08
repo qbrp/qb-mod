@@ -1,4 +1,4 @@
-package org.qbrp.system.networking
+package org.qbrp.system.networking.messages
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -11,8 +11,9 @@ class JsonContent : MessageContent() {
         buf.writeString(json.toString())
     }
 
-    override fun convert(buf: PacketByteBuf): JsonObject {
+    override fun convert(buf: PacketByteBuf): JsonContent {
         val jsonString = buf.readString() // Читаем JSON из буфера
-        return JsonParser.parseString(jsonString).asJsonObject.also { json = it }
+        json = JsonParser.parseString(jsonString).asJsonObject.also { json = it }
+        return this
     }
 }
