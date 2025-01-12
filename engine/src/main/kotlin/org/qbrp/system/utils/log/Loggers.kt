@@ -1,12 +1,12 @@
 package org.qbrp.system.utils.log
 
-import org.imperial_hell.ihSystems.Logger
 import org.qbrp.system.utils.keys.LoggerKey
 
 object Loggers {
     private val loggers = mutableMapOf<LoggerKey, Logger>()
 
     init {
+        register(Logger(enabled = false,"database"))
         register(Logger(enabled = true,"plasmo"))
         register(Logger(enabled = true,"plasmo", "playback"))
         register(Logger(enabled = true,"plasmo", "controller"))
@@ -15,7 +15,6 @@ object Loggers {
         register(Logger(enabled = false,"visualData", "loader"))
         register(Logger(enabled = true,"resources"))
         register(Logger(enabled = true,"timers"))
-        register(Logger(enabled = true,"database"))
         register(Logger(enabled = false,"network", "sending"))
         register(Logger(enabled = false,"network", "receiving"))
         register(Logger(enabled = false,"resources", "debug"))

@@ -1,4 +1,4 @@
-package org.qbrp.plasmo.contoller.lavaplayer
+package org.qbrp.plasmo.playback.lavaplayer
 
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.data.StringData

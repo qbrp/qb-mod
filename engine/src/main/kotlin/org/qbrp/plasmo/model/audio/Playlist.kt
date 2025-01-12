@@ -1,16 +1,15 @@
 package org.qbrp.plasmo.model.audio
 
-import klite.Session
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.qbrp.plasmo.contoller.AddonStorage
-import org.qbrp.plasmo.contoller.lavaplayer.AudioManager
-import org.qbrp.plasmo.contoller.player.SourceManager
+import com.fasterxml.jackson.annotation.JsonGetter
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonSetter
+import kotlinx.coroutines.*
+import org.qbrp.plasmo.controller.view.PlaylistView
+import org.qbrp.plasmo.controller.view.View
+import org.qbrp.plasmo.MusicStorage
 import org.qbrp.plasmo.model.Playable
+import org.qbrp.plasmo.model.audio.Playlist.Playback
 import org.qbrp.plasmo.model.priority.Priorities
 import org.qbrp.plasmo.model.priority.Priority
 import org.qbrp.plasmo.model.selectors.RegionSelector
@@ -18,64 +17,139 @@ import org.qbrp.plasmo.model.selectors.Selector
 import org.qbrp.system.utils.log.Loggers
 import java.util.UUID
 
-class Playlist(
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class Playlist(
     var name: String,
     override var selector: Selector = RegionSelector("global"),
     override var priority: Priority = Priorities.lowest(),
-    override var cycle: Int = -1
+    override var cycle: Int = -1,
+    val tracks: MutableList<String> = mutableListOf<String>(),
 ) : Playable() {
-    val tracks = mutableListOf<String>()
-    @Transient
-    private var playJob: Job? = null
-    @Transient
-    var playSession: String = UUID.randomUUID().toString()
+    @JsonIgnore
+    var playback: Playback = Playback()
 
-    private var currentCycle = 0
-    private var currentTrack = 0
-    var currentTime = 0
-
-    fun updateSession() {
-        playSession = UUID.randomUUID().toString()
+    @JsonGetter("track")
+    fun serializeTrack(): Int = playback.currentTrackIndex
+    @JsonSetter("track")
+    fun setTrack(trackIndex: Int) { playback.currentTrackIndex = trackIndex }
+    @JsonGetter("currentTime")
+    fun serializeCurrentTime(): Int = playback.currentTime
+    @JsonSetter("currentTime")
+    fun setCurrentTime(time: Int) { playback.currentTime = time }
+    @JsonGetter("playing")
+    fun isPlaying(): Boolean {
+        return playback.playJob != null
+    }
+    @JsonSetter("playing")
+    fun setPlay(playing: Boolean) {
+        if (playing) { play() }
     }
 
-    override fun play() {
-        if (tracks.isEmpty() || playJob?.isActive == true) return
-        log("Воспроизведение плейлиста $name начато")
-        playJob = CoroutineScope(Dispatchers.Default).launch {
-            while (playNextSecond()) { log("Время: $currentTime"); delay(1000) }
-            log("Воспроизведение плейлиста $name завершено")
+
+    @JsonIgnore
+    override fun getView(): View = PlaylistView(this)
+    override fun play() = playback.startIfNotPlaying()
+    override fun stop() = playback.stop()
+
+    fun addTrack(name: String) {
+        if (MusicStorage.isTrackExists(name)) tracks.add(name)
+    }
+
+    fun removeTrack(index: Int) {
+        if (index in tracks.indices) {
+            tracks.removeAt(index)
+            playback.onTrackRemoved(index)
         }
     }
 
-    override fun stop() {
-        playJob?.cancel()
-        playJob = null
-        log("Воспроизведение плейлиста $name остановлено")
+    fun moveTrack(from: Int, to: Int) {
+        if (from in tracks.indices && to in tracks.indices && from != to) {
+            tracks.add(to, tracks.removeAt(from))
+            playback.onTrackMoved(from, to)
+        }
     }
 
-    private fun playNextSecond(): Boolean {
-        if (++currentTime > getCurrentTrack().endTimestamp) nextTrack()
-        return playJob?.isActive == true
-    }
+    @JsonIgnore
+    override fun getCurrentTrack(): Track = playback.getCurrentTrack()
 
-    private fun nextTrack() {
-        currentTime = 0
-        if (++currentTrack >= tracks.size) {
-            if (cycle == -1 || ++currentCycle <= cycle) {
-                currentTrack = 0
-            } else {
-                currentTrack = 0
-                stop()
+    inner class Playback(
+        var currentTrackIndex: Int = 0,
+        var currentTime: Int = 0,
+        var currentCycle: Int = 0,
+        @JsonIgnore
+        var playJob: Job? = null,
+        @JsonIgnore
+        var playSession: String = UUID.randomUUID().toString() ) {
+
+        fun startIfNotPlaying() {
+            println(playJob?.isActive)
+            println(tracks)
+            if (playJob?.isActive != true && tracks.isNotEmpty()) start()
+        }
+
+        private fun start() {
+            resetSession()
+            log("Воспроизведение плейлиста: $name")
+            playJob = CoroutineScope(Dispatchers.Default).launch {
+                while (playNextSecond()) delay(1000)
+                log("Плейлист $name завершен.")
             }
         }
-        log("Плейлист $name переключился на трек: ${getCurrentTrack().name}")
-        updateSession()
+
+        fun stop() {
+            playJob?.cancel()
+            playJob = null
+            log("Остановлен плейлист: $name")
+        }
+
+        @JsonIgnore
+        fun getCurrentTrack(): Track = MusicStorage.getTrack(tracks[currentTrackIndex])
+
+        private fun playNextSecond(): Boolean {
+            if (++currentTime > getCurrentTrack().endTimestamp) nextTrack()
+            return playJob?.isActive == true
+        }
+
+        private fun nextTrack() {
+            currentTime = 0
+            if (++currentTrackIndex >= tracks.size) {
+                if (cycle == -1 || ++currentCycle <= cycle) {
+                    currentTrackIndex = 0
+                } else {
+                    stop()
+                }
+            }
+            resetSession()
+            log("Switched to track: ${getCurrentTrack().name}")
+        }
+
+        fun onTrackRemoved(index: Int) {
+            if (index == currentTrackIndex) {
+                stop()
+                currentTrackIndex = 0
+                currentTime = 0
+                if (tracks.isNotEmpty()) start()
+            } else if (index < currentTrackIndex) {
+                currentTrackIndex--
+            }
+        }
+
+        fun onTrackMoved(from: Int, to: Int) {
+            if (from == currentTrackIndex || to == currentTrackIndex) {
+                stop()
+                currentTime = 0
+                start()
+            }
+        }
+
+        private fun resetSession() {
+            playSession = UUID.randomUUID().toString()
+        }
     }
 
-
-    fun addTrack(name: String) { if (AddonStorage.isTrackExists(name)) tracks.add(name) }
-    override fun getCurrentTrack(): Track = AddonStorage.getTrack(tracks[currentTrack])
     private fun log(message: String) = logger.log(message)
 
-    companion object { val logger = Loggers.get("plasmo", "playback") }
+    companion object {
+        private val logger = Loggers.get("plasmo", "playback")
+    }
 }

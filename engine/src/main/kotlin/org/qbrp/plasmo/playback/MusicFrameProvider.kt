@@ -1,4 +1,4 @@
-package org.qbrp.plasmo.contoller
+package org.qbrp.plasmo.playback
 
 import su.plo.voice.api.encryption.Encryption
 import su.plo.voice.api.server.audio.provider.AudioFrameProvider
@@ -6,13 +6,8 @@ import su.plo.voice.api.server.audio.provider.AudioFrameResult
 import su.plo.voice.lavaplayer.libs.com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import su.plo.voice.lavaplayer.libs.com.sedmelluq.discord.lavaplayer.track.AudioTrackState
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-
 class MusicFrameProvider(
     private val player: AudioPlayer,
-    private val fadeInTime: Double,
-    private val fadeOutTime: Double,
     private val trackDuration: Double,
     private val startOffset: Double,
     private val encryption: Encryption

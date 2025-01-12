@@ -1,4 +1,4 @@
-package org.qbrp.plasmo.contoller.player
+package org.qbrp.plasmo.playback.player
 
 import net.minecraft.server.network.ServerPlayerEntity
 

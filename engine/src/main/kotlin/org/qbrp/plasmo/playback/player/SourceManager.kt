@@ -1,7 +1,6 @@
-package org.qbrp.plasmo.contoller.player
+package org.qbrp.plasmo.playback.player
 
 import net.minecraft.server.network.ServerPlayerEntity
-import org.qbrp.plasmo.contoller.lavaplayer.AudioManager
 import su.plo.voice.api.server.PlasmoVoiceServer
 
 class SourceManager {

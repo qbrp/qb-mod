@@ -1,11 +1,9 @@
 package org.qbrp.core.game.items
 
-import klite.info
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.util.Identifier
 import org.qbrp.core.Core.Companion.MOD_ID
-import org.qbrp.core.resources.structure.integrated.Parents
 import org.qbrp.system.utils.log.Loggers
 
 class Items() {

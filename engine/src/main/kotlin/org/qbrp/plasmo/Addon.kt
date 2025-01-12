@@ -3,10 +3,15 @@ package org.qbrp.plasmo
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
 import org.qbrp.core.ServerCore
-import org.qbrp.plasmo.contoller.AddonStorage
-import org.qbrp.plasmo.contoller.PlayerSelectionHandler
-import org.qbrp.plasmo.contoller.player.SourceManager
-import org.qbrp.plasmo.contoller.lavaplayer.AudioManager
+import org.qbrp.core.game.registry.CommandsRepository
+import org.qbrp.core.resources.ServerResources
+import org.qbrp.plasmo.controller.view.ViewCommands
+import org.qbrp.plasmo.controller.PlaylistCommands
+import org.qbrp.plasmo.controller.TrackCommands
+import org.qbrp.plasmo.model.priority.Priorities
+import org.qbrp.plasmo.playback.PlayerSelectionHandler
+import org.qbrp.plasmo.playback.player.SourceManager
+import org.qbrp.plasmo.playback.lavaplayer.AudioManager
 import org.qbrp.system.utils.log.Loggers
 import su.plo.voice.api.addon.AddonInitializer
 import su.plo.voice.api.addon.AddonLoaderScope
@@ -33,16 +38,15 @@ class Addon(val server: MinecraftServer) : AddonInitializer {
     @InjectPlasmoVoice
     private lateinit var voiceServer: PlasmoVoiceServer
 
-//    fun test() {
-//        AddonStorage.addTrack("Made in Abyss", "https://kappa.vgmsite.com/soundtracks/made-in-abyss-ost/pmxedjjeon/1-01%20Made%20in%20Abyss.mp3").apply {
-//            //endTimestamp = 30.0
-//            setFadeTime(6.0)
-//        }
-//        AddonStorage.getDefaultPlaylist().apply {
-//            addTrack("Made in Abyss")
-//            play()
-//        }
-//    }
+    fun test() {
+        MusicStorage.addTrack("Old Stories", "https://www.youtube.com/watch?v=KlN0EAILYwA")
+        MusicStorage.addTrack("Precipice", "https://youtu.be/dEgjOyBwIaE")
+        MusicStorage.getDefaultPlaylist().apply {
+            addTrack("Old Stories")
+            addTrack("Precipice")
+            play()
+        }
+    }
 
     override fun onAddonInitialize() {
         registerSourceLine()
@@ -51,26 +55,36 @@ class Addon(val server: MinecraftServer) : AddonInitializer {
         SourceManager.voiceServer = voiceServer
         playerSelectionHandler = PlayerSelectionHandler(sourceManager)
         playerSelectionHandler.startHandling()
-        AddonStorage.addDefaultPlaylist()
         voiceServer.eventBus.register(this, EventListener())
-        logger.success("Аддон Music-Manager инициализирован.")
+        load()
+        MusicStorage.startSaveLifecycle()
+        CommandsRepository.add(listOf(
+            ViewCommands(playerSelectionHandler),
+            PlaylistCommands(),
+            TrackCommands())
+        )
         //test()
+        logger.success("Аддон Music-Manager инициализирован.")
+    }
+
+    fun load() {
+        Priorities.fromStrings(ServerResources.root.config.music.priorities)
+        MusicStorage.load()
+        MusicStorage.addDefaultPlaylist()
     }
 
     override fun onAddonShutdown() {
         logger.log("Аддон Music-Manager выгружен.")
     }
 
-    fun registerSourceLine()
-    {
-        val sourceLine = voiceServer.sourceLineManager.createBuilder(
+    fun registerSourceLine() = voiceServer.sourceLineManager.createBuilder(
             this,
             "music",
             "Музыка и звуковые эффекты",
             "plasmovoice:textures/icons/speaker_priority.png",
             10,
         ).build()
-    }
+
     inner class EventListener {
 
         @EventSubscribe

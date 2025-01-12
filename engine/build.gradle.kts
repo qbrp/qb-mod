@@ -5,6 +5,8 @@ plugins {
     kotlin("jvm") version "2.0.0"
     id("fabric-loom") version "1.9.1"
     id("maven-publish")
+    id("com.gradleup.shadow") version "8.3.5"
+    kotlin("plugin.serialization") version "2.1.0"
 }
 
 version = project.property("mod_version") as String
@@ -36,6 +38,10 @@ loom {
 
 repositories {
     mavenCentral()
+    maven("https://repo.plo.su")
+    maven("https://repo.plasmoverse.com/releases")
+    maven("https://repo.plasmoverse.com/snapshots")
+    maven("https://maven.enginehub.org/repo/")
     maven { url = uri("https://jitpack.io") }
 }
 
@@ -47,9 +53,16 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${project.property("loader_version")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${project.property("kotlin_loader_version")}")
 
-    implementation("com.squareup.okhttp3:okhttp:${project.property("okhttp_version")}")
+    implementation("su.plo.voice.api:server:2.1.2")
+    implementation("su.plo:pv-addon-lavaplayer-lib:1.1.2")
+    implementation("com.sk89q.worldedit:worldedit-core:7.3.0")
+
+    include(implementation("com.squareup.okhttp3:okhttp:${project.property("okhttp_version")}")!!)
+    include(implementation(group= "com.squareup.okio", name= "okio-jvm", version= "3.2.0"))
     include(implementation("com.github.codeborne.klite:klite-server:${project.property("klite_version")}")!!)
     include(implementation("com.github.codeborne.klite:klite-core:${project.property("klite_version")}")!!)
+    include(implementation("su.plo.slib:api-server:1.0.2-SNAPSHOT")!!)
+
 
     include(implementation("org.mongodb:mongodb-driver-sync:5.2.1")!!)
     implementation("org.mongodb:mongodb-driver-core:5.2.1")
@@ -68,8 +81,16 @@ dependencies {
     include(implementation("org.litote.kmongo:kmongo-property:5.1.0")!!)
     include(implementation("org.litote.kmongo:kmongo-shared:5.1.0")!!)
     include(implementation("de.undercouch:bson4jackson:2.15.1")!!)
+    include(implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")!!)
+    include(implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")!!)
 
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_version")}")
+}
+
+tasks.shadowJar {
+    relocate("kotlin", "su.plo.voice.libs.kotlin")
+    relocate("kotlinx.coroutines", "su.plo.voice.libs.kotlinx.coroutines")
+    relocate("kotlinx.serialization", "su.plo.voice.libs.kotlinx.serialization")
 }
 
 tasks.processResources {

@@ -1,8 +1,7 @@
-package org.imperial_hell.ihSystems
+package org.qbrp.system.utils.log
 
 import org.qbrp.system.utils.format.ConsoleColors
 import org.qbrp.system.utils.keys.LoggerKey
-import org.qbrp.system.utils.log.LogType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

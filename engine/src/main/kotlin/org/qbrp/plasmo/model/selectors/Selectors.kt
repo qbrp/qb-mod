@@ -6,16 +6,22 @@ import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.minecraft.server.command.ServerCommandSource
 import java.util.concurrent.CompletableFuture
+import kotlin.reflect.KClass
+import kotlin.reflect.full.primaryConstructor
 
 object Selectors {
     private val selectorMap = mapOf(
-        "player" to { params: MutableMap<String, String> -> PlayerSelector(params["nickname"] ?: "") },
-        "group" to { params: MutableMap<String, String> -> GroupSelector(params["name"] ?: "") },
-        "region" to { params: MutableMap<String, String> -> RegionSelector(params["name"] ?: "") }
+        "player" to PlayerSelector::class,
+        "group" to GroupSelector::class,
+        "region" to RegionSelector::class
     )
 
-    fun createSelector(name: String, params: MutableMap<String, String>): Selector? {
-        return selectorMap[name]?.invoke(params)
+    fun createSelector(name: String, params: List<String>): Selector? {
+        return selectorMap[name]?.primaryConstructor?.call(params)
+    }
+
+    fun getSelectorName(selectorClass: KClass<out Selector>): String? {
+        return selectorMap.entries.find { it.value == selectorClass }?.key
     }
 
     class SelectorsProvider : SuggestionProvider<ServerCommandSource> {
@@ -27,6 +33,4 @@ object Selectors {
             return builder.buildFuture()
         }
     }
-
-
 }

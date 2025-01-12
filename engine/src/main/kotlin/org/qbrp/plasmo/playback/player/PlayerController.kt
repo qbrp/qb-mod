@@ -1,7 +1,8 @@
-package org.qbrp.plasmo.contoller.player
+package org.qbrp.plasmo.playback.player
 
-import org.qbrp.plasmo.contoller.MusicFrameProvider
-import org.qbrp.plasmo.contoller.lavaplayer.AudioManager
+import org.qbrp.plasmo.playback.MusicFrameProvider
+import org.qbrp.plasmo.playback.lavaplayer.AudioManager
+import org.qbrp.plasmo.model.audio.Playlist
 import org.qbrp.plasmo.model.audio.Track
 import org.qbrp.system.utils.log.Loggers
 import su.plo.voice.api.server.audio.source.AudioSender
@@ -23,49 +24,51 @@ class PlayerController(nickname: String) {
 
     fun remove() { source.remove(); stopTrack() }
 
-    private var currentSessionUUID: String = ""
+    private var currentSessionUUID: String = "unset"
     private var currentTrack: AudioTrack? = null
     private var currentPlayer: AudioPlayer? = null
     private lateinit var sender: AudioSender
 
-    fun sync(track: Track, position: Int, session: String) {
+    fun sync(playback: Playlist.Playback) {
+        val track = playback.getCurrentTrack()
+        val session = playback.playSession
+        val position = playback.currentTime
+        var currentPosition = (currentPlayer?.playingTrack?.position ?: 0) / 1000
+        if (playback.playJob == null) { stopTrack(); return }
         val isTrackChanged = session != currentSessionUUID
         if (isTrackChanged) {
             logger.log("Рассинхронизирован ${track.name}: UUID $currentSessionUUID слушателя не совпадает с $session")
-            playTrack(track, position, session)
+            playTrack(track, playback)
+            currentSessionUUID = session
+            return
         }
-        val currentPosition = currentPlayer?.playingTrack?.position ?: 0
-        val isPositionChanged = abs(position - (currentPosition / 1000)) > 5
+        val isPositionChanged = abs(position - currentPosition) > 6
         if (isPositionChanged) {
-            logger.log("Рассинхронизирован ${track.name}: текущая позиция ${(currentPosition / 1000)}, настоящая $position")
-            currentPlayer?.playingTrack?.position = (position * 1000).toLong()
-            logger.log("Установлена позиция: ${currentPlayer?.playingTrack?.position?.div(1000)}")
+            logger.log("Рассинхронизирован ${track.name}: текущая позиция ${currentPosition}, настоящая $position")
+            currentPlayer?.playingTrack?.position = position.toLong() * 1000
+            logger.log("Установлена позиция: $currentPosition")
         }
     }
 
-    fun playTrack(track: Track, position: Int, session: String) {
+    fun playTrack(track: Track, playback: Playlist.Playback) {
         logger.log("Воспроизведение трека \"${track.name}\" для ${source.player.instance.name} (${track.link})")
         stopTrack()
-        val lavaTrack = track.getAudio()
-        val player = AudioManager.lavaPlayerManager.createPlayer().apply {
-            playTrack(lavaTrack)
-            playingTrack.position = (position * 1000).toLong()
-        }
-        currentSessionUUID = session
-        currentTrack = lavaTrack
-        currentPlayer = player
+        currentTrack = track.getAudio()
+        currentPlayer = AudioManager.lavaPlayerManager.createPlayer()?.apply {
+            playTrack(currentTrack)
+            playingTrack.position = (playback.currentTime * 1000).toLong()
+        } ?: throw IllegalStateException("Player creation failed")
 
-        val fadeInDuration = track.fadeInTime
-        val fadeOutDuration = track.fadeOutTime
-        val frameProvider = MusicFrameProvider(player, fadeInDuration, fadeOutDuration,
-            (player.playingTrack.duration / 1000).toDouble(),
-            (player.playingTrack.position / 1000).toDouble(),
+        val frameProvider = MusicFrameProvider(currentPlayer as AudioPlayer,
+            (currentPlayer!!.playingTrack.duration / 1000).toDouble(),
+            (currentPlayer!!.playingTrack.position / 1000).toDouble(),
             SourceManager.voiceServer.defaultEncryption)
         sender = source.createAudioSender(frameProvider).apply { start() }
         sender.onStop { stopTrack() }
     }
 
     fun stopTrack() {
+        currentSessionUUID = ""
         currentPlayer?.destroy()
         currentTrack = null
         currentPlayer = null

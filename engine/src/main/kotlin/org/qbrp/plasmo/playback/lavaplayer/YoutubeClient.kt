@@ -1,4 +1,4 @@
-package org.qbrp.plasmo.contoller.lavaplayer
+package org.qbrp.plasmo.playback.lavaplayer
 
 import su.plo.voice.lavaplayer.libs.dev.lavalink.youtube.clients.Android
 import su.plo.voice.lavaplayer.libs.dev.lavalink.youtube.clients.MWeb

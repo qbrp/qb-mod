@@ -2,6 +2,7 @@ package org.qbrp.core.game
 
 import org.qbrp.core.game.items.BaseItem
 import org.qbrp.core.game.items.Items
+import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.resources.structure.integrated.Parents
 
 object Game {
