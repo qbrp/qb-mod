@@ -1,5 +1,5 @@
 package org.qbrp.core.resources.units
-import org.qbrp.core.resources.ISavable
+import org.qbrp.core.resources.Savable
 import org.qbrp.core.resources.data.Data
 import java.nio.file.Path
 
@@ -8,9 +8,9 @@ open class ContentUnit(
     name: String,
     extension: String,
     open val data: Data
-) : Unit(path.resolve("$name.$extension") as Path), ISavable {
+) : Unit(path.resolve("$name.$extension") as Path), Savable {
 
-    override fun handle(): Unit {
+    override fun initFile(): Unit {
         val filePath = this.path.toFile()
         if (!filePath.exists()) {
             try { filePath.createNewFile()

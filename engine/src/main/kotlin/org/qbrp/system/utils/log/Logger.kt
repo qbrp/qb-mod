@@ -14,14 +14,16 @@ class Logger(val enabled: Boolean = true, vararg loggerKey: String) {
     fun success(message: String) { log(message, LogType.SUCCESS) }
 
     fun log(message: String, type: LogType = LogType.INFO) {
+        val formattedMessage = formatMessage(message)
         if (enabled) {
-            val formattedMessage = formatMessage(message)
             when (type) {
                 LogType.INFO -> logger.info(formattedMessage)
                 LogType.WARN -> logger.info("${ConsoleColors.ORANGE}$formattedMessage")
-                LogType.ERROR -> logger.error(formattedMessage)
                 LogType.SUCCESS -> logger.info("${ConsoleColors.GREEN}$formattedMessage")
+                LogType.ERROR -> logger.error("${ConsoleColors.RED}$formattedMessage")
             }
+        } else if(type == LogType.ERROR) {
+            logger.error("${ConsoleColors.RED}$formattedMessage")
         }
     }
 

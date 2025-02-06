@@ -1,14 +1,17 @@
 package org.qbrp.system.database
 
+
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import org.litote.kmongo.KMongo
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.MongoClient
 import com.mongodb.MongoException
 import org.bson.Document
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.UpdateOptions
+import org.litote.kmongo.KMongo
 import org.qbrp.system.utils.log.Loggers
 import kotlin.text.toList
 
@@ -18,7 +21,7 @@ class DatabaseService(private val url: String, private val dbName: String) {
     private val logger = Loggers.get("database")
 
     private val objectMapper: ObjectMapper = ObjectMapper().apply {
-        registerKotlinModule()  // Для корректной работы с Kotlin
+        registerKotlinModule()
     }
 
     fun connect(): Boolean {
@@ -73,7 +76,6 @@ class DatabaseService(private val url: String, private val dbName: String) {
     }
 
     fun <T> insertObject(document: String, obj: T): String? = try {
-        println("Вставка объекта в коллекцию $document (${db?.name})")
         val data = serializeObjectToMap(obj)  // Сериализуем объект
         db?.getCollection(document)?.insertOne(Document(data))?.insertedId?.asObjectId()?.value?.toHexString()
     } catch (e: MongoException) {

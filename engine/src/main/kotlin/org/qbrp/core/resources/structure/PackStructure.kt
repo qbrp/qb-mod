@@ -14,14 +14,17 @@ import kotlin.io.path.nameWithoutExtension
 
 class PackStructure(path: File) : Structure(path, clear = true) {
 
-    init { handle() }
+    init { initFile() }
 
     val root = addBranch("assets")
     val mod = root.addBranch("qbrp")
 
+    val blockstatesRegistry = mod.addBranch("blockstates")
     val modelsRegistry = mod.addBranch("models")
+
     val itemTypes = modelsRegistry.addBranch("item")
     val itemModels = modelsRegistry.addBranch("item")
+
     val texturesRegistry = mod.addBranch("textures")
     val itemTextures = texturesRegistry.addBranch("item")
 

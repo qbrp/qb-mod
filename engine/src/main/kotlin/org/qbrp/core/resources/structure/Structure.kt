@@ -1,6 +1,5 @@
 package org.qbrp.core.resources.structure
 
-import org.qbrp.core.resources.ISavable
 import org.qbrp.system.utils.keys.Key
 import org.qbrp.core.resources.units.ContentUnit
 import java.io.File

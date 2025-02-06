@@ -11,7 +11,7 @@ data class ClientConfigData(val resources: Resources = Resources()) : Data() {
     }
 
     class Resources {
-        val host: String = "0.0.0.0"
+        val host: String = "imperialhell.org:25002"
         val port: Int = 25008
         val request: String = "resourcepack.zip"
 

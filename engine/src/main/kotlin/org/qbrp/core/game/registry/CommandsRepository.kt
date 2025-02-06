@@ -11,5 +11,6 @@ object CommandsRepository {
 
     fun initCommands(dispatcher: CommandDispatcher<ServerCommandSource>) {
         commands.forEach { it.register(dispatcher) }
+        commands.clear()
     }
 }

@@ -1,11 +1,16 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "org.qbrp.engine.mixin.client",
+  "package": "mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "chat.ChatHudMixin",
+    "chat.ChatInputSuggestorMixin",
+    "chat.ChatScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+  ]
 }

@@ -10,9 +10,9 @@ import kotlin.io.path.pathString
 
 object ClientResources {
     val logger = Loggers.get("resources")
-    val root = ClientStructure(Branch(Paths.get("qbrpClient")).handle().path.toFile())
-    val resourcepacks = Branch(File("resourcepacks").toPath()).handle()
-    val assets = Branch(File("assets").toPath()).handle()
+    val root = ClientStructure(Branch(Paths.get("qbrpClient")).initFile().path.toFile())
+    val resourcepacks = Branch(File("resourcepacks").toPath()).initFile()
+    val assets = Branch(File("assets").toPath()).initFile()
 
     fun downloadPack() {
         val pack = resourcepacks.addUnit(ZipData(assets.path.resolve("pack.zip").pathString), name = "pack", extension = "zip") as DownloadedUnit

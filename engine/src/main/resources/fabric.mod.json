@@ -17,7 +17,6 @@
       "org.qbrp.core.ServerCore"
     ],
     "main": [
-      "org.qbrp.engine.Engine",
       "org.qbrp.core.Core"
     ]
   },

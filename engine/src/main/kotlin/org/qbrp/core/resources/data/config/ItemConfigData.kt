@@ -66,7 +66,6 @@ data class ItemConfigData(private var models: Map<String, Model> = emptyMap()) :
             }
 
             data.models = models
-            println(data)
             return data
         }
     }

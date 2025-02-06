@@ -2,18 +2,21 @@ package org.qbrp.core.resources
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import org.imperial_hell.ihSystems.Logger
+import org.qbrp.system.utils.log.Logger
 import org.qbrp.system.utils.log.Loggers
 import java.io.File
 
 object ServerResources {
     fun getLogger(): Logger = Loggers.get("resources")
 
-    lateinit var root: ServerStructure
+    private lateinit var root: ServerStructure
+
+    fun getRootBranch() = root
+    fun getConfig() = root.config
 
     fun buildResources() {
         root = ServerStructure()
-        root.bakeResourcePack()
+        root.resources.bakeResourcePack()
         root.printData()
     }
 

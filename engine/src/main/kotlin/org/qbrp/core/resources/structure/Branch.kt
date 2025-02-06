@@ -1,7 +1,7 @@
 package org.qbrp.core.resources.structure
 
 import com.google.gson.Gson
-import org.qbrp.core.resources.ISavable
+import org.qbrp.core.resources.Savable
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.units.ContentUnit
 import org.qbrp.core.resources.units.Unit
@@ -15,6 +15,7 @@ import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.name
+import kotlin.io.path.pathString
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.primaryConstructor
 
@@ -41,7 +42,7 @@ open class Branch(
         }
     }
 
-    override fun handle(): Branch {
+    override fun initFile(): Branch {
         try {
             if (Files.notExists(path)) { Files.createDirectories(path) }
         } catch (e: Exception) {
@@ -101,8 +102,12 @@ open class Branch(
 
     fun add(unit: Unit, log: Boolean = true): Unit {
         if (log) { logger.log("<<[+]>> ${unit.path} <<(${unit.javaClass.simpleName})>>") }
-        return unit.handle().also { children.add(it)
+        return unit.initFile().also { children.add(it)
         }
+    }
+
+    fun resolve(name: String): File {
+        return path.resolve(name).toFile()
     }
 
     fun zip(outputZip: File, sourceFolder: File = path.toFile(), createContainer: Boolean = false, containerName: String? = null) {
@@ -140,7 +145,7 @@ open class Branch(
         try {
             children.forEach { child ->
                 when (child) {
-                    is ISavable -> child.save() // Сохраняем объект, реализующий ISavable
+                    is Savable -> child.save() // Сохраняем объект, реализующий Savable
                     is Branch -> if (child !is Structure) child.save() // Если это не Structure, вызываем save
                 }
             }

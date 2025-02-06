@@ -31,7 +31,7 @@ class ModelBundle(
             val file = itemType as ContentUnit
             val data = file.data as PredicatesData
             data.addPredicate(
-                modelUnit.path.toString().getRelative("models").pathToJsonFormat().removeExtensions(), customModelData
+                modelUnit.pathString().getRelative("models").pathToJsonFormat().removeExtensions(), customModelData
             )
         }
     }
@@ -40,7 +40,7 @@ class ModelBundle(
         return model.textures.values.map { texture ->
             val textureUnit = packStructure.addTexture(
                 Paths.get(
-                    ServerResources.root.itemResource.path.pathString,
+                    ServerResources.getRootBranch().resources.itemResource.pathString(),
                     texture.replace(":", "/")
                         .replace("./", "$modelPath/")
                         .replace("resources", "") + ".png"

@@ -9,51 +9,56 @@ import org.qbrp.core.resources.data.pack.ModelData
 import org.qbrp.system.utils.keys.Key
 import org.qbrp.core.resources.parsing.ParserBuilder
 import org.qbrp.core.resources.parsing.filters.ExtensionFilter
+import org.qbrp.core.resources.structure.Branch
 import org.qbrp.core.resources.structure.PackStructure
 import org.qbrp.core.resources.structure.Structure
 import java.io.File
+import kotlin.mod
 
 class ServerStructure: Structure(File("qbrp")) {
+    val config = open("config.json", ServerConfigData::class.java).data as ServerConfigData
 
     val records = addBranch("records")
     val music = addBranch("music")
-    val resources = addStructure("resources")
     val items = addStructure("item")
     val blocks = addStructure("block")
-
-    val packStructure = resources.addStructure(
-        PackStructure(
-            path = resources.path.resolve("resourcepack")
-            .toFile())) as PackStructure
-    val itemResource = resources.addBranch("item_resource")
-    val blockResource = resources.addBranch("block_resource")
-    val packOverride = resources.addBranch("overrides")
+    val resources = Resources(this, config)
 
     val youtubeToken = music.open("token.youtube-token", StringData::class.java)
 
-    val config = open("config.json", ServerConfigData::class.java).data as ServerConfigData
-    val pack = ResourcePack(
-        structure = packStructure,
-        packMcMeta = config.resources.packMcMeta,
-        icon = path.resolve("icon.png").toFile(),)
+    class Resources(parentBranch: Branch, val config: ServerConfigData): Structure(parentBranch.resolve("resources") ) {
+
+        val packStructure = addStructure(
+            PackStructure(path = resolve("resourcepack"))) as PackStructure
+        val itemResource = addBranch("item_resource")
+        val blockResource = addBranch("block_resource")
+        val packOverride = addBranch("overrides")
+
+        val pack = ResourcePack(
+            structure = packStructure,
+            packMcMeta = config.resources.packMcMeta,
+            icon = resolve("icon.png"),)
+
+        fun bakeResourcePack() {
+            Game.items.baseItems.forEach { pack.structure.addItemType(it.identifier, it.modelType) } // Для каждого предмета создаем свой файл модели
+            ParserBuilder()
+                .setClass(ModelData::class.java)
+                .addFilter(ExtensionFilter(setOf("json")))
+                .setNaming { file -> Key(file.path) }
+                .build()
+                    .parse(itemResource.path.toFile())
+                    .forEach { model -> pack.content.addModelBundle(
+                        ModelData(ServerResources.parseJson(model.path.toFile()) as JsonObject), model.path
+                        )
+                    } // Парсим все модельки и делаем из них ModelBundle
+
+            pack.structure.mod.pasteNonStructured(packOverride.path) // Добавляем overrides
+            pack.bake(File(config.http.resourcePack))
+        }
+
+    }
 
     fun printData() {
         logger.log("<<Предметы:>> ${items.contentRegistry.size}")
-    }
-
-    fun bakeResourcePack() {
-        Game.items.baseItems.forEach { pack.structure.addItemType(it.identifier, it.modelType) }
-        ParserBuilder()
-            .setClass(ModelData::class.java)
-            .addFilter(ExtensionFilter(setOf("json")))
-            .setNaming { file -> Key(file.path) }
-            .build()
-        .parse(itemResource.path.toFile())
-        .forEach { model -> pack.content.addModelBundle(
-            ModelData(ServerResources.parseJson(model.path.toFile()) as JsonObject), model.path
-            )
-        }
-        pack.structure.mod.pasteNonStructured(packOverride.path)
-        pack.bake(File(config.http.resourcePack)) { pack.structure.save() }
     }
 }

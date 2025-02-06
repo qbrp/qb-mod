@@ -4,6 +4,8 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.minecraft.util.Identifier
 import org.qbrp.system.networking.ClientReceiver
 import org.qbrp.system.networking.messages.Message
+import org.qbrp.system.networking.messages.types.SendContent
+import org.qbrp.system.networking.messages.types.Signal
 import org.qbrp.system.utils.log.Loggers
 import java.util.concurrent.CompletableFuture
 import kotlin.reflect.KClass
@@ -12,9 +14,14 @@ object ClientNetworkManager {
     private val logger = Loggers.get("network", "sending")
 
     fun sendMessage(message: Message) {
-        val data = message.content.writeByteBuf()
+        val content = message.content as SendContent
+        val data = content.write()
         ClientPlayNetworking.send(message.minecraftIdentifier, data)
-        logger.log("CLIENT --> <<${message.identifier}>> (${message.content})")
+        logger.log("CLIENT --> <<${message.identifier}>>")
+    }
+
+    fun sendSignal(name: String) {
+        sendMessage(Message(name, Signal()))
     }
 
     fun <T : Any> responseRequest(
@@ -22,7 +29,7 @@ object ClientNetworkManager {
         responseClass: KClass<T>
     ): CompletableFuture<T> {
         val future = CompletableFuture<T>()
-        val receiver = ClientReceiver(message.identifier, responseClass) { responseMessage, context ->
+        val receiver = ClientReceiver<ClientReceiverContext>(message.identifier, responseClass) { responseMessage, context, receiver ->
             ClientPlayNetworking.unregisterReceiver(Identifier(message.identifier))
             if (responseMessage.identifier == message.identifier) {
                 @Suppress("UNCHECKED_CAST")

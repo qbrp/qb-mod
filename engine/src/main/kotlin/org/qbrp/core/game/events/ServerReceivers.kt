@@ -1,31 +1,37 @@
 package org.qbrp.core.game.events
 
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.ChunkPos
-import org.bson.json.JsonObject
-import org.qbrp.system.networking.messages.JsonArrayContent
 import org.qbrp.system.networking.messages.Messages.GET_CHUNK_VISUAL
-import org.qbrp.system.networking.messages.Messages.LOAD_CHUNK_VISUAL
-import org.qbrp.system.networking.messages.ServerReceiver
-import org.qbrp.system.networking.messages.StringContent
-import org.qbrp.visual.VisualDataStorage
-import org.qbrp.visual.VisualDataStorage.toJsonArray
+import org.qbrp.system.networking.messages.Messages.SEND_MESSAGE
+import org.qbrp.system.networking.messaging.ServerReceiver
+import org.qbrp.system.networking.messages.types.StringContent
+import org.qbrp.core.visual.VisualDataStorage
+import org.qbrp.engine.Engine
+import org.qbrp.system.networking.messages.Messages.END_TYPING
+import org.qbrp.system.networking.messages.Messages.START_TYPING
+import org.qbrp.system.networking.messages.components.Cluster
+import org.qbrp.system.networking.messages.types.Signal
+import org.qbrp.system.networking.messaging.ServerReceiverContext
 
 object ServerReceivers {
     fun register() {
-        ServerReceiver(GET_CHUNK_VISUAL, StringContent::class) { message, context, receiver ->
-            val content = (message.content as StringContent).string
-            val x = content.split(",")[0].toInt()
-            val z = content.split(",")[1].toInt()
-            val objects = VisualDataStorage.getObjectsInChunk(ChunkPos(BlockPos(x, 0 , z)))
-            if (objects.isNotEmpty()) {
-                receiver.response(
-                    JsonArrayContent().apply { array = objects.toJsonArray() },
-                    context,
-                    LOAD_CHUNK_VISUAL
-                )
-            }
-        }.register()
+        ServerReceiver<ServerReceiverContext>(GET_CHUNK_VISUAL, StringContent::class, { message, context, receiver ->
+            VisualDataStorage.visualDataNetworking.handleGetRequest(message.content as StringContent, receiver as ServerReceiver, context)
+        }, { message, context, receiver ->
+            //TODO: Сделать перезагрузку
+        }
+        ).register()
+        ServerReceiver<ServerReceiverContext>(START_TYPING, Signal::class, { message, context, receiver ->
+            Engine.chatModule.API.playerStartTyping(context.player)
+            true
+        }).register()
+        ServerReceiver<ServerReceiverContext>(END_TYPING, Signal::class, { message, context, receiver ->
+            Engine.chatModule.API.playerEndTyping(context.player)
+            true
+        }).register()
+        ServerReceiver<ServerReceiverContext>(SEND_MESSAGE, Cluster::class, { message, context, receiver ->
+            Engine.chatModule.API.handleMessagePacket(message)
+            true
+        }).register()
     }
 
 }

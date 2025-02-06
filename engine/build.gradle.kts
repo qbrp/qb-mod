@@ -23,10 +23,12 @@ java {
     // if it is present.
     // If you remove this line, sources will not be generated.
     withSourcesJar()
+
 }
 
 loom {
     splitEnvironmentSourceSets()
+
 
     mods {
         register("engine") {
@@ -42,6 +44,10 @@ repositories {
     maven("https://repo.plasmoverse.com/releases")
     maven("https://repo.plasmoverse.com/snapshots")
     maven("https://maven.enginehub.org/repo/")
+    maven {
+        name = "IzzelAliz Maven"
+        url = uri("https://maven.izzel.io/releases/")
+    }
     maven { url = uri("https://jitpack.io") }
 }
 
@@ -53,9 +59,17 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${project.property("loader_version")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${project.property("kotlin_loader_version")}")
 
+    val modernui_version = "3.11.0.1"
+    implementation("icyllis.modernui:ModernUI-Core:3.11.0")
+    implementation("icyllis.modernui:ModernUI-Markdown:3.11.0")
+    modImplementation("icyllis.modernui:ModernUI-Fabric:1.20.1-${modernui_version}")
+
+    implementation("com.sk89q.worldguard:worldguard-bukkit:7.0.9")
     implementation("su.plo.voice.api:server:2.1.2")
+    compileOnly("su.plo.voice.api:client:2.1.2")
     implementation("su.plo:pv-addon-lavaplayer-lib:1.1.2")
     implementation("com.sk89q.worldedit:worldedit-core:7.3.0")
+    implementation("org.commonmark:commonmark:0.24.0")
 
     include(implementation("com.squareup.okhttp3:okhttp:${project.property("okhttp_version")}")!!)
     include(implementation(group= "com.squareup.okio", name= "okio-jvm", version= "3.2.0"))
@@ -63,9 +77,8 @@ dependencies {
     include(implementation("com.github.codeborne.klite:klite-core:${project.property("klite_version")}")!!)
     include(implementation("su.plo.slib:api-server:1.0.2-SNAPSHOT")!!)
 
-
     include(implementation("org.mongodb:mongodb-driver-sync:5.2.1")!!)
-    implementation("org.mongodb:mongodb-driver-core:5.2.1")
+    include(implementation("org.mongodb:mongodb-driver-core:5.2.1")!!)
     include(implementation("org.mongodb:bson:5.2.1")!!)
     include(implementation("org.mongodb:bson-record-codec:5.2.1")!!)
     include(implementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")!!)
@@ -116,6 +129,7 @@ tasks.withType<JavaCompile>().configureEach {
     // If Javadoc is generated, this must be specified in that task too.
     options.encoding = "UTF-8"
     options.release.set(targetJavaVersion)
+    options.compilerArgs.add("-parameters")
 }
 
 tasks.withType<KotlinCompile>().configureEach {

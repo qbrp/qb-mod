@@ -9,10 +9,10 @@ import kotlin.io.path.pathString
 
 class WebServer {
 
-    val server: Server = Server(listen = InetSocketAddress(ServerResources.root.config.http.port))
+    val server: Server = Server(listen = InetSocketAddress(ServerResources.getConfig().http.port))
 
     fun start() {
-        server.assets("/", AssetsHandler(Path.of(ServerResources.root.resources.path.pathString)))
+        server.assets("/", AssetsHandler(Path.of(ServerResources.getRootBranch().resources.path.pathString)))
         server.start()
     }
 
