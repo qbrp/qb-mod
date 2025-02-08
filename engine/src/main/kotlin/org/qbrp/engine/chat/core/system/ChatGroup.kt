@@ -1,4 +1,4 @@
-package org.qbrp.engine.chat.system
+package org.qbrp.engine.chat.core.system
 
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.network.ServerPlayerEntity

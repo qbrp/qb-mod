@@ -1,7 +1,7 @@
-package org.qbrp.engine.chat.system
+package org.qbrp.engine.chat.core.system
 
 import net.minecraft.server.network.ServerPlayerEntity
-import org.qbrp.engine.chat.messages.ChatMessage
+import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.system.networking.messages.Message
 import org.qbrp.system.networking.messages.Messages.CHAT_GROUPS
 import org.qbrp.system.networking.messages.Messages.SEND_MESSAGE

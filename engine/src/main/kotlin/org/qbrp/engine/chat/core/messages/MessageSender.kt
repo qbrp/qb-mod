@@ -1,8 +1,8 @@
-package org.qbrp.engine.chat.messages
+package org.qbrp.engine.chat.core.messages
 
 import net.minecraft.server.network.ServerPlayerEntity
-import org.qbrp.engine.chat.events.MessageSendEvent
-import org.qbrp.engine.chat.system.ServerChatNetworking
+import org.qbrp.engine.chat.core.events.MessageSendEvent
+import org.qbrp.engine.chat.core.system.ServerChatNetworking
 
 class MessageSender(private val networking: ServerChatNetworking, private val targets: MutableList<ServerPlayerEntity>) : Sender {
     fun addTarget(player: ServerPlayerEntity) {
@@ -28,7 +28,7 @@ class MessageSender(private val networking: ServerChatNetworking, private val ta
 
     override fun send(message: ChatMessage) {
         targets.forEach {
-            MessageSendEvent.EVENT.invoker().onMessageSend(this, message)
+            MessageSendEvent.Companion.EVENT.invoker().onMessageSend(this, message)
             networking.sendMessagePacket(it, message)
         }
     }

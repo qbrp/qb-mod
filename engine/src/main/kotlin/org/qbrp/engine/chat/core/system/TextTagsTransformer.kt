@@ -1,4 +1,4 @@
-package org.qbrp.engine.chat.system
+package org.qbrp.engine.chat.core.system
 
 import org.qbrp.system.utils.format.Format.stripFormatting
 

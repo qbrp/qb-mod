@@ -1,8 +1,7 @@
-package org.qbrp.engine.chat.system
+package org.qbrp.engine.chat.core.system
 
-import org.qbrp.engine.chat.messages.ChatMessage
-import org.qbrp.engine.chat.messages.ChatMessageTagsBuilder
-import org.qbrp.engine.chat.messages.ChatMessageTagsCluster
+import org.qbrp.engine.chat.core.messages.ChatMessage
+import org.qbrp.engine.chat.core.messages.ChatMessageTagsBuilder
 import org.qbrp.system.networking.messages.Message
 import org.qbrp.system.networking.messages.components.Cluster
 import org.qbrp.system.networking.messages.components.readonly.ClusterViewer

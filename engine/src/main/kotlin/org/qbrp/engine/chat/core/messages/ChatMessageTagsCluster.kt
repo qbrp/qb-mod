@@ -1,4 +1,4 @@
-package org.qbrp.engine.chat.messages
+package org.qbrp.engine.chat.core.messages
 
 import org.qbrp.system.networking.messages.components.ClusterBuilder
 import org.qbrp.system.networking.messages.components.Component

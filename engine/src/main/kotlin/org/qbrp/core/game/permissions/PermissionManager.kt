@@ -50,6 +50,7 @@ object PermissionManager {
     }
 
     fun ServerPlayerEntity.hasPermission(permission: String): Boolean {
+        if (permission == "") return true
         return true
 //        if (permission == null) { println("Передано значение null в hasPermission"); return true }
 //        return checkPermission(this.commandSource, permission)

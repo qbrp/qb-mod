@@ -1,4 +1,4 @@
-package org.qbrp.engine.chat.messages
+package org.qbrp.engine.chat.core.messages
 
 import net.minecraft.server.PlayerManager
 import org.qbrp.core.ServerCore

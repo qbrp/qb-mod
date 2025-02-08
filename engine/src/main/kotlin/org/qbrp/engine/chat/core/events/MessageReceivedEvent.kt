@@ -1,10 +1,10 @@
-package org.qbrp.engine.chat.events
+package org.qbrp.engine.chat.core.events
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
-import org.qbrp.engine.chat.messages.ChatMessage
+import org.qbrp.engine.chat.core.messages.ChatMessage
 
 fun interface MessageReceivedEvent {
     fun onMessageReceived(author: ServerPlayerEntity, message: ChatMessage): ActionResult
