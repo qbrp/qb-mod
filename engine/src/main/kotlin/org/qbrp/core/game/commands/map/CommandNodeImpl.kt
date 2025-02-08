@@ -13,7 +13,7 @@ data class CommandNodeImpl(
     override var name: String,
     override val subCommands: MutableList<CommandNode> = mutableListOf(),
     override val arguments: MutableList<ArgumentNode> = mutableListOf(),
-    override var execute: Executor? = null
+    override var execute: Executor? = null,
 ) : CommandNode {
     override fun getLiteral(): LiteralArgumentBuilder<ServerCommandSource> {
         val commandLiteral = literal<ServerCommandSource>(name)
@@ -35,12 +35,7 @@ data class CommandNodeImpl(
                 // Если это последний аргумент, добавляем execute
                 if (index == 0 && execute != null) {
                     requiredArgumentBuilder.executes { context ->
-                        try {
-                            execute?.execute(context)
-                            1
-                        } catch (e: Exception) {
-                            context.source.sendError("Ошибка: ${e.message}".formatMinecraft())
-                        }
+                        execute?.execute(context)
                         1
                     }
                 }
@@ -73,12 +68,7 @@ data class CommandNodeImpl(
         // Если нет аргументов, добавляем execute на корень
         if (lastArgumentBuilder == null && execute != null) {
             commandLiteral.executes { context ->
-                try {
-                    execute?.execute(context)
-                    1
-                } catch (e: Exception) {
-                    context.source.sendError("Ошибка: ${e.message}".formatMinecraft())
-                }
+                execute?.execute(context)
                 1
             }
         }

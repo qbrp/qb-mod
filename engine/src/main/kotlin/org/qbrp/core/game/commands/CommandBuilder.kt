@@ -63,7 +63,8 @@ class CommandBuilder {
             try {
                 clazz.declaredMethods.forEach { method ->
                     if (method.isAnnotationPresent(Execute::class.java)) {
-                        rootCommand.execute = Executor(method, clazz, deps, printErrors)
+                        val annotation = method.getAnnotation(Execute::class.java)
+                        rootCommand.execute = Executor(method, clazz, deps, printErrors, annotation.permission, annotation.operatorLevel)
                     }
                 }
             } catch (e: Exception) {
@@ -98,7 +99,6 @@ class CommandBuilder {
                 print(subCommand, "$indent    ") // Рекурсивный вызов с CommandNode
             }
         }
-
         return this
     }
 
