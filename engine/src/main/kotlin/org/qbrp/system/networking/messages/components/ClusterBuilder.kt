@@ -16,12 +16,13 @@ open class ClusterBuilder {
     }
 
     fun component(component: Component): ClusterBuilder {
+        components.removeIf { it.name == component.name }
         components.add(component)
         return this
     }
 
     fun components(components: List<Component>): ClusterBuilder {
-        this.components.addAll(components)
+        components.forEach { component(it) }
         return this
     }
 

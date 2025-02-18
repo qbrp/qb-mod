@@ -19,16 +19,20 @@ object Loggers {
         register(Logger(enabled = true,"visualData", "loader"))
         register(Logger(enabled = true,"resources"))
         register(Logger(enabled = true,"timers"))
-        register(Logger(enabled = false,"network", "sending"))
+        register(Logger(enabled = true,"network", "sending"))
         register(Logger(enabled = false,"network", "receiving"))
         register(Logger(enabled = false,"serverNetwork", "sending"))
         register(Logger(enabled = false,"serverNetwork", "receiving"))
         register(Logger(enabled = false,"resources", "debug"))
         register(Logger(enabled = true,"items", "mechanics"))
         register(Logger(enabled = true,"regions"))
+        register(Logger(enabled = true,"groups"))
         register(Logger(enabled = true,"spectatorsModule"))
         register(Logger(enabled = true,"chatModule"))
         register(Logger(enabled = false,"cluster"))
+        register(Logger(enabled = true,"time"))
+        register(Logger(enabled = true,"chat"))
+        register(Logger(enabled = true,"chat", "broadcast"))
     }
 
     fun register(logger: Logger) { loggers[logger.key] = logger }

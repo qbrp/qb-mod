@@ -1,6 +1,8 @@
 package org.qbrp.system.utils.world
 
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.util.math.BlockPos
+import kotlin.compareTo
 
 fun List<PlayerEntity>.getPlayersInRadius(
     player: PlayerEntity,

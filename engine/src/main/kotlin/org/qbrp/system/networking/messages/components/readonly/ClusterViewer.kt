@@ -6,6 +6,10 @@ import org.qbrp.system.networking.messages.types.StringContent
 
 class ClusterViewer(private val components: List<Component> = listOf()) {
 
+    fun isComponentExists(name: String): Boolean {
+        return components.stream().anyMatch { component -> component.name == name }
+    }
+
     fun <T> getHeader(index: Int = 0): T? {
         return components
             .filter { it.meta == mapOf("type" to "header") }

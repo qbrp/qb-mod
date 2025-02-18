@@ -1,6 +1,6 @@
 package org.qbrp.system.networking.messages.components
 
-import org.qbrp.engine.chat.messages.ChatMessageTagsCluster
+import org.qbrp.engine.chat.core.messages.ChatMessageTagsCluster
 import org.qbrp.system.networking.messages.types.BooleanContent
 import org.qbrp.system.networking.messages.types.Content
 import org.qbrp.system.networking.messages.types.IntContent

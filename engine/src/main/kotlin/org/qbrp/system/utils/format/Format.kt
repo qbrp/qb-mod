@@ -1,5 +1,9 @@
 package org.qbrp.system.utils.format
 
+import icyllis.modernui.graphics.Color
+import icyllis.modernui.text.Spannable
+import icyllis.modernui.text.SpannableString
+import icyllis.modernui.text.style.ForegroundColorSpan
 import net.minecraft.text.OrderedText
 import net.minecraft.text.Style
 import net.minecraft.text.Text
@@ -14,6 +18,77 @@ object Format {
 
     private val HEX_PATTERN = Pattern.compile("&?#([A-Fa-f0-9]{6})")
 
+    private fun getSpannableString(input: String, stripColorCodes: Boolean = true): SpannableString {
+        val colorMap = mapOf(
+            '0' to Color.rgb(0, 0, 0),       // Черный
+            '1' to Color.rgb(0, 0, 170),     // Темно-синий
+            '2' to Color.rgb(0, 170, 0),     // Темно-зеленый
+            '3' to Color.rgb(0, 170, 170),   // Темно-голубой
+            '4' to Color.rgb(170, 0, 0),     // Темно-красный
+            '5' to Color.rgb(170, 0, 170),   // Темно-фиолетовый
+            '6' to Color.rgb(255, 170, 0),   // Золотой
+            '7' to Color.rgb(170, 170, 170), // Серый
+            '8' to Color.rgb(85, 85, 85),    // Темно-серый
+            '9' to Color.rgb(170, 170, 255), // Голубой
+            'a' to Color.rgb(85, 255, 85),   // Зеленый
+            'b' to Color.rgb(85, 255, 255),  // Голубой
+            'c' to Color.rgb(255, 85, 85),   // Красный
+            'd' to Color.rgb(255, 85, 255),  // Розовый
+            'e' to Color.rgb(255, 255, 85),  // Желтый
+            'f' to Color.rgb(255, 255, 255)  // Белый
+        )
+
+        val builder = StringBuilder() // Буфер для очищенного текста
+        val spannableIndices = mutableListOf<Triple<Int, Int, Int>>() // (start, end, color)
+
+        var lastColor: Int? = null
+        var startIndex = 0
+        var currentIndex = 0
+
+        while (currentIndex < input.length) {
+            if (input[currentIndex] == '&' && currentIndex + 1 < input.length) {
+                val code = input[currentIndex + 1]
+                if (code == 'r') { // Сброс цвета
+                    if (lastColor != null) {
+                        spannableIndices.add(Triple(startIndex, builder.length, lastColor!!))
+                    }
+                    lastColor = null
+                    currentIndex += 2
+                } else if (colorMap.containsKey(code)) { // Новый цвет
+                    if (lastColor != null) {
+                        spannableIndices.add(Triple(startIndex, builder.length, lastColor!!))
+                    }
+                    lastColor = colorMap[code]
+                    currentIndex += 2
+                } else {
+                    builder.append(input[currentIndex])
+                    currentIndex++
+                }
+            } else {
+                builder.append(input[currentIndex])
+                currentIndex++
+            }
+
+            if (lastColor != null) {
+                startIndex = builder.length
+            }
+        }
+
+        if (lastColor != null) {
+            spannableIndices.add(Triple(startIndex, builder.length, lastColor!!))
+        }
+
+        val cleanedString = if (stripColorCodes) builder.toString() else input
+        val spannable = SpannableString(cleanedString)
+
+        for ((start, end, color) in spannableIndices) {
+            spannable.setSpan(ForegroundColorSpan(color), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+
+        return spannable
+    }
+
+
     fun String.stripFormatting(): String {
         return stripAllFormatting(this)
     }
@@ -22,71 +97,6 @@ object Format {
         val strippedVanilla = text.replace(Regex("&[0-9A-FK-ORa-fk-or]"), "")
         val strippedHex = HEX_PATTERN.matcher(strippedVanilla).replaceAll("")
         return strippedHex
-    }
-
-    fun formatOrderedText(text: String): OrderedText {
-        val colorized = colorize(text) // Преобразуем &-коды и HEX в §
-        var currentStyle = Style.EMPTY
-        val buffer = StringBuilder()
-        val orderedParts = mutableListOf<OrderedText>()
-        var i = 0
-
-        while (i < colorized.length) {
-            if (colorized[i] == '§') {
-                if (i + 1 < colorized.length) {
-                    val code = colorized[i + 1]
-
-                    // Обработка HEX-цветов вида §x§R§R§G§G§B§B
-                    if (code == 'x' && i + 13 < colorized.length) {
-                        // Добавляем текущий буфер
-                        if (buffer.isNotEmpty()) {
-                            orderedParts.add(createOrderedSegment(buffer, currentStyle))
-                            buffer.clear()
-                        }
-
-                        // Парсим HEX
-                        val hex = buildString {
-                            append(colorized[i + 3])
-                            append(colorized[i + 5])
-                            append(colorized[i + 7])
-                            append(colorized[i + 9])
-                            append(colorized[i + 11])
-                            append(colorized[i + 13])
-                        }
-                        currentStyle = Style.EMPTY.withColor(TextColor.fromRgb(hex.toInt(16)))
-                        i += 14
-                    } else {
-                        // Обработка ванильных кодов (например, §a)
-                        val formatting = Formatting.byCode(code)
-                        if (formatting != null) {
-                            if (buffer.isNotEmpty()) {
-                                orderedParts.add(createOrderedSegment(buffer, currentStyle))
-                                buffer.clear()
-                            }
-                            currentStyle = currentStyle.withExclusiveFormatting(formatting)
-                            i += 2
-                        } else {
-                            // Если код невалидный, добавляем символы как есть
-                            buffer.append('§').append(code)
-                            i += 2
-                        }
-                    }
-                } else {
-                    // Если после '§' нет символа, выходим из цикла
-                    break
-                }
-            } else {
-                // Обычный символ, добавляем в буфер
-                buffer.append(colorized[i])
-                i++
-            }
-        }
-
-        if (buffer.isNotEmpty()) {
-            orderedParts.add(createOrderedSegment(buffer, currentStyle))
-        }
-
-        return OrderedText.concat(*orderedParts.toTypedArray())
     }
 
     private fun createOrderedSegment(buffer: StringBuilder, style: Style): OrderedText {
@@ -151,34 +161,12 @@ object Format {
         return Text.literal(formattedString).setStyle(text.style)
     }
 
-    private fun colorize(text: String): String {
-        return translateAlternateColorCodes('&', translateHexColors(text))
-    }
-
-    private fun translateHexColors(text: String): String {
-        return HEX_PATTERN.matcher(text).replaceAll { matcher ->
-            val hexColor = matcher.group(1)
-            buildString {
-                append("§x")
-                for (char in hexColor) {
-                    append('§').append(char)
-                }
-            }
-        }
-    }
-
-    private fun translateAlternateColorCodes(altColorChar: Char, text: String): String {
-        return text.replace(Regex("(?i)$altColorChar([0-9A-FK-ORa-fk-or])")) { match ->
-            "§${match.groupValues[1]}"
-        }
-    }
-
-    fun stripColor(text: String): String {
-        return text.replace(Regex("§[0-9A-FK-ORa-fk-or]"), "")
-    }
-
     fun String.formatMinecraft(): Text {
         return Format.format(this)
+    }
+
+    fun String.formatAsSpans(): SpannableString {
+        return getSpannableString(this)
     }
 
     fun String.asIdentifier(): Identifier {
