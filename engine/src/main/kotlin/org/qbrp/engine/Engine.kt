@@ -17,6 +17,7 @@ class Engine {
         lateinit var musicManagerModule: MusicManagerModule
         lateinit var spectatorsModule: SpectatorsModule
         lateinit var chatModule: ChatModule
+        lateinit var damageControllerModule: DamageControllerModule
         lateinit var timeModule: TimeModule
     }
 
@@ -26,6 +27,7 @@ class Engine {
         musicManagerModule.load()
         spectatorsModule = SpectatorsModule()
         chatModule = ChatModule(ServerResources.getConfig().chat, server)//
+        damageControllerModule = DamageControllerModule().apply { load() }
         timeModule = TimeModule(server, ServerResources.getConfig().time).apply { load() }
     }
 }
