@@ -5,21 +5,22 @@ import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.util.ActionResult
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.chat.core.messages.MessageSender
+import org.qbrp.engine.chat.core.messages.Sender
 
-fun interface MessageSenderPipeline {
-    fun onMessageSenderInitialization(message: ChatMessage, messageSender: MessageSender): ActionResult
+fun interface MessageUpdateEvent {
+    fun onMessageUpdate(message: ChatMessage): ActionResult
 
     companion object {
-        val EVENT: Event<MessageSenderPipeline> = EventFactory.createArrayBacked(
-            MessageSenderPipeline::class.java,
-            { listeners: Array<out MessageSenderPipeline> ->
+        val EVENT: Event<MessageUpdateEvent> = EventFactory.createArrayBacked(
+            MessageUpdateEvent::class.java,
+            { listeners: Array<out MessageUpdateEvent> ->
                 // Создаем функцию, которая будет вызывать всех слушателей
-                MessageSenderPipeline { message, sender ->
+                MessageUpdateEvent { message ->
                     for (listener in listeners) {
-                        val result = listener.onMessageSenderInitialization(message, sender)
+                        val result = listener.onMessageUpdate(message)
                         println(message)
                         if (result != ActionResult.PASS) {
-                            return@MessageSenderPipeline result
+                            return@MessageUpdateEvent result
                         }
                     }
                     ActionResult.PASS

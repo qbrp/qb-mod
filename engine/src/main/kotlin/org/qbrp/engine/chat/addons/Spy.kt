@@ -19,7 +19,7 @@ class Spy(val server: MinecraftServer, val networking: ServerChatNetworking) {
             if (!spyPlayers.isEmpty() && sender.isPlayerInTarget(message.getAuthorEntity(server.playerManager)!!) ) {
                 val spySender = MessageSender(networking, spyPlayers)
                 val spyMessage = message.copy().apply {
-                    text = "&6[S]&r $text"
+                    setText("&6[S]&r ${getText()}")
                 }
                 spySender.send(spyMessage)
             }

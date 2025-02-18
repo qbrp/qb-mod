@@ -10,8 +10,7 @@ import org.qbrp.engine.chat.core.messages.Sender
 class MessageHandler(val server: MinecraftServer) {
 
     fun handleReceivedMessage(message: ChatMessage, responseNetworking: ServerChatNetworking) {
-        val author = server.playerManager.getPlayer(message.authorName)!!
-        MessageReceivedEvent.Companion.EVENT.invoker().onMessageReceived(author, message)
+        MessageReceivedEvent.Companion.EVENT.invoker().onMessageReceived(message)
         getSender(message, responseNetworking).send(message)
     }
 

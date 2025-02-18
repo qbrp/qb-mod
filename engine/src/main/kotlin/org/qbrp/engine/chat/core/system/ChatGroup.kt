@@ -16,6 +16,7 @@ data class ChatGroup(
     val prefix: String = "",
     val color: String = "",
     val radius: Int = 16,
+    val components: List<String> = listOf(),
     val format: String = "{playerName}: {text}",
     val cooldown: Int = 0
 ) {

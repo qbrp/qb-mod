@@ -7,16 +7,17 @@ import net.minecraft.util.ActionResult
 import org.qbrp.engine.chat.core.messages.ChatMessage
 
 fun interface MessageReceivedEvent {
-    fun onMessageReceived(author: ServerPlayerEntity, message: ChatMessage): ActionResult
+    fun onMessageReceived(message: ChatMessage): ActionResult
 
     companion object {
         val EVENT: Event<MessageReceivedEvent> = EventFactory.createArrayBacked(
             MessageReceivedEvent::class.java,
             { listeners: Array<out MessageReceivedEvent> ->
                 // Создаем функцию, которая будет вызывать всех слушателей
-                MessageReceivedEvent { author, message ->
+                MessageReceivedEvent { message ->
                     for (listener in listeners) {
-                        val result = listener.onMessageReceived(author, message)
+                        val result = listener.onMessageReceived(message)
+                        println(message)
                         if (result != ActionResult.PASS) {
                             return@MessageReceivedEvent result
                         }
