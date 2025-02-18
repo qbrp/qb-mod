@@ -49,6 +49,7 @@ repositories {
         url = uri("https://maven.izzel.io/releases/")
     }
     maven { url = uri("https://jitpack.io") }
+    maven("https://maven.nucleoid.xyz/") { name = "Nucleoid" }
 }
 
 dependencies {
@@ -58,17 +59,16 @@ dependencies {
     mappings("net.fabricmc:yarn:${project.property("yarn_mappings")}:v2")
     modImplementation("net.fabricmc:fabric-loader:${project.property("loader_version")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${project.property("kotlin_loader_version")}")
+    modImplementation(include("eu.pb4:placeholder-api:2.1.4+1.20.1")!!)
 
     val modernui_version = "3.11.0.1"
     implementation("icyllis.modernui:ModernUI-Core:3.11.0")
     implementation("icyllis.modernui:ModernUI-Markdown:3.11.0")
     modImplementation("icyllis.modernui:ModernUI-Fabric:1.20.1-${modernui_version}")
 
-    implementation("com.sk89q.worldguard:worldguard-bukkit:7.0.9")
     implementation("su.plo.voice.api:server:2.1.2")
     compileOnly("su.plo.voice.api:client:2.1.2")
     implementation("su.plo:pv-addon-lavaplayer-lib:1.1.2")
-    implementation("com.sk89q.worldedit:worldedit-core:7.3.0")
     implementation("org.commonmark:commonmark:0.24.0")
 
     include(implementation("com.squareup.okhttp3:okhttp:${project.property("okhttp_version")}")!!)
