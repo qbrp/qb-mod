@@ -2,17 +2,21 @@ package org.qbrp.core.resources
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import org.qbrp.core.game.registry.CommandsRepository
+import org.qbrp.core.resources.commands.ResourcesCommands
 import org.qbrp.system.utils.log.Logger
 import org.qbrp.system.utils.log.Loggers
 import java.io.File
 
 object ServerResources {
     fun getLogger(): Logger = Loggers.get("resources")
+    init { CommandsRepository.add(ResourcesCommands()) }
 
     private lateinit var root: ServerStructure
 
     fun getRootBranch() = root
     fun getConfig() = root.config
+    fun reloadConfig() = root.reloadConfig()
 
     fun buildResources() {
         root = ServerStructure()

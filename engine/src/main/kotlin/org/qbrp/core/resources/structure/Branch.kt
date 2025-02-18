@@ -78,26 +78,32 @@ open class Branch(
         return add(structure) as Structure
     }
 
-    fun open(filename: String, clazz: Class<*>, gson: Gson = Gson()): ContentUnit {
-        val path = path.resolve(filename)
-        if (!Files.exists(path)) { addUnit(clazz.getConstructor().newInstance() as Data, filename.removeExtensions(), filename.getExtension()) }
-        val file = path.toFile()
+    fun open(filePath: Path, clazz: Class<*>, gson: Gson = Gson()): ContentUnit {
+        val filename = filePath.fileName.toString()
+        if (!Files.exists(filePath)) {
+            addUnit(clazz.getConstructor().newInstance() as Data, filename.removeExtensions(), filename.getExtension())
+        }
+        val file = filePath.toFile()
         val fileContent = file.takeIf { it.exists() }?.readText() ?: ""
-
         val data = try {
             if (Data::class.java.isAssignableFrom(clazz)) {
                 clazz.kotlin.companionObjectInstance?.let { companion ->
-                    companion::class.java.getDeclaredMethod("fromFile", File::class.java).apply { isAccessible = true }
+                    companion::class.java.getDeclaredMethod("fromFile", File::class.java)
+                        .apply { isAccessible = true }
                         .invoke(companion, file) as Data
-                } ?: gson.fromJson(fileContent, clazz) as Data // Если компаньона нет, используем Gson
+                } ?: gson.fromJson(fileContent, clazz) as Data
             } else {
                 gson.fromJson(fileContent, clazz) as Data
             }
         } catch (e: Exception) {
             throw IllegalStateException("Error deserializing file '$filename': ${e.message}", e)
         }
-
         return addUnit(data, filename.removeExtensions(), filename.getExtension())
+    }
+
+    fun open(filename: String, clazz: Class<*>, gson: Gson = Gson()): ContentUnit {
+        val filePath = path.resolve(filename)
+        return open(filePath, clazz, gson)
     }
 
     fun add(unit: Unit, log: Boolean = true): Unit {

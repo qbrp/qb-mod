@@ -16,7 +16,7 @@ import java.io.File
 import kotlin.mod
 
 class ServerStructure: Structure(File("qbrp")) {
-    val config = open("config.json", ServerConfigData::class.java).data as ServerConfigData
+    var config = open("config.json", ServerConfigData::class.java).data as ServerConfigData
 
     val records = addBranch("records")
     val music = addBranch("music")
@@ -25,6 +25,9 @@ class ServerStructure: Structure(File("qbrp")) {
     val resources = Resources(this, config)
 
     val youtubeToken = music.open("token.youtube-token", StringData::class.java)
+
+    private fun openConfig() = open("config.json", ServerConfigData::class.java).data as ServerConfigData
+    fun reloadConfig() { config = openConfig()}
 
     class Resources(parentBranch: Branch, val config: ServerConfigData): Structure(parentBranch.resolve("resources") ) {
 
