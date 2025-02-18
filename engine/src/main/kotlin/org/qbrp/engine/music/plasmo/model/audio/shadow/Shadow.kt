@@ -13,15 +13,19 @@ import org.qbrp.engine.music.plasmo.model.selectors.Selector
 import su.plo.voice.api.server.PlasmoVoiceServer
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
+import org.qbrp.engine.music.plasmo.model.audio.Playlist
+import org.qbrp.engine.music.plasmo.model.audio.playback.PlaybackSessionManager
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Shadow(
     val originalName: String,
-    override var name: String,
-    override var selector: Selector,
-    override var priority: Priority,
-    voiceServer: PlasmoVoiceServer
-) : Playable(voiceServer), KoinComponent {
+    name: String,
+    selector: Selector,
+    priority: Priority,
+    voiceServer: PlasmoVoiceServer,
+    sessionManager: PlaybackSessionManager
+) : Playlist(name, selector, priority, voiceServer, sessionManager), KoinComponent {
+
     @JsonIgnore override var queue: Queue = get(parameters = { parametersOf(originalName) })
 
     override fun getView(): View {

@@ -21,19 +21,26 @@ open class Queue(
     @JsonIgnore var currentRepeat = 0
     @JsonIgnore var onQueueFinished: () -> Unit = {}
 
+    @JsonIgnore
     fun getCurrentTrack(): Track? {
         val trackName = tracks.getOrNull(currentTrackIndex) ?: return null
         return storage.getTrackOrThrow(trackName)
     }
 
-    @JsonIgnore
-    private val queueLock = Any()
+    fun copy(): Queue {
+        return Queue(currentTrackIndex, repeats, tracks)
+    }
+
     fun next() {
-        synchronized(queueLock) {
+        if (tracks.isNotEmpty()) {
             if (repeats == -1 || currentRepeat < repeats) {
                 if (currentTrackIndex >= tracks.size - 1) {
-                    currentTrackIndex = 0
                     if (repeats != -1) currentRepeat++
+                    if (currentRepeat < repeats || repeats == -1) {
+                        currentTrackIndex = 0
+                    } else {
+                        onQueueFinished()
+                    }
                 } else {
                     currentTrackIndex++
                 }

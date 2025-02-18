@@ -77,13 +77,13 @@ class MusicStorage(val database: MusicDatabaseService,
 
     fun addPlaylist(name: String, selector: Selector, priority: Priority, cycle: Int = -1): Playable {
         val queue = get<Queue>(parameters = { parametersOf(0, cycle, mutableListOf<String>()) })
-        val playlist = get<Playlist>(parameters = { parametersOf(name, selector, priority, voiceServer, queue) })
+        val playlist = get<Playlist>(parameters = { parametersOf(name, selector, priority, queue) })
         addPlaylist(playlist)
         return getPlayable(name) as Playable
     }
 
     fun addShadow(originalName: String, name: String, selector: Selector, priority: Priority, cycle: Int = -1): Shadow {
-        addPlaylist(Shadow(originalName, name, selector, priority, voiceServer))
+        addPlaylist(Shadow(originalName, name, selector, priority, voiceServer, get()))
         return getPlayable(name) as Shadow
     }
 

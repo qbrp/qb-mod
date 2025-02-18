@@ -13,9 +13,12 @@ import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.music.plasmo.*
 import org.qbrp.engine.music.plasmo.controller.PlaylistCommand
 import org.qbrp.engine.music.plasmo.controller.TrackCommand
+import org.qbrp.engine.music.plasmo.model.audio.Playable
 import org.qbrp.engine.music.plasmo.model.audio.Playlist
 import org.qbrp.engine.music.plasmo.model.audio.Queue
 import org.qbrp.engine.music.plasmo.model.audio.Track
+import org.qbrp.engine.music.plasmo.model.audio.playback.PlaybackSessionManager
+import org.qbrp.engine.music.plasmo.model.audio.playback.PlaybackSessionManagerImpl
 import org.qbrp.engine.music.plasmo.model.audio.playback.Radio
 import org.qbrp.engine.music.plasmo.model.audio.shadow.ShadowQueue
 import org.qbrp.engine.music.plasmo.model.priority.Priorities
@@ -92,8 +95,10 @@ class MusicManagerModule : QbModule("music"), KoinComponent {
         }
         factory { (player: ServerPlayerEntity) -> PlayerState(get(), player) }
         factory { (originalName: String) -> ShadowQueue(originalName) }
-        factory { (name: String, selector: Selector, priority: Priority, voiceServer: PlasmoVoiceServer, queue: Queue) ->
-            Playlist(name, selector, priority, voiceServer).apply { loadQueue(queue) }
+        factory { (playable: Playable) -> PlaybackSessionManagerImpl(playable, get()) }
+
+        factory { (name: String, selector: Selector, priority: Priority, queue: Queue) ->
+            Playlist(name, selector, priority, get(), get()).apply { loadQueue(queue) }
         }
 
         single { MusicManagerModule() }
