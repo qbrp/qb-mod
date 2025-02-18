@@ -8,7 +8,7 @@ import net.minecraft.util.math.BlockPos
 import org.qbrp.system.utils.format.Format.formatMinecraft
 import java.util.WeakHashMap
 
-object RegionSelectionProcessor {
+object RegionSelection {
     private val playerSelections = WeakHashMap<ServerPlayerEntity, Selection>()
     val selectionTool = Items.IRON_AXE
 

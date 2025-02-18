@@ -6,11 +6,11 @@ import net.minecraft.server.MinecraftServer
 import org.qbrp.core.game.events.Handlers
 import org.qbrp.core.game.events.ServerReceivers
 import org.qbrp.core.game.registry.CommandsRepository
+import org.qbrp.core.groups.Groups
 import org.qbrp.core.regions.Regions
 import org.qbrp.core.regions.commands.RegionCommands
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.engine.Engine
-import org.qbrp.engine.chat.system.TextTagsTransformer
 import org.qbrp.engine.music.plasmo.playback.lavaplayer.AudioManager
 import org.qbrp.system.networking.http.WebServer
 import org.qbrp.view.View
@@ -27,6 +27,7 @@ class ServerCore : DedicatedServerModInitializer {
         Handlers.registerServerEvents()
         AudioManager.registerSources()
         Regions.load()
+        Groups.openGroups()
         ServerLifecycleEvents.SERVER_STARTED.register { server ->
             ServerCore.server = server
             CommandsRepository.add(RegionCommands())
