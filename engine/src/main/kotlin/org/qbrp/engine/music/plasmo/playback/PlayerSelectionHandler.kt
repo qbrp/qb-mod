@@ -4,6 +4,7 @@ import net.minecraft.command.argument.EntityArgumentType.player
 import net.minecraft.server.network.ServerPlayerEntity
 import org.qbrp.engine.music.plasmo.MusicStorage
 import org.qbrp.engine.music.plasmo.model.audio.Playable
+import org.qbrp.engine.music.plasmo.model.audio.playback.PlayerSession
 import org.qbrp.engine.music.plasmo.model.priority.Priorities
 import org.qbrp.engine.music.plasmo.playback.player.MusicPlayerManager
 import org.qbrp.system.utils.log.Loggers
@@ -20,13 +21,20 @@ class PlayerSelectionHandler(val musicPlayerManager: MusicPlayerManager, val sto
             if (playlist.selector.match(player)) playlists.add(playlist)
         }
         return playlists.toList()
+
     }
+
+    fun getPlayerSession(player: ServerPlayerEntity): PlayerSession? =
+        getSelectedPlaylists(player)
+            .filter { it.isManuallyDisabled != true }
+            .minByOrNull { priorities.getIndex(it.priority) }
+            ?.getSession(player)
 
     fun startHandling() {
         timer = fixedRateTimer(
             name = "[qbrp/Plasmo] [SelectionHandler]",
             initialDelay = 0,
-            period = 400,
+            period = 1000,
             daemon = true
         ) {
             try {
@@ -34,8 +42,7 @@ class PlayerSelectionHandler(val musicPlayerManager: MusicPlayerManager, val sto
                     val playlists = getSelectedPlaylists(playerState.player)
                     if (playlists.isNotEmpty()) {
                         playlists
-                            .filter { it.isManuallyDisabled != true } // Фильтруем плейлисты
-                            .onEach { it.checkAutoDisable() } // Применяем проверку для всех фильтрованных плейлистов
+                            .filter { it.isManuallyDisabled != true }
                             .minByOrNull { priorities.getIndex(it.priority) } // Получаем плейлист с максимальным приоритетом
                             ?.let { playlist ->
                                 playerState.sync(playlist) // Синхронизируем с найденным плейлистом
@@ -47,7 +54,7 @@ class PlayerSelectionHandler(val musicPlayerManager: MusicPlayerManager, val sto
                     }
                 }
             } catch (e: Exception) {
-                logger.error("${e.message}")
+                logger.error("${e.printStackTrace()}")
             }
         }
     }

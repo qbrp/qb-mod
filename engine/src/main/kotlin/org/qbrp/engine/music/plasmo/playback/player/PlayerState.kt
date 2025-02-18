@@ -14,17 +14,20 @@ class PlayerState(val player: ServerPlayerEntity) {
         .orElseThrow()
 
     fun sync(playlist: Playable) {
-        if (currentPlayable != playlist) {
-            currentPlayable?.unsubscribe(this)
+        if (currentPlayable == playlist) { playlist.subscribe(this); return }
+        if (currentPlayable?.unsubscribe(this) == true || currentPlayable == null) {
             currentPlayable = playlist.apply { subscribe(this@PlayerState) }
         }
     }
 
     fun desync() {
-        if (currentPlayable != null) {
+        if (currentPlayable != null && currentPlayable?.unsubscribe(this) == true) {
             logger.log("${player.name.string} расссинхронизирован")
-            currentPlayable?.unsubscribe(this)
             currentPlayable = null
         }
+    }
+
+    fun handleDisconnect() {
+        currentPlayable?.killSession(voicePlayer)
     }
 }

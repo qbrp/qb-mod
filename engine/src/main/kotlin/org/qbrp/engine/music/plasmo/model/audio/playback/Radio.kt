@@ -1,29 +1,32 @@
-package org.qbrp.engine.music.plasmo.model.audio
+package org.qbrp.engine.music.plasmo.model.audio.playback
 
-import java.util.Timer
-import kotlin.concurrent.schedule
 import org.qbrp.engine.Engine
+import org.qbrp.engine.music.plasmo.model.audio.Track
+import org.qbrp.engine.music.plasmo.model.audio.effects.ConditionalFadeInFilter
+import org.qbrp.engine.music.plasmo.model.audio.effects.FadeInFilter
+import org.qbrp.engine.music.plasmo.model.audio.effects.FadeOutFilter
 import org.qbrp.engine.music.plasmo.playback.MusicFrameProvider
 import org.qbrp.engine.music.plasmo.playback.lavaplayer.AudioManager
-import org.qbrp.engine.music.plasmo.playback.player.PlayerState
 import org.qbrp.system.utils.log.Loggers
-import su.plo.voice.api.server.PlasmoVoiceServer
 import su.plo.voice.api.server.audio.source.AudioSender
-import su.plo.voice.api.server.audio.source.ServerBroadcastSource
-import su.plo.voice.api.server.player.VoiceServerPlayer
-import su.plo.voice.lavaplayer.libs.com.sedmelluq.discord.lavaplayer.player.AudioPlayer
+import su.plo.voice.api.server.audio.source.ServerDirectSource
+import su.plo.voice.lavaplayer.libs.com.sedmelluq.discord.lavaplayer.filter.FloatPcmAudioFilter
 import su.plo.voice.lavaplayer.libs.com.sedmelluq.discord.lavaplayer.track.TrackMarker
 import su.plo.voice.lavaplayer.libs.com.sedmelluq.discord.lavaplayer.track.TrackMarkerHandler
-import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.div
-import kotlin.text.toInt
 
 class Radio(
-    val source: ServerBroadcastSource,
+    val source: ServerDirectSource,
     val track: Track,
     val onTrackFinished: () -> Unit = {}) {
-    val repeats: Int = track.cycle
+    val repeats: Int = track.loops
     var currentRepeat: Int = 0
+
+    val isPlaying: Boolean
+        get() = !audioPlayer.isPaused
+
+    fun fadeOut() { fadeOutFilter.isFadingOut = true }
+    fun cancelFadeOut() { fadeOutFilter.isFadingOut = false }
+    fun isFadedOut() = fadeOutFilter.isFadedOut
 
     private val stopMarkHandler = object : TrackMarkerHandler {
         override fun handle(markerState: TrackMarkerHandler.MarkerState?) {
@@ -38,11 +41,31 @@ class Radio(
         }
     }
 
+    private lateinit var fadeInFilter: ConditionalFadeInFilter
+    private lateinit var fadeOutFilter: FadeOutFilter
+
     val audioTrack = track.getAudio()
     val audioPlayer = AudioManager.lavaPlayerManager.createPlayer().apply {
+        setFilterFactory { _, format, output ->
+            fadeInFilter = ConditionalFadeInFilter(
+                output as FloatPcmAudioFilter,
+                5000,
+                format.sampleRate,
+                format.channelCount
+            ) { !fadeOutFilter.isFadingOut }
+
+            fadeOutFilter = FadeOutFilter(
+                fadeInFilter,
+                5000,
+                format.sampleRate,
+                format.channelCount
+            )
+            listOf(fadeOutFilter, fadeInFilter)
+        }
         playTrack(audioTrack)
         playingTrack.addMarker(TrackMarker((track.endTimestamp * 1000).toLong() - 800, stopMarkHandler))
     }
+
 
     val frameProvider = MusicFrameProvider(audioPlayer, Engine.musicManagerModule.getVoiceServer().defaultEncryption)
     val bufferedSender: AudioSender = source.createAudioSender(frameProvider).apply { start() }
@@ -76,4 +99,5 @@ class Radio(
     companion object {
         val logger = Loggers.get("musicManager", "controller")
     }
+
 }

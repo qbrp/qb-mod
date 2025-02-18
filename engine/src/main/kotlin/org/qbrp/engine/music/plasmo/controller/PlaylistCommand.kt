@@ -14,6 +14,7 @@ import org.qbrp.core.game.commands.annotations.Provider
 import org.qbrp.core.game.commands.annotations.SubCommand
 import org.qbrp.engine.music.plasmo.MusicStorage
 import org.qbrp.engine.music.plasmo.model.audio.TracksSuggestionProvider
+import org.qbrp.engine.music.plasmo.model.audio.playback.Radio
 import org.qbrp.engine.music.plasmo.model.priority.Priorities
 import org.qbrp.engine.music.plasmo.model.priority.Priority
 import org.qbrp.engine.music.plasmo.model.selectors.PrioritySuggestionsProvider
@@ -44,26 +45,62 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : S
     @SubCommand("add")
     class Add(
         @Arg("string") val name: String,
-        @Arg("string") @Provider(SelectorsProvider::class) val selector: String,
-        @Arg("string") val selectorArgs: String,
-        @Arg("string") @Provider(PrioritySuggestionsProvider::class) val priority: String
     ) {
-        @Execute
-        fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
-            try {
-                val selectorInstance = SelectorBuilder().createSelector(selector, selectorArgs)
-                val priorityInstance = (deps.get("priorities") as Priorities).getPriority(priority)
-                val playlist = (deps.get("storage") as MusicStorage).addPlaylist(name, selectorInstance as Selector, priorityInstance as Priority)
 
-                playlist.queue.play()
-                context.source.sendMessage("Плейлист $name успешно добавлен!".formatMinecraft())
-            } catch (e: Exception) {
-                e.printStackTrace()
-                context.source.sendError("Ошибка: ${e.message}".formatMinecraft())
+        @SubCommand
+        class Default(
+            @Arg("string", true) val name: String,
+            @Arg("string") @Provider(SelectorsProvider::class) val selector: String,
+            @Arg("string") val selectorArgs: String,
+            @Arg("string") @Provider(PrioritySuggestionsProvider::class) val priority: String
+        ) {
+            @Execute
+            fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
+                try {
+                    val selectorInstance = SelectorBuilder().createSelector(selector, selectorArgs)
+                    val priorityInstance = (deps.get("priorities") as Priorities).getPriority(priority)
+                    (deps.get("storage") as MusicStorage).addPlaylist(
+                        name,
+                        selectorInstance as Selector,
+                        priorityInstance as Priority
+                    )
+                    context.source.sendMessage("Плейлист $name успешно добавлен!".formatMinecraft())
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    context.source.sendError("Ошибка: ${e.message}".formatMinecraft())
+                }
+            }
+        }
+
+        @SubCommand
+        class Shadow(
+            @Arg("string", true) val name: String,
+            @Arg("string") val originalName: String,
+            @Arg("string") @Provider(SelectorsProvider::class) val selector: String,
+            @Arg("string") val selectorArgs: String,
+            @Arg("string") @Provider(PrioritySuggestionsProvider::class) val priority: String
+        ) {
+            @Execute
+            fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
+                try {
+                    val selectorInstance = SelectorBuilder().createSelector(selector, selectorArgs)
+                    val priorityInstance = (deps.get("priorities") as Priorities).getPriority(priority)
+                    (deps.get("storage") as MusicStorage).addShadow(
+                        originalName,
+                        name,
+                        selectorInstance as Selector,
+                        priorityInstance as Priority
+                    )
+                    context.source.sendMessage("Плейлист-копия $name успешно добавлен!".formatMinecraft())
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    context.source.sendError("Ошибка: ${e.message}".formatMinecraft())
+                }
             }
         }
     }
 
+    @SubCommand
     class Delete(
         @Arg("string") val name: String
     ) {
@@ -79,13 +116,13 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : S
         }
     }
 
-    @SubCommand("play")
+    @SubCommand("resume")
     class Play(@Arg("string") val playlistName: String) {
         @Execute
         fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
             try {
                 val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
-                playlist?.queue?.play()
+                playlist?.doForSessions { p, session -> session.radio?.resume() }
                 context.source.sendMessage("Плейлист $playlistName запущен.".formatMinecraft())
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -100,7 +137,7 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : S
         fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
             try {
                 val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
-                playlist?.queue?.radio?.stop()
+                playlist?.doForSessions { p, session -> session.radio?.stop() }
                 context.source.sendMessage("Плейлист $playlistName остановлен.".formatMinecraft())
             } catch (e: Exception) {
                 context.source.sendError("Ошибка: ${e.message}".formatMinecraft())
@@ -125,6 +162,7 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : S
                         if ((deps.get("storage") as MusicStorage).isTrackExists(trackName)) {
                             val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
                             playlist?.queue?.addTrack(trackName)
+                            playlist?.validateStaticState()
                             context.source.sendMessage("Трек $trackName добавлен в плейлист.".formatMinecraft())
                         } else {
                             context.source.sendMessage("Трек $trackName не существует.".formatMinecraft())
@@ -145,6 +183,7 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : S
                     try {
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
                         playlist?.queue?.removeTrack(trackNumber)
+                        playlist?.validateStaticState()
                         context.source.sendMessage("Трек номер $trackNumber удалён из плейлиста.".formatMinecraft())
                     } catch (e: Exception) {
                         context.source.sendError("Ошибка: ${e.message}".formatMinecraft())
@@ -162,7 +201,24 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : S
                 fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
                     try {
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
-                        playlist?.queue?.moveTo(fromIndex, toIndex)
+                        playlist?.doForSessions { p, session -> session.queue.moveTo(fromIndex, toIndex) }
+                        context.source.sendMessage("Трек был перемещен.".formatMinecraft())
+                    } catch (e: Exception) {
+                        context.source.sendError("Ошибка: ${e.message}".formatMinecraft())
+                    }
+                }
+            }
+
+            @SubCommand("moveUnary")
+            class MoveTrackUnary(
+                @Arg("string", true) val playlistName: String,
+                @Arg("integer") val operation: Int) {
+
+                @Execute
+                fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
+                    try {
+                        val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
+                        playlist?.doForSessions { p, session -> session.queue.moveTo(session.queue.currentTrackIndex, session.queue.currentTrackIndex + operation) }
                         context.source.sendMessage("Трек был перемещен.".formatMinecraft())
                     } catch (e: Exception) {
                         context.source.sendError("Ошибка: ${e.message}".formatMinecraft())
@@ -184,7 +240,7 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : S
                 fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
                     try {
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
-                        playlist?.queue?.setPosition(pos)
+                        playlist?.doForSessions { p, session -> session.queue.setPosition(pos); session.createRadio() }
                         context.source.sendMessage("Трек был перемещен.".formatMinecraft())
                     } catch (e: Exception) {
                         context.source.sendError("Ошибка: ${e.message}".formatMinecraft())
@@ -224,6 +280,7 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : S
                     try {
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
                         playlist?.queue?.repeats = cycle
+                        playlist?.validateStaticState()
                         context.source.sendMessage("Циклы плейлиста обновлены.".formatMinecraft())
                     } catch (e: Exception) {
                         context.source.sendError("Ошибка: ${e.message}".formatMinecraft())
@@ -233,13 +290,15 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : S
 
             @SubCommand("selector")
             class SetSelector(@Arg("string", true) val playlistName: String,
-                @Provider(SelectorsProvider::class) @Arg("string") val selector: String, @Arg("string") val selectorArgs: String) {
+                @Provider(SelectorsProvider::class) @Arg("string") val selectorName: String, @Arg("string") val selectorArgs: String) {
 
                 @Execute
                 fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
                     try {
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
-                        playlist?.selector = SelectorBuilder().createSelector(selector, selectorArgs) as Selector
+                        val selector = SelectorBuilder().createSelector(selectorName, selectorArgs) as Selector
+                        playlist?.selector = selector
+                        playlist?.validateStaticState()
                         context.source.sendMessage("Селектор обновлён.".formatMinecraft())
                     } catch (e: Exception) {
                         context.source.sendError("Ошибка: ${e.message}".formatMinecraft())
@@ -253,7 +312,9 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : S
                 fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
                     try {
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
-                        playlist?.priority = (deps.get("priorities") as Priorities).getPriority(priority) as Priority
+                        val priority = (deps.get("priorities") as Priorities).getPriority(priority) as Priority
+                        playlist?.priority = priority
+                        playlist?.validateStaticState()
                         context.source.sendMessage("Приоритет обновлён.".formatMinecraft())
                     } catch (e: Exception) {
                         context.source.sendError("Ошибка: ${e.message}".formatMinecraft())
@@ -269,6 +330,7 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : S
                     try {
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
                         (deps.get("storage") as MusicStorage).changePlayableName(playlistName, newName)
+                        playlist?.validateStaticState()
                         context.source.sendMessage("Название обновлено.".formatMinecraft())
                     } catch (e: Exception) {
                         context.source.sendError("Ошибка: ${e.message}".formatMinecraft())

@@ -10,7 +10,7 @@ class MusicPlayerManager(val playerManager: PlayerManager) {
         players.put(player.name.string, PlayerState(player))
     }
     fun removePlayer(playerName: String) {
-        players[playerName]?.desync(); players.remove(playerName) }
+        players[playerName]?.handleDisconnect(); players.remove(playerName) }
     fun getPlayerState(playerName: String): PlayerState = players[playerName]!!
     fun getAllPlayers() = players.values
 }

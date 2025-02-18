@@ -4,55 +4,22 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.qbrp.engine.Engine
 import org.qbrp.system.utils.log.Loggers
-import su.plo.voice.api.server.PlasmoVoiceServer
-import su.plo.voice.api.server.audio.source.ServerBroadcastSource
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Queue(
+open class Queue(
     var currentTrackIndex: Int = 0,
     var repeats: Int = 1,
-    val tracks: MutableList<String> = mutableListOf(), // Список имен треков
+    open val tracks: MutableList<String> = mutableListOf(), // Список имен треков
 ) {
-    @JsonIgnore lateinit var source: ServerBroadcastSource
-    @JsonIgnore var radio: Radio? = null
+    @JsonIgnore var currentRepeat = 0
     @JsonIgnore var onQueueFinished: () -> Unit = {}
-    var currentRepeat = 0
 
-    @JsonIgnore
     fun getCurrentTrack(): Track? {
         val trackName = tracks.getOrNull(currentTrackIndex) ?: return null
-        return Engine.musicManagerModule.storage.getTrack(trackName)
+        return Engine.musicManagerModule.storage.getTrackOrThrow(trackName)
     }
 
-    fun checkPlayingTrack() {
-        checkCurrentTrack()
-        if (getCurrentTrack()?.name != radio?.track?.name) { clearRadio(); play() }
-    }
-
-    fun checkCurrentTrack() {
-        if (tracks.size < currentTrackIndex) currentTrackIndex = tracks.size
-    }
-
-    fun clearRadio() {
-        radio?.destroy(); radio = null }
-
-    fun play() {
-        if (tracks.isEmpty()) { return }
-        radio?.audioPlayer?.isPaused?.let { if (!it) return }
-        checkCurrentTrack()
-        if (radio == null) createRadio(getCurrentTrack() as Track)
-        else radio!!.resume()
-    }
-
-    fun createRadio(track: Track) {
-        radio = Radio(source, track) {
-            clearRadio()
-            nextTrack()
-        }
-        logger.log("Создан проигрыватель: ${track.name}")
-    }
-
-    fun nextTrack() {
+    fun next() {
         if (repeats == -1 || currentRepeat < repeats) {
             if (currentTrackIndex >= tracks.size - 1) {
                 currentTrackIndex = 0
@@ -60,23 +27,33 @@ data class Queue(
             } else {
                 currentTrackIndex++
             }
-            play()
         } else {
-            onQueueFinished.invoke()
+            onQueueFinished()
         }
     }
 
-    fun addTrack(trackName: String) = tracks.add(trackName)
+    fun validateQueue() {
+        val storage = Engine.musicManagerModule.storage
+        currentTrackIndex = tracks.indexOfFirst {
+            storage.getTrack(it)?.name == getCurrentTrack()?.name
+        }
+        currentTrackIndex.coerceIn(0 , tracks.size)
+    }
+
+    fun addTrack(trackName: String) {
+        tracks.add(trackName)
+        validateQueue()
+    }
 
     fun removeTrack(index: Int) {
         try {
             if (index in tracks.indices) {
                 tracks.removeAt(index)
             }
-            checkPlayingTrack()
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        validateQueue()
     }
 
     fun moveTo(fromIndex: Int, toIndex: Int): Boolean {
@@ -90,11 +67,12 @@ data class Queue(
             tracks.removeAt(fromIndex)
             tracks.add(toIndex, movedTrack)
 
-            checkPlayingTrack()
-
+            validateQueue()
             return true
         } catch (e: Exception) {
             logger.log("Error moving track: ${e.message}")
+
+            validateQueue()
             return false
         }
     }
@@ -102,8 +80,8 @@ data class Queue(
     fun setPosition(index: Int) {
         if (index in 0..tracks.size - 1) {
             currentTrackIndex = index
-            clearRadio(); play()
         }
+        validateQueue()
     }
 
     fun clearQueue() {

@@ -1,13 +1,13 @@
 package org.qbrp.engine.music.plasmo.controller.view
 
 import net.minecraft.text.ClickEvent
-import net.minecraft.text.Style
 import net.minecraft.text.Text
 import org.qbrp.engine.Engine
 import org.qbrp.engine.music.plasmo.model.audio.Playable
+import org.qbrp.engine.music.plasmo.model.audio.playback.PlayerSession
 import org.qbrp.system.utils.format.Format.formatMinecraft
 
-class PlaylistView(val playable: Playable) : View {
+class PlaylistView(var playable: Playable, var session: PlayerSession? = null) : View {
 
     override fun getText(): Text {
         return getHeader()
@@ -17,12 +17,12 @@ class PlaylistView(val playable: Playable) : View {
         val cycleComponent = if (playable.queue.repeats != -1) "&6(${playable.queue.currentRepeat} / ${playable.queue.repeats})" else ""
         val selectorComponent = createClickableSelectorComponent()
         val priorityComponent = createClickablePriorityComponent()
-        val line = if (playable.queue.tracks.isNotEmpty() || playable.queue.radio != null) {
-            val currentPosition = playable.queue.radio?.getCurrentPosition() ?: 10
-            val trackEndTimestamp = playable.queue.getCurrentTrack()?.endTimestamp?.toInt() ?: 10
+        val line = if (playable.queue.getCurrentTrack() != null && session != null) {
+            val currentPosition = session!!.radio?.getCurrentPosition() ?: 10
+            val trackEndTimestamp = playable.queue.getCurrentTrack()!!.endTimestamp.toInt()
             createProgressLine(currentPosition, trackEndTimestamp, 10, "━", "⬤")
         } else {
-            "В данный момент ни один из треков не проигрывается".formatMinecraft()
+            "".formatMinecraft()
         }
         val tracks = getTracks()
 
@@ -41,6 +41,7 @@ class PlaylistView(val playable: Playable) : View {
             .append(line)
         } catch (e: Exception) {
             Text.literal("Плейлист ${playable.name}")
+                .also { e.printStackTrace() }
         }
     }
 
@@ -84,13 +85,20 @@ class PlaylistView(val playable: Playable) : View {
             }
         }
         return Text.literal("§x$progressLine ")
-            .append(createBackButton().toText())
-            .append(Text.literal(" "))
             .append(createPlayButton().toText())
             .append(Text.literal(" "))
             .append(createStopButton().toText())
-            .append(Text.literal(" "))
-            .append(createNextButton().toText())
+    }
+
+    private fun createClickableTrackButton(index: Int, name: String): ClickableButton {
+        return MusicClickableButton(
+            label = name,
+            color = 0xFFFFFF, // Голубой
+            command = """/playlists edit "${playable.name}" playback pos $index""",
+            hoverText = "Поставить трек",
+            action = ClickEvent.Action.RUN_COMMAND,
+            playlist = playable,
+        )
     }
 
     private fun createNextButton(): ClickableButton {
@@ -162,20 +170,24 @@ class PlaylistView(val playable: Playable) : View {
     private fun getTracks(): Text {
         val result = Text.literal("")
         playable.queue.tracks.forEachIndexed { index, trackLine ->
-            val track = Engine.musicManagerModule.storage.getTrack(trackLine)
-            val duration = MusicViewCommand.formatTime(track?.endTimestamp?.toInt() ?: 1 * (track?.cycle ?: 1))
-            val trackText = createTrackLine(index, trackLine, duration)
+            val track = Engine.musicManagerModule.storage.getTrackOrThrow(trackLine)
+            val duration = MusicViewCommand.formatTime(track?.endTimestamp?.toInt() ?: 1 * (track?.loops ?: 1))
+            val trackText = createTrackLine(index, trackLine, duration, track.loops.toString())
             result.append(trackText)
         }
         return result
     }
 
-    private fun createTrackLine(index: Int, trackName: String, duration: String): Text {
-        val dot = if (playable.queue.currentTrackIndex == index) "&c▪" else "▪"
+    private fun createTrackLine(index: Int, trackName: String, duration: String, loops: String): Text {
+        val dot = if (playable.queue.currentTrackIndex == index) "&a$index:" else "&7$index"
+        val loops = if (loops == "1" || loops == "0" ) "" else "&6($loops)"
         return Text.literal("")
             .append(dot.formatMinecraft())
-            .append(Text.literal(" $trackName ($duration) ")
-                .setStyle(Style.EMPTY.withColor(0xFFFFFF)))
+            .append(" ")
+            .append((createClickableTrackButton(index, trackName)).toText())
+            .append(" ")
+            .append("($duration) $loops".formatMinecraft())
+            .append(" ")
             .append(createRemoveTrackButton(index).toText())
             .append(" ")
             .append(createMoveTrackUpButton(index).toText())
@@ -199,7 +211,7 @@ class PlaylistView(val playable: Playable) : View {
         return MusicClickableButton(
             label = "[⬆]",
             color = 0x55FF55, // Зеленый
-            command = """/playlists edit "${playable.name}" queue move $index ${index - 1}""",
+            command = """/playlists edit "${playable.name}" queue moveUnary 1""",
             hoverText = "Переместить трек вверх",
             action = ClickEvent.Action.RUN_COMMAND,
             playlist = playable,
@@ -210,7 +222,7 @@ class PlaylistView(val playable: Playable) : View {
         return MusicClickableButton(
             label = "[⬇]",
             color = 0x55FF55, // Зеленый
-            command = """/playlists edit "${playable.name}" queue move $index ${index + 1}""",
+            command = """/playlists edit "${playable.name}" queue moveUnary -1""",
             hoverText = "Переместить трек вниз",
             action = ClickEvent.Action.RUN_COMMAND,
             playlist = playable,

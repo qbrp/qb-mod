@@ -1,20 +1,15 @@
 package org.qbrp.engine.music.plasmo.model.selectors
 
-import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.suggestion.SuggestionProvider
-import com.mojang.brigadier.suggestion.Suggestions
-import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import net.minecraft.server.command.ServerCommandSource
-import java.util.concurrent.CompletableFuture
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 class SelectorBuilder {
     companion object {
         val selectorMap = mapOf(
-            "player" to PlayerSelector::class,
+            "players" to PlayersSelector::class,
             "group" to GroupSelector::class,
-            "region" to RegionSelector::class
+            "region" to RegionSelector::class,
+            "regions" to RegionsSelector::class
         )
     }
 

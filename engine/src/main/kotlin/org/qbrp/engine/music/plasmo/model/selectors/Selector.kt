@@ -12,7 +12,9 @@ import net.minecraft.server.network.ServerPlayerEntity
 )
 @JsonSubTypes(Type(value = GroupSelector::class, name = "group"),
    Type(value = RegionSelector::class, name = "region"),
-   Type(value = PlayerSelector::class, name = "player"))
+   Type(value = RegionsSelector::class, name = "regions"),
+   Type(value = PlayersSelector::class, name = "players"),
+   Type(value = PlayersSelector::class, name = "player"))
 abstract class Selector {
    open val type: String = "selector"
    abstract val params: List<String>

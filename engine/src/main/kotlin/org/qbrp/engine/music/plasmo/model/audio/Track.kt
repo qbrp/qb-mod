@@ -2,12 +2,12 @@ package org.qbrp.engine.music.plasmo.model.audio
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import org.qbrp.engine.music.plasmo.model.audio.Radio.Companion.logger
+import org.qbrp.engine.music.plasmo.model.audio.playback.Radio.Companion.logger
 import org.qbrp.engine.music.plasmo.playback.lavaplayer.AudioManager
 import su.plo.voice.lavaplayer.libs.com.sedmelluq.discord.lavaplayer.track.AudioTrack
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Track(val link: String, val name: String, var cycle: Int) {
+class Track(val link: String, val name: String, var loops: Int) {
     var startTimestamp: Double = 0.0
     var endTimestamp: Double = 0.0
 

@@ -3,6 +3,7 @@ package org.qbrp.engine.music.plasmo
 import org.qbrp.engine.music.plasmo.model.audio.Playable
 import org.qbrp.engine.music.plasmo.model.audio.Playlist
 import org.qbrp.engine.music.plasmo.model.audio.Queue
+import org.qbrp.engine.music.plasmo.model.audio.shadow.Shadow
 import org.qbrp.engine.music.plasmo.model.audio.Track
 import org.qbrp.engine.music.plasmo.model.priority.Priorities
 import org.qbrp.engine.music.plasmo.model.priority.Priority
@@ -12,7 +13,10 @@ import su.plo.voice.api.server.PlasmoVoiceServer
 import kotlin.collections.forEach
 import kotlin.concurrent.fixedRateTimer
 
-class MusicStorage(val database: MusicDatabaseService, val priorities: Priorities, val voiceServer: PlasmoVoiceServer) {
+class MusicStorage(val database: MusicDatabaseService,
+                   val priorities: Priorities,
+                   val voiceServer: PlasmoVoiceServer) {
+    private val fabric: PlayableFabric = PlayableFabric(voiceServer, this)
     private val tracks = mutableMapOf<String, Track>()
     private val playable = mutableListOf<Playable>()
 
@@ -20,9 +24,9 @@ class MusicStorage(val database: MusicDatabaseService, val priorities: Prioritie
         try {
             database.openTracks()
                 .forEach { track -> tracks[track.name] = track }
-            database.openPlaylists(voiceServer).forEach {
-                addPlaylist(it)
-            }
+            database.openPlaylists()
+                .sortedBy { it.type != "playlist" }
+                .forEach { addPlaylist(fabric.build(it)) }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -37,7 +41,7 @@ class MusicStorage(val database: MusicDatabaseService, val priorities: Prioritie
         ) {
             try {
                 tracks.values.forEach { database.saveTrack(it) }
-                playable.forEach { database.savePlaylist(it as Playlist) }
+                playable.forEach { database.savePlaylist(it) }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -58,10 +62,11 @@ class MusicStorage(val database: MusicDatabaseService, val priorities: Prioritie
         return tracks.containsKey(name)
     }
 
-    fun getTrack(name: String): Track = tracks[name]!!
+    fun getTrackOrThrow(name: String): Track = tracks[name]!!
+    fun getTrack(name: String): Track? = tracks[name]
     fun getAllTracks(): List<Track> = tracks.values.toList()
     fun deleteTrack(name: String) {
-        database.archiveTrack(getTrack(name))
+        database.archiveTrack(getTrackOrThrow(name))
         tracks.remove(name)
     }
     fun getDefaultPlaylist(): Playlist = playable.first() as Playlist
@@ -83,11 +88,16 @@ class MusicStorage(val database: MusicDatabaseService, val priorities: Prioritie
     }
 
     fun addPlaylist(name: String, selector: Selector, priority: Priority, cycle: Int = -1): Playable {
-        addPlaylist(Playlist(name, selector, priority, voiceServer).apply { initQueue(Queue(0, cycle)) })
+        addPlaylist(Playlist(name, selector, priority, voiceServer).apply { loadQueue(Queue(0, cycle)) })
         return getPlayable(name) as Playable
     }
 
-    fun addPlaylist(playlist: Playlist) {
+    fun addShadow(originalName: String, name: String, selector: Selector, priority: Priority, cycle: Int = -1): Shadow {
+        addPlaylist(Shadow(originalName, name, selector, priority, voiceServer))
+        return getPlayable(name) as Shadow
+    }
+
+    fun addPlaylist(playlist: Playable) {
         playable.add(playlist)
     }
 }

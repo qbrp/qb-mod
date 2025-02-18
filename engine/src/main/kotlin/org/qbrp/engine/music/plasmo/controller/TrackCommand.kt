@@ -39,7 +39,6 @@ class TrackCommand(val storage: MusicStorage): ServerModCommand {
 
     @SubCommand
     class List {
-
         @Execute
         fun listTracks(context: CommandContext<ServerCommandSource>, deps: Deps) {
             val source = context.source
@@ -48,7 +47,7 @@ class TrackCommand(val storage: MusicStorage): ServerModCommand {
                 source.sendMessage("Нет доступных треков.".formatMinecraft())
             } else {
                 tracks.forEach { track ->
-                    val cycles = if (track.cycle != -1) "&2(${track.cycle}) " else " "
+                    val cycles = if (track.loops != -1) "&2(${track.loops}) " else " "
                     source.sendMessage(Text.literal("")
                         .append("&a${track.name} ".formatMinecraft())
                         .append("&7${MusicViewCommand.formatTime(track.startTimestamp.toInt())} - ${MusicViewCommand.formatTime(track.endTimestamp.toInt())} ".formatMinecraft())
@@ -91,7 +90,7 @@ class TrackCommand(val storage: MusicStorage): ServerModCommand {
             fun edit(context: CommandContext<ServerCommandSource>, deps: Deps) {
                 val storage = deps.get("storage") as MusicStorage
                 val time = minutes * 60 + seconds
-                storage.getTrack(trackName).endTimestamp = time.toDouble()
+                storage.getTrackOrThrow(trackName).endTimestamp = time.toDouble()
                 context.source.sendMessage("Трек $trackName изменен!".formatMinecraft())
             }
 
@@ -106,7 +105,7 @@ class TrackCommand(val storage: MusicStorage): ServerModCommand {
             fun edit(context: CommandContext<ServerCommandSource>, deps: Deps) {
                 val storage = deps.get("storage") as MusicStorage
                 val time = minutes * 60 + seconds
-                storage.getTrack(trackName).startTimestamp = time.toDouble()
+                storage.getTrackOrThrow(trackName).startTimestamp = time.toDouble()
                 context.source.sendMessage("Трек $trackName изменен!".formatMinecraft())
             }
 
@@ -119,7 +118,7 @@ class TrackCommand(val storage: MusicStorage): ServerModCommand {
             @Execute
             fun edit(context: CommandContext<ServerCommandSource>, deps: Deps) {
                 val storage = deps.get("storage") as MusicStorage
-                storage.getTrack(trackName).cycle = repeats
+                storage.getTrackOrThrow(trackName).loops = repeats
                 context.source.sendMessage("Трек $trackName изменен!".formatMinecraft())
             }
 

@@ -1,8 +1,5 @@
 package org.qbrp.engine.music.plasmo.model.audio
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import kotlinx.coroutines.*
-import org.qbrp.system.utils.log.Loggers
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.qbrp.engine.music.plasmo.controller.view.PlaylistView
 import org.qbrp.engine.music.plasmo.controller.view.View
@@ -21,12 +18,5 @@ class Playlist(
     override fun getView(): View {
         return PlaylistView(this)
     }
-
-    companion object {
-        fun buildFromDTO(dto: PlayableDTO, voiceServer: PlasmoVoiceServer): Playable {
-            return Playlist(dto.name, dto.selector, dto.priority, voiceServer).apply { initQueue(dto.queue.copy()); isManuallyDisabled = dto.isManuallyDisabled  }
-        }
-    }
-
 
 }

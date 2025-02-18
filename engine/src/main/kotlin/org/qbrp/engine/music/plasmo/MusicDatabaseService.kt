@@ -11,14 +11,15 @@ class MusicDatabaseService(val db: DatabaseService) {
     fun openTracks(): List<Track> {
         return db.fetchAll("tracks", mapOf(), Track::class.java) as List<Track>
     }
-    fun openPlaylists(voiceServer: PlasmoVoiceServer): List<Playlist> {
+
+    fun openPlaylists(): List<PlayableDTO> {
         val data = db.fetchAll("playlists", mapOf(), PlayableDTO::class.java) as List<PlayableDTO>
-        return data.map { Playlist.buildFromDTO(it, voiceServer) as Playlist }
+        return data
     }
     fun saveTrack(track: Track) {
         db.upsertObject<Track>("tracks", mapOf("name" to track.name), track)
     }
-    fun savePlaylist(playlist: Playlist) {
+    fun savePlaylist(playlist: Playable) {
         db.upsertObject<PlayableDTO>("playlists", mapOf("name" to playlist.name), playlist.toDTO())
     }
     fun archivePlayable(playable: Playable) {
