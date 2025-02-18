@@ -1,11 +1,14 @@
 package org.qbrp.core.game.commands
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import net.minecraft.server.command.ServerCommandSource
 import org.qbrp.core.game.commands.annotations.Arg
 import org.qbrp.core.game.commands.annotations.Command
 import org.qbrp.core.game.commands.annotations.Execute
 import org.qbrp.core.game.commands.annotations.Provider
+import org.qbrp.core.game.commands.annotations.Redirect
 import org.qbrp.core.game.commands.annotations.SubCommand
 import org.qbrp.core.game.commands.map.ArgumentNodeImpl
 import org.qbrp.core.game.commands.map.CommandNode
@@ -15,13 +18,23 @@ import org.qbrp.core.game.commands.map.Executor
 class CommandBuilder {
 
     private lateinit var mappedCommand: CommandNode
+    private lateinit var commandRedirects: List<LiteralArgumentBuilder<ServerCommandSource>>
     private var deps: Deps = Deps()
     private var printErrors = false
 
     fun buildTree(clazz: Class<*>): CommandBuilder {
         mappedCommand = buildCommandTree(clazz)
+        if (clazz.getAnnotation(Redirect::class.java) != null) {
+            commandRedirects = clazz.getAnnotation(Redirect::class.java).let {
+                it.names.map { name ->
+                    literal<ServerCommandSource>(name).redirect(mappedCommand.getLiteral().build())
+                }
+            }
+        }
         return this
     }
+
+    fun getRedirects() = commandRedirects
 
     fun importDependencies(deps: Deps): CommandBuilder {
         this.deps = deps
@@ -52,7 +65,8 @@ class CommandBuilder {
             constructor.parameters.forEach { parameter ->
                 if (parameter.isAnnotationPresent(Arg::class.java)) {
                     val argAnnotation = parameter.getAnnotation(Arg::class.java)
-                    val argumentNode = ArgumentNodeImpl(parameter.name, argAnnotation.type, argAnnotation.sub)
+                    val type = if (argAnnotation.type != "") argAnnotation.type else parameter.type.simpleName
+                    val argumentNode = ArgumentNodeImpl(parameter.name, type, argAnnotation.sub)
                     if (parameter.isAnnotationPresent(Provider::class.java)) {
                         val providerAnnotation = parameter.getAnnotation(Provider::class.java)
                         argumentNode.provider = providerAnnotation.clazz::java.get().getConstructor().newInstance() as SuggestionProvider<ServerCommandSource>

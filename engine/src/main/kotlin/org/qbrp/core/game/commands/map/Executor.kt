@@ -28,7 +28,7 @@ data class Executor(val method: Method,
                 val argAnnotation = parameter.getAnnotation(Arg::class.java)
                     ?: throw IllegalArgumentException("Параметр ${parameter.name} не имеет аннотации @Arg")
 
-                TypeValidator.getArgumentValue<Any>(argAnnotation.type, context, parameter.name)
+                TypeValidator.getArgumentValue<Any>(if (argAnnotation.type == "") parameter.type.simpleName else argAnnotation.type, context, parameter.name)
             }.toTypedArray()
         }
 
