@@ -13,9 +13,9 @@ class TracksSuggestionProvider() : SuggestionProvider<ServerCommandSource> {
         context: CommandContext<ServerCommandSource>,
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
-        Engine.musicManagerModule.storage.getAllTracks().forEach { track ->
-            builder.suggest(""""${track.name}"""")
-        }
+        //Engine.musicManagerModule.storage.getAllTracks().forEach { track ->
+            //builder.suggest(""""${track.name}"""")
+        //}
         return builder.buildFuture()
     }
 }

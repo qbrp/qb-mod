@@ -18,7 +18,6 @@ fun interface MessageUpdateEvent {
                 MessageUpdateEvent { message ->
                     for (listener in listeners) {
                         val result = listener.onMessageUpdate(message)
-                        println(message)
                         if (result != ActionResult.PASS) {
                             return@MessageUpdateEvent result
                         }

@@ -42,4 +42,8 @@ object ConsoleColors {
     fun bold(text: String): String {
         return "$BOLD$text$RESET"
     }
+
+    fun String.color(color: String): String {
+        return "$color$this$RESET"
+    }
 }

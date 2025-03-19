@@ -17,7 +17,6 @@ fun interface MessageSenderPipeline {
                 MessageSenderPipeline { message, sender ->
                     for (listener in listeners) {
                         val result = listener.onMessageSenderInitialization(message, sender)
-                        println(message)
                         if (result != ActionResult.PASS) {
                             return@MessageSenderPipeline result
                         }

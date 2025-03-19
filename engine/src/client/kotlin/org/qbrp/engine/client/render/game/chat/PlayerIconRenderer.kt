@@ -11,9 +11,11 @@ import net.minecraft.entity.Entity
 import net.minecraft.util.math.RotationAxis
 import net.minecraft.util.math.Vec3d
 import org.joml.Matrix4f
+import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatModule
 import org.qbrp.engine.client.EngineClient
 import org.qbrp.engine.client.engine.chat.ChatModuleClient
+import org.qbrp.engine.client.engine.chat.ClientChatAPI
 import org.qbrp.system.utils.format.Format.asIdentifier
 import kotlin.math.PI
 import kotlin.math.sin
@@ -37,7 +39,7 @@ class PlayerIconRenderer {
         WorldRenderEvents.AFTER_ENTITIES.register(WorldRenderEvents.AfterEntities { context ->
             val client = MinecraftClient.getInstance()
             val world = client.world ?: return@AfterEntities
-            val chatAPI: ChatModuleClient.API? = EngineClient.getChatModuleAPI()
+            val chatAPI = Engine.getAPI<ClientChatAPI>()
 
             world.players.forEach { entity ->
                 if (client.player?.canSee(entity) == true && entity != client.player && chatAPI?.isPlayerWriting(entity) == true) {

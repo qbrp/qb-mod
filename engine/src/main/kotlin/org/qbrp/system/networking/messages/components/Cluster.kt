@@ -49,4 +49,8 @@ open class Cluster(protected open var components: List<Component>? = emptyList()
     override fun getData(): ClusterViewer {
         return ClusterViewer(components!!)
     }
+
+    override fun setData(data: Any) {
+        components = data as List<Component>
+    }
 }

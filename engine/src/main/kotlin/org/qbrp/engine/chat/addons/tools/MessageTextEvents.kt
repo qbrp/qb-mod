@@ -1,17 +1,18 @@
 package org.qbrp.engine.chat.addons.tools
 
-import net.minecraft.util.ActionResult
-import org.qbrp.engine.chat.core.events.MessageUpdateEvent
+import org.qbrp.engine.chat.core.messages.ChatMessage
 
 class MessageTextEvents {
-    init {
-        MessageUpdateEvent.EVENT.register { message ->
-            val textContent = message.getTags().getComponentData<String>("textContent") ?: return@register ActionResult.PASS
+    companion object {
+        fun pasteText(message: ChatMessage) {
+            val textContent = message.getTags().getComponentData<String>("textContent") ?: return
             message.apply {
-                setTags(getTagsBuilder()
-                    .placeholder("text.onSend", textContent))
+                setTags(
+                    getTagsBuilder()
+                        .placeholder("text", textContent)
+                )
             }
-            ActionResult.PASS
+            message.handleUpdate()
         }
     }
 }

@@ -1,47 +1,26 @@
 package org.qbrp.engine.client.core.events
 
-import icyllis.modernui.mc.MuiModApi
-import icyllis.modernui.mc.UIManager
-import icyllis.modernui.mc.MuiScreen
-import icyllis.modernui.mc.fabric.MuiFabricApi
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.world.ClientWorld
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.ChunkPos
-import net.minecraft.world.chunk.Chunk
-import org.qbrp.engine.client.core.visual.VisualDataLoader
-import org.qbrp.engine.client.render.hud.chat.ChatInputScreen
+import org.qbrp.engine.client.EngineClient
+import org.qbrp.engine.client.system.networking.ClientNetworkManager
+import org.qbrp.system.VersionChecker
+import org.qbrp.system.networking.messages.Message
+import org.qbrp.system.networking.messages.Messages
+import org.qbrp.system.networking.messages.types.StringContent
 
 object ClientHandlers {
-
     val client = MinecraftClient.getInstance()
     val player = client.player
 
     fun registerEvents() {
-        ClientEntityEvents.ENTITY_LOAD.register { entity, world ->
-            if (entity is ServerPlayerEntity) {
-                val chunkPos = ChunkPos(BlockPos(entity.pos.x.toInt(), 0, entity.pos.z.toInt()))
-                player?.pos?.let {
-                    VisualDataLoader.chunkRequest(chunkPos)
-                }
-            }
+        ClientPlayConnectionEvents.DISCONNECT.register { _, _ ->
+            EngineClient.keybindsManager.clearHiddenKeyBindings()
         }
-    }
-
-
-    fun registerChunkLoadEvents() {
-        ClientChunkEvents.CHUNK_LOAD.register { world: ClientWorld, chunk: Chunk ->
-            val chunkPos = chunk.getPos()
-            VisualDataLoader.chunkRequest(chunkPos)
+        ClientPlayConnectionEvents.JOIN.register { handler, sender, client ->
+            ClientNetworkManager.sendMessage(
+                Message(Messages.HANDLE_VERSION, StringContent(VersionChecker.getVersionObject().toString()))
+            )
         }
-        ClientChunkEvents.CHUNK_UNLOAD.register { world: ClientWorld, chunk: Chunk ->
-
-        }
-
     }
 }

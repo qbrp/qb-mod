@@ -12,6 +12,10 @@ class JsonContent : BilateralContent() {
         return buf.writeString(json.toString())
     }
 
+    override fun setData(data: Any) {
+        json = data as JsonObject
+    }
+
     override fun convert(buf: PacketByteBuf): JsonContent {
         val jsonString = buf.readString() // Читаем JSON из буфера
         json = JsonParser.parseString(jsonString).asJsonObject.also { json = it }

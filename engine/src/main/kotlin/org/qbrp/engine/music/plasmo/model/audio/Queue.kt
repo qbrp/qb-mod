@@ -1,8 +1,14 @@
 package org.qbrp.engine.music.plasmo.model.audio
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.koin.core.context.GlobalContext
 import org.qbrp.engine.Engine
+import org.qbrp.engine.music.plasmo.MusicStorage
 import org.qbrp.system.utils.log.Loggers
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -11,29 +17,33 @@ open class Queue(
     var repeats: Int = 1,
     open val tracks: MutableList<String> = mutableListOf(), // Список имен треков
 ) {
+    @JsonIgnore val storage: MusicStorage = GlobalContext.get().get()
     @JsonIgnore var currentRepeat = 0
     @JsonIgnore var onQueueFinished: () -> Unit = {}
 
     fun getCurrentTrack(): Track? {
         val trackName = tracks.getOrNull(currentTrackIndex) ?: return null
-        return Engine.musicManagerModule.storage.getTrackOrThrow(trackName)
+        return storage.getTrackOrThrow(trackName)
     }
 
+    @JsonIgnore
+    private val queueLock = Any()
     fun next() {
-        if (repeats == -1 || currentRepeat < repeats) {
-            if (currentTrackIndex >= tracks.size - 1) {
-                currentTrackIndex = 0
-                if (repeats != -1) currentRepeat++
+        synchronized(queueLock) {
+            if (repeats == -1 || currentRepeat < repeats) {
+                if (currentTrackIndex >= tracks.size - 1) {
+                    currentTrackIndex = 0
+                    if (repeats != -1) currentRepeat++
+                } else {
+                    currentTrackIndex++
+                }
             } else {
-                currentTrackIndex++
+                onQueueFinished()
             }
-        } else {
-            onQueueFinished()
         }
     }
 
     fun validateQueue() {
-        val storage = Engine.musicManagerModule.storage
         currentTrackIndex = tracks.indexOfFirst {
             storage.getTrack(it)?.name == getCurrentTrack()?.name
         }

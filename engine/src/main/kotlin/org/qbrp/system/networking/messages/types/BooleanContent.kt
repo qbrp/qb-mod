@@ -12,14 +12,14 @@ class BooleanContent(var bool: Boolean? = false): BilateralContent() {
         return this
     }
 
-    override fun getData(): Any {
-        return bool!!
-    }
+    override fun getData(): Any = bool!!
 
     override fun write(buf: PacketByteBuf): PacketByteBuf {
         super.write(buf)
         buf.writeBoolean(bool!!)
         return buf
     }
+
+    override fun setData(data: Any) { bool = data as Boolean }
 }
 

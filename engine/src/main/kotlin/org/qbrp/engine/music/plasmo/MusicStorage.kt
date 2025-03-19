@@ -1,5 +1,7 @@
 package org.qbrp.engine.music.plasmo
 
+import org.koin.core.parameter.parametersOf
+import org.koin.core.component.get
 import org.qbrp.engine.music.plasmo.model.audio.Playable
 import org.qbrp.engine.music.plasmo.model.audio.Playlist
 import org.qbrp.engine.music.plasmo.model.audio.Queue
@@ -11,11 +13,13 @@ import org.qbrp.engine.music.plasmo.model.selectors.RegionSelector
 import org.qbrp.engine.music.plasmo.model.selectors.Selector
 import su.plo.voice.api.server.PlasmoVoiceServer
 import kotlin.collections.forEach
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import kotlin.concurrent.fixedRateTimer
 
 class MusicStorage(val database: MusicDatabaseService,
                    val priorities: Priorities,
-                   val voiceServer: PlasmoVoiceServer) {
+                   val voiceServer: PlasmoVoiceServer): KoinComponent {
     private val fabric: PlayableFabric = PlayableFabric(voiceServer, this)
     private val tracks = mutableMapOf<String, Track>()
     private val playable = mutableListOf<Playable>()
@@ -41,7 +45,6 @@ class MusicStorage(val database: MusicDatabaseService,
         ) {
             try {
                 tracks.values.forEach { database.saveTrack(it) }
-                playable.forEach { database.savePlaylist(it) }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -88,7 +91,9 @@ class MusicStorage(val database: MusicDatabaseService,
     }
 
     fun addPlaylist(name: String, selector: Selector, priority: Priority, cycle: Int = -1): Playable {
-        addPlaylist(Playlist(name, selector, priority, voiceServer).apply { loadQueue(Queue(0, cycle)) })
+        val queue = get<Queue>(parameters = { parametersOf(0, cycle, mutableListOf<String>()) })
+        val playlist = get<Playlist>(parameters = { parametersOf(name, selector, priority, voiceServer, queue) })
+        addPlaylist(playlist)
         return getPlayable(name) as Playable
     }
 

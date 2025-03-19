@@ -19,6 +19,7 @@ class ClientReceiver<T : ReceiverContext>(
     private val logger = Loggers.get("network", "receiving")
 
     fun register() {
+        logger.log("Зарегистрирован ресивер: <<${Identifier("qbrp", messageId)}>>")
         ClientPlayNetworking.registerGlobalReceiver(Identifier("qbrp", messageId)) { client, handler, buf, responseSender ->
             val context = ClientReceiverContext(client, handler)
             try {

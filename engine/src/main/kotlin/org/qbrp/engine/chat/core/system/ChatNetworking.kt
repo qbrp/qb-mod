@@ -10,10 +10,13 @@ abstract class ChatNetworking {
     fun getChatMessage(message: Message, stripNewLines: Boolean = true): ChatMessage {
         val cluster = message.getContent<ClusterViewer>()
         return ChatMessage(
-            authorName = cluster.getComponentData<String>("authorName")!!,
-            text = cluster.getComponentData<String>("text")!!,
-            metaTags = cluster.getCluster<Cluster>("tags")!!.getBuilder() as ChatMessageTagsBuilder,
-            uuid = cluster.getComponentData<String>("uuid")!!,
-        ).apply { if (stripNewLines) setText(getText().replace("\n", " ")) }
+            authorName = cluster.getComponentData("authorName")!!,
+            text = cluster.getComponentData("text")!!,
+            uuid = cluster.getComponentData("uuid")!!,
+            timestamp = cluster.getComponentData<Long>("timestamp")!!,
+        ).apply {
+            setTags(cluster.getCluster<Cluster>("tags")!!.getBuilder() as ChatMessageTagsBuilder,)
+            if (stripNewLines) setText(getText().replace("\n", " "))
+        }
     }
 }

@@ -7,15 +7,14 @@ import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.StringHelper;
 import org.apache.commons.lang3.StringUtils;
+import org.qbrp.engine.Engine;
 import org.qbrp.engine.client.EngineClient;
 import org.qbrp.engine.client.engine.chat.ChatModuleClient;
+import org.qbrp.engine.client.engine.chat.ClientChatAPI;
 import org.qbrp.engine.client.engine.chat.system.Typer;
-import org.qbrp.engine.client.render.Render;
-import org.qbrp.engine.client.render.hud.chat.TransfromTextFieldWidget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -53,37 +52,38 @@ class ChatScreenMixin extends Screen {
     private void onChatOpen(CallbackInfo ci) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player != null) {
-            Objects.requireNonNull(EngineClient.Companion.getChatModuleAPI()).startTyping(player);
+            Objects.requireNonNull((ChatModuleClient) Engine.Companion.getModuleManager().getModule("chat")).getAPI().startTyping(player);
         }
-        this.chatField = new TransfromTextFieldWidget(this.client.advanceValidatingTextRenderer, 4, this.height - 12, this.width - 4, 12, Text.translatable("chat.editBox")) {
-            protected MutableText getNarrationMessage() {
-                return super.getNarrationMessage().append(chatInputSuggestor.getNarration());
-            }
-        };
-        this.chatField.setMaxLength(256);
-        this.chatField.setDrawsBackground(false);
-        this.chatField.setText(this.originalChatText);
-        this.chatField.setChangedListener(this::onChatFieldUpdate);
-        this.chatField.setFocusUnlocked(false);
-        this.addSelectableChild(this.chatField);
-        this.chatInputSuggestor = new ChatInputSuggestor(this.client, this, this.chatField, this.textRenderer, false, false, 1, 10, true, -805306368);
-        this.chatInputSuggestor.refresh();
-        this.setInitialFocus(this.chatField);
-        if (this.chatField instanceof TransfromTextFieldWidget) {
-            ((TransfromTextFieldWidget) this.chatField).setRenderedTextTransformer(text ->
-                    Objects.requireNonNull(EngineClient.Companion.getChatModuleAPI())
-                            .getTextTransformer()
-                            .getColorTransformedMessage(text)
-            );
-            ((TransfromTextFieldWidget) this.chatField).setupCustomRenderer();
-        }
+        this.chatField.setMaxLength(456);
     }
+//        this.chatField = new TransfromTextFieldWidget(this.client.advanceValidatingTextRenderer, 4, this.height - 12, this.width - 4, 12, Text.translatable("chat.editBox")) {
+//            protected MutableText getNarrationMessage() {
+//                return super.getNarrationMessage().append(chatInputSuggestor.getNarration());
+//            }
+//        };
+//        this.chatField.setDrawsBackground(false);
+//        this.chatField.setText(this.originalChatText);
+//        this.chatField.setChangedListener(this::onChatFieldUpdate);
+//        this.chatField.setFocusUnlocked(false);
+//        this.addSelectableChild(this.chatField);
+//        this.chatInputSuggestor = new ChatInputSuggestor(this.client, this, this.chatField, this.textRenderer, false, false, 1, 10, true, -805306368);
+//        this.chatInputSuggestor.refresh();
+//        this.setInitialFocus(this.chatField);
+//        if (this.chatField instanceof TransfromTextFieldWidget) {
+//            ((TransfromTextFieldWidget) this.chatField).setRenderedTextTransformer(text ->
+//                    Objects.requireNonNull(EngineClient.Companion.getChatModuleAPI())
+//                            .getTextTransformer()
+//                            .getColorTransformedMessage(text)
+//            );
+//            ((TransfromTextFieldWidget) this.chatField).setupCustomRenderer();
+//        }
+//    }
 
     @Inject(method = "removed", at = @At("HEAD"))
     private void onChatClose(CallbackInfo ci) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player != null) {
-            Objects.requireNonNull(EngineClient.Companion.getChatModuleAPI()).endTyping(player);
+            Objects.requireNonNull((ChatModuleClient) Engine.Companion.getModuleManager().getModule("chat")).getAPI().endTyping(player);
         }
     }
 
@@ -92,28 +92,28 @@ class ChatScreenMixin extends Screen {
         return chatField.getText();
     }
 
-    @Redirect(
-            method = "render",
-            at = @At(
-                    value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/DrawContext;fill(IIIII)V"
-        )
-    )
-    private void redirectFill(DrawContext context, int x1, int y1, int x2, int y2, int color) {
-        int bgColor = this.client.options.getTextBackgroundColor(Integer.MIN_VALUE);
-        Typer.TypingMessageContext typingContext = Objects.requireNonNull(EngineClient.Companion.getChatModuleAPI()).getTypingContextFromText(chatField.getText());
-        String tagsNames = typingContext.calculateMetaInfoNames();
-
-        if (getTypingMessage() != null && !tagsNames.isEmpty()) {
-            int textWidth = typingContext.calculateMetaInfoWidth(this.client.textRenderer);
-            chatField.setX(textWidth + 11);
-            context.fill(x1 + textWidth + 6, y1, x2, y2, bgColor);
-            return;
-        } else {
-            chatField.setX(4);
-        }
-        context.fill(x1, y1, x2, y2, bgColor);
-    }
+//    @Redirect(
+//            method = "render",
+//            at = @At(
+//                    value = "INVOKE",
+//            target = "Lnet/minecraft/client/gui/DrawContext;fill(IIIII)V"
+//        )
+//    )
+//    private void redirectFill(DrawContext context, int x1, int y1, int x2, int y2, int color) {
+//        int bgColor = this.client.options.getTextBackgroundColor(Integer.MIN_VALUE);
+//        Typer.TypingMessageContext typingContext = Objects.requireNonNull(EngineClient.Companion.getChatModuleAPI()).getTypingContextFromText(chatField.getText());
+//        String tagsNames = typingContext.calculateMetaInfoNames();
+//
+//        if (getTypingMessage() != null && !tagsNames.isEmpty()) {
+//            int textWidth = typingContext.calculateMetaInfoWidth(this.client.textRenderer);
+//            chatField.setX(textWidth + 11);
+//            context.fill(x1 + textWidth + 6, y1, x2, y2, bgColor);
+//            return;
+//        } else {
+//            chatField.setX(4);
+//        }
+//        context.fill(x1, y1, x2, y2, bgColor);
+//    }
 
     @ModifyArgs(
             method = "render",
@@ -137,13 +137,13 @@ class ChatScreenMixin extends Screen {
      */
     @Overwrite
     public boolean sendMessage(String chatText, boolean addToHistory) {
-        ChatModuleClient.API api = EngineClient.Companion.getChatModuleAPIorThrow();
+        ClientChatAPI api = Objects.requireNonNull((ChatModuleClient) Engine.Companion.getModuleManager().getModule("chat")).getAPI();
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player != null) {
            api.endTyping(player);
         }
 
-        chatText = this.normalize(api.getTextTransformer().getColorTransformedMessage(chatText));
+        chatText = this.normalize(api.getTextTransformer().getTransformedMessage(chatText));
         if (chatText.isEmpty()) {
             return true;
         } else {
@@ -156,7 +156,11 @@ class ChatScreenMixin extends Screen {
                 this.client.player.networkHandler.sendChatCommand(chatText.substring(1));
             } else {
                 assert this.client.player != null;
+                //if (EngineClient.Companion.getChatClientModule().getEnabled()) {
                 api.sendMessageToServer(api.createMessageFromContext(api.getTypingContextFromText(chatText)));
+                //} else {
+                //this.client.player.networkHandler.sendChatMessage(chatText);
+                //}
             }
 
             return true;

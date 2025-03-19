@@ -9,7 +9,12 @@ object Messages {
     const val END_TYPING = "end_typing"
 
     const val SEND_MESSAGE = "send_message"
-    const val CHAT_GROUPS = "chat_groups"
+    const val HANDLE_VERSION = "handle_version"
 
-    const val SPAWN = "spawn"
+    const val SERVER_INFORMATION = "server_information"
+
+    const val REGISTRATION_REQUEST = "request_registration"
+    const val REGISTRATION_RESPONSE = "registration_response"
+
+    fun moduleUpdate(name: String): String = "module_update_$name"
 }

@@ -1,10 +1,15 @@
 package org.qbrp.system.networking.messages.components
 
+import net.minecraft.text.Text
 import org.qbrp.engine.chat.core.messages.ChatMessageTagsCluster
 import org.qbrp.system.networking.messages.types.BooleanContent
+import org.qbrp.system.networking.messages.types.ClusterListContent
 import org.qbrp.system.networking.messages.types.Content
+import org.qbrp.system.networking.messages.types.DoubleContent
 import org.qbrp.system.networking.messages.types.IntContent
+import org.qbrp.system.networking.messages.types.LongContent
 import org.qbrp.system.networking.messages.types.StringContent
+import org.qbrp.system.networking.messages.types.TextContent
 import kotlin.reflect.KClass
 
 class ComponentTypeFactory {
@@ -14,9 +19,13 @@ class ComponentTypeFactory {
 
     init {
         registerComponentType("string", ::StringContent)
+        registerComponentType("text", ::TextContent)
         registerComponentType("boolean", ::BooleanContent)
         registerComponentType("int", ::IntContent)
+        registerComponentType("long", ::LongContent)
+        registerComponentType("double", ::DoubleContent)
         registerComponentType("cluster", ::Cluster)
+        registerComponentType("clusterList", ::ClusterListContent)
         registerComponentType("chatMessageTagsCluster", ::ChatMessageTagsCluster)
     }
 
@@ -26,7 +35,7 @@ class ComponentTypeFactory {
     }
 
     fun buildComponentType(clazz: Class<*>): Content {
-        val constructor = componentsTypeMap[clazz.simpleName] ?: throw IllegalArgumentException("Компонент '${clazz.simpleName}' не найден")
+        val constructor = componentsTypeMap[clazz.simpleName.replaceFirstChar { it.lowercase() }] ?: throw IllegalArgumentException("Компонент '${clazz.simpleName}' не найден")
         return constructor()
     }
 

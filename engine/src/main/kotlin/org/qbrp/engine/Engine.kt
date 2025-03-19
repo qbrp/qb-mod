@@ -1,33 +1,32 @@
 package org.qbrp.engine
 
-import net.minecraft.server.MinecraftServer
+import org.koin.core.component.KoinComponent
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.engine.chat.ChatModule
-import org.qbrp.engine.chat.core.messages.ChatMessage
-import org.qbrp.engine.chat.core.messages.ChatMessageTagsBuilder
 import org.qbrp.engine.damage.DamageControllerModule
-import org.qbrp.engine.music.MusicManagerModule
 import org.qbrp.engine.spectators.SpectatorsModule
 import org.qbrp.engine.time.TimeModule
-import org.qbrp.system.networking.messages.types.StringContent
+import org.qbrp.system.modules.ModuleAPI
+import org.qbrp.system.modules.ModuleManager
+import org.qbrp.system.modules.QbModule
+import org.qbrp.system.utils.log.Loggers
 
-class Engine {
-
+class Engine: KoinComponent {
     companion object {
-        lateinit var musicManagerModule: MusicManagerModule
-        lateinit var spectatorsModule: SpectatorsModule
-        lateinit var chatModule: ChatModule
-        lateinit var damageControllerModule: DamageControllerModule
-        lateinit var timeModule: TimeModule
+        val moduleManager: ModuleManager = ModuleManager()
+
+        inline fun <reified T : ModuleAPI> getAPI(): T? {
+            return moduleManager.getAPI<T>()
+        }
+
+        inline fun <reified T : ModuleAPI> isApiAvailable(): Boolean {
+            return moduleManager.isApiAvailable<T>()
+        }
+
+        val globalLogger = Loggers.get("engine")
     }
 
-    // Подразумевает, что Core был полностью загружен
-    fun initialize(server: MinecraftServer) {
-        musicManagerModule = MusicManagerModule(server, ServerResources.getConfig().music, ServerResources.getConfig().databases)
-        musicManagerModule.load()
-        spectatorsModule = SpectatorsModule()
-        chatModule = ChatModule(ServerResources.getConfig().chat, server)//
-        damageControllerModule = DamageControllerModule().apply { load() }
-        timeModule = TimeModule(server, ServerResources.getConfig().time).apply { load() }
+    fun initialize() {
+        moduleManager.initialize()
     }
 }

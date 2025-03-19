@@ -5,7 +5,11 @@ import org.qbrp.core.resources.data.Data
 import java.nio.file.Path
 import java.nio.file.Paths
 
-data class ClientConfigData(val resources: Resources = Resources()) : Data() {
+data class ClientConfigData(
+    val resources: Resources = Resources(),
+    val account: Account  = Account()
+) : Data()
+{
     override fun toFile(): String {
         return gson.toJson(this)
     }
@@ -17,6 +21,10 @@ data class ClientConfigData(val resources: Resources = Resources()) : Data() {
 
         val downloadUrl: String
             get() = "http://$host:$port/$request"
+    }
+
+    class Account {
+        var code: String = "NONE"
     }
 
 }

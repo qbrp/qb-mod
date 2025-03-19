@@ -1,17 +1,20 @@
 package org.qbrp.engine.music.plasmo.model.audio.playback
 
-import org.qbrp.engine.music.plasmo.controller.view.PlaylistView
+import org.koin.core.component.KoinComponent
+import org.qbrp.engine.music.plasmo.view.PlaylistView
 import org.qbrp.engine.music.plasmo.model.audio.Playable
 import org.qbrp.engine.music.plasmo.model.audio.Queue
 import su.plo.voice.api.server.audio.source.ServerDirectSource
 import kotlin.concurrent.timer
+import org.koin.core.component.get
+import org.koin.core.parameter.parametersOf
 
 data class PlayerSession(
     var playable: Playable,
     val source: ServerDirectSource,
     var queue: Queue,
     var radio: Radio? = null
-) {
+): KoinComponent {
     private var unsubscribeTimer: java.util.Timer? = null
     private var unsubscribeTimePassed = false
 
@@ -58,11 +61,14 @@ data class PlayerSession(
     }
 
     fun createRadio(time: Long = 0) {
-        queue.getCurrentTrack()?.let { track ->
+        val track = queue.getCurrentTrack()
+        if (track != null) {
             radio?.destroy()
-            radio = Radio(source, track) {
-                handleTrackFinished()
-            }.apply {
+            radio = get<Radio>(parameters = {
+                parametersOf(source, queue.getCurrentTrack(), {
+                    handleTrackFinished()
+                })
+            }).apply {
                 audioPlayer.playingTrack.position = time
             }
         }

@@ -3,25 +3,24 @@ package org.qbrp.engine.chat.core.system
 import net.minecraft.server.network.ServerPlayerEntity
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.system.networking.messages.Message
-import org.qbrp.system.networking.messages.Messages.CHAT_GROUPS
+import org.qbrp.system.networking.messages.Messages
 import org.qbrp.system.networking.messages.Messages.SEND_MESSAGE
-import org.qbrp.system.networking.messages.types.ClusterListContent
+import org.qbrp.system.networking.messages.components.Cluster
+import org.qbrp.system.networking.messages.types.BooleanContent
 import org.qbrp.system.networking.messaging.NetworkManager
-
+import org.qbrp.system.networking.messaging.ServerReceiver
+import org.qbrp.system.networking.messaging.ServerReceiverContext
 
 class ServerChatNetworking(val handler: MessageHandler): ChatNetworking() {
-    fun handleMessagePacket(message: Message) {
-        handler.handleReceivedMessage(getChatMessage(message), this)
+    init {
+        ServerReceiver<ServerReceiverContext>(SEND_MESSAGE, Cluster::class, { message, context, receiver ->
+            handleMessagePacket(message)
+            true
+        }).register()
     }
 
-    fun sendGroupsList(player: ServerPlayerEntity, groups: ChatGroups) {
-        val clusterGroups = groups.getAllGroups().map { group -> group.toCluster() }
-        NetworkManager.sendMessage(player,
-            Message(
-                CHAT_GROUPS,
-                ClusterListContent().apply { list =  clusterGroups}
-            )
-        )
+    fun handleMessagePacket(message: Message) {
+        handler.handleReceivedMessage(getChatMessage(message), this)
     }
 
     fun sendMessagePacket(player: ServerPlayerEntity, message: ChatMessage) {
@@ -32,5 +31,4 @@ class ServerChatNetworking(val handler: MessageHandler): ChatNetworking() {
             )
         )
     }
-
 }

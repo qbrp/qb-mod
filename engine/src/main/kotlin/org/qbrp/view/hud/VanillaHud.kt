@@ -6,7 +6,7 @@ import org.qbrp.system.utils.format.Format.formatMinecraft
 import kotlin.concurrent.fixedRateTimer
 
 class VanillaHud: ActionBarHud {
-    val actionBarStatuses = mutableMapOf<ServerPlayerEntity, Text>()
+    private val actionBarStatuses = mutableMapOf<ServerPlayerEntity, Text>()
 
     init {
         handleActionBarStatus()
@@ -20,6 +20,7 @@ class VanillaHud: ActionBarHud {
         player: ServerPlayerEntity,
         statusMessage: String
     ) {
+        if (statusMessage == "") sendActionBarMsg(player, "".formatMinecraft())
         actionBarStatuses[player] = statusMessage.formatMinecraft()
     }
 

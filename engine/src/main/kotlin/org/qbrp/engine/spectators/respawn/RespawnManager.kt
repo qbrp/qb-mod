@@ -1,13 +1,23 @@
 package org.qbrp.engine.spectators.respawn
 
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.util.ActionResult
 import net.minecraft.world.GameMode
 import org.qbrp.core.game.registry.CommandsRepository
+import org.qbrp.core.keybinds.ServerKeybindCallback
 import org.qbrp.view.View
 
 class RespawnManager {
     private val cachedGameModes = mutableMapOf<ServerPlayerEntity, GameMode>()
     private val notSpawnPlayers: MutableMap<String, ServerPlayerEntity> = mutableMapOf()
+
+    init {
+        val event = ServerKeybindCallback.getOrCreateEvent("spectators_spawn")
+        event.register { player ->
+            spawn(player)
+            ActionResult.SUCCESS
+        }
+    }
 
     private fun getGameMode(player: ServerPlayerEntity): GameMode {
         return cachedGameModes[player] ?: if (player.hasPermissionLevel(4)) GameMode.CREATIVE else GameMode.SURVIVAL

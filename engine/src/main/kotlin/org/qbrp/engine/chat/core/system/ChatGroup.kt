@@ -1,14 +1,17 @@
 package org.qbrp.engine.chat.core.system
 
+import PermissionManager.hasPermission
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.network.ServerPlayerEntity
-import org.qbrp.core.game.permissions.PermissionManager
-import org.qbrp.core.game.permissions.PermissionManager.hasPermission
+import org.qbrp.engine.chat.core.messages.ChatMessage
+import org.qbrp.engine.chat.core.messages.MessageComponent
 import org.qbrp.system.networking.messages.components.ClusterBuilder
 import org.qbrp.system.networking.messages.components.Cluster
+import org.qbrp.system.networking.messages.components.Component
 import org.qbrp.system.networking.messages.types.IntContent
 import org.qbrp.system.networking.messages.types.StringContent
 import org.qbrp.system.utils.world.getPlayersInRadius
+import kotlin.collections.set
 
 data class ChatGroup(
     val name: String,
@@ -16,22 +19,57 @@ data class ChatGroup(
     val prefix: String = "",
     val color: String = "",
     val radius: Int = 16,
-    val components: List<String> = listOf(),
+    val components: List<MessageComponent>? = listOf(),
     val format: String = "{playerName}: {text}",
     val cooldown: Int = 0
 ) {
-    private val cooldownMap = mutableMapOf<String, Int>()
-    private fun getWritePerm() = PermissionManager.getOrRegister("chat.group.$name", "write")
-    private fun getReadPerm() = PermissionManager.getOrRegister("chat.group.$name", "read")
+    @Transient
+    private var cooldownMap: MutableMap<String, Long>? = null
+    @Transient
+    var buildedComponents: List<Component>? = null
 
-    fun playerHasWritePermission(player: ServerPlayerEntity): Boolean = player.hasPermission(getWritePerm())
-    fun playerHasReadPermission(player: ServerPlayerEntity): Boolean = player.hasPermission(getReadPerm())
+
+    fun buildComponents() {
+        buildedComponents = components?.map { it.build() } ?: emptyList()
+    }
+
+    fun cooldownPlayer(player: ServerPlayerEntity) {
+        if (cooldownMap == null) { cooldownMap = HashMap() }
+        cooldownMap?.set(player.name.string, System.currentTimeMillis())
+    }
+
+    fun getDefaultComponents(): List<Component> {
+        return buildedComponents.also { println(it) } ?: emptyList()
+    }
+
+    fun getEstimatedCooldown(player: ServerPlayerEntity): Long = cooldownMap?.get(player.name.string) ?: 0L
+
+    fun cooldownPassedFor(player: ServerPlayerEntity): Boolean {
+        val currentTime = System.currentTimeMillis()
+        val lastCooldown = cooldownMap?.get(player.name.string) ?: 0L
+        return (currentTime - lastCooldown) >= cooldown * 100
+    }
+
+    fun playerCanWrite(player: ServerPlayerEntity): Boolean = playerHasWritePermission(player)
+
+    fun playerHasWritePermission(player: ServerPlayerEntity): Boolean = player.hasPermission("chat.group.$name.write")
+    fun playerHasReadPermission(player: ServerPlayerEntity): Boolean = player.hasPermission("chat.group.$name.read")
 
     fun getPlayersCanSee(source: PlayerEntity): List<PlayerEntity> {
         return source.world.players
             .getPlayersInRadius(source, radius.toDouble(), true, true)
             .filter { playerHasReadPermission(it as ServerPlayerEntity) }
     }
+
+    fun isInMessage(message: ChatMessage): Boolean {
+        val text = message.getText()
+
+        // Проверяем, что текст достаточно длинный, прежде чем вызывать substring
+        if (text.length < prefix.length) return false
+
+        return text.substring(0, prefix.length) == prefix
+    }
+
 
     fun getFormattedName() = "$color$simpleName"
 

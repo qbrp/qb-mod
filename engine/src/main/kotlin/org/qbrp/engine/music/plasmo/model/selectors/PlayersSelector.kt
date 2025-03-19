@@ -13,7 +13,10 @@ class PlayersSelector(
 
     override fun match(player: ServerPlayerEntity): Boolean {
         val server = ServerCore.server
-        val players = params.mapNotNull { server.playerManager.getPlayer(it) }
+        val players = params[0]
+            .trim()
+            .split(",")
+            .mapNotNull { server.playerManager.getPlayer(it) }
         return players.any { it == player }
     }
 }

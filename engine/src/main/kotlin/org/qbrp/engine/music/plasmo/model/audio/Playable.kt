@@ -1,9 +1,9 @@
 package org.qbrp.engine.music.plasmo.model.audio
 
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import net.minecraft.server.network.ServerPlayerEntity
-import org.qbrp.engine.music.plasmo.controller.view.View
+import org.qbrp.engine.music.plasmo.view.View
 import org.qbrp.engine.music.plasmo.model.audio.playback.PlayerSession
-import org.qbrp.engine.music.plasmo.model.audio.playback.Radio
 import org.qbrp.engine.music.plasmo.model.priority.Priority
 import org.qbrp.engine.music.plasmo.model.selectors.Selector
 import org.qbrp.engine.music.plasmo.playback.player.PlayerState
@@ -14,20 +14,23 @@ import su.plo.voice.api.server.player.VoiceServerPlayer
 import su.plo.voice.lavaplayer.libs.com.fasterxml.jackson.annotation.JsonIgnore
 import java.util.concurrent.ConcurrentHashMap
 
-abstract class Playable(val voiceServer: PlasmoVoiceServer) {
+abstract class Playable(
+    @JsonIgnore val voiceServer: PlasmoVoiceServer
+) {
     abstract var name: String
     abstract var selector: Selector
     abstract var priority: Priority
 
     var isManuallyDisabled: Boolean = false // Флаг для ручного выключения
 
+    @JsonIgnore
     private val sourceLine = voiceServer.sourceLineManager
         .getLineByName("music")
         .orElseThrow { IllegalStateException("Music source line not found") }
 
     @JsonIgnore
     private val playerSessions = ConcurrentHashMap<VoiceServerPlayer, PlayerSession>()
-    open lateinit var queue: Queue
+    @JsonManagedReference open lateinit var queue: Queue
 
     open fun loadQueue(queue: Queue) { this.queue = queue }
 
@@ -43,7 +46,15 @@ abstract class Playable(val voiceServer: PlasmoVoiceServer) {
         logger.log("Плейлист $name включен")
     }
 
-    fun doForSessions(block: (VoiceServerPlayer, PlayerSession) -> Unit) = playerSessions.forEach(block)
+    @JsonIgnore
+    private val playerSessionsLock = Any()
+    fun doForSessions(block: (VoiceServerPlayer, PlayerSession) -> Unit) {
+        synchronized(playerSessionsLock) {
+            playerSessions.forEach(block)
+        }
+    }
+
+
     fun getSession(player: VoiceServerPlayer): PlayerSession? = playerSessions[player]
     fun getSession(player: ServerPlayerEntity): PlayerSession? = playerSessions.values.find { it.source.player.instance.gameProfile.name == player.name.string }
     fun validateStaticState() {
