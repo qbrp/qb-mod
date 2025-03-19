@@ -11,6 +11,10 @@ open class ListContent<T>(val writer: (PacketByteBuf, T) -> Unit, val reader: (P
         return buf
     }
 
+    override fun setData(data: Any) {
+        list = data as List<T>
+    }
+
     override fun convert(buf: PacketByteBuf): BilateralContent {
         super.convert(buf);
         list = buf.readCollection({ size -> ArrayList<T>(size) }, reader)

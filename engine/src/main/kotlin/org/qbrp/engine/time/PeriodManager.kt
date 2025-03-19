@@ -2,7 +2,6 @@ package org.qbrp.engine.time
 
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
-import org.qbrp.engine.time.TimeModule.Time
 import org.qbrp.system.utils.log.Loggers
 import kotlin.math.round
 
@@ -11,7 +10,7 @@ class PeriodManager(
     private val notifications: TimeNotifications,
     private val config: ServerConfigData.Time
 ) {
-    val logger = Loggers.get("time")
+    private val logger = Loggers.get("time")
 
     private val periods: List<Period> = config.periods
     private var currentPeriodIndex = 0
@@ -19,6 +18,8 @@ class PeriodManager(
 
     val currentPeriod: Period?
         get() = periods.getOrNull(currentPeriodIndex)
+
+    private var enabled = false
 
     fun nextPeriod() {
         // Добавляем завершённый период в список выполненных
@@ -85,13 +86,13 @@ class PeriodManager(
         }
     }
 
-    var tickCounter = 0
+    private var tickCounter = 0
     private val tickStepDuration = 1200
 
     fun handleTick() {
         val period = currentPeriod ?: return
         if (period.duration - period.elapsedTimeMinutes <= 1 && currentPeriodIndex == periods.size - 1) {
-            Engine.timeModule.enabled = false
+            enabled = false
             setRpTime(config.rpTimeOffset)
             return
         }
@@ -102,7 +103,7 @@ class PeriodManager(
             }
             handleNotification()
             worldTimeManager.setTickTime(period.getTickTime())
-            logger.log("<<${period.name}>> РП: ${Time.minutesToTime(getRpTime())}. В минутах: ${getGameTime()}. В тиках: ${period.getTickTime()}")
+            logger.log("<<${period.name}>> РП: ${TimeUtils.minutesToTime(getRpTime())}. В минутах: ${getGameTime()}. В тиках: ${period.getTickTime()}")
             tickCounter = 0
         }
     }

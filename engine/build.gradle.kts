@@ -29,7 +29,6 @@ java {
 loom {
     splitEnvironmentSourceSets()
 
-
     mods {
         register("engine") {
             sourceSet("main")
@@ -44,38 +43,67 @@ repositories {
     maven("https://repo.plasmoverse.com/releases")
     maven("https://repo.plasmoverse.com/snapshots")
     maven("https://maven.enginehub.org/repo/")
+    maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+        name = "sonatype-oss-snapshots1"
+        mavenContent { snapshotsOnly() }
+    }
     maven {
         name = "IzzelAliz Maven"
         url = uri("https://maven.izzel.io/releases/")
     }
-    maven { url = uri("https://jitpack.io") }
+    maven {
+        url = uri("https://jitpack.io")
+    }
+    maven {
+        name = "Ladysnake Mods"
+        url = uri("https://maven.ladysnake.org/releases")
+    }
+
     maven("https://maven.nucleoid.xyz/") { name = "Nucleoid" }
 }
 
+val includeDependency by extra(
+    System.getenv("INCLUDE_DEPENDENCY")?.toBoolean() ?: false
+)
+
 dependencies {
-    // To change the versions see the gradle.properties file
+    // Основные зависимости
     implementation(kotlin("reflect"))
+    include(implementation("org.reflections:reflections:0.10.2")!!)
+    include(implementation("org.javassist:javassist:3.28.0-GA")!!)
     minecraft("com.mojang:minecraft:${project.property("minecraft_version")}")
     mappings("net.fabricmc:yarn:${project.property("yarn_mappings")}:v2")
     modImplementation("net.fabricmc:fabric-loader:${project.property("loader_version")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${project.property("kotlin_loader_version")}")
-    modImplementation(include("eu.pb4:placeholder-api:2.1.4+1.20.1")!!)
+    modImplementation("eu.pb4:placeholder-api:${project.property("placeholder_api_version")}")
+    if (includeDependency) {
+        modImplementation(include("net.kyori:adventure-platform-fabric:${project.property("adventure_version")}")!!)
+    }
+    include(implementation("net.kyori:adventure-text-serializer-gson:4.14.0")!!)
 
-    val modernui_version = "3.11.0.1"
-    implementation("icyllis.modernui:ModernUI-Core:3.11.0")
-    implementation("icyllis.modernui:ModernUI-Markdown:3.11.0")
-    modImplementation("icyllis.modernui:ModernUI-Fabric:1.20.1-${modernui_version}")
+    modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-base:${project.property("cca_version")}")
+    modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-<MODULE>:${project.property("cca_version")}")
 
-    implementation("su.plo.voice.api:server:2.1.2")
-    compileOnly("su.plo.voice.api:client:2.1.2")
-    implementation("su.plo:pv-addon-lavaplayer-lib:1.1.2")
-    implementation("org.commonmark:commonmark:0.24.0")
+    // ModernUI зависимости
+    implementation("icyllis.modernui:ModernUI-Core:${project.property("modernui_core_version")}")
+    implementation("icyllis.modernui:ModernUI-Markdown:${project.property("modernui_markdown_version")}")
+    modImplementation("icyllis.modernui:ModernUI-Fabric:1.20.1-${project.property("modernui_version")}")
 
+    // PlasmoVoice API и дополнительные библиотеки
+    implementation("su.plo.voice.api:server:${project.property("voice_api_version")}")
+    compileOnly("su.plo.voice.api:client:${project.property("voice_api_version")}")
+    implementation("su.plo:pv-addon-lavaplayer-lib:${project.property("pv_addon_lavaplayer_lib_version")}")
+    implementation("org.commonmark:commonmark:${project.property("commonmark_version")}")
+
+    // HTTP-сервер ресурсов
     include(implementation("com.squareup.okhttp3:okhttp:${project.property("okhttp_version")}")!!)
-    include(implementation(group= "com.squareup.okio", name= "okio-jvm", version= "3.2.0"))
+    include(implementation("com.squareup.okio:okio-jvm:${project.property("okio_version")}")!!)
     include(implementation("com.github.codeborne.klite:klite-server:${project.property("klite_version")}")!!)
     include(implementation("com.github.codeborne.klite:klite-core:${project.property("klite_version")}")!!)
-    include(implementation("su.plo.slib:api-server:1.0.2-SNAPSHOT")!!)
+    include(implementation("su.plo.slib:api-server:${project.property("slib_api_server_version")}")!!)
+
+    include(implementation(project.dependencies.platform("io.insert-koin:koin-bom:${project.property("koin_version")}"))!!)
+    include(implementation("io.insert-koin:koin-core")!!)
 
     include(implementation("org.mongodb:mongodb-driver-sync:5.2.1")!!)
     include(implementation("org.mongodb:mongodb-driver-core:5.2.1")!!)
@@ -96,8 +124,15 @@ dependencies {
     include(implementation("de.undercouch:bson4jackson:2.15.1")!!)
     include(implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")!!)
     include(implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")!!)
+    include(implementation("net.kyori:adventure-text-minimessage:4.14.0")!!)
+
+    compileOnly("net.luckperms:api:5.4")
 
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_version")}")
+}
+
+tasks.runClient {args =
+    (args?.plus(arrayOf("--gameDir", "client")) ?: arrayOf("--gameDir", "client")) as List<String?>
 }
 
 tasks.shadowJar {

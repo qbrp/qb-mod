@@ -1,15 +1,18 @@
 package org.qbrp.engine.music.plasmo.model.audio.shadow
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import org.qbrp.engine.Engine
-import org.qbrp.engine.music.plasmo.controller.view.PlaylistView
-import org.qbrp.engine.music.plasmo.controller.view.View
+import org.koin.core.component.KoinComponent
+import org.qbrp.engine.music.plasmo.view.PlaylistView
+import org.qbrp.engine.music.plasmo.view.View
 import org.qbrp.engine.music.plasmo.model.audio.Playable
 import org.qbrp.engine.music.plasmo.model.audio.PlayableDTO
 import org.qbrp.engine.music.plasmo.model.audio.Queue
 import org.qbrp.engine.music.plasmo.model.priority.Priority
 import org.qbrp.engine.music.plasmo.model.selectors.Selector
 import su.plo.voice.api.server.PlasmoVoiceServer
+import org.koin.core.component.get
+import org.koin.core.parameter.parametersOf
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Shadow(
@@ -18,8 +21,8 @@ class Shadow(
     override var selector: Selector,
     override var priority: Priority,
     voiceServer: PlasmoVoiceServer
-) : Playable(voiceServer) {
-    override var queue: Queue = ShadowQueue(originalName)
+) : Playable(voiceServer), KoinComponent {
+    @JsonIgnore override var queue: Queue = get(parameters = { parametersOf(originalName) })
 
     override fun getView(): View {
         return PlaylistView(this)

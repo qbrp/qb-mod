@@ -8,4 +8,8 @@ class ChatMessageTagsCluster(components: List<Component> = emptyList()): Cluster
     override fun getBuilder(): ClusterBuilder {
         return ChatMessageTagsBuilder().apply { components(components!!) }
     }
+
+    override fun setData(data: Any) {
+        throw UnsupportedOperationException()
+    }
 }

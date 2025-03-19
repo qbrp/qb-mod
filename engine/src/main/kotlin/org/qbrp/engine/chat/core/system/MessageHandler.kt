@@ -1,6 +1,7 @@
 package org.qbrp.engine.chat.core.system
 
 import net.minecraft.server.MinecraftServer
+import net.minecraft.util.ActionResult
 import org.qbrp.engine.chat.core.events.MessageReceivedEvent
 import org.qbrp.engine.chat.core.events.MessageSenderPipeline
 import org.qbrp.engine.chat.core.messages.ChatMessage
@@ -10,8 +11,9 @@ import org.qbrp.engine.chat.core.messages.Sender
 class MessageHandler(val server: MinecraftServer) {
 
     fun handleReceivedMessage(message: ChatMessage, responseNetworking: ServerChatNetworking) {
-        MessageReceivedEvent.Companion.EVENT.invoker().onMessageReceived(message)
-        getSender(message, responseNetworking).send(message)
+        if (MessageReceivedEvent.Companion.EVENT.invoker().onMessageReceived(message) != ActionResult.FAIL) {
+            getSender(message, responseNetworking).send(message)
+        }
     }
 
     fun getSender(message: ChatMessage, responseNetworking: ServerChatNetworking): Sender {

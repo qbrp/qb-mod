@@ -1,33 +1,45 @@
 package org.qbrp.core.resources
 
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import org.qbrp.core.game.Game
 import org.qbrp.core.resources.data.StringData
+import org.qbrp.core.resources.data.config.ConfigUpdateCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
-import org.qbrp.core.resources.data.pack.ItemConfigData
 import org.qbrp.core.resources.data.pack.ModelData
-import org.qbrp.system.utils.keys.Key
 import org.qbrp.core.resources.parsing.ParserBuilder
 import org.qbrp.core.resources.parsing.filters.ExtensionFilter
 import org.qbrp.core.resources.structure.Branch
 import org.qbrp.core.resources.structure.PackStructure
 import org.qbrp.core.resources.structure.Structure
+import org.qbrp.engine.chat.addons.records.Record
 import java.io.File
-import kotlin.mod
+import java.time.Clock
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class ServerStructure: Structure(File("qbrp")) {
-    var config = open("config.json", ServerConfigData::class.java).data as ServerConfigData
+    var config = openConfig()
 
     val records = addBranch("records")
-    val music = addBranch("music")
     val items = addStructure("item")
     val blocks = addStructure("block")
     val resources = Resources(this, config)
 
-    val youtubeToken = music.open("token.youtube-token", StringData::class.java)
+    val youtubeToken = open("token.youtube-token", StringData::class.java)
 
-    private fun openConfig() = open("config.json", ServerConfigData::class.java).data as ServerConfigData
-    fun reloadConfig() { config = openConfig()}
+    private fun openConfig() = (open(
+        "config.json",
+        ServerConfigData::class.java,
+        GsonBuilder()
+            .setPrettyPrinting()
+            .disableHtmlEscaping()
+            .create(),
+    ).data as ServerConfigData)
+        .also { ConfigUpdateCallback.EVENT.invoker().onConfigUpdated(it) }
+    fun reloadConfig() {
+        config = openConfig()
+    }
 
     class Resources(parentBranch: Branch, val config: ServerConfigData): Structure(parentBranch.resolve("resources") ) {
 
@@ -47,7 +59,6 @@ class ServerStructure: Structure(File("qbrp")) {
             ParserBuilder()
                 .setClass(ModelData::class.java)
                 .addFilter(ExtensionFilter(setOf("json")))
-                .setNaming { file -> Key(file.path) }
                 .build()
                     .parse(itemResource.path.toFile())
                     .forEach { model -> pack.content.addModelBundle(

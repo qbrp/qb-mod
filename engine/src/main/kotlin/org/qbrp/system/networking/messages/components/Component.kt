@@ -5,11 +5,23 @@ import org.qbrp.system.networking.messages.types.SendContent
 import org.qbrp.system.networking.messages.types.Signal
 import java.util.UUID
 
-data class Component(val name: String = "", val content: SendContent = Signal(), val meta: Map<String, String> = emptyMap()): SendContent {
+open class Component(val name: String = "", var content: SendContent = Signal(), val meta: Map<String, String> = emptyMap()): SendContent {
     override var messageId: String = UUID.randomUUID().toString()
+
+    override fun toString(): String {
+        return "Component(name='$name', content=$content, meta=$meta)"
+    }
 
     companion object {
         private val factory = ComponentTypeFactory()
+    }
+
+    fun copy(): Component {
+        return Component(
+            name = this.name,
+            content = this.content, // Глубокая копия данных
+            meta = this.meta.toMap() // Глубокая копия метаданных
+        )
     }
 
     override fun write(buf: PacketByteBuf): PacketByteBuf {
@@ -25,5 +37,9 @@ data class Component(val name: String = "", val content: SendContent = Signal(),
         }
         content.write(buf)
         return buf
+    }
+
+    override fun setData(data: Any) {
+        content = data as SendContent
     }
 }

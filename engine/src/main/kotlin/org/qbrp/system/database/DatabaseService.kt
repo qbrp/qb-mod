@@ -11,6 +11,7 @@ import com.mongodb.MongoException
 import org.bson.Document
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.UpdateOptions
+import org.bson.conversions.Bson
 import org.litote.kmongo.KMongo
 import org.qbrp.system.utils.log.Loggers
 import kotlin.text.toList
@@ -124,16 +125,21 @@ class DatabaseService(private val url: String, private val dbName: String) {
         false
     }
 
-    fun fetchAll(document: String, query: Map<String, Any>, clazz: Class<*>): List<*> {
+    fun fetchAll(
+        document: String,
+        query: Map<String, Any>,
+        clazz: Class<*>,
+        customFilters: List<Bson> = emptyList()
+    ): List<*> {
         return try {
-            logger.log("Получение всех документов из коллекции $document с фильтром $query")
+            logger.log("Получение всех документов из коллекции $document с фильтром $query и дополнительными фильтрами $customFilters")
             val collection = db?.getCollection(document)
-            val documents = if (query.isEmpty()) {
+            val queryFilters = query.map { Filters.eq(it.key, it.value) }
+            val allFilters = queryFilters + customFilters
+            val documents = if (allFilters.isEmpty()) {
                 collection?.find()?.toList()  // Запрос без фильтров
             } else {
-                collection?.find(
-                    Filters.and(query.map { Filters.eq(it.key, it.value) })
-                )?.toList()
+                collection?.find(Filters.and(allFilters))?.toList()
             }
             documents?.map { document ->
                 objectMapper.readValue(document.toJson(), clazz)

@@ -52,7 +52,7 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : S
             @Arg("string", true) val name: String,
             @Arg("string") @Provider(SelectorsProvider::class) val selector: String,
             @Arg("string") val selectorArgs: String,
-            @Arg("string") @Provider(PrioritySuggestionsProvider::class) val priority: String
+            @Arg("string") val priority: String
         ) {
             @Execute
             fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
@@ -78,7 +78,7 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : S
             @Arg("string") val originalName: String,
             @Arg("string") @Provider(SelectorsProvider::class) val selector: String,
             @Arg("string") val selectorArgs: String,
-            @Arg("string") @Provider(PrioritySuggestionsProvider::class) val priority: String
+            @Arg("string") val priority: String
         ) {
             @Execute
             fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
@@ -307,7 +307,7 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : S
             }
 
             @SubCommand("priority")
-            class SetPriority(@Arg("string", true) val playlistName: String, @Arg("string") @Provider(PrioritySuggestionsProvider::class)  val priority: String) {
+            class SetPriority(@Arg("string", true) val playlistName: String, @Arg("string") val priority: String) {
                 @Execute
                 fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
                     try {

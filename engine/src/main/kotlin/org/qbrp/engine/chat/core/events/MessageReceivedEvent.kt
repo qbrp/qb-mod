@@ -17,7 +17,6 @@ fun interface MessageReceivedEvent {
                 MessageReceivedEvent { message ->
                     for (listener in listeners) {
                         val result = listener.onMessageReceived(message)
-                        println(message)
                         if (result != ActionResult.PASS) {
                             return@MessageReceivedEvent result
                         }

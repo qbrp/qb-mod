@@ -1,11 +1,11 @@
 package org.qbrp.core.game.commands.map
 
+import PermissionManager.hasPermission
 import com.mojang.brigadier.context.CommandContext
 import net.minecraft.server.command.ServerCommandSource
 import org.qbrp.core.game.commands.Deps
 import org.qbrp.core.game.commands.TypeValidator
 import org.qbrp.core.game.commands.annotations.Arg
-import org.qbrp.core.game.permissions.PermissionManager.hasPermission
 import org.qbrp.system.utils.format.Format.formatMinecraft
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
@@ -46,6 +46,7 @@ data class Executor(val method: Method,
     }
 
     fun checkPermission(context: CommandContext<ServerCommandSource>): Boolean {
+        if (context.source.player?.hasPermissionLevel(4) == true) return true
         return context.source.player?.hasPermission(permission) != false && context.source.player?.hasPermissionLevel(operatorLevel) == true
     }
 }

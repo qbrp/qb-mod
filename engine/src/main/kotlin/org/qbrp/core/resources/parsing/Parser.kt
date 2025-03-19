@@ -1,9 +1,9 @@
 package org.qbrp.core.resources.parsing
 
 import com.google.gson.Gson
-import org.qbrp.system.utils.keys.Key
 import org.qbrp.core.resources.parsing.filters.FileFilter
 import org.qbrp.core.resources.structure.Branch
+import org.qbrp.core.resources.units.ContentUnit
 import org.qbrp.core.resources.units.Unit
 import java.io.File
 
@@ -12,8 +12,12 @@ class Parser(
     private val filters: List<FileFilter>,
     private val maxDepth: Int,
     private val clazz: Class<*>,
-    private val naming: (File) -> Key // Лямбда для генерации UnitKey на основе файла
+    private val onOpen: (File, ContentUnit, Branch) -> kotlin.Unit // Лямбда для генерации UnitKey на основе файла
 ) {
+    fun parse(branch: Branch): MutableList<Unit> {
+        return parse(branch.path.toFile())
+    }
+
     fun parse(path: File): MutableList<Unit> {
         val rootBranch = Branch(path.toPath())
         parseDirectory(path, rootBranch, 0)
@@ -33,13 +37,15 @@ class Parser(
         for (file in children) {
             when {
                 file.isDirectory -> {
+                    println("Открытие файла ${file.name}")
                     val childBranch = parentBranch.addBranch(file.name)
                     parseDirectory(file, childBranch, currentDepth + 1)
                 }
                 file.isFile -> {
-                    val unitKey = naming(file)  // Генерируем UnitKey с помощью лямбды
                     val unit = parentBranch.open(file.name, clazz, gson)
                     if (!parentBranch.children.contains(unit)) {
+                        println("Открытие файла ${file.name}")
+                        onOpen(file, unit, parentBranch)
                         parentBranch.add(unit)
                     }
                 }

@@ -14,6 +14,7 @@ object TypeValidator {
             "word" -> StringArgumentType.word()
             "integer" -> IntegerArgumentType.integer()
             "int" -> IntegerArgumentType.integer()
+            "greedystring" -> StringArgumentType.greedyString()
             "boolean" -> BoolArgumentType.bool()
             else -> throw IllegalArgumentException("Unsupported argument type: $type")
         }
@@ -23,6 +24,7 @@ object TypeValidator {
     fun <T> getArgumentValue(type: String, context: CommandContext<ServerCommandSource>, name: String): T {
         return when (type.lowercase()) {
             "string" -> StringArgumentType.getString(context, name) as T
+            "greedystring" -> StringArgumentType.getString(context, name) as T
             "integer" -> IntegerArgumentType.getInteger(context, name) as T
             "int" -> IntegerArgumentType.getInteger(context, name) as T
             "boolean" -> BoolArgumentType.getBool(context, name) as T

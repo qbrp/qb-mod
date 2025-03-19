@@ -1,73 +1,57 @@
 package org.qbrp.engine.chat
 
-import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
+import org.koin.core.component.KoinScopeComponent
+import org.koin.core.component.createScope
+import org.koin.core.component.get
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
+import org.qbrp.core.ServerCore
+import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.data.config.ServerConfigData
-import org.qbrp.core.visual.VisualDataStorage
-import org.qbrp.engine.chat.addons.Broadcaster
-import org.qbrp.engine.chat.addons.Groups
-import org.qbrp.engine.chat.addons.JoinLeaveMessages
-import org.qbrp.engine.chat.addons.Mentions
-import org.qbrp.engine.chat.addons.Placeholders
-import org.qbrp.engine.chat.addons.Spectators
-import org.qbrp.engine.chat.addons.Spy
-import org.qbrp.engine.chat.addons.Volume
-import org.qbrp.engine.chat.addons.tools.MessageTextEvents
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.chat.core.messages.MessageSender
-import org.qbrp.engine.chat.core.system.ServerChatNetworking
 import org.qbrp.engine.chat.core.system.MessageHandler
+import org.qbrp.engine.chat.core.system.ServerChatNetworking
+import org.qbrp.system.modules.Autoload
+import org.qbrp.system.modules.QbModule
+import org.qbrp.system.modules.ModuleAPI
 import org.qbrp.system.networking.messages.Message
 import org.qbrp.system.utils.log.Loggers
 
-class ChatModule(val chatConfig: ServerConfigData.Chat, val server: MinecraftServer) {
-    companion object { const val MESSAGE_AUTHOR_SYSTEM = "system" }
+@Autoload
+class ChatModule() : QbModule("chat"), ChatAPI {
+    companion object {
+        const val SYSTEM_MESSAGE_AUTHOR = "system"
+    }
+
     private val logger = Loggers.get("chatModule")
-    private val handler = MessageHandler(server)
-    private val networking = ServerChatNetworking(handler)
 
-    init {
-        logger.success("ChatModule загружен")
+    override fun getAPI(): ChatAPI = this
+
+    override fun getName(): String = "chat"
+
+    override fun getKoinModule() = module {
+        single { ServerResources.getConfig().chat }
+        single { MessageHandler(get()) }
+        single { ServerChatNetworking(get()) }
+        single<ChatModule> { this@ChatModule }
     }
 
-    val API = Api()
-    private val addons = Addons()
+    override fun createSender() = MessageSender(get<ServerChatNetworking>())
+    override fun loadAddon(addon: ChatAddon) { }
 
-    inner class Api {
-        fun playerStartTyping(player: ServerPlayerEntity) {
-            VisualDataStorage.getPlayer(player.name.string)?.apply {
-                isWriting = true
-                broadcastHardUpdate()
-            }
-        }
-        fun playerEndTyping(player: ServerPlayerEntity) {
-            VisualDataStorage.getPlayer(player.name.string)?.apply {
-                isWriting = false
-                broadcastHardUpdate()
-            }
-        }
+    override fun sendMessage(player: ServerPlayerEntity, message: ChatMessage) =
+        createSender()
+            .apply { addTarget(player) }
+            .send(message)
 
-        fun sendDataToJoinedPlayer(player: ServerPlayerEntity) {
-            networking.sendGroupsList(player, addons.groups.groupsList)
-        }
-        fun getNetworking() = networking
-        fun createSender() = MessageSender(networking, mutableListOf())
-        fun handleMessagePacket(message: Message) { networking.handleMessagePacket(message) }
-        fun handleMessage(message: ChatMessage) { handler.handleReceivedMessage(message, networking) }
-        fun getAddons() = addons
+    override fun sendMessage(player: ServerPlayerEntity, message: String) =
+        createSender()
+            .apply { addTarget(player) }
+            .send(ChatMessage(SYSTEM_MESSAGE_AUTHOR, message))
 
-        fun getBroadcaster() = addons.broadcaster
-    }
+    override fun handleMessage(message: ChatMessage) = get<MessageHandler>().handleReceivedMessage(message, get())
 
-    inner class Addons() {
-        private val volume = Volume()
-        val groups = Groups(server, chatConfig)
-        private val mentions = Mentions(server)
-        private val spectators = Spectators(server)
-        private val spy = Spy(server, networking)
-        val broadcaster = Broadcaster(groups, server)
-        val joinLeaveMessages = JoinLeaveMessages(chatConfig, API)
-        private val placeholders = Placeholders()
-        private val messageText = MessageTextEvents()
-    }
+    fun handleMessagePacket(message: Message) = get<ServerChatNetworking>().handleMessagePacket(message)
 }

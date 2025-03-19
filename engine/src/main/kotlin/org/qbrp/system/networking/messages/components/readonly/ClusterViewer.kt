@@ -4,7 +4,7 @@ import org.qbrp.system.networking.messages.components.Component
 import org.qbrp.system.networking.messages.types.ReceiveContent
 import org.qbrp.system.networking.messages.types.StringContent
 
-class ClusterViewer(private val components: List<Component> = listOf()) {
+open class ClusterViewer(private val components: List<Component> = listOf()) {
 
     fun isComponentExists(name: String): Boolean {
         return components.stream().anyMatch { component -> component.name == name }
@@ -20,6 +20,23 @@ class ClusterViewer(private val components: List<Component> = listOf()) {
     fun <T> getComponentData(name: String): T? {
         return components.find { it.name == name }
         ?.let { (it.content as? ReceiveContent)?.getData() as? T }
+    }
+
+    fun <T> getComponentsData(name: String): List<T?>? {
+        return components.filter { it.name == name }
+            .map { (it.content as? ReceiveContent)?.getData() as? T }
+    }
+
+    fun getIntComponentsData(name: String): List<Int?> {
+        return components.filter { it.name == name }
+            .map {
+                val value = (it.content as? ReceiveContent)?.getData()
+                when (value) {
+                    is Int -> value
+                    is Double -> value.toInt() // Безопасное приведение Double в Int
+                    else -> null // Если тип неизвестен, возвращаем null
+                }
+            }
     }
 
     fun getValueComponents(name: String): Map<String, String> =

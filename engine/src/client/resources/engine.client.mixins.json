@@ -5,8 +5,8 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "chat.ChatHudMixin",
-    "chat.ChatInputSuggestorMixin",
-    "chat.ChatScreenMixin"
+    "chat.ChatScreenMixin",
+    "chat.ClientPlayNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

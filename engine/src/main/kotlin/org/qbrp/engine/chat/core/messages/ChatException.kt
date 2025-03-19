@@ -1,19 +1,23 @@
 package org.qbrp.engine.chat.core.messages
 
 import net.minecraft.util.ActionResult
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.qbrp.engine.Engine
-import org.qbrp.engine.chat.ChatModule.Companion.MESSAGE_AUTHOR_SYSTEM
+import org.qbrp.engine.chat.ChatAPI
+import org.qbrp.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
 
-class ChatException(val errorSource: ChatMessage, val reason: String) {
+class ChatException(val errorSource: ChatMessage, val reason: String): KoinComponent {
+    val chatAPI = Engine.getAPI<ChatAPI>()
+
     fun send(
-        sender: MessageSender = Engine.chatModule.API.createSender()
+        sender: MessageSender = chatAPI!!.createSender()
         .apply { addTarget(errorSource.getAuthorEntity() ?: return@apply) }
     ): ActionResult {
         sender.send(
             ChatMessage(
-                MESSAGE_AUTHOR_SYSTEM,
-                "&c$reason",
-                ChatMessageTagsBuilder())
+                SYSTEM_MESSAGE_AUTHOR,
+                "&c$reason")
         )
         return ActionResult.PASS
     }

@@ -5,4 +5,5 @@ import net.minecraft.network.PacketByteBuf
 
 interface SendContent: Content {
     fun write(buf: PacketByteBuf = PacketByteBufs.create()): PacketByteBuf
+    fun setData(data: Any)
 }

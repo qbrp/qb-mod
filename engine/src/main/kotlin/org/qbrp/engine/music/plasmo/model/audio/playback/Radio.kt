@@ -8,6 +8,7 @@ import org.qbrp.engine.music.plasmo.model.audio.effects.FadeOutFilter
 import org.qbrp.engine.music.plasmo.playback.MusicFrameProvider
 import org.qbrp.engine.music.plasmo.playback.lavaplayer.AudioManager
 import org.qbrp.system.utils.log.Loggers
+import su.plo.voice.api.server.PlasmoVoiceServer
 import su.plo.voice.api.server.audio.source.AudioSender
 import su.plo.voice.api.server.audio.source.ServerDirectSource
 import su.plo.voice.lavaplayer.libs.com.sedmelluq.discord.lavaplayer.filter.FloatPcmAudioFilter
@@ -15,6 +16,7 @@ import su.plo.voice.lavaplayer.libs.com.sedmelluq.discord.lavaplayer.track.Track
 import su.plo.voice.lavaplayer.libs.com.sedmelluq.discord.lavaplayer.track.TrackMarkerHandler
 
 class Radio(
+    val voiceServer: PlasmoVoiceServer,
     val source: ServerDirectSource,
     val track: Track,
     val onTrackFinished: () -> Unit = {}) {
@@ -67,7 +69,7 @@ class Radio(
     }
 
 
-    val frameProvider = MusicFrameProvider(audioPlayer, Engine.musicManagerModule.getVoiceServer().defaultEncryption)
+    val frameProvider = MusicFrameProvider(audioPlayer, voiceServer.defaultEncryption)
     val bufferedSender: AudioSender = source.createAudioSender(frameProvider).apply { start() }
 
     fun repeat() {

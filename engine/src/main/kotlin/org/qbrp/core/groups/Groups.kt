@@ -1,6 +1,5 @@
 package org.qbrp.core.groups
 
-import net.fabricmc.fabric.api.registry.CommandRegistry
 import org.qbrp.core.game.commands.templates.ListProvider
 import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.resources.ServerResources
@@ -19,7 +18,7 @@ object Groups {
         CommandsRepository.add(GroupsCommand())
     }
 
-    private val logger = Loggers.get("groups")
+    private val logger = Loggers.get("chatGroups")
     fun getGroups() = groups
     fun getGroup(name: String) = groups.find { it.name == name }
 

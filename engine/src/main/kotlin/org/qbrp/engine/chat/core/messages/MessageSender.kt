@@ -1,12 +1,16 @@
 package org.qbrp.engine.chat.core.messages
 
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.util.ActionResult
 import org.qbrp.core.resources.units.Unit
+import org.qbrp.engine.chat.core.events.MessageHandledEvent
 import org.qbrp.engine.chat.core.events.MessageSendEvent
 import org.qbrp.engine.chat.core.system.ServerChatNetworking
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.text.toMutableList
 
-class MessageSender(private val networking: ServerChatNetworking, private val targets: MutableList<ServerPlayerEntity>) : Sender {
+open class MessageSender(private val networking: ServerChatNetworking, private val targets: CopyOnWriteArrayList<ServerPlayerEntity> = CopyOnWriteArrayList<ServerPlayerEntity>()) : Sender {
+    constructor(networking: ServerChatNetworking, list: List<ServerPlayerEntity>) : this (networking, CopyOnWriteArrayList(list))
     fun addTarget(player: ServerPlayerEntity) {
         targets.removeIf { it.uuid == player.uuid }
         targets.add(player)
@@ -30,15 +34,16 @@ class MessageSender(private val networking: ServerChatNetworking, private val ta
     }
 
     override fun send(message: ChatMessage) {
-        targets.forEach {
-            MessageSendEvent.EVENT.invoker().onMessageSend(this, message, it, networking)
-            println("Отправление сообщения: $message")
+        val receivers = targets.filter {
+            MessageSendEvent.EVENT.invoker()
+                .onMessageSend(this, message.copy(), it, networking) == ActionResult.SUCCESS
         }
+        MessageHandledEvent.EVENT.invoker().onMessageSend(message, receivers)
     }
 
     fun filterSenders(predicate: (ServerPlayerEntity) -> Boolean): MessageSender {
         val filteredTargets = targets.filter(predicate).toMutableList()
-        return MessageSender(networking, filteredTargets)
+        return MessageSender(networking, filteredTargets as CopyOnWriteArrayList<ServerPlayerEntity>)
     }
 
     fun forEachSender(action: (ServerPlayerEntity) -> kotlin.Unit): MessageSender {

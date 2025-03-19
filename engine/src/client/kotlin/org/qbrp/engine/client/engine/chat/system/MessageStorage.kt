@@ -1,53 +1,81 @@
 package org.qbrp.engine.client.engine.chat.system
 
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.hud.ChatHudLine
-import net.minecraft.client.util.ChatMessages
-import org.qbrp.engine.chat.messages.ChatMessage
-import org.qbrp.engine.chat.messages.ChatMessageTagsBuilder
-import org.qbrp.engine.chat.messages.ChatMessageTagsCluster
-import org.qbrp.engine.client.engine.chat.system.events.ChatFormatEvent
-import org.qbrp.system.networking.messages.components.Cluster
-import org.qbrp.system.utils.format.Format.formatMinecraft
+import org.qbrp.engine.chat.addons.tools.MessageTextTools
+import org.qbrp.engine.chat.core.messages.ChatMessage
+import org.qbrp.engine.client.core.resources.ClientResources
+import org.qbrp.engine.client.core.resources.data.ChatData.MessageDTO
+import org.qbrp.engine.client.engine.chat.system.events.MessageAddedEvent
+import org.qbrp.system.utils.format.Format.asMiniMessage
+import org.qbrp.system.utils.log.Loggers
+import java.util.concurrent.CopyOnWriteArrayList
 
 class MessageStorage {
-    companion object MessageProvider {
-        // Здесь вся логика, которая отвечает за отображение сообщений в HUD-е. Основной метод - calculateComputedMessages
-        private val computedMessages: MutableList<ChatHudLine.Visible> = mutableListOf()
-        private val messageHistory: MutableList<String> = mutableListOf()
+    private val messages: CopyOnWriteArrayList<ChatMessage> = CopyOnWriteArrayList()
+    val logger = Loggers.get("chat", "receiving")
+    val messageHistory: MutableList<String> = mutableListOf()
+    var provider: Provider = LinearMessageProvider()
 
-        fun buildChatHudLines(content: String): List<ChatHudLine.Visible> {
-            val text = content.formatMinecraft()
-            val lines = ChatMessages.breakRenderedChatMessageLines(text, 700, MinecraftClient.getInstance().textRenderer);
+    fun getMessages(from: Int = 0, to: Int = 200): List<ChatMessage> {
+        if (messages.isEmpty()) return emptyList()
+        val size = messages.size
+        val safeTo = (size - from).coerceIn(0, size)
+        val safeFrom = (size - to).coerceIn(0, safeTo)
 
-            return lines.mapIndexed { index, orderedText ->
-                ChatHudLine.Visible(
-                    (MinecraftClient.getInstance().inGameHud?.ticks ?: 0).toInt(),
-                    orderedText,
-                    null,
-                    index == lines.lastIndex
-                )
-            }.reversed()
-        }
+        return messages.subList(safeFrom, safeTo)
     }
-    val messages: MutableList<ChatMessage> = emptyList<ChatMessage>().toMutableList()
 
-    fun addMessage(messageString: String, author: String = "Debug", components: ChatMessageTagsBuilder = ChatMessageTagsBuilder()) {
-        addMessage(ChatMessage(author, messageString, components))
+    fun getSize(): Int = messages.size
+
+    init {
+        ClientResources.root.createChatLogSession()
     }
+
+    fun clear(filter: (ChatMessage) -> Boolean = { true }) {
+        ClientResources.root.chatLogs.save()
+        messages.removeIf(filter)
+        provider.clear()
+        addMessage("&aЧат очищен.")
+    }
+
+    fun addMessage(messageString: String, author: String = "Debug") {
+        addMessage(ChatMessage(author, messageString))
+    }
+
+    private val messageLock = Any()
 
     fun addMessage(message: ChatMessage) {
-        ChatFormatEvent.EVENT.invoker().handleMessage(message)
-        messages.add(message)
-        computedMessages.addAll(0,buildChatHudLines(message.getRawText()))
+        synchronized(messageLock) {
+            val client = MinecraftClient.getInstance()
+            messages.add(message)
+            ClientResources.root.addChatMessageToStorage(getMessageDTO(message))
+            logger.log(
+                "<<${message.authorName}>> --> ${message.getText()}" +
+                        message.getTags().toList().joinToString("\n- ") { it.toString() }
+            )
+            MessageAddedEvent.EVENT.invoker().invokeEvent(message, this)
+            provider.onMessageAdded(message, this)
+            if (message.handleVanilla() && message.authorName == client.player?.name?.string) {
+                client.player?.sendMessage(MessageTextTools.getTextContent(message).asMiniMessage())
+            }
+            if (getSize() > 300) {
+                messages.subList(0, messages.size - 5).clear()
+            }
+        }
     }
 
-    fun calculateComputedMessages(): List<ChatHudLine.Visible> {
-        return computedMessages
+    fun editMessage(modifier: (Int, ChatMessage) -> ChatMessage?) {
+        for (i in messages.indices) {
+            val oldMessage = messages[i]
+            val newMessage = modifier(i, oldMessage)
+            if (newMessage != null) {
+                messages[i] = newMessage
+                provider.onMessageEdited(newMessage.uuid, newMessage, this)
+            }
+        }
     }
 
-    fun provideMessageHistory(): List<String> {
-        return messageHistory
+    fun getMessageDTO(message: ChatMessage): MessageDTO {
+        return MessageDTO(message.getText(), message.authorName, message.uuid)
     }
-
 }

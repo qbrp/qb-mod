@@ -14,8 +14,8 @@ import org.qbrp.core.game.commands.annotations.Execute
 import org.qbrp.core.game.commands.annotations.Provider
 import org.qbrp.core.game.commands.annotations.SubCommand
 import org.qbrp.engine.music.plasmo.MusicStorage
-import org.qbrp.engine.music.plasmo.controller.view.LinkClickableButton
-import org.qbrp.engine.music.plasmo.controller.view.MusicViewCommand
+import org.qbrp.engine.music.plasmo.view.LinkClickableButton
+import org.qbrp.engine.music.plasmo.view.MusicViewCommand
 import org.qbrp.engine.music.plasmo.model.audio.TracksSuggestionProvider
 import org.qbrp.engine.music.plasmo.playback.lavaplayer.AudioManager
 import org.qbrp.system.utils.format.Format.formatMinecraft

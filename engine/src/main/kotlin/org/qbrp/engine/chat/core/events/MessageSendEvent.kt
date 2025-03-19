@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
+import org.qbrp.engine.chat.addons.tools.MessageTextEvents
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.chat.core.messages.MessageSender
 import org.qbrp.engine.chat.core.messages.Sender
@@ -21,7 +22,8 @@ fun interface MessageSendEvent {
                 MessageSendEvent { sender, message, receiver, networking ->
                     for (listener in listeners) {
                         val result = listener.onMessageSend(sender, message, receiver, networking)
-                        println("Обработка отправки для ${receiver.name.string}: $message")
+                        //println("Обработка отправки для ${receiver.name.string}: $message")
+                        println("   Обработка (${receiver.name.string} <- ${message.getText()})")
                         if (result == ActionResult.FAIL) {
                             return@MessageSendEvent ActionResult.FAIL
                         }
@@ -30,7 +32,9 @@ fun interface MessageSendEvent {
                         }
                     }
                     // Если все слушатели вернули PASS, отправляем сообщение
+                    MessageTextEvents.pasteText(message)
                     networking.sendMessagePacket(receiver, message)
+                    println("${receiver.name.string} <- ${message.getText()}")
                     ActionResult.SUCCESS
                 }
             }

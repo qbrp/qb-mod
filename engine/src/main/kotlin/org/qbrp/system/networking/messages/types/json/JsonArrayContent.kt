@@ -20,6 +20,10 @@ class JsonArrayContent : BilateralContent() {
         return buf.writeString(array.toString())
     }
 
+    override fun setData(data: Any) {
+        array = data as JsonArray
+    }
+
     override fun convert(buf: PacketByteBuf): JsonArrayContent {
         val jsonString = buf.readString()  // Читаем JSON строку из буфера
         array = JsonParser.parseString(jsonString).asJsonArray.also { array = it }
