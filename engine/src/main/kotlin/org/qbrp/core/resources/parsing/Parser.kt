@@ -42,9 +42,9 @@ class Parser(
                     parseDirectory(file, childBranch, currentDepth + 1)
                 }
                 file.isFile -> {
+                    println("Открытие файла ${file.name}")
                     val unit = parentBranch.open(file.name, clazz, gson)
                     if (!parentBranch.children.contains(unit)) {
-                        println("Открытие файла ${file.name}")
                         onOpen(file, unit, parentBranch)
                         parentBranch.add(unit)
                     }

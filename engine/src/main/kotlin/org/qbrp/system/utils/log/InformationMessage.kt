@@ -29,8 +29,12 @@ class InformationMessage {
         components.add("- $component".color(ConsoleColors.RED))
     }
 
+    fun addWarnComponent(component: String) {
+        components.add("- $component".color(ConsoleColors.ORANGE))
+    }
+
     fun addSuccessComponent(component: String) {
-        components.add("<<+>> $component")
+        components.add("<<->> $component")
     }
 
 }

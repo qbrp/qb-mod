@@ -39,6 +39,7 @@ object Loggers {
         register(Logger(enabled = true,"info"))
         register(Logger(enabled = true,"engine"))
         register(Logger(enabled = true,"modules"))
+        register(Logger(enabled = true,"items"))
     }
 
     fun register(logger: Logger) { loggers[logger.key] = logger }

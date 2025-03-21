@@ -12,6 +12,10 @@ class BooleanContent(var bool: Boolean? = false): BilateralContent() {
         return this
     }
 
+    override fun toString(): String {
+        return "BooleanContent{bool=$bool}"
+    }
+
     override fun getData(): Any = bool!!
 
     override fun write(buf: PacketByteBuf): PacketByteBuf {

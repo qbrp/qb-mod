@@ -41,6 +41,6 @@ object ClientReceivers {
             ClientNetworkManager.handleServerInfo(message.getContent())
             true
         }.register()
-        //ClientModuleManager.registerStateReceivers()
+        EngineClient.moduleManager.registerStateReceivers()
     }
 }

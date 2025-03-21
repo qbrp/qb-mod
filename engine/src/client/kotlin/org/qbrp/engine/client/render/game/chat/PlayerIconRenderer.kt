@@ -39,7 +39,7 @@ class PlayerIconRenderer {
         WorldRenderEvents.AFTER_ENTITIES.register(WorldRenderEvents.AfterEntities { context ->
             val client = MinecraftClient.getInstance()
             val world = client.world ?: return@AfterEntities
-            val chatAPI = Engine.getAPI<ClientChatAPI>()
+            val chatAPI = EngineClient.getAPI<ClientChatAPI>()
 
             world.players.forEach { entity ->
                 if (client.player?.canSee(entity) == true && entity != client.player && chatAPI?.isPlayerWriting(entity) == true) {

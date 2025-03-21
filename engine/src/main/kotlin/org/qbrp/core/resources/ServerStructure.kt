@@ -3,6 +3,7 @@ package org.qbrp.core.resources
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import org.qbrp.core.game.Game
+import org.qbrp.core.resources.content.DirectoryStorage
 import org.qbrp.core.resources.data.StringData
 import org.qbrp.core.resources.data.config.ConfigUpdateCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
@@ -22,8 +23,8 @@ class ServerStructure: Structure(File("qbrp")) {
     var config = openConfig()
 
     val records = addBranch("records")
-    val items = addStructure("item")
-    val blocks = addStructure("block")
+    val items = DirectoryStorage(this)
+    val blocks = addStructure("blocks")
     val resources = Resources(this, config)
 
     val youtubeToken = open("token.youtube-token", StringData::class.java)

@@ -71,18 +71,18 @@ class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
 
             author?.let {
                 if (!group.playerCanWrite(it)) sendGroup = defaultGroup
-            }
 
-            if (!sendGroup.cooldownPassedFor(author!!)) {
-                ChatException(message, "Кулдаун не пройден. Подождите ${sendGroup.getEstimatedCooldown(author) / 10} секунд.").send()
-                return ActionResult.FAIL
+                if (!sendGroup.cooldownPassedFor(it)) {
+                    ChatException(message, "Кулдаун не пройден. Подождите ${sendGroup.getEstimatedCooldown(author) / 10} секунд.").send()
+                    return ActionResult.FAIL
+                }
+                sendGroup.cooldownPlayer(author)
             }
 
             if (message.getText().startsWith(sendGroup.prefix)) {
                 message.setText(message.getText().substring(sendGroup.prefix.length), false)
             }
 
-            sendGroup.cooldownPlayer(author)
             MessageTextTools.initializeContentMessage(message)
             message.setText(sendGroup.format)
             message.getTagsBuilder()

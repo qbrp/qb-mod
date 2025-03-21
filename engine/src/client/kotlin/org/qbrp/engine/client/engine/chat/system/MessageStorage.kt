@@ -56,7 +56,10 @@ class MessageStorage {
             MessageAddedEvent.EVENT.invoker().invokeEvent(message, this)
             provider.onMessageAdded(message, this)
             if (message.handleVanilla() && message.authorName == client.player?.name?.string) {
-                client.player?.sendMessage(MessageTextTools.getTextContent(message).asMiniMessage())
+                client.player?.networkHandler?.sendChatMessage(MessageTextTools.getTextContent(message))
+            }
+            if (message.getTags().getComponentData<Boolean>("bubble") == true && message.authorName == client.player?.name?.string) {
+                client.player?.networkHandler?.sendCommand("/cb ${MessageTextTools.getTextContent(message)}")
             }
             if (getSize() > 300) {
                 messages.subList(0, messages.size - 5).clear()

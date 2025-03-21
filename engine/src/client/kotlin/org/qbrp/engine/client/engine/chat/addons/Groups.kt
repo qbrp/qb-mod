@@ -8,16 +8,20 @@ import org.koin.dsl.module
 import org.qbrp.engine.chat.ChatAddon
 import org.qbrp.engine.chat.core.system.ChatGroup
 import org.qbrp.engine.chat.core.system.ChatGroupsStorage
+import org.qbrp.engine.client.engine.chat.ClientChatAddon
 import org.qbrp.engine.client.engine.chat.system.events.MessageSendEvent
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
+import org.qbrp.system.modules.ModuleAPI
 import org.qbrp.system.networking.messages.components.readonly.ClusterViewer
 
 @Autoload(LoadPriority.ADDON, EnvType.CLIENT)
-class Groups: ChatAddon("groups"), ClientChatGroupsAPI {
+class Groups: ClientChatAddon("groups"), ClientChatGroupsAPI {
     override fun getKoinModule() = module {
         single { ChatGroupsStorage() }
-    }
+   }
+
+    override fun getAPI(): ModuleAPI? = this
 
     override fun loadChatGroups(groups: List<ChatGroup>) {
         get<ChatGroupsStorage>().loadGroups(groups)

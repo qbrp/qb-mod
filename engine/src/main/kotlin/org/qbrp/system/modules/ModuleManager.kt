@@ -5,6 +5,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.loadKoinModules
 import org.qbrp.core.ServerCore
+import org.qbrp.system.networking.messaging.NetworkManager
 import org.qbrp.system.utils.log.Loggers
 import org.reflections.Reflections
 import kotlin.text.count
@@ -20,8 +21,12 @@ open class ModuleManager: KoinComponent {
 
     fun sendModuleInformation(player: ServerPlayerEntity) {
         modules.forEach {
-
+            it.sendStateInformation(player)
         }
+    }
+
+    fun isModuleEnabled(name: String): Boolean {
+        return modules.find { it.getName() == name }?.isEnabled() == true
     }
 
     inline fun <reified T : QbModule> isModuleAvailable(): Boolean {
@@ -33,7 +38,7 @@ open class ModuleManager: KoinComponent {
     }
 
     fun <T : QbModule> getModule(name: String): T? {
-        return modules.find { it.getName() == name } as T
+        return modules.find { it.getName() == name } as? T
     }
 
     inline fun <reified T : ModuleAPI> getAPI(): T? {
@@ -86,9 +91,14 @@ open class ModuleManager: KoinComponent {
                 instance.priority = priority
                 loadKoinModules(instance.getKoinModule())
                 instance.load()
-
-                logger.success("Загружен ${instance.getName()}")
                 init(instance)
+
+                if (instance.isEnabled()) {
+                    logger.success("Загружен ${instance.getName()}")
+                } else {
+                    ServerCore.informationMessage.addWarnComponent("Модуль ${instance.getName()} отключен.")
+                }
+
             } catch (e: Exception) {
                 ServerCore.informationMessage.addErrorComponent("Ошибка при создании экземпляра модуля ${clazz.simpleName}: ${e.message}")
                 e.printStackTrace()

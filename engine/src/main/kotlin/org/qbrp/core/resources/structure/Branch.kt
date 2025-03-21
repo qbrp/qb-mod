@@ -65,6 +65,7 @@ open class Branch(
     }
 
     fun addUnit(data: Data, name: String, extension: String): ContentUnit {
+        if (data.unit == null) { data.unit = ContentUnit::class.java }
         val clazz = data.unit.kotlin
         val constructor = clazz.primaryConstructor ?: throw IllegalArgumentException("Конструктор не найден")
         return add(constructor.call(path, name, extension, data) as Unit) as ContentUnit
@@ -108,8 +109,7 @@ open class Branch(
 
     fun add(unit: Unit, log: Boolean = true): Unit {
         if (log) { logger.log("<<[+]>> ${unit.path} <<(${unit.javaClass.simpleName})>>") }
-        return unit.initFile().also { children.add(it)
-        }
+        return unit.initFile().also { children.add(it) }
     }
 
     fun resolve(name: String): File {
@@ -143,6 +143,15 @@ open class Branch(
                 Files.createDirectories(targetPath)
             } else {
                 Files.copy(currentPath, targetPath)
+            }
+        }
+    }
+
+    fun forEachBranch(children: List<Unit> = this.children, action: (Branch) -> kotlin.Unit) {
+        children.forEach { child ->
+            when (child) {
+                is Branch -> { action(child); forEachBranch(child.children, action) }
+                else -> return
             }
         }
     }

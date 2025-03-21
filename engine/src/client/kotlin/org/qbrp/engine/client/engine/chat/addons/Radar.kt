@@ -6,12 +6,13 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.BlockPos
 import org.koin.core.component.get
-import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAddon
 import org.qbrp.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
 import org.qbrp.engine.chat.addons.placeholders.Placeholders
 import org.qbrp.engine.chat.addons.placeholders.PlaceholdersAPI
 import org.qbrp.engine.chat.core.messages.ChatMessage
+import org.qbrp.engine.client.EngineClient
+import org.qbrp.engine.client.engine.chat.ClientChatAddon
 import org.qbrp.engine.client.engine.chat.system.MessageStorage
 import org.qbrp.engine.client.engine.chat.system.events.MessageAddedEvent
 import org.qbrp.engine.client.engine.chat.system.events.TextUpdateCallback
@@ -21,7 +22,7 @@ import kotlin.math.atan2
 
 
 @Autoload(LoadPriority.ADDON, EnvType.CLIENT)
-class Radar(): ChatAddon("radar") {
+class Radar(): ClientChatAddon("radar") {
     override fun load() {
         TextUpdateCallback.EVENT.register { text, line ->
             if (line.message.getTags().getComponentData<Boolean>("radar") == true) {
@@ -36,7 +37,7 @@ class Radar(): ChatAddon("radar") {
             ) {
                 message.getTagsBuilder()
                     .placeholder("radar", "")
-                Engine.getAPI<PlaceholdersAPI>()!!.handle(message)
+                EngineClient.getAPI<PlaceholdersAPI>()!!.handle(message)
             }
             ActionResult.PASS
         }

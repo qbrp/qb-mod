@@ -18,10 +18,16 @@ object ServerResources {
     fun getConfig() = root.config
     fun reloadConfig() = root.reloadConfig()
 
+    fun getItems() = root.items
+
     fun buildResources() {
         root = ServerStructure()
-        root.resources.bakeResourcePack()
-        root.printData()
+//        root.resources.bakeResourcePack()
+//        root.printData()
+    }
+
+    fun buildContent() {
+        root.items.openDirectories()
     }
 
     fun parseJson(file: File): JsonObject? =

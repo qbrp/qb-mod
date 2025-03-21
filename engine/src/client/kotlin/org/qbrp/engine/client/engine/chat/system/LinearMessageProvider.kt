@@ -27,10 +27,12 @@ class LinearMessageProvider(val filter: (HandledMessage) -> Boolean = { true }) 
 
         ClientTickEvents.END_WORLD_TICK.register { client ->
             if (ticksCompleted++ > ChatModuleClient.TEXT_UPDATE_TICK_RATE) {
-                allMessages.values.forEach { line ->
-                    TextUpdateCallback.EVENT.invoker().modifyText(line.text, line) ?: line.text
-                }
-                updateCachedSnapshot()
+                taskQueue.add(Runnable {
+                    allMessages.values.forEach { line ->
+                        TextUpdateCallback.EVENT.invoker().modifyText(line.text, line) ?: line.text
+                    }
+                    updateCachedSnapshot() }
+                )
                 ticksCompleted = 0
             }
         }

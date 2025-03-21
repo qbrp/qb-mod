@@ -23,15 +23,15 @@ public class ClientPlayNetworkHandlerMixin {
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/network/message/MessageHandler;onGameMessage(Lnet/minecraft/text/Text;Z)V"))
     private void redirectOnGameMessage(net.minecraft.client.network.message.MessageHandler instance, Text message, boolean overlay) {
-        //if (EngineClient.Companion.getChatClientModule().getEnabled()) {
+        if (EngineClient.Companion.getModuleManager().isModuleEnabled("chat")) {
             if (!overlay) {
                 ChatMessage chatMessage = VanillaChatMessage.Companion.create(message, SYSTEM_MESSAGE_AUTHOR);
-                Objects.requireNonNull((ChatModuleClient) Engine.Companion.getModuleManager().getModule("chat")).getAPI().addMessage(chatMessage);
+                Objects.requireNonNull((ChatModuleClient) EngineClient.Companion.getModuleManager().getModule("chat")).getAPI().addMessage(chatMessage);
             } else {
                 instance.onGameMessage(message, overlay);
             }
-//        } else {
-//            instance.onGameMessage(message, overlay);
-//        }
+        } else {
+            instance.onGameMessage(message, overlay);
+        }
     }
 }

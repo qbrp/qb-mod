@@ -52,7 +52,7 @@ class ChatScreenMixin extends Screen {
     private void onChatOpen(CallbackInfo ci) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player != null) {
-            Objects.requireNonNull((ChatModuleClient) Engine.Companion.getModuleManager().getModule("chat")).getAPI().startTyping(player);
+            Objects.requireNonNull((ChatModuleClient) EngineClient.Companion.getModuleManager().getModule("chat")).getAPI().startTyping(player);
         }
         this.chatField.setMaxLength(456);
     }
@@ -83,7 +83,7 @@ class ChatScreenMixin extends Screen {
     private void onChatClose(CallbackInfo ci) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player != null) {
-            Objects.requireNonNull((ChatModuleClient) Engine.Companion.getModuleManager().getModule("chat")).getAPI().endTyping(player);
+            Objects.requireNonNull((ChatModuleClient) EngineClient.Companion.getModuleManager().getModule("chat")).getAPI().endTyping(player);
         }
     }
 
@@ -137,7 +137,7 @@ class ChatScreenMixin extends Screen {
      */
     @Overwrite
     public boolean sendMessage(String chatText, boolean addToHistory) {
-        ClientChatAPI api = Objects.requireNonNull((ChatModuleClient) Engine.Companion.getModuleManager().getModule("chat")).getAPI();
+        ClientChatAPI api = Objects.requireNonNull((ChatModuleClient) EngineClient.Companion.getModuleManager().getModule("chat")).getAPI();
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player != null) {
            api.endTyping(player);
@@ -156,11 +156,11 @@ class ChatScreenMixin extends Screen {
                 this.client.player.networkHandler.sendChatCommand(chatText.substring(1));
             } else {
                 assert this.client.player != null;
-                //if (EngineClient.Companion.getChatClientModule().getEnabled()) {
-                api.sendMessageToServer(api.createMessageFromContext(api.getTypingContextFromText(chatText)));
-                //} else {
-                //this.client.player.networkHandler.sendChatMessage(chatText);
-                //}
+                if (EngineClient.Companion.getModuleManager().isModuleEnabled("chat")) {
+                    api.sendMessageToServer(api.createMessageFromContext(api.getTypingContextFromText(chatText)));
+                } else {
+                    this.client.player.networkHandler.sendChatMessage(chatText);
+                }
             }
 
             return true;

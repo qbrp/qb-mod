@@ -20,7 +20,7 @@ class ClientChatNetworking(val storage: MessageStorage): ChatNetworking() {
 
     fun registerReceivers() {
         ClientReceiver<ClientReceiverContext>(SEND_MESSAGE, Cluster::class) { message, context, receiver ->
-            Engine.getAPI<ClientChatAPI>()?.handleMessageFromServer(message)
+            EngineClient.getAPI<ClientChatAPI>()?.handleMessageFromServer(message)
             true
         }.register()
     }

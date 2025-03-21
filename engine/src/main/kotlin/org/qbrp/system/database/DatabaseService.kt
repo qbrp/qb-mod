@@ -16,10 +16,10 @@ import org.litote.kmongo.KMongo
 import org.qbrp.system.utils.log.Loggers
 import kotlin.text.toList
 
-class DatabaseService(private val url: String, private val dbName: String) {
-    private var client: MongoClient? = null
-    private var db: MongoDatabase? = null
-    private val logger = Loggers.get("database")
+open class DatabaseService(protected val url: String, protected val dbName: String) {
+    protected var client: MongoClient? = null
+    protected var db: MongoDatabase? = null
+    protected val logger = Loggers.get("database")
 
     private val objectMapper: ObjectMapper = ObjectMapper().apply {
         registerKotlinModule()

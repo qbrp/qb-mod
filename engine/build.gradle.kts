@@ -81,9 +81,6 @@ dependencies {
     }
     include(implementation("net.kyori:adventure-text-serializer-gson:4.14.0")!!)
 
-    modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-base:${project.property("cca_version")}")
-    modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-<MODULE>:${project.property("cca_version")}")
-
     // ModernUI зависимости
     implementation("icyllis.modernui:ModernUI-Core:${project.property("modernui_core_version")}")
     implementation("icyllis.modernui:ModernUI-Markdown:${project.property("modernui_markdown_version")}")
@@ -131,8 +128,8 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_version")}")
 }
 
-tasks.runClient {args =
-    (args?.plus(arrayOf("--gameDir", "client")) ?: arrayOf("--gameDir", "client")) as List<String?>
+tasks.runClient { args =
+    (args?.plus(arrayOf("--gameDir", "client", "--add-opens", "java.base/java.util=ALL-UNNAMED")) ?: arrayOf("--gameDir", "client", "--add-opens", "java.base/java.util=ALL-UNNAMED")) as List<String?>
 }
 
 tasks.shadowJar {

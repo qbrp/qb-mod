@@ -37,7 +37,7 @@ object ClientNetworkManager {
     }
 
     fun handleServerInfo(cluster: ClusterViewer) {
-        val groupsApi = Engine.getAPI<ClientChatGroupsAPI>()
+        val groupsApi = EngineClient.getAPI<ClientChatGroupsAPI>()
         cluster.getComponentData<List<Cluster>>("engine.chatGroups")?.let {
             groupsApi?.loadChatGroups(
                 it.map { cluster ->

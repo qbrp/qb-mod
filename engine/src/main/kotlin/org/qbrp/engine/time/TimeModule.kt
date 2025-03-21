@@ -10,6 +10,7 @@ import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.core.resources.data.config.ServerConfigData.Time
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.addons.BroadcasterAPI
+import org.qbrp.engine.chat.addons.groups.ChatGroupsAPI
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.ModuleAPI
 import org.qbrp.system.modules.QbModule
@@ -22,13 +23,14 @@ GameTime - сколько прошло минут с начала сессии
 RpTime - игровое время в 24-часовом формате
  */
 
-@Autoload
+@Autoload(priority = 0)
 class TimeModule(): QbModule("time"), TimeAPI {
     private lateinit var periodManager: PeriodManager
     private lateinit var worldTimeManager: WorldTimeManager
 
     init {
         dependsOn { Engine.isApiAvailable<BroadcasterAPI>() }
+        dependsOn { Engine.isApiAvailable<ChatGroupsAPI>() }
     }
 
     override fun getKoinModule() = module {
@@ -66,5 +68,5 @@ class TimeModule(): QbModule("time"), TimeAPI {
 
     override fun setCycleEnabled(enabled: Boolean) { this.enabled = enabled }
 
-    var enabled = false
+    var enabled = true
 }

@@ -17,7 +17,7 @@ data class Period(val name: String,
 
     fun getTickTime(): Long {
         val tickCycleDuration = endTimeTicks - startTimeTicks
-        return ((tickCycleDuration / 60) * elapsedTimeMinutes) + startTimeTicks.toLong()
+        return ((tickCycleDuration / duration) * elapsedTimeMinutes) + startTimeTicks.toLong()
     }
     fun isFinished(): Boolean { return elapsedTimeMinutes >= duration }
 }

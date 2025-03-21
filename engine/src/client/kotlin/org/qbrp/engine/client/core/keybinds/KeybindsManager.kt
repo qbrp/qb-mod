@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 import org.lwjgl.glfw.GLFW
-import org.qbrp.engine.Engine
 import org.qbrp.engine.client.EngineClient
 import org.qbrp.engine.client.engine.chat.ClientChatAPI
 import org.qbrp.engine.client.render.Render
@@ -31,7 +30,7 @@ class KeybindsManager {
                 "Очистить чат от системных сообщений",
                 GLFW.GLFW_KEY_L,
             ), "clear_system_msgs") {
-            Engine.getAPI<ClientChatAPI>()?.clearSystemMessages()
+            EngineClient.getAPI<ClientChatAPI>()?.clearSystemMessages()
         }
     }
 

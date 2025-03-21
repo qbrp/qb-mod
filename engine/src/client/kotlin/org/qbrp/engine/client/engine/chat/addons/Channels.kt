@@ -4,6 +4,7 @@ import net.fabricmc.api.EnvType
 import net.minecraft.util.ActionResult
 import org.koin.core.component.get
 import org.qbrp.engine.chat.ChatAddon
+import org.qbrp.engine.client.engine.chat.ClientChatAddon
 import org.qbrp.engine.client.engine.chat.system.LinearMessageProvider
 import org.qbrp.engine.client.engine.chat.system.MessageStorage
 import org.qbrp.engine.client.engine.chat.system.Provider
@@ -12,7 +13,7 @@ import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
 
 @Autoload(LoadPriority.ADDON, EnvType.CLIENT)
-class Channels: ChatAddon("channels") {
+class Channels: ClientChatAddon("channels") {
     private lateinit var providersCache: MutableMap<String, Provider>
 
     override fun load() {

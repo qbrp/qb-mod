@@ -1,7 +1,6 @@
 package org.qbrp.engine.client.engine.chat.system
 
 import net.minecraft.client.font.TextRenderer
-import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.core.system.ChatGroup
 import org.qbrp.engine.client.EngineClient
 import org.qbrp.engine.client.engine.chat.ClientChatAPI
@@ -66,7 +65,7 @@ class Typer() {
         }
 
         fun findGroupFromTags(): ChatGroup? {
-            return Engine.getAPI<ClientChatGroupsAPI>()?.getChatGroups()?.getGroup(getComponent<String>("group") ?: "")
+            return EngineClient.getAPI<ClientChatGroupsAPI>()?.getChatGroups()?.getGroup(getComponent<String>("group") ?: "")
         }
     }
 }

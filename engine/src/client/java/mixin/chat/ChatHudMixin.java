@@ -7,6 +7,7 @@ import net.minecraft.network.message.MessageSignatureData;
 import net.minecraft.text.Text;
 import org.qbrp.engine.Engine;
 import org.qbrp.engine.chat.core.messages.ChatMessage;
+import org.qbrp.engine.client.EngineClient;
 import org.qbrp.engine.client.engine.chat.ChatModuleClient;
 import org.qbrp.engine.client.engine.chat.ClientChatAPI;
 import org.spongepowered.asm.mixin.*;
@@ -28,6 +29,7 @@ public abstract class ChatHudMixin {
     private List<ChatHudLine.Visible> visibleMessages;
 
     // Поле для хранения api, изначально null
+    @Unique
     private ClientChatAPI api;
 
     @Inject(method = "<init>", at = @At("RETURN"))
@@ -39,7 +41,7 @@ public abstract class ChatHudMixin {
     private void onRender(CallbackInfo ci) {
         // Инициализируем api, если он еще не установлен
         if (api == null) {
-            api = ((ChatModuleClient) Objects.requireNonNull(Engine.Companion.getModuleManager().getModule("chat"))).getAPI();
+            api = ((ChatModuleClient) Objects.requireNonNull(EngineClient.Companion.getModuleManager().getModule("chat"))).getAPI();
         }
         // Обновляем visibleMessages из api
         this.visibleMessages = api.getMessageProvider().provide(api.getStorage());
@@ -50,7 +52,7 @@ public abstract class ChatHudMixin {
             cancellable = true)
     private void onAddMessage(Text message, MessageSignatureData signature, int ticks, MessageIndicator indicator, boolean refresh, CallbackInfo ci) {
         if (api != null) {
-            api.addMessage(ChatMessage.Companion.create(message, SYSTEM_MESSAGE_AUTHOR)); // Предполагается, что api имеет метод addMessage
+            //api.addMessage(ChatMessage.Companion.create(message, SYSTEM_MESSAGE_AUTHOR)); // Предполагается, что api имеет метод addMessage
             ci.cancel(); // Отменяем оригинальный метод, так как api теперь управляет сообщениями
         }
         // Если api еще null, даем оригинальному методу обработать сообщение

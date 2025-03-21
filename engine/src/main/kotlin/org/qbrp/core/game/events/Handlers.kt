@@ -20,10 +20,10 @@ object Handlers {
 
     fun registerServerEvents() {
         ServerPlayConnectionEvents.INIT.register() { handler, server ->
-            VersionChecker.addPlayerTask(handler.player)
+            Engine.moduleManager.sendModuleInformation(handler.player)
         }
         ServerPlayConnectionEvents.JOIN.register { handler, sender, server ->
-            Engine.moduleManager.sendModuleInformation(handler.player)
+            VersionChecker.addPlayerTask(handler.player)
             ServerInformationComposer.send(handler.player)
             PlayerManager.handleConnected(handler.player)
         }

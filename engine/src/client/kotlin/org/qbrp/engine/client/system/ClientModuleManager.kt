@@ -6,15 +6,15 @@ import org.qbrp.system.networking.ClientReceiver
 import org.qbrp.system.networking.messages.Messages
 import org.qbrp.system.networking.messages.types.BooleanContent
 
-object ClientModuleManager: ModuleManager() {
+class ClientModuleManager: ModuleManager() {
+
     fun registerStateReceivers() {
-//        modules.forEach {
-//            ClientReceiver<ClientReceiverContext>(Messages.moduleUpdate(it.name), BooleanContent::class) { message, context, receiver ->
-//                if (message.getContent<Boolean>()) it.enable() else it.disable()
-//                true
-//            }.register()
-//        }
-        TODO()
+        modules.forEach {
+            ClientReceiver<ClientReceiverContext>(Messages.moduleUpdate(it.getName()), BooleanContent::class) { message, context, receiver ->
+                it.serverState = message.getContent()
+                true
+            }.register()
+        }
     }
 
 }

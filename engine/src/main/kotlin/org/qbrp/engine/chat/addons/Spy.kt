@@ -23,7 +23,6 @@ import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAPI
 import org.qbrp.engine.chat.ChatAddon
 import org.qbrp.engine.chat.ChatModule
-import org.qbrp.engine.chat.addons.groups.ChatGroups
 import org.qbrp.engine.chat.addons.groups.ChatGroupsAPI
 import org.qbrp.engine.chat.core.events.MessageHandledEvent
 
@@ -39,11 +38,11 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
     private val server: MinecraftServer by inject()
     private val chatAPI = Engine.getAPI<ChatAPI>()
     private val chatGroupsAPI = Engine.getAPI<ChatGroupsAPI>()
-    private lateinit var spyPlayersMap: MutableMap<ServerPlayerEntity, Boolean>
+    private lateinit var ignoreSpyPlayersMap: MutableMap<ServerPlayerEntity, Boolean>
 
     override fun load() {
         super.load()
-        spyPlayersMap = get()
+        ignoreSpyPlayersMap = get()
         CommandsRepository.add(this)
 
         MessageHandledEvent.EVENT.register { message, receivers ->
@@ -55,7 +54,7 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
                 .filterNot { it in receivers }
                 .filter { chatGroupsAPI!!.fetchGroup(message)?.playerHasReadPermission(it) == true }
                 .filter { it.hasPermission("chat.spy") }
-                .filter { spyPlayersMap[it] == true }
+                .filter { ignoreSpyPlayersMap[it] != true }
                 .toMutableList()
             if (!spyPlayers.isEmpty()) {
                 val sender = chatAPI!!.createSender().apply {
@@ -96,7 +95,7 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
         @Execute(permission = "chat.spy")
         fun execute(ctx: CommandContext<ServerCommandSource>, deps: Deps) {
             val spyPlayersMap = get<MutableMap<ServerPlayerEntity, Boolean>>()
-            val currentValue = spyPlayersMap.getOrPut(ctx.source.player!!) { true }
+            val currentValue = spyPlayersMap.getOrPut(ctx.source.player!!) { false }
             spyPlayersMap[ctx.source.player!!] = !currentValue
             callback(ctx, "Слежка ${if (currentValue) "выключена" else "включена"}")
         }

@@ -10,14 +10,17 @@ import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAPI
 import org.qbrp.engine.chat.ChatAddon
 import org.qbrp.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
+import org.qbrp.engine.chat.addons.groups.ChatGroups
+import org.qbrp.engine.chat.addons.groups.ChatGroupsAPI
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.chat.core.system.ChatGroup
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
 import org.qbrp.system.modules.ModuleAPI
+import org.qbrp.system.networking.messaging.NetworkManager.sendMessage
 import org.qbrp.system.utils.log.Loggers
 
-@Autoload(priority = 0)
+@Autoload(priority = 2)
 class Broadcaster: ChatAddon("broadcaster"), BroadcasterAPI {
     lateinit var chatModuleAPI: ChatAPI
     val server: MinecraftServer by inject()
@@ -36,9 +39,18 @@ class Broadcaster: ChatAddon("broadcaster"), BroadcasterAPI {
             simpleName = "вещание",
             color = "#e4717a",
             radius = -1,
-            format = "&7~~~&r&d(&f &d)"
+            format = "&7~~~ &r&d(&f {text} &d)"
         ) }
         single { this }
+    }
+
+    override fun broadcastGlobalDo(message: ChatMessage) {
+        ChatGroups.handle(message, get<ChatGroup>(), Engine.getAPI<ChatGroupsAPI>()?.getGroup("default")!!)
+        chatModuleAPI.createSender().apply {
+            addTargets(server.playerManager.playerList)
+            send(message)
+        }
+        logger.log("<<[Do]>> ${message.getText()}")
     }
 
     override fun broadcast(
