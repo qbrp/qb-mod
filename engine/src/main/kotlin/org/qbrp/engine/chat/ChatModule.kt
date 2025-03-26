@@ -16,6 +16,8 @@ import org.qbrp.engine.chat.core.system.ServerChatNetworking
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.QbModule
 import org.qbrp.system.modules.ModuleAPI
+import org.qbrp.system.networking.ServerInformation
+import org.qbrp.system.networking.ServerInformationComposer
 import org.qbrp.system.networking.messages.Message
 import org.qbrp.system.utils.log.Loggers
 
@@ -23,9 +25,14 @@ import org.qbrp.system.utils.log.Loggers
 class ChatModule() : QbModule("chat"), ChatAPI {
     companion object {
         const val SYSTEM_MESSAGE_AUTHOR = "system"
+        var MAX_MESSAGE_LENGTH = 456
     }
 
     private val logger = Loggers.get("chatModule")
+
+    override fun load() {
+        ServerInformation.COMPOSER.component("engine.maxMessageLength", MAX_MESSAGE_LENGTH)
+    }
 
     override fun getAPI(): ChatAPI = this
 
@@ -46,10 +53,10 @@ class ChatModule() : QbModule("chat"), ChatAPI {
             .apply { addTarget(player) }
             .send(message)
 
-    override fun sendMessage(player: ServerPlayerEntity, message: String) =
+    override fun sendMessage(player: ServerPlayerEntity, message: String, authorName: String) =
         createSender()
             .apply { addTarget(player) }
-            .send(ChatMessage(SYSTEM_MESSAGE_AUTHOR, message))
+            .send(ChatMessage(authorName, message))
 
     override fun handleMessage(message: ChatMessage) = get<MessageHandler>().handleReceivedMessage(message, get())
 

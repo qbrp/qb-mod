@@ -18,6 +18,7 @@ import org.qbrp.engine.chat.core.system.ChatGroup
 import org.qbrp.engine.chat.core.system.ChatGroupsStorage
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.ModuleAPI
+import org.qbrp.system.networking.ServerInformation
 import org.qbrp.system.networking.ServerInformationComposer
 import org.qbrp.system.networking.messages.types.ClusterListContent
 
@@ -112,12 +113,12 @@ class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
     private fun initGroups() {
         storage.loadGroups(config.chatGroups)
         composeGroupsList()
-        ServerInformationComposer.send()
+        ServerInformation.send()
     }
 
     private fun composeGroupsList() {
         val clusterGroups = storage.getAllGroups().map { group -> group.toCluster() }
-        ServerInformationComposer.component("engine.chatGroups", ClusterListContent().apply { list = clusterGroups } )
+        ServerInformation.COMPOSER.component("engine.chatGroups", ClusterListContent().apply { list = clusterGroups } )
     }
 
 }

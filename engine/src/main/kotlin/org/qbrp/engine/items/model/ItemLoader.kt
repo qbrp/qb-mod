@@ -12,7 +12,7 @@ import org.qbrp.system.database.DatabaseService
 
 class ItemLoader: DatabaseService(ServerResources.getConfig().databases.nodeUri, ServerResources.getConfig().databases.items), KoinComponent {
     init {
-        connect()
+        //connect()
     }
 
     fun getItemState(id: Int): ItemData {

@@ -39,7 +39,7 @@ class Broadcaster: ChatAddon("broadcaster"), BroadcasterAPI {
             simpleName = "вещание",
             color = "#e4717a",
             radius = -1,
-            format = "&7~~~ &r&d(&f {text} &d)"
+            format = "{name} &r&d(&f {text} &d)"
         ) }
         single { this }
     }

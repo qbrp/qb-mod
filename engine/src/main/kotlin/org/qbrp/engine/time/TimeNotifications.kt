@@ -8,6 +8,12 @@ import org.qbrp.engine.chat.core.messages.ChatMessage
 
 class TimeNotifications(val config: ServerConfigData.Time): KoinComponent {
     fun broadcastTimeDo(time: Int, name: String) {
-        Engine.getAPI<BroadcasterAPI>()!!.broadcastGlobalDo(ChatMessage.text("Время: ${TimeUtils.roundMinutesToNearestHalfHour(time)}. $name"))
+        Engine.getAPI<BroadcasterAPI>()!!.broadcastGlobalDo(
+            ChatMessage.text("${TimeUtils.minutesToTime(TimeUtils.roundMinutesToNearestHalfHour(time))} - $name")
+                .apply {
+                    getTagsBuilder()
+                        .placeholder("name", "&bВремя")
+                }
+        )
     }
 }

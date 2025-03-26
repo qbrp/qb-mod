@@ -14,6 +14,7 @@ import org.qbrp.system.utils.time.TimerUpdater
 import org.qbrp.core.visual.VisualDataStorage
 import org.qbrp.engine.Engine
 import org.qbrp.system.VersionChecker
+import org.qbrp.system.networking.ServerInformation
 import org.qbrp.system.networking.ServerInformationComposer
 
 object Handlers {
@@ -24,7 +25,7 @@ object Handlers {
         }
         ServerPlayConnectionEvents.JOIN.register { handler, sender, server ->
             VersionChecker.addPlayerTask(handler.player)
-            ServerInformationComposer.send(handler.player)
+            ServerInformation.send(handler.player)
             PlayerManager.handleConnected(handler.player)
         }
         PlayerRegistrationCallback.EVENT.register { session, _ ->

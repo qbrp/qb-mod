@@ -8,8 +8,8 @@ import org.qbrp.engine.client.EngineClient
 import org.qbrp.engine.client.core.keybinds.KeybindsManager
 import org.qbrp.engine.client.engine.chat.ClientChatAPI
 import org.qbrp.engine.client.engine.chat.addons.ClientChatGroupsAPI
-import org.qbrp.engine.client.system.server.ServerInformation
 import org.qbrp.system.networking.ClientReceiver
+import org.qbrp.system.networking.ServerInformation
 import org.qbrp.system.networking.messages.Message
 import org.qbrp.system.networking.messages.Messages.SERVER_INFORMATION
 import org.qbrp.system.networking.messages.components.Cluster
@@ -23,7 +23,7 @@ import kotlin.reflect.KClass
 
 object ClientNetworkManager {
     private val logger = Loggers.get("network", "sending")
-    private var serverInformation: ServerInformation? = null
+    var serverInformation: ServerInformation? = null
 
     fun sendMessage(message: Message) {
         val content = message.content as SendContent
@@ -56,6 +56,7 @@ object ClientNetworkManager {
                 )
             }
         ?: emptyList()
+        ServerInformation.VIEWER = cluster
 
         val keybindsManager = EngineClient.keybindsManager
         serverKeybinds.forEach {

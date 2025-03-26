@@ -36,7 +36,6 @@ import kotlin.collections.MutableMap
 @Autoload(LoadPriority.ADDON)
 class Spy(): ChatAddon("spy"), ServerModCommand {
     private val server: MinecraftServer by inject()
-    private val chatAPI = Engine.getAPI<ChatAPI>()
     private val chatGroupsAPI = Engine.getAPI<ChatGroupsAPI>()
     private lateinit var ignoreSpyPlayersMap: MutableMap<ServerPlayerEntity, Boolean>
 
@@ -97,7 +96,7 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
             val spyPlayersMap = get<MutableMap<ServerPlayerEntity, Boolean>>()
             val currentValue = spyPlayersMap.getOrPut(ctx.source.player!!) { false }
             spyPlayersMap[ctx.source.player!!] = !currentValue
-            callback(ctx, "Слежка ${if (currentValue) "выключена" else "включена"}")
+            callback(ctx, "Слежка ${if (currentValue) "включена" else "выключена"}")
         }
     }
 }

@@ -8,7 +8,7 @@ import org.qbrp.system.networking.messages.components.Cluster
 import org.qbrp.system.networking.messages.components.ClusterBuilder
 import org.qbrp.system.networking.messaging.NetworkManager
 
-object ServerInformationComposer: ClusterBuilder() {
+class ServerInformationComposer: ClusterBuilder() {
 
     fun send() {
         ServerCore.server.playerManager.playerList.forEach { player -> send(player) }

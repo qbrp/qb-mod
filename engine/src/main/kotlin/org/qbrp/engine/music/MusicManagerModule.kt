@@ -43,7 +43,6 @@ class MusicManagerModule : QbModule("music"), KoinComponent {
         get<MusicDatabaseService>().db.connect()
         get<MusicStorage>().apply {
             loadFromDatabase()
-            startSaveLifecycle()
         }
         get<PlayerSelectionHandler>().startHandling()
         get<MusicAddonLoader>()

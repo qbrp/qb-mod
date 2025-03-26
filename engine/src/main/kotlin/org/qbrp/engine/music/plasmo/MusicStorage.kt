@@ -36,21 +36,6 @@ class MusicStorage(val database: MusicDatabaseService,
         }
     }
 
-    fun startSaveLifecycle() {
-        fixedRateTimer(
-            name = "[qbrp/Plasmo] [MusicStorage]",
-            initialDelay = 0,
-            period = 10000,
-            daemon = true
-        ) {
-            try {
-                tracks.values.forEach { database.saveTrack(it) }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
     fun addDefaultPlaylist() {
         if (tracks.isEmpty()) {
             createTrack("Made in Abyss", "https://kappa.vgmsite.com/soundtracks/made-in-abyss-ost/pmxedjjeon/1-01%20Made%20in%20Abyss.mp3", 1)

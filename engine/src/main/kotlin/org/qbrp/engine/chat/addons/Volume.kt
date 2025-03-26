@@ -2,20 +2,15 @@ package org.qbrp.engine.chat.addons
 
 import net.minecraft.block.Block
 import net.minecraft.block.Blocks
-import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
-import net.minecraft.particle.ParticleTypes
 import net.minecraft.registry.Registries
 import net.minecraft.registry.RegistryKeys
-import net.minecraft.registry.tag.BlockTags
 import net.minecraft.registry.tag.TagKey
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import org.koin.core.component.get
-import org.qbrp.core.ServerCore
 import org.qbrp.core.resources.data.config.ConfigUpdateCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
@@ -26,14 +21,13 @@ import org.qbrp.engine.chat.addons.tools.MessageFormatTools
 import org.qbrp.engine.chat.addons.tools.MessageTextTools
 import org.qbrp.engine.chat.core.events.MessageReceivedEvent
 import org.qbrp.engine.chat.core.events.MessageSendEvent
-import org.qbrp.engine.chat.core.events.MessageUpdateEvent
+import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
 import org.qbrp.system.networking.messages.types.IntContent
-import org.qbrp.system.networking.messages.types.StringContent
 import org.qbrp.system.utils.Tracer
-import org.qbrp.system.utils.log.Logger
 import org.qbrp.system.utils.log.Loggers
+import kotlin.math.max
 import kotlin.random.Random
 
 @Autoload(LoadPriority.ADDON)
@@ -44,7 +38,7 @@ class Volume(): ChatAddon("volume") {
             Blocks.AIR to 0.0
         )
         val TAGS_VOLUMES = mutableMapOf<TagKey<Block>, Double>()
-        var FORMATTING_VOLUMES = mapOf<Int, String>()
+        var VOLUME_LEVELS = listOf<ServerConfigData.Chat.Volume.VolumeLevel>()
         val logger = Loggers.get("chat", "volume")
     }
 
@@ -65,7 +59,7 @@ class Volume(): ChatAddon("volume") {
             TAGS_VOLUMES[tagKey] = volume
         }
 
-        FORMATTING_VOLUMES = config.formatVolume
+        VOLUME_LEVELS = config.volumeLevels
     }
 
     fun getBlockVolumeModifier(blockPos: BlockPos, world: World): Double {
@@ -116,7 +110,7 @@ class Volume(): ChatAddon("volume") {
             }
             Engine.getAPI<RecordsAPI>()!!.addLine(
                 message,
-                Replica(message.authorName, message.getText(), volume)
+                Replica(message.authorName, MessageTextTools.getTextContent(message), volume)
             )
 
             ActionResult.PASS
@@ -134,7 +128,7 @@ class Volume(): ChatAddon("volume") {
             var volumeEdit = 0.0
             Tracer.tracePathAndModify(Vec3d(sourceX.toDouble(), sourceY.toDouble(), sourceZ.toDouble()), Vec3d(receiver.x, receiver.y, receiver.z)) { pos ->
                 volumeEdit -= getBlockVolumeModifier(pos, receiver.world) + 0.1
-                println("    Громкость -> ${receiver.name.string}: $volumeEdit (${message.uuid})")
+                true
             }
             val newVolume = (volume + volumeEdit).toInt()
             if (newVolume < 0) return@register ActionResult.FAIL
@@ -143,7 +137,7 @@ class Volume(): ChatAddon("volume") {
                     .component("volume", IntContent(newVolume))
                     .component("volumeHandled", true))
             }
-            val handledMessageText = if (tags.getComponentData<Boolean>("format") != false) format(newVolume, MessageTextTools.getTextContent(message),tags.getComponentData<Boolean>("distort") != false)
+            val handledMessageText = if (tags.getComponentData<Boolean>("format") != false) format(newVolume, message,tags.getComponentData<Boolean>("distort") != false)
             else MessageTextTools.getTextContent(message)
 
             MessageTextTools.setTextContent(message, handledMessageText)
@@ -151,19 +145,24 @@ class Volume(): ChatAddon("volume") {
         }
     }
 
-    private fun format(level: Int, message: String, distort: Boolean): String {
+    private fun format(level: Int, message: ChatMessage, distort: Boolean): String {
+        val text = MessageTextTools.getTextContent(message)
         var formatSymbol = "&f"
-        if (level < FORMATTING_VOLUMES.keys.first()) {
+        if (level < VOLUME_LEVELS.first().value) {
             formatSymbol = config.formatMinVolume
         } else {
-            FORMATTING_VOLUMES.forEach { key, value ->
-                if (level >= key) formatSymbol = value
+            VOLUME_LEVELS.forEach {
+                if (level >= it.value) {
+                    formatSymbol =  it.formatText
+                    message.getTagsBuilder()
+                        .placeholder("formatSep", it.formatSep)
+                }
             }
         }
 
-        var processedMessage = message
+        var processedMessage = text
         if (level <= config.distortionLevel) {
-            val distortionStrength = ((config.distortionLevel - level).toDouble() / config.distortionLevel * config.maxDistortion).toInt()
+            val distortionStrength = max(((config.distortionLevel - level).toDouble() / config.distortionLevel * config.maxDistortion).toInt(), config.minDistortion)
             if (distort) processedMessage = distort(processedMessage, distortionStrength)
         }
 

@@ -24,6 +24,7 @@ import org.qbrp.core.resources.ServerResources
 import org.qbrp.engine.Engine
 import org.qbrp.engine.music.plasmo.playback.lavaplayer.AudioManager
 import org.qbrp.system.VersionChecker
+import org.qbrp.system.networking.ServerInformation
 import org.qbrp.system.networking.ServerInformationComposer
 import org.qbrp.system.networking.http.WebServer
 import org.qbrp.system.utils.log.InformationMessage
@@ -54,6 +55,7 @@ class ServerCore : DedicatedServerModInitializer {
             initializeMainModules(server)
             CommandsRepository.initCommands(server.commandManager.dispatcher)
             ServerKeybinds.composeServerInfo()
+            ServerInformation.build()
             informationMessage.print()
         }
         ServerLifecycleEvents.SERVER_STOPPED.register { server ->

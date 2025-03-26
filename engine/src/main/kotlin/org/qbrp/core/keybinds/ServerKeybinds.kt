@@ -2,6 +2,7 @@ package org.qbrp.core.keybinds
 
 import org.lwjgl.glfw.GLFW
 import org.qbrp.engine.Engine
+import org.qbrp.system.networking.ServerInformation
 import org.qbrp.system.networking.ServerInformationComposer
 import org.qbrp.system.networking.messages.components.ClusterBuilder
 import org.qbrp.system.networking.messages.types.ClusterListContent
@@ -29,7 +30,7 @@ object ServerKeybinds {
 
     fun composeServerInfo() {
         val keybinds = ClusterListContent().apply { list = keybinds.map { it.toCluster() } }
-        ServerInformationComposer.component("core.keybinds", keybinds)
+        ServerInformation.COMPOSER.component("core.keybinds", keybinds)
     }
 
 }

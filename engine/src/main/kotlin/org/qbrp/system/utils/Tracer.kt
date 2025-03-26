@@ -8,7 +8,7 @@ import kotlin.math.roundToInt
 
 object Tracer {
 
-    fun tracePathAndModify(start: Vec3d, end: Vec3d, modify: (BlockPos) -> Unit) {
+    fun tracePathAndModify(start: Vec3d, end: Vec3d, modify: (BlockPos) -> Boolean) {
         val dx = end.x - start.x
         val dy = end.y - start.y
         val dz = end.z - start.z
@@ -25,8 +25,9 @@ object Tracer {
 
         for (i in 0..steps) {
             val currentBlock = BlockPos(currentX.roundToInt(), currentY.roundToInt(), currentZ.roundToInt())
-            modify(currentBlock)
-
+            if (!modify(currentBlock)) {
+                break // Останавливаем трассировку, если modify вернул false
+            }
             currentX += stepX
             currentY += stepY
             currentZ += stepZ
