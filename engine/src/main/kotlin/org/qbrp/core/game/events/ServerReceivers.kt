@@ -25,14 +25,6 @@ object ServerReceivers {
             //TODO: Сделать перезагрузку
         }
         ).register()
-        ServerReceiver<ServerReceiverContext>(START_TYPING, Signal::class, { message, context, receiver ->
-            //Engine.getAPI<ChatAPI>() .(context.player)
-            true
-        }).register()
-        ServerReceiver<ServerReceiverContext>(END_TYPING, Signal::class, { message, context, receiver ->
-            //Engine.chatModule.API.playerEndTyping(context.player)
-            true
-        }).register()
         ServerReceiver<ServerReceiverContext>(HANDLE_VERSION, StringContent::class, { message, context, receiver ->
             VersionChecker.handlePlayer(context.player, message.getContent())
             true
