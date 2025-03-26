@@ -81,6 +81,8 @@ dependencies {
     }
     include(implementation("net.kyori:adventure-text-serializer-gson:4.14.0")!!)
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+
     // ModernUI зависимости
     implementation("icyllis.modernui:ModernUI-Core:${project.property("modernui_core_version")}")
     implementation("icyllis.modernui:ModernUI-Markdown:${project.property("modernui_markdown_version")}")
