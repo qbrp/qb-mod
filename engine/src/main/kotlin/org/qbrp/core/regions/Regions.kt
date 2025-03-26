@@ -12,7 +12,8 @@ import org.qbrp.system.utils.log.Loggers
 object Regions {
     private val regions = mutableListOf<Region>()
     private val databaseService = RegionsDatabase(
-        DatabaseService(ServerResources.getConfig().databases.nodeUri, ServerResources.getConfig().databases.regions).apply { connect() }
+        DatabaseService(ServerResources.getConfig().databases.nodeUri, ServerResources.getConfig().databases.regions)
+            //.apply { connect() }
     )
     private val logger = Loggers.get("regions")
 

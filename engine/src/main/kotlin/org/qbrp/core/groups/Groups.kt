@@ -12,7 +12,8 @@ object Groups {
         DatabaseService(
             ServerResources.getConfig().databases.nodeUri,
             ServerResources.getConfig().databases.groups
-        ).apply { connect() }
+        )
+            //.apply { connect() }
     )
     init {
         CommandsRepository.add(GroupsCommand())
