@@ -26,9 +26,11 @@ import org.qbrp.engine.client.engine.chat.system.Provider
 import org.qbrp.engine.client.engine.chat.system.events.MessageAddedEvent
 import org.qbrp.engine.client.engine.chat.system.events.MessageSendEvent
 import org.qbrp.engine.client.engine.chat.system.events.TextUpdateCallback
+import org.qbrp.engine.client.system.networking.ClientNetworkManager
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.ModuleAPI
 import org.qbrp.system.modules.QbModule
+import org.qbrp.system.networking.ServerInformation
 import org.qbrp.system.networking.messages.Message
 import org.qbrp.system.networking.messages.components.readonly.ClusterViewer
 import kotlin.math.atan2
@@ -40,6 +42,7 @@ class ChatModuleClient(): QbModule("chat"), ClientChatAPI {
 
     companion object {
         const val TEXT_UPDATE_TICK_RATE = 5
+        var MAX_MESSAGE_LENGTH = 456
     }
 
     override fun getKoinModule() = module {
@@ -56,6 +59,7 @@ class ChatModuleClient(): QbModule("chat"), ClientChatAPI {
         networking = get<ClientChatNetworking>().apply {
             registerReceivers()
         }
+        MAX_MESSAGE_LENGTH = ServerInformation.VIEWER?.getComponentData<Int>("engine.maxMessageLength") ?: 456
     }
 
     override fun isPlayerWriting(player: PlayerEntity): Boolean { return VisualDataStorage.getPlayer(player.name.string)?.isWriting == true }
