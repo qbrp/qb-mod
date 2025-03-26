@@ -28,26 +28,33 @@ data class ServerConfigData(
         val volume: Volume = Volume(),
     ) {
         data class Commands(val formatMe: String = "{playerDisplayName} &e* &f{text}",
-                          val formatDo: String = "{playerDisplayName} &d( &f{text} &d)",
-                          val formatGdo: String = "{playerDisplayName} &d( &f{text} &d)",
-                          val formatRoll: String = "{playerDisplayName} &b* &f{text} &b- &a{roll}%")
+                            val formatDo: String = "{playerDisplayName} &d( &f{text} &d)",
+                            val formatGdo: String = "{playerDisplayName} &d( &f{text} &d)",
+                            val formatRoll: String = "{playerDisplayName} &b* &f{text} &b- &a{roll}%",
+                            val formatPm: String = "<#554436>(( <#F4A460><bold>ᴘᴍ</bold> <#c97e3d>{playerName} <#F4A460>▸ <#c97e3d><recipientName><#F4A460>: {text} <#554436>))")
 
         data class Volume(val volumePrefixes: Map<String, Int> = mapOf(),
                           val blockVolumes: Map<String, Double> = mapOf(),
                           val tagVolumes: Map<String, Double> = mapOf(),
-                          val formatVolume: Map<Int, String> = mapOf(
-                              5 to "&7",
-                              15 to "&f",
-                              25 to "&c",
-                              45 to "&c&l",
-                              80 to "&4&l",
+                          val volumeLevels: List<VolumeLevel> = listOf(
+                              VolumeLevel(5, "<gray>", "<yellow>"),
+                              VolumeLevel(15, "<white>", ""),
+                              VolumeLevel(25, "<red>", "<red>"),
+                              VolumeLevel(25, "<red><bold>", "<red>"),
+                              VolumeLevel(25, "<dark_red><bold>", "<red>")
                           ),
                           val formatMinVolume: String = "&7&o",
                           val defaultVolumeBlockModifier: Double = 5.0,
                           val defaultVolume: Int = 25,
-                          val distortionLevel: Int = 15,
-                          val maxDistortion: Int = 70,
-                          val artifacts: List<String> = listOf("#", "-", "...", "*", "~", "^"))
+                          val distortionLevel: Int = 10,
+                          val maxDistortion: Int = 60,
+                          val minDistortion: Int = 60,
+                          val minVolume: Int = 5,
+                          val minOverhearVolume: Int = 0,
+                          val artifacts: List<String> = listOf("#", "-", "...", "*", "~", "^")) {
+
+            data class VolumeLevel(val value: Int, val formatText: String, val formatSep: String)
+        }
     }
 
     data class Players(
