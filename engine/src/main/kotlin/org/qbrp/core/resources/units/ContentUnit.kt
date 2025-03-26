@@ -9,6 +9,7 @@ open class ContentUnit(
     extension: String,
     open val data: Data
 ) : Unit(path.resolve("$name.$extension") as Path), Savable {
+    var autoOverwrite: Boolean = false
 
     override fun initFile(): Unit {
         val filePath = this.path.toFile()
@@ -18,7 +19,7 @@ open class ContentUnit(
                 throw IllegalStateException("Не удалось создать файл: ${filePath.path}", e)
             }
         }
-        save()
+        if (autoOverwrite) save()
         return this
     }
 
