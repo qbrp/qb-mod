@@ -54,7 +54,7 @@ class MessageStorage {
                         message.getTags().toList().joinToString("\n- ") { it.toString() }
             )
             MessageAddedEvent.EVENT.invoker().invokeEvent(message, this)
-            provider.onMessageAdded(message, this)
+            if (message.getText().trim() != "") provider.onMessageAdded(message, this)
             if (message.handleVanilla() && message.authorName == client.player?.name?.string) {
                 client.player?.networkHandler?.sendChatMessage(MessageTextTools.getTextContent(message))
             }

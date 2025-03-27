@@ -37,13 +37,13 @@ data class ServerConfigData(
                           val blockVolumes: Map<String, Double> = mapOf(),
                           val tagVolumes: Map<String, Double> = mapOf(),
                           val volumeLevels: List<VolumeLevel> = listOf(
+                              VolumeLevel(0, "<dark_gray>", "<yellow>"),
                               VolumeLevel(5, "<gray>", "<yellow>"),
                               VolumeLevel(15, "<white>", ""),
                               VolumeLevel(25, "<red>", "<red>"),
-                              VolumeLevel(25, "<red><bold>", "<red>"),
-                              VolumeLevel(25, "<dark_red><bold>", "<red>")
+                              VolumeLevel(40, "<red><bold>", "<red>"),
+                              VolumeLevel(80, "<dark_red><bold>", "<red>")
                           ),
-                          val formatMinVolume: String = "&7&o",
                           val defaultVolumeBlockModifier: Double = 5.0,
                           val defaultVolume: Int = 25,
                           val distortionLevel: Int = 10,
@@ -52,6 +52,9 @@ data class ServerConfigData(
                           val minVolume: Int = 5,
                           val minOverhearVolume: Int = 0,
                           val artifacts: List<String> = listOf("#", "-", "...", "*", "~", "^")) {
+            fun getVolumeLevelFor(volume: Int): VolumeLevel {
+                return volumeLevels.findLast { volume > it.value } ?: volumeLevels.first()
+            }
 
             data class VolumeLevel(val value: Int, val formatText: String, val formatSep: String)
         }

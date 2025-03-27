@@ -14,7 +14,7 @@ import org.qbrp.system.modules.LoadPriority
 class Clickable: ClientChatAddon("clickable") {
     override fun load() {
         ChatFormatEvent.EVENT.register { message, text ->
-            TextTagsTransformer.replaceTagsWithFormat(message.getText(), "playerNickClickable") { tag, value ->
+            TextTagsTransformer.replaceTagsWithFormat(message.getText(), "player_nick_clickable") { tag, value ->
                 val groupPrefix = message.getTags().getComponentData<String>("group")?.let {
                     EngineClient.getAPI<ClientChatGroupsAPI>()?.getChatGroups()?.getGroup(it)?.prefix ?: ""
                 } ?: ""

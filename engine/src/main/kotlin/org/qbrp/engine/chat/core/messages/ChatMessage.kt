@@ -24,7 +24,7 @@ open class ChatMessage(val authorName: String,
                        private var text: String,
                        val uuid: String = UUID.randomUUID().toString(),
                        val timestamp: Long = System.currentTimeMillis()): ChatMessageData {
-    private var metaTags: ChatMessageTagsBuilder = ChatMessageTagsBuilder()
+    protected var metaTags: ChatMessageTagsBuilder = ChatMessageTagsBuilder()
 
     override fun toString(): String {
         return "ChatMessage(authorName='$authorName', text='$text')"

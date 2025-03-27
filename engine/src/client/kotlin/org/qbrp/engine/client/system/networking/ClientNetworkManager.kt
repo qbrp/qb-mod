@@ -23,7 +23,6 @@ import kotlin.reflect.KClass
 
 object ClientNetworkManager {
     private val logger = Loggers.get("network", "sending")
-    var serverInformation: ServerInformation? = null
 
     fun sendMessage(message: Message) {
         val content = message.content as SendContent

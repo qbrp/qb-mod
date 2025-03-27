@@ -33,7 +33,10 @@ import org.qbrp.system.modules.QbModule
 import org.qbrp.system.networking.ServerInformation
 import org.qbrp.system.networking.messages.Message
 import org.qbrp.system.networking.messages.components.readonly.ClusterViewer
+import java.util.concurrent.TimeUnit
+import kotlin.concurrent.fixedRateTimer
 import kotlin.math.atan2
+import kotlin.random.Random
 
 @Autoload(env = EnvType.CLIENT)
 class ChatModuleClient(): QbModule("chat"), ClientChatAPI {
