@@ -8,6 +8,7 @@ import org.koin.core.component.inject
 import org.koin.dsl.module
 import org.qbrp.core.resources.data.config.ConfigUpdateCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
+import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAddon
 import org.qbrp.engine.chat.addons.tools.MessageTextTools
 import org.qbrp.engine.chat.core.events.MessageReceivedEvent
@@ -66,7 +67,8 @@ class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
     }
 
     companion object {
-        fun handle(message: ChatMessage, group: ChatGroup, defaultGroup: ChatGroup): ActionResult {
+        fun handle(message: ChatMessage, group: ChatGroup, defaultGroup: ChatGroup = Engine.getAPI<ChatGroupsAPI>()
+            ?.getGroup("default")!!): ActionResult {
             val author = message.getAuthorEntity()
             var sendGroup = group
 

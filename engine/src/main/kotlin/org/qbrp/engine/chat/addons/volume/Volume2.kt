@@ -62,7 +62,7 @@ class Volume2: ChatAddon("volume2") {
             }
             Engine.getAPI<RecordsAPI>()!!.addLine(
                 message,
-                Replica(message.authorName, message.getText(), volume)
+                Replica(message.authorName, MessageTextTools.getTextContent(message), volume)
             )
 
             ActionResult.PASS

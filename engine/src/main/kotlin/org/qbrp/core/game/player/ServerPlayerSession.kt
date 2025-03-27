@@ -7,8 +7,10 @@ import com.mongodb.client.model.Filters
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
+import org.qbrp.core.game.player.PlayerManager
 import org.qbrp.core.game.player.ServerPlayerSession.Account
 import org.qbrp.core.game.player.registration.LoginResult
+import org.qbrp.core.game.player.registration.PlayerRegistrationCallback
 import org.qbrp.system.database.DatabaseService
 import org.qbrp.system.networking.messages.Messages
 import org.qbrp.system.networking.messaging.NetworkManager
@@ -40,7 +42,6 @@ data class ServerPlayerSession(
                   var displayName: String = minecraftNicknames.first(),
                   val uuid: UUID = UUID.randomUUID(),
     ) {
-
         fun updateDisplayName(newName: String) { displayName = newName }
 
         fun updateRegisteredNicknames(name: String) {
@@ -81,6 +82,7 @@ data class ServerPlayerSession(
                 if (!isNicknameAlreadyRegistered(nickname)) {
                     account = it
                     account.updateRegisteredNicknames(nickname)
+                    PlayerRegistrationCallback.EVENT.invoker().onRegister(this@ServerPlayerSession, PlayerManager)
                     return LoginResult.SUCCESS
                 } else {
                     return LoginResult.ALREADY_LOGGED_IN
@@ -91,6 +93,7 @@ data class ServerPlayerSession(
 
         fun register() {
             account = Account.new(this@ServerPlayerSession)
+            PlayerRegistrationCallback.EVENT.invoker().onRegister(this@ServerPlayerSession, PlayerManager)
             save()
         }
     }

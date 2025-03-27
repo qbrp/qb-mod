@@ -11,6 +11,7 @@ import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
 import org.qbrp.system.modules.ModuleAPI
+import org.qbrp.system.utils.format.Format.asMiniMessage
 
 @Autoload(LoadPriority.ADDON, both = true)
 class Placeholders: ChatAddon("placeholders"), PlaceholdersAPI {
@@ -41,8 +42,14 @@ class Placeholders: ChatAddon("placeholders"), PlaceholdersAPI {
             ActionResult.PASS
         }
 
-        MessageSendEvent.EVENT.register { _, message, _, _ ->
+        MessageSendEvent.EVENT.register { _, message, receiver, _ ->
             handle(message)
+            message.getTagsBuilder()
+                .placeholder("recipientName", receiver.name.string)
+                .placeholder("recipientDisplayName", receiver.displayName.string)
+                .placeholder("recipientRpName",
+                    PlayerManager.getPlayerData(receiver.name.string)?.account?.displayName ?: receiver.name.string
+                )
             ActionResult.PASS
         }
     }

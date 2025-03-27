@@ -13,7 +13,7 @@ import org.qbrp.system.networking.messages.types.StringContent
 import org.qbrp.system.utils.world.getPlayersInRadius
 import kotlin.collections.set
 
-data class ChatGroup(
+open class ChatGroup(
     val name: String,
     val simpleName: String = "",
     val prefix: String = "",
@@ -21,7 +21,8 @@ data class ChatGroup(
     val radius: Int = 16,
     val components: List<MessageComponent>? = listOf(),
     val format: String = "{playerName}: {text}",
-    val cooldown: Int = 0
+    val cooldown: Int = 0,
+    val permission: Boolean = false,
 ) {
     @Transient
     private var cooldownMap: MutableMap<String, Long>? = null
@@ -52,16 +53,16 @@ data class ChatGroup(
 
     fun playerCanWrite(player: ServerPlayerEntity): Boolean = playerHasWritePermission(player)
 
-    fun playerHasWritePermission(player: ServerPlayerEntity): Boolean = player.hasPermission("chat.group.$name.write")
-    fun playerHasReadPermission(player: ServerPlayerEntity): Boolean = player.hasPermission("chat.group.$name.read")
+    fun playerHasWritePermission(player: ServerPlayerEntity): Boolean = if (permission) player.hasPermission("chat.group.$name.write") else true
+    fun playerHasReadPermission(player: ServerPlayerEntity): Boolean = if (permission)  player.hasPermission("chat.group.$name.read") else true
 
-    fun getPlayersCanSee(source: PlayerEntity): List<PlayerEntity> {
+    open fun getPlayersCanSee(source: PlayerEntity): List<PlayerEntity> {
         return source.world.players
             .getPlayersInRadius(source, radius.toDouble(), true, true)
             .filter { playerHasReadPermission(it as ServerPlayerEntity) }
     }
 
-    fun isInMessage(message: ChatMessage): Boolean {
+    open fun isInMessage(message: ChatMessage): Boolean {
         val text = message.getText()
 
         // Проверяем, что текст достаточно длинный, прежде чем вызывать substring
@@ -71,7 +72,7 @@ data class ChatGroup(
     }
 
 
-    fun getFormattedName() = "$color$simpleName"
+    open fun getFormattedName() = "$color$simpleName"
 
     fun toCluster(): Cluster {
         return ClusterBuilder()

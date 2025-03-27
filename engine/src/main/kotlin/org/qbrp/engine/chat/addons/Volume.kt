@@ -1,16 +1,22 @@
 package org.qbrp.engine.chat.addons
 
+import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.block.Block
 import net.minecraft.block.Blocks
 import net.minecraft.registry.Registries
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.registry.tag.TagKey
+import net.minecraft.server.command.CommandManager
+import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import org.koin.core.component.get
+import org.qbrp.core.game.registry.CommandsRepository
+import org.qbrp.core.game.registry.ServerModCommand
 import org.qbrp.core.resources.data.config.ConfigUpdateCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
@@ -26,20 +32,32 @@ import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
 import org.qbrp.system.networking.messages.types.IntContent
 import org.qbrp.system.utils.Tracer
+import org.qbrp.system.utils.format.Format.asMiniMessage
 import org.qbrp.system.utils.log.Loggers
+import java.lang.ref.WeakReference
 import kotlin.math.max
 import kotlin.random.Random
 
 @Autoload(LoadPriority.ADDON)
-class Volume(): ChatAddon("volume") {
+class Volume(): ChatAddon("volume"), ServerModCommand {
     private var config: ServerConfigData.Chat.Volume = get<ServerConfigData.Chat>().volume
+    private var overhearPlayers: MutableMap<ServerPlayerEntity, Boolean> = mutableMapOf()
+
     companion object {
-        val BLOCK_VOLUMES = mutableMapOf<Block, Double>(
-            Blocks.AIR to 0.0
-        )
+        val BLOCK_VOLUMES = mutableMapOf<Block, Double>()
         val TAGS_VOLUMES = mutableMapOf<TagKey<Block>, Double>()
-        var VOLUME_LEVELS = listOf<ServerConfigData.Chat.Volume.VolumeLevel>()
         val logger = Loggers.get("chat", "volume")
+    }
+
+    override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
+        dispatcher.register(CommandManager.literal("overhear")
+            .executes() { ctx ->
+                val player = ctx.source.player ?: return@executes 0
+                val currentValue = overhearPlayers.getOrPut(player) { true }
+                overhearPlayers[player] = !currentValue
+                ctx.source.sendMessage("<gray>Режим подслушивания ${if (!currentValue) "выключен" else "включен"}.".asMiniMessage())
+                1
+            })
     }
 
     private fun loadConfig() {
@@ -58,8 +76,6 @@ class Volume(): ChatAddon("volume") {
             val tagKey = TagKey.of(RegistryKeys.BLOCK, Identifier(tagName))
             TAGS_VOLUMES[tagKey] = volume
         }
-
-        VOLUME_LEVELS = config.volumeLevels
     }
 
     fun getBlockVolumeModifier(blockPos: BlockPos, world: World): Double {
@@ -81,10 +97,11 @@ class Volume(): ChatAddon("volume") {
             this.config = config.chat.volume
             loadConfig()
         }
+        CommandsRepository.add(this)
 
         // Первичная обработка
         MessageReceivedEvent.EVENT.register { message ->
-            if (message.getTags().getComponentData<Boolean>("ignoreVolume") == true) { return@register ActionResult.PASS }
+            if (message.getTags().getComponentData<Boolean>("handleVolume") != true) { return@register ActionResult.PASS }
             val author = message.getAuthorEntity() ?: return@register ActionResult.PASS
             val pos = author.blockPos
             var volume = message.getTags().getComponentData<Int>("volume") ?: 0
@@ -103,6 +120,7 @@ class Volume(): ChatAddon("volume") {
             MessageTextTools.setTextContent(message, text.substring(charsHandled, text.length))
             message.apply {
                 setTags(getTagsBuilder()
+                    .placeholder("formatSep", config.getVolumeLevelFor(config.defaultVolume + volume).formatSep)
                     .component("sourceX", IntContent(pos.x))
                     .component("sourceY", IntContent(pos.y))
                     .component("sourceZ", IntContent(pos.z))
@@ -119,7 +137,8 @@ class Volume(): ChatAddon("volume") {
         // Изменение Volume
         MessageSendEvent.EVENT.register { sender, message, receiver, networking ->
             val tags = message.getTags()
-            if (tags.getComponentData<Boolean>("ignoreVolume") == true) { return@register ActionResult.PASS }
+            if (tags.getComponentData<Boolean>("handleVolume") != true) { return@register ActionResult.PASS }
+            val author = message.getAuthorEntity() ?: return@register ActionResult.PASS
             val volume = tags.getComponentData<Int>("volume") ?: return@register ActionResult.PASS
             val sourceX = tags.getComponentData<Int>("sourceX") ?: return@register ActionResult.PASS
             val sourceY = tags.getComponentData<Int>("sourceY") ?: return@register ActionResult.PASS
@@ -131,12 +150,15 @@ class Volume(): ChatAddon("volume") {
                 true
             }
             val newVolume = (volume + volumeEdit).toInt()
-            if (newVolume < 0) return@register ActionResult.FAIL
+
+            if (newVolume <= (if (overhearPlayers[author] == true) config.minOverhearVolume else config.minVolume)) return@register ActionResult.FAIL
+
             message.apply {
                 setTags(getTagsBuilder()
                     .component("volume", IntContent(newVolume))
                     .component("volumeHandled", true))
             }
+
             val handledMessageText = if (tags.getComponentData<Boolean>("format") != false) format(newVolume, message,tags.getComponentData<Boolean>("distort") != false)
             else MessageTextTools.getTextContent(message)
 
@@ -147,18 +169,8 @@ class Volume(): ChatAddon("volume") {
 
     private fun format(level: Int, message: ChatMessage, distort: Boolean): String {
         val text = MessageTextTools.getTextContent(message)
-        var formatSymbol = "&f"
-        if (level < VOLUME_LEVELS.first().value) {
-            formatSymbol = config.formatMinVolume
-        } else {
-            VOLUME_LEVELS.forEach {
-                if (level >= it.value) {
-                    formatSymbol =  it.formatText
-                    message.getTagsBuilder()
-                        .placeholder("formatSep", it.formatSep)
-                }
-            }
-        }
+        val volumeLevel = config.getVolumeLevelFor(level)
+        var formatSymbol = volumeLevel.formatText
 
         var processedMessage = text
         if (level <= config.distortionLevel) {
@@ -176,15 +188,12 @@ class Volume(): ChatAddon("volume") {
         while (i < message.length) {
             val c = message[i]
             if (c.isLetterOrDigit() && Random.nextInt(100) < strength) {
-                // Случайно выбираем: заменить символ на артефакт или поменять местами с последующим символом
                 if (Random.nextBoolean() && i < message.lastIndex) {
-                    // Меняем местами текущий символ с следующим
                     result.append(message[i + 1])
                     result.append(c)
                     i += 2
                     continue
                 } else {
-                    // Заменяем символ на случайный артефакт
                     result.append(artifacts.random())
                     i++
                     continue
