@@ -33,5 +33,6 @@ public class ClientPlayNetworkHandlerMixin {
         } else {
             instance.onGameMessage(message, overlay);
         }
+        // В целом, не особо то и нужно
     }
 }

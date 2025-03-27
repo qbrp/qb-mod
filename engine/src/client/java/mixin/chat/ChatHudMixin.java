@@ -7,6 +7,7 @@ import net.minecraft.network.message.MessageSignatureData;
 import net.minecraft.text.Text;
 import org.qbrp.engine.Engine;
 import org.qbrp.engine.chat.core.messages.ChatMessage;
+import org.qbrp.engine.chat.core.messages.VanillaChatMessage;
 import org.qbrp.engine.client.EngineClient;
 import org.qbrp.engine.client.engine.chat.ChatModuleClient;
 import org.qbrp.engine.client.engine.chat.ClientChatAPI;
@@ -52,10 +53,9 @@ public abstract class ChatHudMixin {
             cancellable = true)
     private void onAddMessage(Text message, MessageSignatureData signature, int ticks, MessageIndicator indicator, boolean refresh, CallbackInfo ci) {
         if (api != null) {
-            //api.addMessage(ChatMessage.Companion.create(message, SYSTEM_MESSAGE_AUTHOR)); // Предполагается, что api имеет метод addMessage
-            ci.cancel(); // Отменяем оригинальный метод, так как api теперь управляет сообщениями
+            api.addMessage(VanillaChatMessage.Companion.create(message, SYSTEM_MESSAGE_AUTHOR));
+            //ci.cancel();
         }
-        // Если api еще null, даем оригинальному методу обработать сообщение
     }
 
     @Inject(method = "clear", at = @At("HEAD"), cancellable = true)
@@ -64,6 +64,5 @@ public abstract class ChatHudMixin {
             api.clearStorage(); // Очищаем хранилище api
             ci.cancel(); // Отменяем оригинальный метод
         }
-        // Если api еще null, оригинальный метод очистит visibleMessages
     }
 }
