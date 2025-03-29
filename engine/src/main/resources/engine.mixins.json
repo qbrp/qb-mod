@@ -15,6 +15,7 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "ChatMessageC2SPacketMixin"
+    "ChatMessageC2SPacketMixin",
+    "ServerPlayerInteractionManagerMixin"
   ]
 }
