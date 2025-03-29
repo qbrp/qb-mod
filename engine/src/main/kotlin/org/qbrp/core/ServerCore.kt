@@ -15,7 +15,6 @@ import org.qbrp.core.game.events.Handlers
 import org.qbrp.core.game.events.ServerReceivers
 import org.qbrp.core.game.player.PlayerManager
 import org.qbrp.core.game.registry.CommandsRepository
-import org.qbrp.core.groups.Groups
 import org.qbrp.core.keybinds.ServerKeybindCallback
 import org.qbrp.core.keybinds.ServerKeybinds
 import org.qbrp.core.regions.Regions
@@ -48,7 +47,6 @@ class ServerCore : DedicatedServerModInitializer {
         Handlers.registerServerEvents()
         AudioManager.registerSources()
         Regions.load()
-        Groups.openGroups()
         PlayerManager.loadCommand()
         ServerLifecycleEvents.SERVER_STARTED.register { server ->
             ServerCore.server = server
