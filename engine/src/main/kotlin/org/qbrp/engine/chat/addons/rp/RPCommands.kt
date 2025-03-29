@@ -71,14 +71,14 @@ class RPCommands(): ChatAddon("rp-commands") {
         radius: Int = 32,
         components: ClusterBuilder = defaultComponents
     ): ChatGroup {
-        return chatGroupsAPI!!.getGroup(name) ?: ChatGroup(
+        return chatGroupsAPI?.getGroup(name) ?: ChatGroup(
             name = name,
             format = format,
             radius = radius,
             prefix = "NONE"
         ).apply {
             buildedComponents = components.build().getData().toList()
-            chatGroupsAPI.addGroup(this)
+            chatGroupsAPI?.addGroup(this)
         }
     }
 

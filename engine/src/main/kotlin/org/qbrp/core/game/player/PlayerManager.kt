@@ -53,11 +53,11 @@ object PlayerManager: ServerModCommand {
         )
     }
 
-    val handToHandProcessor = HandToHandActionProcessor()
     fun loadCommand() = CommandsRepository.add(this)
 
     fun getPlayer(name: String) = ServerCore.server.playerManager.getPlayer(name)
-    fun getPlayerData(name: String): ServerPlayerSession? = players[name]
+    fun getPlayerSession(name: String): ServerPlayerSession? = players[name]
+    fun getPlayerSession(player: ServerPlayerEntity): ServerPlayerSession = players[player.name.string]!!
 
     fun handleConnected(player: ServerPlayerEntity) {
         players.put(player.name.string, ServerPlayerSession(player, getDefaultSpeed(player.interactionManager.gameMode).toInt())
@@ -65,7 +65,7 @@ object PlayerManager: ServerModCommand {
     }
 
     fun handleDisconnected(player: ServerPlayerEntity) {
-        players.get(player.name.string)?.onDisconnect()
+        players.get(player.name.string)!!.onDisconnect()
         players.remove(player.name.string)
     }
 
@@ -122,7 +122,7 @@ object PlayerManager: ServerModCommand {
             class Set(@Arg(sub = true) val playerName: String, @Arg var speed: Int): CallbackCommand() {
                 @Execute(operatorLevel = 4)
                 fun execute(ctx: CommandContext<ServerCommandSource>, deps: Deps) {
-                    getPlayerData(playerName)?.setSpeed(speed)
+                    getPlayerSession(playerName)?.setSpeed(speed)
                 }
             }
 
@@ -130,7 +130,7 @@ object PlayerManager: ServerModCommand {
             class Reset(@Arg(sub = true) val playerName: String,): CallbackCommand() {
                 @Execute(operatorLevel = 4)
                 fun execute(ctx: CommandContext<ServerCommandSource>, deps: Deps) {
-                    getPlayerData(playerName)?.resetSpeed()
+                    getPlayerSession(playerName)?.resetSpeed()
                 }
             }
 

@@ -28,7 +28,7 @@ class GmUtils: ChatAddon("gm-utils") {
                         runnable = { plr ->
                             val target = message.getAuthorEntity()
                                 ?: run { plr.sendMessage("<red>Игрок не найден".asMiniMessage()); return@Button }
-                            plr.teleport(target.pos.x, target.pos.y, target.pos.z)
+                            plr.server.commandManager.executeWithPrefix(plr.commandSource, "tp ${target.name.string}")
                         }
                     ), "tp")
                     pasteElement(Button(
@@ -45,7 +45,7 @@ class GmUtils: ChatAddon("gm-utils") {
                     .placeholder("menu", page.getOpenButton("<dark_gray>(⚡)", receiver, false).getText())
             } else {
                 message.getTagsBuilder()
-                    .placeholder("menu", "")
+                    .placeholder("menu", " ")
             }
             ActionResult.PASS
         }

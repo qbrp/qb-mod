@@ -28,7 +28,7 @@ class PlayerSelectionHandler(val musicPlayerManager: MusicPlayerManager, val sto
         getSelectedPlaylists(player)
             .filter { it.isManuallyDisabled != true }
             .minByOrNull { priorities.getIndex(it.priority) }
-            ?.getSession(player)
+            ?.sessionManager?.getSession(player)
 
     fun startHandling() {
         timer = fixedRateTimer(

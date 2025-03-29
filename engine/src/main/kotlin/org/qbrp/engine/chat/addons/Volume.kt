@@ -53,9 +53,9 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
         dispatcher.register(CommandManager.literal("overhear")
             .executes() { ctx ->
                 val player = ctx.source.player ?: return@executes 0
-                val currentValue = overhearPlayers.getOrPut(player) { true }
+                val currentValue = overhearPlayers.getOrPut(player) { false }
                 overhearPlayers[player] = !currentValue
-                ctx.source.sendMessage("<gray>Режим подслушивания ${if (!currentValue) "выключен" else "включен"}.".asMiniMessage())
+                ctx.source.sendMessage("<gray>Режим подслушивания ${if (currentValue) "выключен" else "включен"}.".asMiniMessage())
                 1
             })
     }
@@ -138,7 +138,6 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
         MessageSendEvent.EVENT.register { sender, message, receiver, networking ->
             val tags = message.getTags()
             if (tags.getComponentData<Boolean>("handleVolume") != true) { return@register ActionResult.PASS }
-            val author = message.getAuthorEntity() ?: return@register ActionResult.PASS
             val volume = tags.getComponentData<Int>("volume") ?: return@register ActionResult.PASS
             val sourceX = tags.getComponentData<Int>("sourceX") ?: return@register ActionResult.PASS
             val sourceY = tags.getComponentData<Int>("sourceY") ?: return@register ActionResult.PASS
@@ -151,7 +150,7 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
             }
             val newVolume = (volume + volumeEdit).toInt()
 
-            if (newVolume <= (if (overhearPlayers[author] == true) config.minOverhearVolume else config.minVolume)) return@register ActionResult.FAIL
+            if (newVolume <= (if (overhearPlayers[receiver] == true) config.minOverhearVolume else config.minVolume)) return@register ActionResult.FAIL
 
             message.apply {
                 setTags(getTagsBuilder()
@@ -187,7 +186,7 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
         var i = 0
         while (i < message.length) {
             val c = message[i]
-            if (c.isLetterOrDigit() && Random.nextInt(100) < strength) {
+            if (c.isLetter() && Random.nextInt(100) < strength) {
                 if (Random.nextBoolean() && i < message.lastIndex) {
                     result.append(message[i + 1])
                     result.append(c)

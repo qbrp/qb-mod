@@ -16,7 +16,6 @@ open class FadeInFilter(
                     // Если начали затухание, сбрасываем обработанные сэмплы
                     processedSamples = 0
                     isFadedIn = false // Сбрасываем флаг, если включаем эффект снова
-                    println("FadeInFilter Debug: started fading in")
                 }
             }
         }
@@ -57,7 +56,6 @@ open class FadeInFilter(
         // Проверяем, завершилось ли усиление громкости
         if (processedSamples >= totalFadeSamples && !isFadedIn) {
             isFadedIn = true
-            println("FadeInFilter Debug: track fully faded in, isFadedIn set to true")
         }
 
         output.process(samples, offset, length)

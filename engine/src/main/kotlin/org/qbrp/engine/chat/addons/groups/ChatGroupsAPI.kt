@@ -1,6 +1,5 @@
 package org.qbrp.engine.chat.addons.groups
 
-import org.qbrp.core.groups.Group
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.chat.core.system.ChatGroup
 import org.qbrp.system.modules.ModuleAPI

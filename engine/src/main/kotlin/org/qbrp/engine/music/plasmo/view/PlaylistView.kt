@@ -186,7 +186,7 @@ class PlaylistView(
     }
 
     private fun createTrackLine(index: Int, trackName: String, duration: String, loops: String): Text {
-        val dot = if (playable.queue.currentTrackIndex == index) "&a$index:" else "&7$index"
+        val dot = if (session?.queue?.currentTrackIndex == index) "&a$index:" else "&7$index"
         val loops = if (loops == "1" || loops == "0" ) "" else "&6($loops)"
         return Text.literal("")
             .append(dot.formatMinecraft())

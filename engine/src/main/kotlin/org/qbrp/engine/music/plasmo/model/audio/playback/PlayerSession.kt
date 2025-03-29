@@ -1,5 +1,8 @@
 package org.qbrp.engine.music.plasmo.model.audio.playback
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.qbrp.engine.music.plasmo.view.PlaylistView
 import org.qbrp.engine.music.plasmo.model.audio.Playable
@@ -8,12 +11,14 @@ import su.plo.voice.api.server.audio.source.ServerDirectSource
 import kotlin.concurrent.timer
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
+import org.qbrp.engine.music.plasmo.playback.player.PlayerState
 
 data class PlayerSession(
     var playable: Playable,
     val source: ServerDirectSource,
     var queue: Queue,
-    var radio: Radio? = null
+    val state: PlayerState,
+    var radio: Radio? = null,
 ): KoinComponent {
     private var unsubscribeTimer: java.util.Timer? = null
     private var unsubscribeTimePassed = false
@@ -32,10 +37,7 @@ data class PlayerSession(
 
     // Возвращает булеву, готов ли игрок отписаться
     fun handleUnsubscribe(): Boolean {
-        //radio?.fadeOut() ?: return true
-        //return radio!!.isFadedOut()
         radio?.let { it.audioPlayer.volume = 0 } ?: return true
-
         if (unsubscribeTimer == null) {
             unsubscribeTimer = timer("unsubscribeTimer", false, 700, Long.MAX_VALUE) {
                 unsubscribeTimePassed = true
@@ -46,31 +48,38 @@ data class PlayerSession(
         return unsubscribeTimePassed
     }
 
+    fun fadeOut() {
+        radio?.let { it.audioPlayer.volume = 0 }
+        Thread.sleep(700)
+    }
+
     fun cancelUnsubscribe() {
-        //println("Cancelling fade out")
-        //radio!!.cancelFadeOut()
         radio?.audioPlayer?.volume = 100
         unsubscribeTimer?.cancel()
         unsubscribeTimer = null
         unsubscribeTimePassed = false
     }
 
-    private fun handleTrackFinished() {
+    private suspend fun handleTrackFinished() {
         nextTrack()
         createRadio()
     }
 
-    fun createRadio(time: Long = 0) {
-        val track = queue.getCurrentTrack()
-        if (track != null) {
-            radio?.destroy()
-            radio = get<Radio>(parameters = {
-                parametersOf(source, queue.getCurrentTrack(), {
-                    handleTrackFinished()
-                })
-            }).apply {
-                audioPlayer.playingTrack.position = time
+    suspend fun createRadio(time: Long = 0) {
+        withContext(Dispatchers.Default) {
+            if (radio != null) fadeOut()
+            val track = queue.getCurrentTrack()
+            if (track != null) {
+                radio?.destroy()
+                radio = get<Radio>(parameters = {
+                    parametersOf(source, queue.getCurrentTrack(), {
+                        runBlocking { handleTrackFinished() }
+                    })
+                }).apply {
+                    audioPlayer.playingTrack.position = time
+                }
             }
+            radio!!.audioPlayer?.volume = 100
         }
     }
 }

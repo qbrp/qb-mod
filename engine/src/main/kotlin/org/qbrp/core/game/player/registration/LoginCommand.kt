@@ -5,7 +5,6 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
-import org.koin.java.KoinJavaComponent.inject
 import org.qbrp.core.game.player.PlayerManager
 import org.qbrp.core.game.player.ServerPlayerSession
 import org.qbrp.core.game.registry.ServerModCommand
@@ -13,6 +12,7 @@ import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAPI
 import org.qbrp.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
 import org.qbrp.engine.chat.core.messages.ChatMessage
+import org.qbrp.system.database.CoroutinesUtil
 import java.util.UUID
 
 class LoginCommand: ServerModCommand {
@@ -26,10 +26,10 @@ class LoginCommand: ServerModCommand {
             .executes { context ->
                 try {
                     val player = context.source.player!!
-                    val session = PlayerManager.getPlayerData(player.name.string)
+                    val session = PlayerManager.getPlayerSession(player)
                     val code = StringArgumentType.getString(context, "code") // Получаем значение аргумента
 
-                    if (code == "") {
+                    if (code == "" || code == "NONE") {
                         handleBlankResult(context); return@executes 1
                     }
                     var uuid = UUID.randomUUID()
@@ -39,14 +39,20 @@ class LoginCommand: ServerModCommand {
                         handleBlankResult(context); return@executes 1
                     }
 
-                    val loginOperation = session!!.database.login(uuid, session.entity.name.string)
-                    when (loginOperation) {
-                        LoginResult.SUCCESS -> handleSuccessResult(context, session, uuid)
-                        LoginResult.ALREADY_LOGGED_IN -> handleAlreadyRegistered(context)
-                        LoginResult.NOT_FOUND -> { handleNotFoundResult(context, code); handleBlankResult(context)}
-                    }
+                    CoroutinesUtil.runAsyncCommand(context,
+                        operation = { session.database.login(uuid, session.entity.name.string) },
+                        callback = { loginResult ->
+                            when (loginResult) {
+                                LoginResult.SUCCESS -> handleSuccessResult(context, session, uuid)
+                                LoginResult.ALREADY_LINKED -> handleAlreadyRegistered(context)
+                                LoginResult.NOT_FOUND -> {
+                                    handleNotFoundResult(context, code)
+                                    handleBlankResult(context)
+                                }
+                            }
+                        }
+                    )
                 } catch (e: Exception) {
-                    println(e.message)
                     e.printStackTrace()
                 }
                 1

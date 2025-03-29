@@ -13,7 +13,7 @@ class NicknameCommand: ServerModCommand {
             .then(CommandManager.argument("nickname", StringArgumentType.greedyString())
             .executes { ctx ->
                 val nick = StringArgumentType.getString(ctx, "nickname")
-                PlayerManager.getPlayerData(ctx.source.player!!.name.string)?.account!!.updateDisplayName(
+                PlayerManager.getPlayerSession(ctx.source.player!!.name.string)?.account!!.updateDisplayName(
                 nick)
                 ctx.source.sendMessage("<gray>Никнейм установлен на $nick".asMiniMessage())
             1

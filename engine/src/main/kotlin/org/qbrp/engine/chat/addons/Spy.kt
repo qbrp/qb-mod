@@ -63,7 +63,7 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
                     setText("&6[S]&r ${getText()}")
                     setTags(getTagsBuilder()
                         .component("spy", StringContent())
-                        .component("ignoreVolume", BooleanContent(true)))
+                        .component("handleVolume", BooleanContent(false)))
                     handleUpdate()
                 }
                 sender.send(spyMessage)

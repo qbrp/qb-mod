@@ -1,14 +1,12 @@
 package org.qbrp.core.game.player
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonSetter
-import com.fasterxml.jackson.annotation.Nulls
 import com.mongodb.client.model.Filters
-import net.minecraft.entity.attribute.EntityAttributeModifier
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
-import org.qbrp.core.game.player.PlayerManager
-import org.qbrp.core.game.player.ServerPlayerSession.Account
 import org.qbrp.core.game.player.registration.LoginResult
 import org.qbrp.core.game.player.registration.PlayerRegistrationCallback
 import org.qbrp.system.database.DatabaseService
@@ -24,89 +22,91 @@ data class ServerPlayerSession(
     lateinit var account: Account
     val database = Database()
     val handler = PlayerHandler(this)
+    //val interactionManager = InteractionManager(this)
 
     fun onDisconnect() {
-        saveAccountIfExists()
+        // Вызываем сохранение аккаунта в отдельном потоке
+        CoroutineScope(Dispatchers.IO).launch {
+            saveAccountIfExists()
+        }
     }
 
     fun onConnect() {
         sendRegistrationMessage()
     }
 
-    private fun saveAccountIfExists() {
-        if (::account.isInitialized) { database.save() }
-    }
+    fun isAuthorized() = ::account.isInitialized
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    class Account(@JsonSetter(nulls = Nulls.AS_EMPTY) val minecraftNicknames: MutableList<String>,
-                  var displayName: String = minecraftNicknames.first(),
-                  val uuid: UUID = UUID.randomUUID(),
-    ) {
-        fun updateDisplayName(newName: String) { displayName = newName }
-
-        fun updateRegisteredNicknames(name: String) {
-            if (minecraftNicknames.contains(name)) { minecraftNicknames.add(name) }
-        }
-
-        companion object {
-            fun new(player: ServerPlayerSession) = Account(mutableListOf(player.entity.name.string))
+    private suspend fun saveAccountIfExists() {
+        if (::account.isInitialized) {
+            database.save()
         }
     }
 
-    inner class Database(val service: DatabaseService = PlayerManager.databaseService) {
-
-        fun save() {
-            service.upsertObject<Account>(
-                "data",
-                mapOf("uuid" to account.uuid.toString()),
-                account)
-        }
-
-        fun get(uuid: UUID): Account? {
-            val matches = service.fetchAll("data", mapOf("uuid" to uuid.toString()), Account::class.java)
-            return matches.firstOrNull() as Account?
-        }
-
-        fun isNicknameAlreadyRegistered(nickname: String): Boolean {
-            val matches = service.fetchAll(
-                document = "data",
-                query = emptyMap(),  // Можно оставить пустым, так как фильтр будет через customFilters
-                clazz = Account::class.java,
-                customFilters = listOf(Filters.eq("nicknames", nickname)) // nicknames — это массив в документе
-            )
-            return matches.isNotEmpty()
-        }
-
-        fun login(uuid: UUID, nickname: String): LoginResult {
-            get(uuid)?.let {
-                if (!isNicknameAlreadyRegistered(nickname)) {
-                    account = it
-                    account.updateRegisteredNicknames(nickname)
-                    PlayerRegistrationCallback.EVENT.invoker().onRegister(this@ServerPlayerSession, PlayerManager)
-                    return LoginResult.SUCCESS
-                } else {
-                    return LoginResult.ALREADY_LOGGED_IN
-                }
-            }
-            return LoginResult.NOT_FOUND
-        }
-
-        fun register() {
-            account = Account.new(this@ServerPlayerSession)
-            PlayerRegistrationCallback.EVENT.invoker().onRegister(this@ServerPlayerSession, PlayerManager)
-            save()
-        }
-    }
-
-    private fun sendRegistrationMessage() = NetworkManager.sendSignal(entity, Messages.REGISTRATION_REQUEST)
+    private fun sendRegistrationMessage() =
+        NetworkManager.sendSignal(entity, Messages.REGISTRATION_REQUEST)
 
     fun setSpeed(speed: Int) {
         this.speed = speed
     }
 
-    fun resetSpeed() { this.speed = null }
+    fun resetSpeed() {
+        this.speed = null
+    }
 
-    fun getDisplayName(): String = if (!::account.isInitialized) entity.name.string else account.displayName
+    fun getDisplayName(): String =
+        if (!::account.isInitialized) entity.name.string else account.displayName
 
-    fun getDisplayNameText(): Text = if (!::account.isInitialized) entity.name else account.displayName.asMiniMessage()
+    fun getDisplayNameText(): Text =
+        if (!::account.isInitialized) entity.name else account.displayName.asMiniMessage()
+
+    inner class Database(val service: DatabaseService = PlayerManager.databaseService) {
+
+        suspend fun save() = withContext(Dispatchers.IO) {
+            service.upsertObject<Account>(
+                "data",
+                mapOf("uuid" to account.uuid.toString()),
+                account
+            )
+        }
+
+        suspend fun get(uuid: UUID): Account? = withContext(Dispatchers.IO) {
+            val matches = service.fetchAll("data", mapOf("uuid" to uuid.toString()), Account::class.java)
+            matches.firstOrNull() as Account?
+        }
+
+        suspend fun isNicknameAlreadyRegistered(nickname: String): Boolean =
+            withContext(Dispatchers.IO) {
+                val matches = service.fetchAll(
+                    document = "data",
+                    query = emptyMap(),
+                    clazz = Account::class.java,
+                    customFilters = listOf(Filters.eq("nicknames", nickname))
+                )
+                matches.isNotEmpty()
+            }
+
+        suspend fun login(uuid: UUID, nickname: String): LoginResult = withContext(Dispatchers.IO) {
+            get(uuid)?.let {
+                if (!isNicknameAlreadyRegistered(nickname)) {
+                    authorize(it)
+                    LoginResult.SUCCESS
+                } else {
+                    LoginResult.ALREADY_LINKED
+                }
+            } ?: LoginResult.NOT_FOUND
+        }
+
+        suspend fun register() = withContext(Dispatchers.IO) {
+            authorize(Account.new(this@ServerPlayerSession))
+        }
+
+        private suspend fun authorize(account: Account) = withContext(Dispatchers.IO) {
+            this@ServerPlayerSession.account = account.apply {
+                updateRegisteredNicknames(this@ServerPlayerSession.entity.name.string)
+            }
+            PlayerRegistrationCallback.EVENT.invoker().onRegister(this@ServerPlayerSession, PlayerManager)
+            save()
+        }
+    }
 }

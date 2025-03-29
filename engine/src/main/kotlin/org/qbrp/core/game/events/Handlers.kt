@@ -8,7 +8,6 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import org.qbrp.core.game.player.PlayerManager
 import org.qbrp.core.game.player.registration.PlayerRegistrationCallback
-import org.qbrp.core.groups.GroupSelection
 import org.qbrp.core.regions.RegionSelection
 import org.qbrp.system.utils.time.TimerUpdater
 import org.qbrp.core.visual.VisualDataStorage
@@ -39,15 +38,7 @@ object Handlers {
             RegionSelection.handleInteraction(player as ServerPlayerEntity, hand, hitResult)
             ActionResult.PASS
         })
-        UseEntityCallback.EVENT.register { player, world, hand, entity, hitResult ->
-            if (entity is ServerPlayerEntity) GroupSelection.handleInteraction(player as ServerPlayerEntity, entity)
-            ActionResult.PASS
-        }
-        ServerTickEvents.END_WORLD_TICK.register { server ->
-            PlayerManager.playersList.forEach { it.handler.handleTick() }
-        }
     }
-
 
     fun registerBaseEvents() {
         ServerTickEvents.END_WORLD_TICK.register { server ->
