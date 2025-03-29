@@ -10,8 +10,6 @@ import org.qbrp.engine.chat.core.events.MessageUpdateEvent
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
-import org.qbrp.system.modules.ModuleAPI
-import org.qbrp.system.utils.format.Format.asMiniMessage
 
 @Autoload(LoadPriority.ADDON, both = true)
 class Placeholders: ChatAddon("placeholders"), PlaceholdersAPI {
@@ -33,7 +31,7 @@ class Placeholders: ChatAddon("placeholders"), PlaceholdersAPI {
             message.getTagsBuilder()
                 .placeholder("playerName", name)
                 .placeholder("playerDisplayName", author?.displayName?.string ?: SYSTEM_MESSAGE_AUTHOR)
-                .placeholder("playerRpName", PlayerManager.getPlayerData(name)?.getDisplayName() ?: name)
+                .placeholder("playerRpName", PlayerManager.getPlayerSession(name)?.getDisplayName() ?: name)
             ActionResult.PASS
         }
 
@@ -44,12 +42,6 @@ class Placeholders: ChatAddon("placeholders"), PlaceholdersAPI {
 
         MessageSendEvent.EVENT.register { _, message, receiver, _ ->
             handle(message)
-            message.getTagsBuilder()
-                .placeholder("recipientName", receiver.name.string)
-                .placeholder("recipientDisplayName", receiver.displayName.string)
-                .placeholder("recipientRpName",
-                    PlayerManager.getPlayerData(receiver.name.string)?.account?.displayName ?: receiver.name.string
-                )
             ActionResult.PASS
         }
     }

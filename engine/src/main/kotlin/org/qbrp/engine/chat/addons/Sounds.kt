@@ -1,5 +1,6 @@
 package org.qbrp.engine.chat.addons
 
+import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket
 import net.minecraft.registry.Registries
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
@@ -8,6 +9,7 @@ import org.qbrp.engine.chat.addons.records.Action
 import org.qbrp.engine.chat.core.events.MessageSendEvent
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
+import org.qbrp.system.utils.world.playSoundForPlayer
 
 @Autoload(LoadPriority.ADDON)
 class Sounds: ChatAddon("sounds") {
@@ -16,7 +18,7 @@ class Sounds: ChatAddon("sounds") {
         super.load()
         MessageSendEvent.EVENT.register() { sender, message, receiver, networking ->
             message.getTags().getComponentData<String>("sound")?.also {
-                receiver.playSound(Registries.SOUND_EVENT.get(Identifier.tryParse(it)), 1F, 1F)
+                playSoundForPlayer(receiver, it, 1F, 1F)
             }
             ActionResult.PASS
         }

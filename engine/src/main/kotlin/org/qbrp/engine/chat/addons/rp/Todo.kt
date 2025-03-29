@@ -4,15 +4,16 @@ import net.minecraft.util.ActionResult
 import org.qbrp.engine.chat.ChatAddon
 import org.qbrp.engine.chat.addons.tools.MessageTextTools
 import org.qbrp.engine.chat.core.events.MessageReceivedEvent
+import org.qbrp.engine.chat.core.events.MessageSenderPipeline
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
 
-@Autoload(LoadPriority.ADDON)
+@Autoload(1)
 class Todo : ChatAddon("todo") {
 
     override fun load() {
         super.load()
-        MessageReceivedEvent.EVENT.register { message ->
+        MessageSenderPipeline.EVENT.register { message, sender ->
             MessageTextTools.setTextContent(message, transformText(MessageTextTools.getTextContent(message)))
             ActionResult.PASS
         }

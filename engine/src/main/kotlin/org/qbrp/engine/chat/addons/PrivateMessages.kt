@@ -3,8 +3,6 @@ package org.qbrp.engine.chat.addons
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.command.argument.EntityArgumentType
-import net.minecraft.command.argument.MessageArgumentType
-import net.minecraft.command.suggestion.SuggestionProviders
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.CommandManager.argument
@@ -12,7 +10,6 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundEvents
 import org.koin.core.component.get
-import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.qbrp.core.game.player.PlayerManager
 import org.qbrp.core.game.registry.CommandsRepository
@@ -22,10 +19,7 @@ import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAddon
 import org.qbrp.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
-import org.qbrp.engine.chat.addons.groups.ChatGroups
 import org.qbrp.engine.chat.addons.groups.ChatGroupsAPI
-import org.qbrp.engine.chat.addons.placeholders.PlaceholdersAPI
-import org.qbrp.engine.chat.addons.tools.MessageTextTools
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.chat.core.system.ChatGroup
 import org.qbrp.system.modules.Autoload
@@ -61,6 +55,11 @@ class PrivateMessages: ChatAddon("pms"), ServerModCommand {
                     val text = StringArgumentType.getString(ctx, "text")
                     val message = ChatMessage(name, text).apply {
                         getTagsBuilder()
+                            .placeholder("recipientName", target.name.string)
+                            .placeholder("recipientDisplayName", target.displayName.string)
+                            .placeholder("recipientRpName",
+                                PlayerManager.getPlayerSession(target.name.string)?.account?.displayName ?: target.name.string
+                            )
                             .component("sound", SoundEvents.UI_BUTTON_CLICK.key.get().value.toString())
                             .component("mention", target.name.string)
                             .component("group", "pm")
