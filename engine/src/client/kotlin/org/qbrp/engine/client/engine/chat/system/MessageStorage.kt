@@ -45,8 +45,8 @@ class MessageStorage {
     private val messageLock = Any()
 
     fun addMessage(message: ChatMessage) {
+        val client = MinecraftClient.getInstance()
         synchronized(messageLock) {
-            val client = MinecraftClient.getInstance()
             messages.add(message)
             ClientResources.root.addChatMessageToStorage(getMessageDTO(message))
             logger.log(
@@ -55,15 +55,15 @@ class MessageStorage {
             )
             MessageAddedEvent.EVENT.invoker().invokeEvent(message, this)
             if (message.getText().trim() != "") provider.onMessageAdded(message, this)
-            if (message.handleVanilla() && message.authorName == client.player?.name?.string) {
-                client.player?.networkHandler?.sendChatMessage(MessageTextTools.getTextContent(message))
-            }
             if (message.getTags().getComponentData<Boolean>("bubble") == true && message.authorName == client.player?.name?.string) {
                 client.player?.networkHandler?.sendCommand("/cb ${MessageTextTools.getTextContent(message)}")
             }
             if (getSize() > 300) {
                 messages.subList(0, messages.size - 5).clear()
             }
+        }
+        if (message.handleVanilla() && message.authorName == client.player?.name?.string) {
+            client.player?.networkHandler?.sendChatMessage(MessageTextTools.getTextContent(message).asMiniMessage().copy().string)
         }
     }
 
