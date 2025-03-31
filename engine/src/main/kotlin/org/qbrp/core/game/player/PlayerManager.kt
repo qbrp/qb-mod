@@ -74,12 +74,7 @@ object PlayerManager: ServerModCommand {
     }
 
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
-        dispatcher.register(
-            CommandBuilder()
-                .buildTree(this::class.java)
-                .getCommand()
-                .getLiteral()
-        )
+        PlayerManagerCommand().register(dispatcher)
         RegistrationCommand().register(dispatcher)
         LoginCommand().register(dispatcher)
         NicknameCommand().register(dispatcher)
@@ -110,31 +105,5 @@ object PlayerManager: ServerModCommand {
     fun getLookDirection(player: PlayerEntity): Vec3d {
         val rotation = player.rotationVector
         return Vec3d(rotation.x, rotation.y, rotation.z)
-    }
-
-    @SubCommand
-    class Edit(@Arg val playerName: String) {
-
-        @SubCommand
-        class Speed {
-
-            @SubCommand
-            class Set(@Arg(sub = true) val playerName: String, @Arg var speed: Int): CallbackCommand() {
-                @Execute(operatorLevel = 4)
-                fun execute(ctx: CommandContext<ServerCommandSource>, deps: Deps) {
-                    getPlayerSession(playerName)?.setSpeed(speed)
-                }
-            }
-
-            @SubCommand
-            class Reset(@Arg(sub = true) val playerName: String,): CallbackCommand() {
-                @Execute(operatorLevel = 4)
-                fun execute(ctx: CommandContext<ServerCommandSource>, deps: Deps) {
-                    getPlayerSession(playerName)?.resetSpeed()
-                }
-            }
-
-        }
-
     }
 }

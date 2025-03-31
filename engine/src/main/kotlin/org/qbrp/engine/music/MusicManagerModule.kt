@@ -37,10 +37,12 @@ import su.plo.voice.api.server.PlasmoVoiceServer
 import su.plo.voice.api.server.audio.source.ServerDirectSource
 
 @Autoload
-class MusicManagerModule : QbModule("music"), KoinComponent {
+class MusicManagerModule : QbModule("music"), KoinComponent, MusicManagerAPI {
     private val logger = Loggers.get("musicManager")
 
     override fun getName() = "musicManager"
+
+    override fun getTracks(): List<Track> = get<MusicStorage>().getAllTracks()
 
     override fun load() {
         get<MusicDatabaseService>().db.connect()
@@ -52,7 +54,7 @@ class MusicManagerModule : QbModule("music"), KoinComponent {
         CommandsRepository.add(get<List<ServerModCommand>>())
     }
 
-    override fun getAPI(): ModuleAPI? = null
+    override fun getAPI(): MusicManagerAPI = this
 
     fun getVoiceServer(): PlasmoVoiceServer = get<MusicAddonLoader>().voiceServer
 
@@ -96,9 +98,8 @@ class MusicManagerModule : QbModule("music"), KoinComponent {
         factory { (player: ServerPlayerEntity) -> PlayerState(get(), player) }
         factory { (originalName: String) -> ShadowQueue(originalName) }
         factory { (playable: Playable) -> PlaybackSessionManagerImpl(playable, get()) }
-
         factory { (name: String, selector: Selector, priority: Priority, queue: Queue) ->
-            Playlist(name, selector, priority, get(), get()).apply { loadQueue(queue) }
+            Playlist(name, selector, priority, get()).apply { loadQueue(queue) }
         }
 
         single { MusicManagerModule() }

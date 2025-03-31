@@ -16,7 +16,7 @@ object ClientResources {
 
     fun downloadPack() {
         val pack = resourcepacks.addUnit(ZipData(assets.path.resolve("pack.zip").pathString), name = "pack", extension = "zip") as DownloadedUnit
-        pack.download(root.config.resources.downloadUrl)
+        pack.download(root.configData.resources.downloadUrl)
         pack.extract(resourcepacks.path)
     }
 }

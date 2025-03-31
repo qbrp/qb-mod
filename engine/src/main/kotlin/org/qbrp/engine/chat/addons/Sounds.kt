@@ -18,7 +18,13 @@ class Sounds: ChatAddon("sounds") {
         super.load()
         MessageSendEvent.EVENT.register() { sender, message, receiver, networking ->
             message.getTags().getComponentData<String>("sound")?.also {
-                playSoundForPlayer(receiver, it, 1F, 1F)
+                if (it != "") {
+                    try {
+                        playSoundForPlayer(receiver, it, 1F, 1F)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
             }
             ActionResult.PASS
         }

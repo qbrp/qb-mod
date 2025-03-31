@@ -158,12 +158,29 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
                     .component("volumeHandled", true))
             }
 
-            val handledMessageText = if (tags.getComponentData<Boolean>("format") != false) format(newVolume, message,tags.getComponentData<Boolean>("distort") != false)
-            else MessageTextTools.getTextContent(message)
+            if (message.getAuthorEntity() == receiver) {
+                log(message)
+                message.getTagsBuilder()
+                    .component("log", true)
+            }
+            ActionResult.PASS
+        }
+
+        // Форматирование
+        MessageSendEvent.EVENT.register() { sender, message, receiver, networking ->
+            val tags = message.getTags()
+            if (tags.getComponentData<Boolean>("format") != true) { return@register ActionResult.PASS }
+            val volume = tags.getComponentData<Int>("volume") ?: return@register ActionResult.PASS
+
+            val handledMessageText = format(volume, message,tags.getComponentData<Boolean>("distort") != false)
 
             MessageTextTools.setTextContent(message, handledMessageText)
             ActionResult.PASS
         }
+    }
+
+    private fun log(message: ChatMessage) {
+        logger.log(MessageTextTools.getTextContent(message))
     }
 
     private fun format(level: Int, message: ChatMessage, distort: Boolean): String {
@@ -184,9 +201,13 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
         val artifacts = config.artifacts
         val result = StringBuilder()
         var i = 0
+        var ignore = false
         while (i < message.length) {
             val c = message[i]
-            if (c.isLetter() && Random.nextInt(100) < strength) {
+            if (c == '{') ignore = true
+            if (c == '*') { ignore = !ignore }
+            if (c == '}') ignore = false
+            if (c.isLetter() && Random.nextInt(100) < strength && !ignore) {
                 if (Random.nextBoolean() && i < message.lastIndex) {
                     result.append(message[i + 1])
                     result.append(c)

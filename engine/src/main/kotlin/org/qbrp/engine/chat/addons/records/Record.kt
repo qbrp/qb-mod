@@ -8,6 +8,7 @@ import org.koin.core.component.get
 import org.qbrp.core.resources.data.Data
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAPI
+import org.qbrp.engine.chat.addons.tools.MessageTextTools
 import org.qbrp.engine.chat.core.events.MessageReceivedEvent
 import org.qbrp.engine.chat.core.messages.ChatMessage
 
@@ -25,7 +26,7 @@ class Record: Data(), KoinComponent {
         lines[uuid] = line
     }
 
-    fun addLine(msg: ChatMessage, line: Line = Message(msg.authorName, msg.getText())) {
+    fun addLine(msg: ChatMessage, line: Line = Message(msg.authorName, MessageTextTools.getTextContent(msg))) {
         lines[msg.uuid] = line
     }
 
