@@ -22,9 +22,8 @@ class Shadow(
     name: String,
     selector: Selector,
     priority: Priority,
-    voiceServer: PlasmoVoiceServer,
-    sessionManager: PlaybackSessionManager
-) : Playlist(name, selector, priority, voiceServer, sessionManager), KoinComponent {
+    voiceServer: PlasmoVoiceServer
+) : Playlist(name, selector, priority, voiceServer), KoinComponent {
 
     @JsonIgnore override var queue: Queue = get(parameters = { parametersOf(originalName) })
 

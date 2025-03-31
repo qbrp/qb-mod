@@ -19,11 +19,11 @@ import java.time.Clock
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-@Autoload(LoadPriority.ADDON)
+@Autoload(3)
 class Records: ChatAddon("records"), RecordsAPI {
 
     override fun getKoinModule(): Module = module {
-        single { ServerResources.getRootBranch().addUnit(Record(),"chat_log_${composeRecordName()}", "json") }
+        single { ServerResources.getRootBranch().records.addUnit(Record(),"chat_log_${composeRecordName()}", "json") }
         single { get<ContentUnit>().data as Record }
     }
 

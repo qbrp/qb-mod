@@ -3,14 +3,17 @@ package org.qbrp.engine.chat.core.messages
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import org.qbrp.core.resources.units.Unit
+import org.qbrp.engine.chat.addons.tools.MessageTextTools
 import org.qbrp.engine.chat.core.events.MessageHandledEvent
 import org.qbrp.engine.chat.core.events.MessageSendEvent
 import org.qbrp.engine.chat.core.system.ServerChatNetworking
+import org.qbrp.system.utils.log.Loggers
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.text.toMutableList
 
 open class MessageSender(private val networking: ServerChatNetworking, private val targets: CopyOnWriteArrayList<ServerPlayerEntity> = CopyOnWriteArrayList<ServerPlayerEntity>()) : Sender {
     constructor(networking: ServerChatNetworking, list: List<ServerPlayerEntity>) : this (networking, CopyOnWriteArrayList(list))
+    companion object { val logger = Loggers.get("chat", "sending")}
     fun addTarget(player: ServerPlayerEntity) {
         targets.removeIf { it.uuid == player.uuid }
         targets.add(player)
@@ -37,6 +40,10 @@ open class MessageSender(private val networking: ServerChatNetworking, private v
         val receivers = targets.filter {
             MessageSendEvent.EVENT.invoker()
                 .onMessageSend(this, message.copy(), it, networking) == ActionResult.SUCCESS
+        }
+        if (message.getTags().getComponentData<Boolean>("log") != true) {
+            message.getText()
+            message.getTagsBuilder().component("log", true)
         }
         MessageHandledEvent.EVENT.invoker().onMessageSend(message, receivers)
     }

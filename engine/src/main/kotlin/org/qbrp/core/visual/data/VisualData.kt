@@ -8,6 +8,6 @@ abstract class VisualData(val world: World, val uuid: String, open val x: Int, o
     companion object { val networking = VisualDataStorage.visualDataNetworking}
     abstract fun toCluster(): Cluster
     fun broadcastHardUpdate() {
-        //networking.sendHardSingleUpdateMessage(this)
+        networking.sendHardSingleUpdateMessage(this)
     }
 }

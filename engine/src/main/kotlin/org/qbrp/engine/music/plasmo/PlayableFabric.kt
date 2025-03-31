@@ -3,9 +3,11 @@ package org.qbrp.engine.music.plasmo
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.GlobalContext
+import org.koin.core.parameter.parametersOf
 import org.qbrp.engine.music.plasmo.model.audio.Playable
 import org.qbrp.engine.music.plasmo.model.audio.PlayableDTO
 import org.qbrp.engine.music.plasmo.model.audio.Playlist
+import org.qbrp.engine.music.plasmo.model.audio.playback.PlaybackSessionManagerImpl
 import org.qbrp.engine.music.plasmo.model.audio.shadow.Shadow
 import su.plo.voice.api.server.PlasmoVoiceServer
 
@@ -23,7 +25,6 @@ class PlayableFabric(val voiceServer: PlasmoVoiceServer, val storage: MusicStora
             dto.name,
             dto.selector,
             dto.priority,
-            get(),
             get()
         ).apply {
             loadQueue(dto.queue)
@@ -37,7 +38,6 @@ class PlayableFabric(val voiceServer: PlasmoVoiceServer, val storage: MusicStora
             dto.name,
             dto.selector,
             dto.priority,
-            get(),
             get()
         ).apply {
             loadQueue(storage.getPlayable(dto.name)!!.queue)

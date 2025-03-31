@@ -1,5 +1,9 @@
 package org.qbrp.engine.music.plasmo
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.core.parameter.parametersOf
 import org.koin.core.component.get
 import org.qbrp.engine.music.plasmo.model.audio.Playable
@@ -23,6 +27,7 @@ class MusicStorage(val database: MusicDatabaseService,
     private val fabric: PlayableFabric = PlayableFabric(voiceServer, this)
     private val tracks = mutableMapOf<String, Track>()
     private val playable = mutableListOf<Playable>()
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     fun loadFromDatabase() {
         try {
@@ -34,6 +39,14 @@ class MusicStorage(val database: MusicDatabaseService,
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun save(playable: Playable) {
+        scope.launch(Dispatchers.IO) { database.savePlaylist(playable) }
+    }
+
+    fun save(track: Track) {
+        scope.launch(Dispatchers.IO) { database.saveTrack(track) }
     }
 
     fun addDefaultPlaylist() {
@@ -83,7 +96,7 @@ class MusicStorage(val database: MusicDatabaseService,
     }
 
     fun addShadow(originalName: String, name: String, selector: Selector, priority: Priority, cycle: Int = -1): Shadow {
-        addPlaylist(Shadow(originalName, name, selector, priority, voiceServer, get()))
+        addPlaylist(Shadow(originalName, name, selector, priority, voiceServer))
         return getPlayable(name) as Shadow
     }
 

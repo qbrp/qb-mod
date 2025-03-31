@@ -40,7 +40,7 @@ open class ChatGroup(
     }
 
     fun getDefaultComponents(): List<Component> {
-        return buildedComponents.also { println(it) } ?: emptyList()
+        return buildedComponents ?: emptyList()
     }
 
     fun getEstimatedCooldown(player: ServerPlayerEntity): Long = cooldownMap?.get(player.name.string) ?: 0L

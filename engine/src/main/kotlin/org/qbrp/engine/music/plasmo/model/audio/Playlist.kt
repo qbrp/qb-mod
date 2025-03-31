@@ -14,8 +14,7 @@ open class Playlist(
     override var name: String,
     override var selector: Selector,
     override var priority: Priority,
-    voiceServer: PlasmoVoiceServer,
-    override var sessionManager: PlaybackSessionManager
+    voiceServer: PlasmoVoiceServer
 ) : Playable(voiceServer) {
 
     @JsonIgnore
@@ -30,6 +29,7 @@ open class Playlist(
             session.queue.currentTrackIndex = cachedTrackIndex
             session.playable = this
         }
+        save()
     }
 
 }

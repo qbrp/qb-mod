@@ -1,4 +1,4 @@
-package org.qbrp.engine.chat.addons
+package org.qbrp.engine.chat.addons.spy
 
 import PermissionManager.hasPermission
 import com.mojang.brigadier.CommandDispatcher
@@ -20,7 +20,6 @@ import org.qbrp.core.game.commands.templates.CallbackCommand
 import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.game.registry.ServerModCommand
 import org.qbrp.engine.Engine
-import org.qbrp.engine.chat.ChatAPI
 import org.qbrp.engine.chat.ChatAddon
 import org.qbrp.engine.chat.ChatModule
 import org.qbrp.engine.chat.addons.groups.ChatGroupsAPI
@@ -28,7 +27,6 @@ import org.qbrp.engine.chat.core.events.MessageHandledEvent
 
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
-import org.qbrp.system.networking.messages.types.BooleanContent
 import org.qbrp.system.networking.messages.types.StringContent
 import kotlin.collections.MutableMap
 
@@ -37,11 +35,11 @@ import kotlin.collections.MutableMap
 class Spy(): ChatAddon("spy"), ServerModCommand {
     private val server: MinecraftServer by inject()
     private val chatGroupsAPI = Engine.getAPI<ChatGroupsAPI>()
-    private lateinit var ignoreSpyPlayersMap: MutableMap<ServerPlayerEntity, Boolean>
+    private lateinit var spyManager: SpyManager
 
     override fun load() {
         super.load()
-        ignoreSpyPlayersMap = get()
+        spyManager = get()
         CommandsRepository.add(this)
 
         MessageHandledEvent.EVENT.register { message, receivers ->
@@ -53,7 +51,7 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
                 .filterNot { it in receivers }
                 .filter { chatGroupsAPI!!.fetchGroup(message)?.playerHasReadPermission(it) == true }
                 .filter { it.hasPermission("chat.spy") }
-                .filter { ignoreSpyPlayersMap[it] != true }
+                .filter { spyManager.playerCanSpy(it) }
                 .toMutableList()
             if (!spyPlayers.isEmpty()) {
                 val sender = chatAPI!!.createSender().apply {
@@ -62,8 +60,11 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
                 val spyMessage = message.copy().apply {
                     setText("&6[S]&r ${getText()}")
                     setTags(getTagsBuilder()
+                        .component("sound", "")
                         .component("spy", StringContent())
-                        .component("handleVolume", BooleanContent(false)))
+                        .component("handleVolume", false)
+                        .component("spectators", false)
+                        .component("radar", false))
                     handleUpdate()
                 }
                 sender.send(spyMessage)
@@ -73,7 +74,7 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
     }
 
     override fun getKoinModule(): Module = module {
-        single { mutableMapOf<ServerPlayerEntity, Boolean>() }
+        single { SpyManager() }
     }
 
     fun getSpyPlayers(): List<ServerPlayerEntity> {
