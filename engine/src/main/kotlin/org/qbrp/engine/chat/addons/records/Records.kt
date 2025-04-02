@@ -9,7 +9,7 @@ import org.koin.dsl.module
 import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.game.registry.ServerModCommand
 import org.qbrp.core.resources.ServerResources
-import org.qbrp.core.resources.units.ContentUnit
+import org.qbrp.core.resources.units.TextUnit
 import org.qbrp.engine.chat.ChatAddon
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.system.modules.Autoload
@@ -24,7 +24,7 @@ class Records: ChatAddon("records"), RecordsAPI {
 
     override fun getKoinModule(): Module = module {
         single { ServerResources.getRootBranch().records.addUnit(Record(),"chat_log_${composeRecordName()}", "json") }
-        single { get<ContentUnit>().data as Record }
+        single { get<TextUnit>().data as Record }
     }
 
     override fun getAPI(): RecordsAPI = this
@@ -36,7 +36,7 @@ class Records: ChatAddon("records"), RecordsAPI {
     }
 
     override fun saveRecord() {
-        get<ContentUnit>().save()
+        get<TextUnit>().save()
     }
 
     override fun addLine(uuid: String, line: Line) {
