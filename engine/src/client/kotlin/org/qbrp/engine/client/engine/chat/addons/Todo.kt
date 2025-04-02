@@ -14,8 +14,7 @@ class Todo : ClientChatAddon("todo") {
     override fun load() {
         super.load()
         MessageAddedEvent.EVENT.register { message, sender ->
-            MessageTextTools.setTextContent(message, transformText(MessageTextTools.getTextContent(message)))
-            message.setText(MessageTextTools.getTextContent(message))
+            message.setText(transformText(message.getText()))
             ActionResult.PASS
         }
     }
