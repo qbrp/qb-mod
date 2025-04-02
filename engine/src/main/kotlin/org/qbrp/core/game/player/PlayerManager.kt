@@ -68,12 +68,7 @@ object PlayerManager: ServerModCommand {
     }
 
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
-        dispatcher.register(
-            CommandBuilder()
-                .buildTree(this::class.java)
-                .getCommand()
-                .getLiteral()
-        )
+        PlayerManagerCommand().register(dispatcher)
         RegistrationCommand().register(dispatcher)
         LoginCommand().register(dispatcher)
         NicknameCommand().register(dispatcher)

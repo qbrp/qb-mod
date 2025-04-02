@@ -5,6 +5,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import net.minecraft.server.network.ServerPlayerEntity
+import okhttp3.Dispatcher
+import org.koin.core.context.GlobalContext
+import org.qbrp.engine.music.plasmo.MusicStorage
 import org.qbrp.engine.music.plasmo.model.audio.playback.PlaybackSessionManager
 import org.qbrp.engine.music.plasmo.model.audio.playback.PlaybackSessionManagerImpl
 import org.qbrp.engine.music.plasmo.model.audio.playback.PlaybackSubscribe
@@ -27,11 +30,11 @@ abstract class Playable(
     abstract var name: String
     abstract var selector: Selector
     abstract var priority: Priority
-    abstract var sessionManager: PlaybackSessionManager
+    open val sessionManager: PlaybackSessionManager = PlaybackSessionManagerImpl(this, voiceServer)
+    open lateinit var queue: Queue
 
     var isManuallyDisabled: Boolean = false // Флаг для ручного выключения
 
-    open lateinit var queue: Queue
     open fun loadQueue(queue: Queue) { this.queue = queue }
 
     abstract fun getView(): View
@@ -40,6 +43,10 @@ abstract class Playable(
 
     override fun subscribe(playerState: PlayerState): Boolean = sessionManager.subscribe(playerState)
     override fun unsubscribe(playerState: PlayerState): Boolean = sessionManager.unsubscribe(playerState)
+
+    open fun save() {
+        GlobalContext.get().get<MusicStorage>().save(this)
+    }
 
     fun disable() {
         isManuallyDisabled = true

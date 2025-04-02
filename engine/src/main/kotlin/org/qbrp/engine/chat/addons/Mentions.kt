@@ -1,10 +1,13 @@
 package org.qbrp.engine.chat.addons
 
 import net.minecraft.server.MinecraftServer
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import org.koin.core.component.inject
 import org.qbrp.core.ServerCore
+import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAddon
+import org.qbrp.engine.chat.addons.groups.ChatGroupsAPI
 import org.qbrp.engine.chat.addons.tools.MessageTextTools
 import org.qbrp.engine.chat.core.events.MessageReceivedEvent
 import org.qbrp.engine.chat.core.events.MessageSenderPipeline
@@ -16,6 +19,9 @@ import org.qbrp.system.utils.format.Format.formatMinecraft
 @Autoload(LoadPriority.ADDON)
 class Mentions(): ChatAddon("mentions") {
     private val server: MinecraftServer by inject()
+    init {
+        dependsOn { Engine.isApiAvailable<ChatGroupsAPI>() }
+    }
 
     override fun load() {
         MessageReceivedEvent.EVENT.register { message ->
@@ -23,7 +29,9 @@ class Mentions(): ChatAddon("mentions") {
             message.getTagsBuilder().apply {
                 pattern.findAll(MessageTextTools.getTextContent(message)).forEach { match ->
                     val username = match.value.substring(1)
-                    if (ServerCore.server.playerManager.getPlayer(username) != null) {
+                    if (ServerCore.server.playerManager.getPlayer(username) != null
+                        || username == "everyone"
+                        || username == "here") {
                         textComponent("mention", username, message) { text, component ->
                             text.replace(match.value, component)
                         }
@@ -35,6 +43,12 @@ class Mentions(): ChatAddon("mentions") {
 
         MessageSenderPipeline.EVENT.register { message, sender ->
             message.getTags().getComponentsData<String>("mention")?.forEach {
+                if (it == "everyone") {
+                    sender.addTargets(server.playerManager.playerList)
+                } else if (it == "here") {
+                    sender.addTargets((Engine.getAPI<ChatGroupsAPI>()!!
+                        .fetchGroup(message)?.getPlayersCanSee(message.getAuthorEntity()!!) ?: emptyList()) as List<ServerPlayerEntity>)
+                }
                 sender.addTarget(server.playerManager.getPlayer(it) ?: return@register ActionResult.PASS)
             }
             MessageTextTools.setTextContent(message, TextTagsTransformer.replaceTagsWithFormat(
