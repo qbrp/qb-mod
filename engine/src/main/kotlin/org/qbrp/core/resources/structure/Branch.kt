@@ -78,10 +78,15 @@ open class Branch(
         return add(structure) as Structure
     }
 
-    fun open(filePath: Path, clazz: Class<*>, gson: Gson = Gson()): TextUnit {
+    fun open(filePath: Path, clazz: Class<*>, gson: Gson = Gson(), initializeIfNotExists: Boolean = true): TextUnit {
         val filename = filePath.fileName.toString()
         if (!Files.exists(filePath)) {
-            addUnit(clazz.getConstructor().newInstance() as Data, filename.removeExtensions(), filename.getExtension())
+            addUnit(clazz.getConstructor().newInstance() as Data, filename.removeExtensions(), filename.getExtension()).also {
+                if (initializeIfNotExists) {
+                    it.save()
+                    return it
+                }
+            }
         }
         val file = filePath.toFile()
         val fileContent = file.takeIf { it.exists() }?.readText() ?: ""
