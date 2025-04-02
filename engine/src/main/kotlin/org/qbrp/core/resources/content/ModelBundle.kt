@@ -5,13 +5,10 @@ import org.qbrp.core.resources.data.pack.PredicatesData
 import org.qbrp.core.resources.structure.PackStructure
 import org.qbrp.core.resources.PackContent
 import org.qbrp.core.resources.ServerResources
-import org.qbrp.core.resources.units.ContentUnit
-import org.qbrp.system.utils.keys.Key
+import org.qbrp.core.resources.units.TextUnit
 import org.qbrp.system.utils.format.*
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.UUID
-import kotlin.io.path.pathString
 
 class ModelBundle(
     model: ModelData,
@@ -28,7 +25,7 @@ class ModelBundle(
 
     init {
         packStructure.itemTypes.children.forEach { itemType ->
-            val file = itemType as ContentUnit
+            val file = itemType as TextUnit
             val data = file.data as PredicatesData
             data.addPredicate(
                 modelUnit.pathString().getRelative("models").pathToJsonFormat().removeExtensions(), customModelData

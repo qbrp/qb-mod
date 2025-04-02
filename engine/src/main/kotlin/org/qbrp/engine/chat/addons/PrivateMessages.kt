@@ -14,7 +14,7 @@ import org.koin.dsl.module
 import org.qbrp.core.game.player.PlayerManager
 import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.game.registry.ServerModCommand
-import org.qbrp.core.resources.data.config.ConfigUpdateCallback
+import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAddon
@@ -35,7 +35,7 @@ class PrivateMessages: ChatAddon("pms"), ServerModCommand {
     override fun load() {
         super.load()
         CommandsRepository.add(this)
-        ConfigUpdateCallback.EVENT.register() {
+        ConfigInitializationCallback.EVENT.register() {
             Engine.getAPI<ChatGroupsAPI>()!!.addGroup(get<PmChatGroup>())
         }
     }

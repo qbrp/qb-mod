@@ -4,7 +4,7 @@ import icyllis.modernui.graphics.Image
 import org.qbrp.core.resources.structure.ImagesStructure
 import org.qbrp.engine.client.core.resources.data.ClientConfigData
 import org.qbrp.core.resources.structure.Structure
-import org.qbrp.core.resources.units.ContentUnit
+import org.qbrp.core.resources.units.TextUnit
 import org.qbrp.core.resources.units.TextureUnit
 import org.qbrp.engine.client.core.resources.data.ChatData
 import org.qbrp.engine.client.core.resources.data.MainMenuImagesData
@@ -24,7 +24,7 @@ class ClientStructure(path: File): Structure(path) {
     }
 
     val chatLogs = addBranch("chat_logs")
-    private lateinit var chatLogSession: ContentUnit
+    private lateinit var chatLogSession: TextUnit
 
     fun getMenuImageDescriptions(): List<MainMenuImagesData.ImageDescription> {
         return mainMenuImageDescriptions.images

@@ -5,7 +5,7 @@ import com.google.gson.JsonObject
 import org.qbrp.core.game.Game
 import org.qbrp.core.resources.content.DirectoryStorage
 import org.qbrp.core.resources.data.StringData
-import org.qbrp.core.resources.data.config.ConfigUpdateCallback
+import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.core.resources.data.pack.ModelData
 import org.qbrp.core.resources.parsing.ParserBuilder
@@ -13,13 +13,12 @@ import org.qbrp.core.resources.parsing.filters.ExtensionFilter
 import org.qbrp.core.resources.structure.Branch
 import org.qbrp.core.resources.structure.PackStructure
 import org.qbrp.core.resources.structure.Structure
-import org.qbrp.engine.chat.addons.records.Record
 import java.io.File
-import java.time.Clock
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class ServerStructure: Structure(File("qbrp")) {
+    init {
+        initFile()
+    }
     var config = openConfig()
 
     val records = addBranch("records")
@@ -37,7 +36,7 @@ class ServerStructure: Structure(File("qbrp")) {
             .disableHtmlEscaping()
             .create(),
     ).data as ServerConfigData)
-        .also { ConfigUpdateCallback.EVENT.invoker().onConfigUpdated(it) }
+        .also { ConfigInitializationCallback.EVENT.invoker().onConfigUpdated(it) }
     fun reloadConfig() {
         config = openConfig()
     }
@@ -47,7 +46,7 @@ class ServerStructure: Structure(File("qbrp")) {
         val packStructure = addStructure(
             PackStructure(path = resolve("resourcepack"))) as PackStructure
         val itemResource = addBranch("item_resource")
-        val blockResource = addBranch("block_resource")
+        val blockResource = addBranch("block_reТsource")
         val packOverride = addBranch("overrides")
 
         val pack = ResourcePack(

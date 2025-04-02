@@ -2,7 +2,6 @@ package org.qbrp.engine.chat.addons
 
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.block.Block
-import net.minecraft.block.Blocks
 import net.minecraft.registry.Registries
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.registry.tag.TagKey
@@ -17,7 +16,7 @@ import net.minecraft.world.World
 import org.koin.core.component.get
 import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.game.registry.ServerModCommand
-import org.qbrp.core.resources.data.config.ConfigUpdateCallback
+import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAddon
@@ -34,7 +33,6 @@ import org.qbrp.system.networking.messages.types.IntContent
 import org.qbrp.system.utils.Tracer
 import org.qbrp.system.utils.format.Format.asMiniMessage
 import org.qbrp.system.utils.log.Loggers
-import java.lang.ref.WeakReference
 import kotlin.math.max
 import kotlin.random.Random
 
@@ -93,7 +91,7 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
 
     override fun load() {
         loadConfig()
-        ConfigUpdateCallback.EVENT.register { config ->
+        ConfigInitializationCallback.EVENT.register { config ->
             this.config = config.chat.volume
             loadConfig()
         }

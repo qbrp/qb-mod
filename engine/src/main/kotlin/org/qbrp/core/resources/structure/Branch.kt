@@ -3,7 +3,7 @@ package org.qbrp.core.resources.structure
 import com.google.gson.Gson
 import org.qbrp.core.resources.Savable
 import org.qbrp.core.resources.ServerResources
-import org.qbrp.core.resources.units.ContentUnit
+import org.qbrp.core.resources.units.TextUnit
 import org.qbrp.core.resources.units.Unit
 import org.qbrp.core.resources.data.Data
 import org.qbrp.core.resources.parsing.Parser
@@ -15,7 +15,6 @@ import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.name
-import kotlin.io.path.pathString
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.primaryConstructor
 
@@ -64,11 +63,11 @@ open class Branch(
         return this
     }
 
-    fun addUnit(data: Data, name: String, extension: String): ContentUnit {
-        if (data.unit == null) { data.unit = ContentUnit::class.java }
+    fun addUnit(data: Data, name: String, extension: String): TextUnit {
+        if (data.unit == null) { data.unit = TextUnit::class.java }
         val clazz = data.unit.kotlin
         val constructor = clazz.primaryConstructor ?: throw IllegalArgumentException("Конструктор не найден")
-        return add(constructor.call(path, name, extension, data) as Unit) as ContentUnit
+        return add(constructor.call(path, name, extension, data) as Unit) as TextUnit
     }
 
     fun addStructure(name: String): Structure {
@@ -79,7 +78,7 @@ open class Branch(
         return add(structure) as Structure
     }
 
-    fun open(filePath: Path, clazz: Class<*>, gson: Gson = Gson()): ContentUnit {
+    fun open(filePath: Path, clazz: Class<*>, gson: Gson = Gson()): TextUnit {
         val filename = filePath.fileName.toString()
         if (!Files.exists(filePath)) {
             addUnit(clazz.getConstructor().newInstance() as Data, filename.removeExtensions(), filename.getExtension())
@@ -102,7 +101,7 @@ open class Branch(
         return addUnit(data, filename.removeExtensions(), filename.getExtension())
     }
 
-    fun open(filename: String, clazz: Class<*>, gson: Gson = Gson()): ContentUnit {
+    fun open(filename: String, clazz: Class<*>, gson: Gson = Gson()): TextUnit {
         val filePath = path.resolve(filename)
         return open(filePath, clazz, gson)
     }

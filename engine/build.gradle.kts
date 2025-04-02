@@ -65,7 +65,6 @@ repositories {
 val includeDependency by extra(
     System.getenv("INCLUDE_DEPENDENCY")?.toBoolean() ?: false
 )
-
 dependencies {
     // Основные зависимости
     implementation(kotlin("reflect"))
@@ -125,6 +124,7 @@ dependencies {
     include(implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")!!)
     include(implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")!!)
     include(implementation("net.kyori:adventure-text-minimessage:4.14.0")!!)
+    include(implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.0")!!)
 
     compileOnly("net.luckperms:api:5.4")
 

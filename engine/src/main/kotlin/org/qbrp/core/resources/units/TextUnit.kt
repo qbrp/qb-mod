@@ -3,7 +3,7 @@ import org.qbrp.core.resources.Savable
 import org.qbrp.core.resources.data.Data
 import java.nio.file.Path
 
-open class ContentUnit(
+open class TextUnit(
     path: Path,
     name: String,
     extension: String,

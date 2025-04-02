@@ -12,7 +12,7 @@ class TextureUnit(
     name: String,
     extension: String,
     data: TextureData,
-) : ContentUnit(path, name, "png", data) {
+) : TextUnit(path, name, "png", data) {
 
     // Метод для копирования текстуры в новый путь
     override fun save() {

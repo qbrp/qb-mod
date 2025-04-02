@@ -6,7 +6,7 @@ import net.minecraft.util.ActionResult
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.dsl.module
-import org.qbrp.core.resources.data.config.ConfigUpdateCallback
+import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAddon
@@ -18,9 +18,7 @@ import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.chat.core.system.ChatGroup
 import org.qbrp.engine.chat.core.system.ChatGroupsStorage
 import org.qbrp.system.modules.Autoload
-import org.qbrp.system.modules.ModuleAPI
 import org.qbrp.system.networking.ServerInformation
-import org.qbrp.system.networking.ServerInformationComposer
 import org.qbrp.system.networking.messages.types.ClusterListContent
 
 @Autoload(priority = 1)
@@ -39,7 +37,7 @@ class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
     override fun load() {
         super.load()
         storage = get()
-        ConfigUpdateCallback.EVENT.register { updatedConfig ->
+        ConfigInitializationCallback.EVENT.register { updatedConfig ->
             config = updatedConfig.chat
             initGroups()
         }

@@ -3,15 +3,15 @@ package org.qbrp.core.resources.parsing
 import com.google.gson.Gson
 import org.qbrp.core.resources.parsing.filters.FileFilter
 import org.qbrp.core.resources.structure.Branch
-import org.qbrp.core.resources.units.ContentUnit
+import org.qbrp.core.resources.units.TextUnit
 import java.io.File
 
 class ParserBuilder {
     private var gson: Gson = Gson()
     private var maxDepth: Int = Int.MAX_VALUE
     private val filters = mutableListOf<FileFilter>()
-    private var clazz: Class<*> = ContentUnit::class.java
-    private var onOpen: (File, ContentUnit, Branch) -> kotlin.Unit = { _, _, _ -> }
+    private var clazz: Class<*> = TextUnit::class.java
+    private var onOpen: (File, TextUnit, Branch) -> kotlin.Unit = { _, _, _ -> }
 
     fun setMaxDepth(depth: Int): ParserBuilder {
         maxDepth = depth
@@ -33,7 +33,7 @@ class ParserBuilder {
         return this
     }
 
-    fun setOnOpen(onOpen: (File, ContentUnit, Branch) -> kotlin.Unit): ParserBuilder {
+    fun setOnOpen(onOpen: (File, TextUnit, Branch) -> kotlin.Unit): ParserBuilder {
         this.onOpen = onOpen
         return this
     }

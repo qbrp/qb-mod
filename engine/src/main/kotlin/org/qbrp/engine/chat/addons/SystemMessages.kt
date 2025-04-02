@@ -1,15 +1,11 @@
 package org.qbrp.engine.chat.addons
 
 import net.minecraft.server.network.ServerPlayerEntity
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.qbrp.core.resources.data.config.ConfigUpdateCallback
+import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
-import org.qbrp.engine.chat.ChatAPI
 import org.qbrp.engine.chat.ChatAddon
-import org.qbrp.engine.chat.ChatModule
-import org.qbrp.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.chat.core.messages.ChatMessageTagsBuilder
 import org.qbrp.system.modules.Autoload
@@ -27,7 +23,7 @@ class SystemMessages(): ChatAddon("system-messages"), ModuleAPI {
 
     override fun load() {
         super.load()
-        ConfigUpdateCallback.EVENT.register { updatedConfig ->
+        ConfigInitializationCallback.EVENT.register { updatedConfig ->
             config = updatedConfig.chat
         }
     }

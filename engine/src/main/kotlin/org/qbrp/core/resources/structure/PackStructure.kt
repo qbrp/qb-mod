@@ -1,6 +1,6 @@
 package org.qbrp.core.resources.structure
 import net.minecraft.util.Identifier
-import org.qbrp.core.resources.units.ContentUnit
+import org.qbrp.core.resources.units.TextUnit
 import org.qbrp.core.resources.units.TextureUnit
 import org.qbrp.core.resources.data.pack.MetaData
 import org.qbrp.core.resources.data.pack.ModelData
@@ -43,7 +43,7 @@ class PackStructure(path: File) : Structure(path, clear = true) {
             .addUnit(TextureData(path.toString()), path.nameWithoutExtension, "png") as TextureUnit
     }
 
-    fun addModel(model: ModelData): ContentUnit {
+    fun addModel(model: ModelData): TextUnit {
         return itemModels.addContainer()
             .addUnit(model, path.nameWithoutExtension, "json")
     }

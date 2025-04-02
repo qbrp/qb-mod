@@ -1,7 +1,6 @@
 package org.qbrp.core.game.player
 
 import com.mojang.brigadier.CommandDispatcher
-import com.mojang.brigadier.context.CommandContext
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.command.ServerCommandSource
@@ -13,18 +12,13 @@ import net.minecraft.world.GameMode
 import net.minecraft.world.RaycastContext
 import org.qbrp.core.ServerCore
 import org.qbrp.core.game.commands.CommandBuilder
-import org.qbrp.core.game.commands.Deps
-import org.qbrp.core.game.commands.annotations.Arg
 import org.qbrp.core.game.commands.annotations.Command
-import org.qbrp.core.game.commands.annotations.Execute
-import org.qbrp.core.game.commands.annotations.SubCommand
-import org.qbrp.core.game.commands.templates.CallbackCommand
 import org.qbrp.core.game.player.registration.LoginCommand
 import org.qbrp.core.game.player.registration.RegistrationCommand
 import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.game.registry.ServerModCommand
 import org.qbrp.core.resources.ServerResources
-import org.qbrp.core.resources.data.config.ConfigUpdateCallback
+import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.system.database.DatabaseService
 import org.qbrp.system.secrets.Databases
 
@@ -38,7 +32,7 @@ object PlayerManager: ServerModCommand {
     val databaseService = DatabaseService(Databases.MAIN, "players").also { it.connect() }
 
     init {
-        ConfigUpdateCallback.EVENT.register {
+        ConfigInitializationCallback.EVENT.register {
             loadDefaultSpeeds()
         }
         loadDefaultSpeeds()
@@ -110,31 +104,5 @@ object PlayerManager: ServerModCommand {
     fun getLookDirection(player: PlayerEntity): Vec3d {
         val rotation = player.rotationVector
         return Vec3d(rotation.x, rotation.y, rotation.z)
-    }
-
-    @SubCommand
-    class Edit(@Arg val playerName: String) {
-
-        @SubCommand
-        class Speed {
-
-            @SubCommand
-            class Set(@Arg(sub = true) val playerName: String, @Arg var speed: Int): CallbackCommand() {
-                @Execute(operatorLevel = 4)
-                fun execute(ctx: CommandContext<ServerCommandSource>, deps: Deps) {
-                    getPlayerSession(playerName)?.setSpeed(speed)
-                }
-            }
-
-            @SubCommand
-            class Reset(@Arg(sub = true) val playerName: String,): CallbackCommand() {
-                @Execute(operatorLevel = 4)
-                fun execute(ctx: CommandContext<ServerCommandSource>, deps: Deps) {
-                    getPlayerSession(playerName)?.resetSpeed()
-                }
-            }
-
-        }
-
     }
 }

@@ -3,11 +3,10 @@ package org.qbrp.engine.chat.addons.rp
 import org.koin.core.component.get
 import org.qbrp.core.ServerCore
 import org.qbrp.core.game.registry.CommandsRepository
-import org.qbrp.core.resources.data.config.ConfigUpdateCallback
+import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAddon
-import org.qbrp.engine.chat.addons.groups.ChatGroups
 import org.qbrp.engine.chat.addons.groups.ChatGroupsAPI
 import org.qbrp.engine.chat.addons.records.Action
 import org.qbrp.engine.chat.addons.records.Do
@@ -15,7 +14,6 @@ import org.qbrp.engine.chat.core.messages.ChatMessageTagsBuilder
 import org.qbrp.engine.chat.core.system.ChatGroup
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
-import org.qbrp.system.modules.QbModule
 import org.qbrp.system.networking.messages.components.ClusterBuilder
 import org.qbrp.system.networking.messages.components.Component
 
@@ -31,7 +29,7 @@ class RPCommands(): ChatAddon("rp-commands") {
     }
 
     override fun load() {
-        ConfigUpdateCallback.EVENT.register { registerCommands(); CommandsRepository.initCommands(ServerCore.server.commandManager.dispatcher) }
+        ConfigInitializationCallback.EVENT.register { registerCommands(); CommandsRepository.initCommands(ServerCore.server.commandManager.dispatcher) }
         registerCommands()
     }
 

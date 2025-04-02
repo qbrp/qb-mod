@@ -3,7 +3,7 @@ package org.qbrp.core.resources.parsing
 import com.google.gson.Gson
 import org.qbrp.core.resources.parsing.filters.FileFilter
 import org.qbrp.core.resources.structure.Branch
-import org.qbrp.core.resources.units.ContentUnit
+import org.qbrp.core.resources.units.TextUnit
 import org.qbrp.core.resources.units.Unit
 import java.io.File
 
@@ -12,7 +12,7 @@ class Parser(
     private val filters: List<FileFilter>,
     private val maxDepth: Int,
     private val clazz: Class<*>,
-    private val onOpen: (File, ContentUnit, Branch) -> kotlin.Unit // Лямбда для генерации UnitKey на основе файла
+    private val onOpen: (File, TextUnit, Branch) -> kotlin.Unit // Лямбда для генерации UnitKey на основе файла
 ) {
     fun parse(branch: Branch): MutableList<Unit> {
         return parse(branch.path.toFile())

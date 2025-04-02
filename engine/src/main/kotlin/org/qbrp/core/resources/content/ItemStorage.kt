@@ -5,11 +5,10 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import org.qbrp.core.resources.parsing.ParserBuilder
 import org.qbrp.core.resources.parsing.filters.ExtensionFilter
 import org.qbrp.core.resources.structure.Structure
-import org.qbrp.core.resources.units.ContentUnit
+import org.qbrp.core.resources.units.TextUnit
 import org.qbrp.system.utils.keys.Key
 import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
-import kotlin.io.path.nameWithoutExtension
 
 class ItemStorage(path: Path): Structure(path.toFile()) {
 
@@ -23,7 +22,7 @@ class ItemStorage(path: Path): Structure(path.toFile()) {
             .addFilter(ExtensionFilter(setOf("json")))
             .build()
                 .parse(path.toFile())
-                .map { (it as ContentUnit) }
+                .map { (it as TextUnit) }
         for (config in configs) {
             registerContent(config, Key((config.data as ItemConfig).name))
         }
