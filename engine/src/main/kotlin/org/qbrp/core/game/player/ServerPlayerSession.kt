@@ -1,10 +1,12 @@
 package org.qbrp.core.game.player
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.mongodb.client.model.Filters
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.io.UnsafeIoApi
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import org.qbrp.core.game.player.registration.LoginResult
@@ -19,29 +21,20 @@ data class ServerPlayerSession(
     val entity: ServerPlayerEntity,
     var speed: Int? = 1
 ) {
-    lateinit var account: Account
+    var account: Account? = null
     val database = Database()
     val handler = PlayerHandler(this)
     //val interactionManager = InteractionManager(this)
 
     fun onDisconnect() {
-        // Вызываем сохранение аккаунта в отдельном потоке
-        CoroutineScope(Dispatchers.IO).launch {
-            saveAccountIfExists()
-        }
+
     }
 
     fun onConnect() {
         sendRegistrationMessage()
     }
 
-    fun isAuthorized() = ::account.isInitialized
-
-    private suspend fun saveAccountIfExists() {
-        if (::account.isInitialized) {
-            database.save()
-        }
-    }
+    fun isAuthorized() = account != null
 
     private fun sendRegistrationMessage() =
         NetworkManager.sendSignal(entity, Messages.REGISTRATION_REQUEST)
@@ -54,19 +47,38 @@ data class ServerPlayerSession(
         this.speed = null
     }
 
-    fun getDisplayName(): String =
-        if (!::account.isInitialized) entity.name.string else account.displayName
+    var customDisplayName: String? = null
 
-    fun getDisplayNameText(): Text =
-        if (!::account.isInitialized) entity.name else account.displayName.asMiniMessage()
+    @get:JsonIgnore
+    val displayName: String
+        get() = customDisplayName
+            ?: account?.appliedCharacter?.name
+            ?: account?.minecraftNicknames?.last()
+            ?: entity.name!!.string
+            ?: "Unknown"
+
+    @get:JsonIgnore
+    val displayNameText: Text
+        get() = displayName.asMiniMessage()
+
+    fun updateCustomName(newName: String) { customDisplayName = newName }
+
+    fun resetCustomName() { customDisplayName = null }
+
+    fun executeCommand(command: String) {
+        entity.server.commandManager.executeWithPrefix(entity.commandSource, command)
+    }
+
+    fun getLookingAt() = PlayerManager.getPlayerLookingAt(this.entity)
 
     inner class Database(val service: DatabaseService = PlayerManager.databaseService) {
 
+        @UnsafeIoApi
         suspend fun save() = withContext(Dispatchers.IO) {
             service.upsertObject<Account>(
                 "data",
-                mapOf("uuid" to account.uuid.toString()),
-                account
+                mapOf("uuid" to account!!.uuid.toString()),
+                account!!
             )
         }
 
@@ -97,16 +109,11 @@ data class ServerPlayerSession(
             } ?: LoginResult.NOT_FOUND
         }
 
-        suspend fun register() = withContext(Dispatchers.IO) {
-            authorize(Account.new(this@ServerPlayerSession))
-        }
-
         private suspend fun authorize(account: Account) = withContext(Dispatchers.IO) {
             this@ServerPlayerSession.account = account.apply {
                 updateRegisteredNicknames(this@ServerPlayerSession.entity.name.string)
             }
             PlayerRegistrationCallback.EVENT.invoker().onRegister(this@ServerPlayerSession, PlayerManager)
-            save()
         }
     }
 }

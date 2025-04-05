@@ -13,6 +13,10 @@ import org.qbrp.engine.chat.ChatAPI
 import org.qbrp.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.system.database.CoroutinesUtil
+import org.qbrp.system.networking.messages.Message
+import org.qbrp.system.networking.messages.Messages
+import org.qbrp.system.networking.messages.types.StringContent
+import org.qbrp.system.networking.messaging.NetworkManager
 import java.util.UUID
 
 class LoginCommand: ServerModCommand {
@@ -98,6 +102,8 @@ class LoginCommand: ServerModCommand {
     }
 
     private fun handleSuccessResult(ctx: CommandContext<ServerCommandSource>, data: ServerPlayerSession, uuid: UUID) {
+        NetworkManager.sendMessage(ctx.source.player!!,
+            Message(Messages.REGISTRATION_RESPONSE, StringContent(uuid.toString())))
         chatAPI.sendMessage(ctx.source.player!!, ChatMessage(
             SYSTEM_MESSAGE_AUTHOR,
             "<green>Вход в аккаунт выполнен. Приятной игры.",

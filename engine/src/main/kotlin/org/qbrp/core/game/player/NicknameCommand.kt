@@ -13,10 +13,15 @@ class NicknameCommand: ServerModCommand {
             .then(CommandManager.argument("nickname", StringArgumentType.greedyString())
             .executes { ctx ->
                 val nick = StringArgumentType.getString(ctx, "nickname")
-                PlayerManager.getPlayerSession(ctx.source.player!!.name.string)?.account!!.updateDisplayName(
-                nick)
+                PlayerManager.getPlayerSession(ctx.source.player!!.name.string)?.updateCustomName(nick)
                 ctx.source.sendMessage("<gray>Никнейм установлен на $nick".asMiniMessage())
             1
         }))
+        dispatcher.register(CommandManager.literal("resetnick")
+            .executes { ctx ->
+                PlayerManager.getPlayerSession(ctx.source.player!!.name.string)?.resetCustomName()
+                ctx.source.sendMessage("<gray>Никнейм сброшен.".asMiniMessage())
+                1
+            })
     }
 }

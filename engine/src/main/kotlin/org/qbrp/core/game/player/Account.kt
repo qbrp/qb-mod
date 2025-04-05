@@ -1,22 +1,23 @@
 package org.qbrp.core.game.player
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonSetter
 import com.fasterxml.jackson.annotation.Nulls
+import org.qbrp.engine.characters.model.Character
 import java.util.UUID
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Account(@JsonSetter(nulls = Nulls.AS_EMPTY) val minecraftNicknames: MutableList<String>,
-              var displayName: String = minecraftNicknames.first(),
+              val characters: List<Character>,
+              var appliedCharacterName: String? = characters.getOrNull(0)?.name,
               val uuid: UUID = UUID.randomUUID()
 ) {
-    fun updateDisplayName(newName: String) { displayName = newName }
+    @get:JsonIgnore
+    val appliedCharacter: Character?
+        get() = characters.find { it.name == appliedCharacterName } ?: characters.getOrNull(0)
 
     fun updateRegisteredNicknames(name: String) {
         if (!minecraftNicknames.contains(name)) { minecraftNicknames.add(name) }
-    }
-
-    companion object {
-        fun new(player: ServerPlayerSession) = Account(mutableListOf(player.entity.name.string))
     }
 }

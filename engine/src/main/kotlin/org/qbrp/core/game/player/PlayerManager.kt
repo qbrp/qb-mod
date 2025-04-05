@@ -14,14 +14,11 @@ import org.qbrp.core.ServerCore
 import org.qbrp.core.game.commands.CommandBuilder
 import org.qbrp.core.game.commands.annotations.Command
 import org.qbrp.core.game.player.registration.LoginCommand
-import org.qbrp.core.game.player.registration.RegistrationCommand
 import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.game.registry.ServerModCommand
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.system.database.DatabaseService
-import org.qbrp.system.secrets.Databases
-
 @Command("playermanager")
 object PlayerManager: ServerModCommand {
     private lateinit var defaultSpeeds: Map<GameMode, Int>
@@ -29,7 +26,7 @@ object PlayerManager: ServerModCommand {
     val players: MutableMap<String, ServerPlayerSession> = mutableMapOf()
     val playersList
         get() = players.values.toList()
-    val databaseService = DatabaseService(Databases.MAIN, "players").also { it.connect() }
+    val databaseService = DatabaseService(ServerResources.getConfig().databases.nodeUri, "players").also { it.connect() }
 
     init {
         ConfigInitializationCallback.EVENT.register {
@@ -54,7 +51,7 @@ object PlayerManager: ServerModCommand {
     fun getPlayerSession(player: ServerPlayerEntity): ServerPlayerSession = players[player.name.string]!!
 
     fun handleConnected(player: ServerPlayerEntity) {
-        players.put(player.name.string, ServerPlayerSession(player, getDefaultSpeed(player.interactionManager.gameMode).toInt())
+        players.put(player.name.string, ServerPlayerSession(player, null)
             .also { it.onConnect() })
     }
 
@@ -69,7 +66,6 @@ object PlayerManager: ServerModCommand {
 
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         PlayerManagerCommand().register(dispatcher)
-        RegistrationCommand().register(dispatcher)
         LoginCommand().register(dispatcher)
         NicknameCommand().register(dispatcher)
     }
@@ -91,10 +87,8 @@ object PlayerManager: ServerModCommand {
             val entityHitResult = raycastResult as EntityHitResult
             return entityHitResult.entity
         }
-
         return null
     }
-
 
     fun getLookDirection(player: PlayerEntity): Vec3d {
         val rotation = player.rotationVector
