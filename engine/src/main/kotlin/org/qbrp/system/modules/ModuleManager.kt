@@ -88,16 +88,17 @@ open class ModuleManager: KoinComponent {
                 // Создаем экземпляр модуля
                 val instance = clazz.getDeclaredConstructor().newInstance() as QbModule
 
-                instance.priority = priority
-                loadKoinModules(instance.getKoinModule())
-                instance.load()
-                init(instance)
-
                 if (instance.isEnabled()) {
                     logger.success("Загружен ${instance.getName()}")
                 } else {
                     ServerCore.informationMessage.addWarnComponent("Модуль ${instance.getName()} отключен.")
+                    return@forEach
                 }
+
+                instance.priority = priority
+                loadKoinModules(instance.getKoinModule())
+                instance.load()
+                init(instance)
 
             } catch (e: Exception) {
                 ServerCore.informationMessage.addErrorComponent("Ошибка при создании экземпляра модуля ${clazz.simpleName}: ${e.message}")
