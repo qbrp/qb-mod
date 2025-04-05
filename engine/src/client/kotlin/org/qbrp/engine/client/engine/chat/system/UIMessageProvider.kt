@@ -63,7 +63,7 @@ class UIMessageProvider(val name: String) : Provider {
         TODO()
     }
 
-    override fun clear() {
+    override fun onClear(storage: MessageStorage) {
         taskQueue.add(Runnable {
             allMessages.clear()
             cachedSnapshot.set(mutableListOf()) // Очищаем кэш

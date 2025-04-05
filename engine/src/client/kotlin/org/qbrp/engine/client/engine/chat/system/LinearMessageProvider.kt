@@ -66,9 +66,12 @@ class LinearMessageProvider(val filter: (HandledMessage) -> Boolean = { true }) 
         })
     }
 
-    override fun clear() {
+    override fun onClear(storage: MessageStorage) {
         taskQueue.add(Runnable {
             allMessages.clear()
+            storage.getMessages(0, 2000).forEach {
+                onMessageAdded(it, storage)
+            }
             cachedSnapshot.set(mutableListOf()) // Очищаем кэш
         })
     }

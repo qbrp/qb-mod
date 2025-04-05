@@ -15,7 +15,7 @@ interface Provider {
     fun onMessageAdded(message: ChatMessage, storage: MessageStorage)
     fun onMessageEdited(uuid: String, message: ChatMessage, storage: MessageStorage)
     fun onMessageDeleted(uuid: String, storage: MessageStorage)
-    fun clear()
+    fun onClear(storage: MessageStorage)
 
     companion object {
         fun buildChatHudLines(text: Text, icon: MessageIcon?, time: Int = (MinecraftClient.getInstance().inGameHud?.ticks ?: 0).toInt()): List<ChatHudLine.Visible> {

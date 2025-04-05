@@ -34,7 +34,7 @@ class MessageStorage {
     fun clear(filter: (ChatMessage) -> Boolean = { true }) {
         ClientResources.root.chatLogs.save()
         messages.removeIf(filter)
-        provider.clear()
+        provider.onClear(this)
         addMessage("&aЧат очищен.")
     }
 
