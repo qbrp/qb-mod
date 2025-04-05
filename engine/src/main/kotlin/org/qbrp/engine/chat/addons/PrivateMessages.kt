@@ -58,7 +58,7 @@ class PrivateMessages: ChatAddon("pms"), ServerModCommand {
                             .placeholder("recipientName", target.name.string)
                             .placeholder("recipientDisplayName", target.displayName.string)
                             .placeholder("recipientRpName",
-                                PlayerManager.getPlayerSession(target.name.string)?.account?.displayName ?: target.name.string
+                                PlayerManager.getPlayerSession(target.name.string)?.displayName ?: target.name.string
                             )
                             .component("sound", SoundEvents.UI_BUTTON_CLICK.key.get().value.toString())
                             .component("mention", target.name.string)

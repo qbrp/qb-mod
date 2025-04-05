@@ -15,7 +15,7 @@ import org.qbrp.system.networking.messages.types.StringContent
 
 @Autoload(priority = LoadPriority.ADDON)
 class SystemMessages(): ChatAddon("system-messages"), ModuleAPI {
-    private var config: ServerConfigData.Chat = get<ServerConfigData.Chat>()
+    private lateinit var config: ServerConfigData.Chat
 
     init {
         dependsOn { Engine.isApiAvailable<BroadcasterAPI>() }

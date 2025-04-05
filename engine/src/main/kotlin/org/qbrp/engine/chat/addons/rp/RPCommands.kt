@@ -19,8 +19,7 @@ import org.qbrp.system.networking.messages.components.Component
 
 @Autoload(LoadPriority.ADDON)
 class RPCommands(): ChatAddon("rp-commands") {
-    private val config = get<ServerConfigData.Chat>().commands
-    private val chatGroupsAPI = Engine.getAPI<ChatGroupsAPI>()
+    private val config = get<ServerConfigData>().chat.commands
 
     companion object {
         val defaultComponents = ChatMessageTagsBuilder()
@@ -69,14 +68,15 @@ class RPCommands(): ChatAddon("rp-commands") {
         radius: Int = 32,
         components: ClusterBuilder = defaultComponents
     ): ChatGroup {
-        return chatGroupsAPI?.getGroup(name) ?: ChatGroup(
+        val chatGroupsAPI = Engine.getAPI<ChatGroupsAPI>()!!
+        return chatGroupsAPI.getGroup(name) ?: ChatGroup(
             name = name,
             format = format,
             radius = radius,
             prefix = "NONE"
         ).apply {
             buildedComponents = components.build().getData().toList()
-            chatGroupsAPI?.addGroup(this)
+            chatGroupsAPI.addGroup(this)
         }
     }
 

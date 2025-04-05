@@ -24,7 +24,7 @@ import org.qbrp.system.networking.messages.types.ClusterListContent
 @Autoload(priority = 1)
 class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
     val server: MinecraftServer by inject()
-    private var config: ServerConfigData.Chat = get()
+    private lateinit var config: ServerConfigData.Chat
     private lateinit var storage: ChatGroupsStorage
 
     override fun getKoinModule() = module {
@@ -41,8 +41,6 @@ class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
             config = updatedConfig.chat
             initGroups()
         }
-        initGroups()
-
         MessageReceivedEvent.EVENT.register { message ->
             if (message.getTags().getComponentData<Boolean>("groupHandled") != true) {
                 handle(

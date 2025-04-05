@@ -38,7 +38,7 @@ import kotlin.random.Random
 
 @Autoload(LoadPriority.ADDON)
 class Volume(): ChatAddon("volume"), ServerModCommand {
-    private var config: ServerConfigData.Chat.Volume = get<ServerConfigData.Chat>().volume
+    private var config: ServerConfigData.Chat.Volume = get<ServerConfigData>().chat.volume
     private var overhearPlayers: MutableMap<ServerPlayerEntity, Boolean> = mutableMapOf()
 
     companion object {

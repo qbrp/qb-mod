@@ -48,6 +48,10 @@ open class ChatMessage(val authorName: String,
         if (invokeUpdateEvent && cachedText != text && ServerCore.isServer()) MessageUpdateEvent.EVENT.invoker().onMessageUpdate(this)
     }
 
+    fun setText(lambda: (String) -> String, invokeUpdateEvent: Boolean = true) {
+        setText(lambda(getText()), invokeUpdateEvent)
+    }
+
     fun setHandleVanilla(enabled: Boolean) {
         getTagsBuilder().component("handleVanilla", enabled)
     }

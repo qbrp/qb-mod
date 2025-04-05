@@ -31,7 +31,7 @@ class Placeholders: ChatAddon("placeholders"), PlaceholdersAPI {
             message.getTagsBuilder()
                 .placeholder("playerName", name)
                 .placeholder("playerDisplayName", author?.displayName?.string ?: SYSTEM_MESSAGE_AUTHOR)
-                .placeholder("playerRpName", PlayerManager.getPlayerSession(name)?.getDisplayName() ?: name)
+                .placeholder("playerRpName", PlayerManager.getPlayerSession(name)?.displayName!! )
             ActionResult.PASS
         }
 
