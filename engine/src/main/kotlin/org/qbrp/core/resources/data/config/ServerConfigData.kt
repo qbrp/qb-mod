@@ -87,7 +87,7 @@ data class ServerConfigData(
 
     data class Databases(
         @SerializedName("node_uri")
-        val nodeUri: String = org.qbrp.system.secrets.Databases.MAIN,
+        val nodeUri: String = "0.0.0.0",
         val items: String = "items",
         val blocks: String = "serverBlocks",
         val music: String = "music",

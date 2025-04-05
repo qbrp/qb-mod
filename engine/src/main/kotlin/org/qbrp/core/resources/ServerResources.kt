@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.resources.commands.ResourcesCommands
+import org.qbrp.core.resources.data.config.KreisyEmojiConfig
 import org.qbrp.core.resources.structure.Structure
 import org.qbrp.system.utils.log.Logger
 import org.qbrp.system.utils.log.Loggers
@@ -29,10 +30,10 @@ object ServerResources {
 //        root.printData()
     }
 
-    fun getKreisyEmojiConfig() {
+    fun getKreisyEmojiConfig(): KreisyEmojiConfig {
         plugins.apply {
             val plugin = addBranch("ChatEmojiPlugin")
-            plugin
+            return plugin.open("config.yml", KreisyEmojiConfig::class.java).data as KreisyEmojiConfig
         }
     }
 
