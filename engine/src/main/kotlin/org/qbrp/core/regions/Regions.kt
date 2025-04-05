@@ -13,7 +13,7 @@ object Regions {
     private val regions = mutableListOf<Region>()
     private val databaseService = RegionsDatabase(
         DatabaseService(ServerResources.getConfig().databases.nodeUri, ServerResources.getConfig().databases.regions)
-            //.apply { connect() }
+            .apply { connect() }
     )
     private val logger = Loggers.get("regions")
 
