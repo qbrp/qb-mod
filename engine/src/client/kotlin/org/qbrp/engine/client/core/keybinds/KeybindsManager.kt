@@ -22,9 +22,9 @@ class KeybindsManager {
             ), "spectators_spawn") { }
         registerKeyBinding(
             createKeybinding(
-                "Передать предмет игроку",
+                "Информация",
                 GLFW.GLFW_KEY_G,
-            ), "hand_to_hand") { }
+            ), "information") { }
         registerKeyBinding(
             createKeybinding(
                 "Очистить чат от системных сообщений",
