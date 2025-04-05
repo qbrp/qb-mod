@@ -22,7 +22,7 @@ class Channels: ClientChatAddon("channels") {
         providersCache = mutableMapOf<String, Provider>("default" to get<MessageStorage>().provider)
         MessageAddedEvent.EVENT.register { message, storage ->
             providersCache.values.forEach {
-                if (it != get<MessageStorage>().provider) it.onMessageAdded(message, storage)
+                if (it != get<MessageStorage>().provider && message.getTags().getComponentData<Boolean>("static") == false) it.onMessageAdded(message, storage)
             }
             message.getTags().getComponentData<String>("clearChannel")?.let {
                 providersCache.remove(it)
