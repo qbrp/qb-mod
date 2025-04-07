@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Appearance(val description: String, val looks: MutableList<Look>) {
+data class Appearance(val description: String, val looks: MutableList<Look>, val model: String) {
     @get:JsonIgnore
     val defaultLook: Look
         get() = looks[0]
@@ -13,10 +13,14 @@ data class Appearance(val description: String, val looks: MutableList<Look>) {
     val look: Look
         get() = appliedLook ?: defaultLook
 
+    @get:JsonIgnore
+    val skinUrl: String
+        get() = appliedLook?.skinUrl ?: defaultLook.skinUrl!!
+
     var appliedLook: Look? = null
 
     fun composeDescription(look: Look = this.look): String {
-        return "${description}\n${look.textDescription}"
+        return "${description}${look.textDescription}"
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

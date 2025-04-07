@@ -1,7 +1,9 @@
 package org.qbrp.engine.characters.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Character(
     val name: String,
     val colors: List<String> = listOf("#FFFFFF", "#FFFFFF"),
@@ -16,7 +18,7 @@ data class Character(
 
     @get:JsonIgnore
     val scaleFactor: Double
-        get() = 0.00535 * height
+        get() = 0.00532 * height
 
     val knownNames: Map<String, String> = emptyMap()
     val attributes: List<String> = emptyList()

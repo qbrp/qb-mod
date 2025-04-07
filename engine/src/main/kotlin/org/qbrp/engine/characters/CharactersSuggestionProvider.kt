@@ -10,19 +10,16 @@ import org.qbrp.core.game.player.PlayerManager
 import java.util.concurrent.CompletableFuture
 
 class CharactersSuggestionProvider(): SuggestionProvider<ServerCommandSource> {
-    private var account: Account? = null
 
     override fun getSuggestions(
         context: CommandContext<ServerCommandSource?>?,
         builder: SuggestionsBuilder?
     ): CompletableFuture<Suggestions?>? {
         val player = context?.source?.player
-        if (player != null && account == null) {
+        if (player != null) {
             val session = PlayerManager.getPlayerSession(player)
-            account = if (session.isAuthorized()) session.account else null
-        }
-        if (account != null) {
-            account!!.characters.forEach {
+            val account = if (session.isAuthorized()) session.account else null
+            account?.characters?.forEach {
                 builder?.suggest(it.name)
             }
         }

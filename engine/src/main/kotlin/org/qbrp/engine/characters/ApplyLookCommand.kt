@@ -21,8 +21,7 @@ class ApplyLookCommand(private val module: CharactersModule): ServerModCommand {
                         try {
                             val look = it.appearance.looks.find { it.name == lookName }
                             if (look != null) {
-                                it.appearance.appliedLook = look
-                                module.applyLook(session)
+                                module.applyLook(session, look)
                             } else {
                                 session.entity.sendMessage("<red>Облик не найден".asMiniMessage())
                             }

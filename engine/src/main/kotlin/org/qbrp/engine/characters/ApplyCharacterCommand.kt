@@ -18,8 +18,7 @@ class ApplyCharacterCommand(private val module: CharactersModule): ServerModComm
                     val character = StringArgumentType.getString(ctx, "name")
                     try {
                         if (session.account!!.characters.find { it.name == (character) } != null) {
-                            session.account!!.appliedCharacterName = character
-                            module.applyCharacter(session)
+                            module.applyCharacter(session, character)
                         } else {
                             session.entity.sendMessage("<red>Персонаж не найден".asMiniMessage())
                         }
