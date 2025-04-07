@@ -4,6 +4,8 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Text
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.qbrp.core.game.registry.ServerModCommand
 import org.qbrp.core.game.commands.CommandBuilder
 import org.qbrp.core.game.commands.DependencyFabric
@@ -63,7 +65,7 @@ class TrackCommand(val storage: MusicStorage): ServerModCommand {
     @SubCommand
     class Add(@Arg("string") val name: String,
               @Arg("string") val link: String,
-              @Arg("integer") val repeats: Int) {
+              @Arg("integer") val repeats: Int): KoinComponent {
 
         @Execute
         fun addTrack(context: CommandContext<ServerCommandSource>, deps: Deps) {
@@ -84,13 +86,15 @@ class TrackCommand(val storage: MusicStorage): ServerModCommand {
         @SubCommand
         class EndTimestamp(@Arg("string", true) val trackName: String,
                            @Arg("integer") val minutes: Int,
-                           @Arg("integer") val seconds: Int) {
+                           @Arg("integer") val seconds: Int): KoinComponent {
 
             @Execute
             fun edit(context: CommandContext<ServerCommandSource>, deps: Deps) {
                 val storage = deps.get("storage") as MusicStorage
                 val time = minutes * 60 + seconds
-                storage.getTrackOrThrow(trackName).endTimestamp = time.toDouble()
+                storage.getTrackOrThrow(trackName)
+                    .apply {endTimestamp = time.toDouble() }
+                    .also { get<MusicStorage>().save(it) }
                 context.source.sendMessage("Трек $trackName изменен!".formatMinecraft())
             }
 
@@ -99,13 +103,15 @@ class TrackCommand(val storage: MusicStorage): ServerModCommand {
         @SubCommand
         class StartTimestamp(@Arg("string", true) val trackName: String,
                              @Arg("integer") val minutes: Int,
-                             @Arg("integer") val seconds: Int) {
+                             @Arg("integer") val seconds: Int): KoinComponent {
 
             @Execute
             fun edit(context: CommandContext<ServerCommandSource>, deps: Deps) {
                 val storage = deps.get("storage") as MusicStorage
                 val time = minutes * 60 + seconds
-                storage.getTrackOrThrow(trackName).startTimestamp = time.toDouble()
+                storage.getTrackOrThrow(trackName)
+                    .apply { startTimestamp = time.toDouble() }
+                    .also { get<MusicStorage>().save(it) }
                 context.source.sendMessage("Трек $trackName изменен!".formatMinecraft())
             }
 
@@ -113,12 +119,14 @@ class TrackCommand(val storage: MusicStorage): ServerModCommand {
 
         @SubCommand
         class Repeats(@Arg("string", true) val trackName: String,
-                      @Arg("integer") val repeats: Int) {
+                      @Arg("integer") val repeats: Int): KoinComponent {
 
             @Execute
             fun edit(context: CommandContext<ServerCommandSource>, deps: Deps) {
                 val storage = deps.get("storage") as MusicStorage
-                storage.getTrackOrThrow(trackName).loops = repeats
+                storage.getTrackOrThrow(trackName)
+                    .apply { loops = repeats }
+                    .also { get<MusicStorage>().save(it) }
                 context.source.sendMessage("Трек $trackName изменен!".formatMinecraft())
             }
 

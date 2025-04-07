@@ -84,7 +84,9 @@ class MusicStorage(val database: MusicDatabaseService,
     }
 
     fun createTrack(name: String, link: String, cycle: Int = 1): Track {
-        tracks[name] = Track(link, name, cycle).apply { setEndFromAudio() }
+        tracks[name] = Track(link, name, cycle)
+            .apply { setEndFromAudio() }
+            .also { save(it) }
         return tracks[name]!!
     }
 

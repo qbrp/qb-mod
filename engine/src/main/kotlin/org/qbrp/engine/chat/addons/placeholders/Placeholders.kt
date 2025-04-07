@@ -10,9 +10,10 @@ import org.qbrp.engine.chat.core.events.MessageUpdateEvent
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
+import org.qbrp.system.modules.QbModule
 
 @Autoload(LoadPriority.ADDON, both = true)
-class Placeholders: ChatAddon("placeholders"), PlaceholdersAPI {
+class Placeholders: QbModule("placeholders"), PlaceholdersAPI {
     override fun handle(message: ChatMessage, filter: (String) -> Boolean) {
         val placeholders = message.getTags().getValueComponents("value")
         var updatedText = message.getText()

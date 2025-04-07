@@ -54,7 +54,7 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
                 .filter { spyManager.playerCanSpy(it) }
                 .toMutableList()
             if (!spyPlayers.isEmpty()) {
-                val sender = chatAPI!!.createSender().apply {
+                val sender = chatAPI.createSender().apply {
                     addTargets(spyPlayers)
                 }
                 val spyMessage = message.copy().apply {
@@ -94,10 +94,14 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
     class SpyCommand(): CallbackCommand(), KoinComponent {
         @Execute(permission = "chat.spy")
         fun execute(ctx: CommandContext<ServerCommandSource>, deps: Deps) {
-            val spyPlayersMap = get<MutableMap<ServerPlayerEntity, Boolean>>()
-            val currentValue = spyPlayersMap.getOrPut(ctx.source.player!!) { false }
-            spyPlayersMap[ctx.source.player!!] = !currentValue
-            callback(ctx, "Слежка ${if (currentValue) "включена" else "выключена"}")
+            try {
+                val spyManager = get<SpyManager>()
+                val player = ctx.source.player!!
+                spyManager.toggleIgnoreSpy(player)
+                callback(ctx, "Слежка ${if (spyManager.playerCanSpy(player)) "включена" else "выключена"}")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ import org.qbrp.system.networking.ServerInformationComposer
 import org.qbrp.system.networking.messages.Message
 import org.qbrp.system.utils.log.Loggers
 
-@Autoload
+@Autoload(both = true)
 class ChatModule() : QbModule("chat"), ChatAPI {
     companion object {
         const val SYSTEM_MESSAGE_AUTHOR = "system"

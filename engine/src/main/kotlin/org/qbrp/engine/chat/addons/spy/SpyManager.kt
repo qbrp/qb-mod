@@ -8,4 +8,9 @@ class SpyManager {
     fun playerCanSpy(player: ServerPlayerEntity): Boolean {
         return ignoreSpyPlayersMap[player] != true
     }
+
+    fun toggleIgnoreSpy(player: ServerPlayerEntity) {
+        val value = ignoreSpyPlayersMap.getOrPut(player) { false }
+        ignoreSpyPlayersMap[player] = !value
+    }
 }
