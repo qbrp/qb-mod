@@ -24,7 +24,9 @@ class KeybindsManager {
             createKeybinding(
                 "Информация",
                 GLFW.GLFW_KEY_G,
-            ), "information") { }
+            ), "information") {
+            println("ingof")
+        }
         registerKeyBinding(
             createKeybinding(
                 "Очистить чат от системных сообщений",

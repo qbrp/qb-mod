@@ -38,8 +38,8 @@ import kotlin.concurrent.fixedRateTimer
 import kotlin.math.atan2
 import kotlin.random.Random
 
-@Autoload(env = EnvType.CLIENT)
-class ChatModuleClient(): QbModule("chat"), ClientChatAPI {
+@Autoload(10, env = EnvType.CLIENT)
+class ChatModuleClient(): QbModule("chat-client"), ClientChatAPI {
     lateinit var messageStorage: MessageStorage
     lateinit var networking: ClientChatNetworking
 

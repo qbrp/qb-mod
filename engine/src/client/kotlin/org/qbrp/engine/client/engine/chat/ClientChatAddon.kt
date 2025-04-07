@@ -7,6 +7,6 @@ import org.qbrp.system.modules.QbModule
 
 abstract class ClientChatAddon(name: String) : QbModule("chat-addon-${name}") {
     init {
-        dependsOn { EngineClient.isApiAvailable<ChatAPI>() }
+        dependsOn { EngineClient.isApiAvailable<ClientChatAPI>() }
     }
 }

@@ -42,7 +42,7 @@ public abstract class ChatHudMixin {
     private void onRender(CallbackInfo ci) {
         // Инициализируем api, если он еще не установлен
         if (api == null) {
-            api = ((ChatModuleClient) Objects.requireNonNull(EngineClient.Companion.getModuleManager().getModule("chat"))).getAPI();
+            api = ((ChatModuleClient) Objects.requireNonNull(EngineClient.Companion.getModuleManager().getModule("chat-client"))).getAPI();
         }
         // Обновляем visibleMessages из api
         this.visibleMessages = api.getMessageProvider().provide(api.getStorage());
