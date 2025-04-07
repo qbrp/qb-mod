@@ -13,13 +13,15 @@ import net.minecraft.world.RaycastContext
 import org.qbrp.core.ServerCore
 import org.qbrp.core.game.commands.CommandBuilder
 import org.qbrp.core.game.commands.annotations.Command
+import org.qbrp.core.game.player.registration.AccountSyncCommand
 import org.qbrp.core.game.player.registration.LoginCommand
 import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.game.registry.ServerModCommand
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.system.database.DatabaseService
-@Command("playermanager")
+import org.qbrp.system.utils.world.getPlayersInRadius
+
 object PlayerManager: ServerModCommand {
     private lateinit var defaultSpeeds: Map<GameMode, Int>
 
@@ -68,26 +70,35 @@ object PlayerManager: ServerModCommand {
         PlayerManagerCommand().register(dispatcher)
         LoginCommand().register(dispatcher)
         NicknameCommand().register(dispatcher)
+        AccountSyncCommand().register(dispatcher)
     }
 
-    fun getPlayerLookingAt(player: ServerPlayerEntity): Entity? {
-        val world = player?.world
-        val lookDirection = getLookDirection(player!!) // Получаем направление взгляда
-        val raycastResult = world?.raycast(
-            RaycastContext(
-                player.eyePos,
-                player.eyePos.add(lookDirection.multiply(5.0)), // Дистанция взгляда
-                RaycastContext.ShapeType.OUTLINE,
-                RaycastContext.FluidHandling.NONE,
-                player
-            )
-        )
+    fun getPlayerLookingAt(player: ServerPlayerEntity): ServerPlayerEntity? {
+        val world = player.world
+        val lookDirection = player.rotationVector // Предполагается, что это направление взгляда
+        val start = player.eyePos // Начальная точка луча (глаза игрока)
+        val end = start.add(lookDirection.multiply(5.0)) // Конечная точка луча (5 блоков)
 
-        if (raycastResult?.type == HitResult.Type.ENTITY) {
-            val entityHitResult = raycastResult as EntityHitResult
-            return entityHitResult.entity
+        val entities = world.server!!.playerManager.playerList.getPlayersInRadius(player, 5.0)
+
+        var closestEntity: ServerPlayerEntity? = null
+        var closestDistance = Double.MAX_VALUE
+
+        // Проверяем каждую сущность
+        for (entity in entities) {
+            // Проверяем пересечение луча с ограничивающей рамкой сущности
+            val hitResult = entity.boundingBox.raycast(start, end)
+            if (hitResult.isPresent) {
+                val hitPos = hitResult.get() // Точка пересечения
+                val distance = start.distanceTo(hitPos) // Расстояние до точки пересечения
+                if (distance < closestDistance) {
+                    closestEntity = entity as ServerPlayerEntity
+                    closestDistance = distance
+                }
+            }
         }
-        return null
+
+        return closestEntity
     }
 
     fun getLookDirection(player: PlayerEntity): Vec3d {

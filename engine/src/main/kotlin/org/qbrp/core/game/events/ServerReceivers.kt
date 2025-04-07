@@ -30,7 +30,6 @@ object ServerReceivers {
             true
         }).register()
         ServerKeybinds.registerKeybindReceiver("spectators_spawn")
-        ServerKeybinds.registerKeybindReceiver("hand_to_hand")
     }
 
 }

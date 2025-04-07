@@ -69,8 +69,7 @@ class LoginCommand: ServerModCommand {
         chatAPI.sendMessage(ctx.source.player!!,
             ChatMessage(
                 SYSTEM_MESSAGE_AUTHOR,
-                "<red>Отправьте код вашего аккаунта через команду /login <код>." +
-                        "<newline>Если у вас нет зарегистрированного аккаунта, введите /reg")
+                "<red>Отправьте код вашего аккаунта через команду /login <код>.")
                 .apply {
                     getTagsBuilder()
                         .component("channel", "registration")

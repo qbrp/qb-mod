@@ -2,8 +2,11 @@ package org.qbrp.core.game.player
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.mongodb.client.model.Filters
+import com.mongodb.client.model.UpdateOptions
+import com.mongodb.client.model.Updates
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.io.UnsafeIoApi
@@ -24,10 +27,13 @@ data class ServerPlayerSession(
     var account: Account? = null
     val database = Database()
     val handler = PlayerHandler(this)
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     //val interactionManager = InteractionManager(this)
 
     fun onDisconnect() {
-
+        scope.launch {
+            if (isAuthorized()) database.saveGameState()
+        }
     }
 
     fun onConnect() {
@@ -52,7 +58,7 @@ data class ServerPlayerSession(
     @get:JsonIgnore
     val displayName: String
         get() = customDisplayName
-            ?: account?.appliedCharacter?.name
+            ?: account?.appliedCharacter?.formattedName
             ?: account?.minecraftNicknames?.last()
             ?: entity.name!!.string
             ?: "Unknown"
@@ -82,6 +88,18 @@ data class ServerPlayerSession(
             )
         }
 
+        suspend fun saveGameState() = withContext(Dispatchers.IO) {
+            val accountUuid = account!!.uuid.toString()
+            val characterName = account!!.appliedCharacterName
+            val filter = Filters.eq("uuid", accountUuid)
+            val update = Updates.combine(
+                Updates.set("appliedCharacterName", characterName),
+                Updates.set("characters.$[elem].appliedLook", account!!.appliedCharacter!!.appearance.look)
+            )
+            val options = UpdateOptions().arrayFilters(listOf(Filters.eq("elem.name", characterName)))
+            service.db!!.getCollection("data").updateOne(filter, update, options)
+        }
+
         suspend fun get(uuid: UUID): Account? = withContext(Dispatchers.IO) {
             val matches = service.fetchAll("data", mapOf("uuid" to uuid.toString()), Account::class.java)
             matches.firstOrNull() as Account?
@@ -109,10 +127,22 @@ data class ServerPlayerSession(
             } ?: LoginResult.NOT_FOUND
         }
 
-        private suspend fun authorize(account: Account) = withContext(Dispatchers.IO) {
-            this@ServerPlayerSession.account = account.apply {
-                updateRegisteredNicknames(this@ServerPlayerSession.entity.name.string)
+        fun updateAccount(account: Account) {
+            try {
+                this@ServerPlayerSession.account = account.apply {
+                    updateRegisteredNicknames(this@ServerPlayerSession.entity.name.string)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
+        }
+
+        suspend fun upsertAccount() {
+            updateAccount(get(account!!.uuid)!!)
+        }
+
+        private suspend fun authorize(account: Account) = withContext(Dispatchers.IO) {
+            updateAccount(account)
             PlayerRegistrationCallback.EVENT.invoker().onRegister(this@ServerPlayerSession, PlayerManager)
         }
     }
