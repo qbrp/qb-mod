@@ -17,7 +17,7 @@ object VersionChecker {
 
     val COMPATIBLE_CLIENT_VERSION: Version = CURRENT_VERSION
 
-    val INCOMPATIBLE_CLIENT_VERSION: Version  = Version.fromString("Alpha-2.1.1")
+    val INCOMPATIBLE_CLIENT_VERSION: Version  = Version.fromString("Alpha-2.3.3")
 
     fun addPlayerTask(player: ServerPlayerEntity) {
         if (players.contains(player)) { players.remove(player) }

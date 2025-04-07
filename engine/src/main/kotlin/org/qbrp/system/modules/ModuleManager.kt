@@ -65,6 +65,7 @@ open class ModuleManager: KoinComponent {
                     }
                 }
             }
+            .also { logger.log("Найдено ${it.count()} модулей") }
             .mapNotNull { clazz ->
             try {
                 if (QbModule::class.java.isAssignableFrom(clazz)) {

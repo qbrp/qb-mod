@@ -25,6 +25,7 @@ fun List<PlayerEntity>.getPlayersInRadius(
     }
 }
 
+
 fun playSoundForPlayer(player: ServerPlayerEntity, soundId: String, volume: Float = 1.0f, pitch: Float = 1.0f) {
     val pos: Vec3d = player.pos // Получаем позицию игрока
     val packet = PlaySoundS2CPacket(

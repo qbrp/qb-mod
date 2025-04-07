@@ -18,7 +18,7 @@ import kotlin.text.toList
 
 open class DatabaseService(protected val url: String, protected val dbName: String) {
     protected var client: MongoClient? = null
-    protected var db: MongoDatabase? = null
+    var db: MongoDatabase? = null
     protected val logger = Loggers.get("database")
 
     private val objectMapper: ObjectMapper = ObjectMapper().apply {
