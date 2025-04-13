@@ -2,6 +2,7 @@ package org.qbrp.engine.spectators.respawn
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
+import net.minecraft.command.argument.EntityArgumentType
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import org.koin.core.component.KoinComponent
@@ -14,8 +15,9 @@ import org.qbrp.core.game.commands.annotations.Execute
 import org.qbrp.core.game.commands.templates.CallbackCommand
 import org.qbrp.core.game.registry.ServerModCommand
 import org.qbrp.engine.Engine
+import org.qbrp.system.utils.format.Format.asMiniMessage
 
-class SpectatorCommands(): ServerModCommand {
+class SpectatorCommands(): ServerModCommand, KoinComponent {
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         dispatcher.register(
             CommandBuilder()
@@ -29,11 +31,17 @@ class SpectatorCommands(): ServerModCommand {
                 .getCommand()
                 .getLiteral()
         )
-        dispatcher.register(
-            CommandBuilder()
-                .buildTree(GiveSpectator::class.java)
-                .getCommand()
-                .getLiteral()
+        dispatcher.register(CommandManager.literal("giveqbs")
+            .then(CommandManager.argument("player", EntityArgumentType.players())
+                .executes { ctx ->
+                    val players = EntityArgumentType.getPlayers(ctx, "player")
+                    players.forEach { player ->
+                        get<RespawnManager>().giveSpectator(player)
+                    }
+                    ctx.source.sendMessage("Режим спавна назначен игрокам ${players.joinToString(", ")}".asMiniMessage())
+                    1
+                }
+            )
         )
     }
 
@@ -50,15 +58,6 @@ class SpectatorCommands(): ServerModCommand {
         @Execute
         fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
             get<RespawnManager>().ignore(context.source.player!!)
-        }
-    }
-
-    @Command("giveqbs")
-    class GiveSpectator(@Arg val playerName: String): CallbackCommand(), KoinComponent {
-        @Execute
-        fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
-            get<RespawnManager>().giveSpectator(context.source.world.players.find { it.name.string == playerName } ?: return callback(context, "&cИгрок не найден"))
-            callback(context, "Режим спектатора назначен игроку $playerName")
         }
     }
 }

@@ -1,8 +1,10 @@
 package org.qbrp.engine.spectators.respawn
 
+import net.minecraft.command.argument.GameModeArgumentType.gameMode
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.world.GameMode
+import org.qbrp.core.game.player.events.PlayerChangeGameModeEvent
 import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.keybinds.ServerKeybindCallback
 import org.qbrp.view.View
@@ -16,6 +18,14 @@ class RespawnManager {
         event.register { player ->
             spawn(player)
             ActionResult.SUCCESS
+        }
+        PlayerChangeGameModeEvent.EVENT.register() { player, gamemode ->
+            notSpawnPlayers[player.name.string]?.let {
+                if (gamemode != GameMode.SPECTATOR) {
+                    ignore(player)
+                }
+            }
+            ActionResult.PASS
         }
     }
 
@@ -38,7 +48,7 @@ class RespawnManager {
         if (!notSpawnPlayers.containsKey(player.name.string)) {
             notSpawnPlayers[player.name.string] = player
             player.changeGameMode(GameMode.SPECTATOR)
-            View.vanillaHud.setActionBarStatus(player, "&6Выберите место появления и напишите /qbs")
+            View.vanillaHud.setActionBarStatus(player, "&6Выберите место появления и напишите /qbs. Чтобы убрать эту надпись, введите /ingoreqbs")
         }
     }
 
