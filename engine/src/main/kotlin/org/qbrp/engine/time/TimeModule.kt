@@ -34,10 +34,9 @@ class TimeModule(): QbModule("time"), TimeAPI {
     }
 
     override fun getKoinModule() = module {
-        single { get<ServerConfigData>().time }
         single { WorldTimeManager(get()) }
-        single { TimeNotifications(get()) }
-        single { PeriodManager(get(), get(), get()) }
+        single { TimeNotifications() }
+        single { PeriodManager(get(), get()) }
     }
 
 

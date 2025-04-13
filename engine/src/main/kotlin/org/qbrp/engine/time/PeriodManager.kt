@@ -1,5 +1,8 @@
 package org.qbrp.engine.time
 
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
 import org.qbrp.system.utils.log.Loggers
@@ -8,11 +11,19 @@ import kotlin.math.round
 class PeriodManager(
     private val worldTimeManager: WorldTimeManager,
     private val notifications: TimeNotifications,
-    private val config: ServerConfigData.Time
-) {
+): KoinComponent {
     private val logger = Loggers.get("time")
+    private var config: ServerConfigData.Time = get<ServerConfigData>().time
 
-    private val periods: List<Period> = config.periods
+    init {
+        ConfigInitializationCallback.EVENT.register { config ->
+            this.config = config.time
+            this.periods = this.config.periods
+            setRpTime(getRpTime())
+        }
+    }
+
+    private var periods: List<Period> = config.periods
     private var currentPeriodIndex = 0
     private val completedPeriods: MutableList<Period> = mutableListOf()
 
@@ -25,14 +36,10 @@ class PeriodManager(
         // Добавляем завершённый период в список выполненных
         currentPeriod?.let { completedPeriods.add(it) }
         currentPeriodIndex++
-        if (currentPeriod != null) {
-            println(
-                "Новый период: ${currentPeriod?.name}. Длительность: ${currentPeriod?.duration} минут, " +
-                        "Прошедшее время: ${currentPeriod?.elapsedTimeMinutes}"
-            )
-        } else {
-            println("Все периоды завершены.")
-        }
+        if (config.sendNotificationsOnNewPeriod) notifications.broadcastTimeDo(
+            getRpTime(),
+            currentPeriod?.name ?: "Конец"
+        )
     }
 
     fun getDayCycleGameTime() = periods.sumOf { it.duration }
@@ -81,9 +88,10 @@ class PeriodManager(
 
         // Проверяем, если RP-время выходит за пределы цикла
         if (rpTime >= getDayCycleRpTime()) {
-            println("RP-время выходит за пределы цикла. Сбрасываем до начала.")
+            logger.warn("RP-время выходит за пределы цикла. Сбрасываем до начала.")
             setRpTime(rpTime % getDayCycleRpTime()) // Рекурсивно сбрасываем до корректного значения
         }
+        handleTime()
     }
 
     private var tickCounter = 0
@@ -98,13 +106,19 @@ class PeriodManager(
         }
         if (tickCounter++ > tickStepDuration) {
             period.incrementElapsedTime()
-            if (period.isFinished()) {
+            handleTime()
+            tickCounter = 0
+        }
+    }
+
+    fun handleTime() {
+        handleNotification()
+        if (currentPeriod != null) {
+            if (currentPeriod!!.isFinished()) {
                 nextPeriod()
             }
-            handleNotification()
-            worldTimeManager.setTickTime(period.getTickTime())
-            logger.log("<<${period.name}>> РП: ${TimeUtils.minutesToTime(getRpTime())}. В минутах: ${getGameTime()}. В тиках: ${period.getTickTime()}")
-            tickCounter = 0
+            worldTimeManager.setTickTime(currentPeriod!!.getTickTime())
+            logger.log("<<${currentPeriod!!.name}>> РП: ${TimeUtils.minutesToTime(getRpTime())}. В минутах: ${getGameTime()}. В тиках: ${currentPeriod!!.getTickTime()}")
         }
     }
 
