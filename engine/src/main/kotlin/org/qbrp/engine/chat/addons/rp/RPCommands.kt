@@ -28,7 +28,6 @@ class RPCommands(): ChatAddon("rp-commands") {
     }
 
     override fun load() {
-        ConfigInitializationCallback.EVENT.register { registerCommands(); CommandsRepository.initCommands(ServerCore.server.commandManager.dispatcher) }
         registerCommands()
     }
 
@@ -38,17 +37,17 @@ class RPCommands(): ChatAddon("rp-commands") {
         registerDefaultRpCommand("me", config.formatMe)
         CommandsRepository.add(MessageCommand("ldo", createCommandChatGroup(
             name ="ldo",
-            format = config.formatDo,
+            format = config.formatLdo,
             radius = 60,
             ClusterBuilder()
-                .component("ignoreVolume", true))) { plr, text ->  Do(plr.name.string, text, "do")}
+                .component("ignoreVolume", true))) { plr, text -> Do(plr.name.string, text, "do")}
         )
         CommandsRepository.add(MessageCommand("gdo", createCommandChatGroup(
             name = "gdo",
             format = config.formatGdo,
             radius = -1,
             ClusterBuilder()
-                .component("ignoreVolume", true))) { plr, text ->  Do(plr.name.string, text, "ldo")}
+                .component("ignoreVolume", true))) { plr, text -> Do(plr.name.string, text, "ldo")}
         )
     }
 

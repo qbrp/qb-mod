@@ -58,7 +58,7 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
                     addTargets(spyPlayers)
                 }
                 val spyMessage = message.copy().apply {
-                    setText("&6[S]&r ${getText()}")
+                    setText("&6[S]&r ${getText().replace("{radar}", "")}")
                     setTags(getTagsBuilder()
                         .component("sound", "")
                         .component("spy", StringContent())
