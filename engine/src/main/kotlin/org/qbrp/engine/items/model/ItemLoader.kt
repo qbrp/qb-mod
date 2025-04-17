@@ -1,6 +1,13 @@
 package org.qbrp.engine.items.model
 
+import com.mongodb.client.model.Filters
+import com.mongodb.client.model.Sorts
 import klite.NotFoundException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.minecraft.item.ItemStack
 import org.koin.core.component.KoinComponent
 import org.litote.kmongo.eq
@@ -12,28 +19,28 @@ import org.qbrp.system.database.DatabaseService
 
 class ItemLoader: DatabaseService(ServerResources.getConfig().databases.nodeUri, ServerResources.getConfig().databases.items), KoinComponent {
     init {
-        //connect()
+        connect()
+    }
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+    // говнокод
+    suspend fun getLastId(): Int = withContext(Dispatchers.IO) {
+        return@withContext db?.getCollection("data")!!
+            .find()
+            .sort(Sorts.descending("id"))
+            .limit(1).first()
+            ?.getInteger("id") ?: 1
     }
 
-    fun getItemState(id: Int): ItemData {
-        val collection = db?.getCollection<ItemData>("data") ?: throw NotFoundException()
-        val item = collection.findOne(ItemData::id eq id) ?: throw NotFoundException()
-        return item
+    suspend fun getItemState(id: Int): ItemState? = withContext(Dispatchers.IO) {
+        val collection = db?.getCollection<ItemState>("data")
+        val item = collection?.findOne(Filters.eq("id", id))
+        return@withContext item
     }
 
-    fun getOrCreateItem(id: Int, itemstack: ItemStack): ItemData {
-        return try {
-            getItemState(id)
-        } catch (e: NotFoundException) {
-            (itemstack.item as QbItem).data
-                .also {
-                    db?.getCollection("data")?.insertOne(it.toJson())
-            }
+    fun createItem(data: ItemState) {
+        scope.launch {
+            db?.getCollection("data")?.insertOne(data.toJson())
         }
     }
-
-    fun createItem(data: ItemData) {
-        db?.getCollection("data")?.insertOne(data.toJson())
-    }
-
 }

@@ -16,8 +16,8 @@ class ItemsModule: QbModule("items") {
     }
 
     override fun getKoinModule() = module {
-        single { ItemManager() }
         single { ItemLoader() }
+        single { ItemManager() }
         single { ItemCommand(get()) }
     }
 }

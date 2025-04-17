@@ -1,5 +1,9 @@
 package org.qbrp.engine.items.model
 
+import klite.NotFoundException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
@@ -11,51 +15,78 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.qbrp.core.components.ItemComponent
 import org.qbrp.core.resources.content.ItemConfig
-import org.qbrp.system.networking.messages.components.Component
+import org.qbrp.engine.Engine
+import org.qbrp.engine.items.ItemsModule
+import org.qbrp.system.utils.format.Format.asMiniMessage
 import org.qbrp.system.utils.log.Loggers
 
 class QbItem(): Item(Settings()), KoinComponent {
-    lateinit var data: ItemData
-    private var activated = true
-    val components: List<ItemComponent>
-        get() = data.components
+    fun getItemState(stack: ItemStack): ItemState? {
+        val nbtId = stack.nbt!!.getInt("id") ?: return null
+        return get<ItemManager>().getItemState(nbtId)
+    }
+    private val scope = CoroutineScope(Dispatchers.IO)
 
-    fun loadFromDatabase(stack: ItemStack) {
-        data = get<ItemLoader>().getOrCreateItem(stack.nbt?.getInt("item_id") ?: return, stack)
-        onLoaded()
+    fun loadItemState(stack: ItemStack) {
+        val nbtId = stack.nbt!!.getInt("id")
+        stack.nbt!!.putBoolean("loaded", false)
+        scope.async {
+            val result = get<ItemManager>().loadFromDatabase(nbtId)
+            if (result != null) {
+                setActivated(stack, true)
+                stack.nbt!!.putBoolean("loaded", true)
+            } else {
+                deactivateOnNotFoundData(stack)
+            }
+        }
     }
 
-    inline fun <reified T> getComponent(): T? {
-        return components.filterIsInstance<T>().first()
+    fun deactivateOnNotFoundData(stack: ItemStack) {
+        setActivated(stack, false)
+        logger.error("Предмет деактивирован, т.к. его данные не найдены.")
     }
 
-    fun createBlankData(tag: ItemConfig.Tag, config: ItemConfig) {
-        data = ItemData(1, tag.name, config.parent, tag.components.map { it.cast() })
-        get<ItemLoader>().createItem(data)
-        onLoaded()
+    fun isActivated(stack: ItemStack): Boolean {
+        return stack.nbt!!.getBoolean("activated") == true
     }
 
-    private fun onLoaded() = Unit
+    fun isLoaded(stack: ItemStack): Boolean {
+        return stack.nbt!!.getBoolean("loaded") == true
+    }
+
+    fun setActivated(stack: ItemStack, activated: Boolean) {
+        stack.nbt!!.putBoolean("activated", activated)
+        if (!activated) {
+            stack.setCustomName("<reset><red>Деактивированный предмет".asMiniMessage())
+        }
+    }
 
     override fun inventoryTick(stack: ItemStack?, world: World?, entity: Entity?, slot: Int, selected: Boolean) {
-        try {
-            super.inventoryTick(stack, world, entity, slot, selected)
-            if (::data.isInitialized && activated) {
-                components.forEach {
-                    it.cache(stack ?: return, entity as? PlayerEntity ?: return)
-                    if (!activated) {
-                        it.activate(); activated = true
+        if (world?.isClient ?: return) {
+
+        } else {
+            try {
+                super.inventoryTick(stack, world, entity, slot, selected)
+                if (stack == null || entity == null || entity !is PlayerEntity) return
+                if (isActivated(stack) && isLoaded(stack)) {
+                    val state = getItemState(stack)
+                    if (state != null) {
+                        state.tick(stack, entity)
+                    } else {
+                        loadItemState(stack)
                     }
-                    it.tick()
                 }
+            } catch (e: Exception) {
+                setActivated(stack!!, false)
+                val state = getItemState(stack)
+                if (state != null) {
+                    logger.error("Ошибка обработки тика предмета ${state.name} с идентификатором ${state.id}: ${e.message}")
+                    logger.error("- Владелец: ${entity?.name?.string} (${entity?.type?.name?.string}), ${entity?.x}, ${entity?.y}, ${entity?.z}")
+                    logger.error("- Компоненты: ${state.components.joinToString("\n")}")
+                    e.printStackTrace()
+                }
+                logger.error("Предмет деактивирован.")
             }
-        } catch (e: Exception) {
-            logger.error("Ошибка обработки тика предмета ${data.name} с идентификатором ${data.id}: ${e.message}")
-            logger.error("- Владелец: ${entity?.name?.string} (${entity?.type?.name?.string}), ${entity?.x}, ${entity?.y}, ${entity?.z}")
-            logger.error("- Компоненты: ${components.joinToString("\n")}")
-            e.printStackTrace()
-            logger.error("Предмет деактивирован.")
-            activated = false
         }
     }
 
