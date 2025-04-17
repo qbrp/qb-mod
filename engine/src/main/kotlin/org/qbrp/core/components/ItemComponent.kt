@@ -4,18 +4,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import okhttp3.Call
+import org.qbrp.engine.items.model.ItemState
 
 abstract class ItemComponent(): AbstractGameComponent() {
+    @Transient protected lateinit var cachedItemState: ItemState
     @Transient protected lateinit var cachedItem: ItemStack
     @Transient protected lateinit var cachedPlayer: PlayerEntity
 
-    fun cache(item: ItemStack, player: PlayerEntity) {
-        cachedItem = item; cachedPlayer = player
+    fun cache(item: ItemStack, player: PlayerEntity, state: ItemState) {
+        cachedItem = item; cachedPlayer = player; cachedItemState = state
     }
 
-    override fun call(callContext: CallContext): String {
+    override fun call(callContext: String): String {
         return try {
-            onCall(callContext, cachedItem, cachedPlayer)
+            onCall(callContext, cachedItem, cachedPlayer, cachedItemState)
         } catch (e: Exception) {
             e.printStackTrace()
             CallResponse.FAIL
@@ -23,16 +25,16 @@ abstract class ItemComponent(): AbstractGameComponent() {
     }
 
     override fun activate() {
-        onActivate(cachedItem, cachedPlayer)
+        onActivate(cachedItem, cachedPlayer, cachedItemState)
     }
 
     override fun tick() {
-        onTick(cachedItem, cachedPlayer)
+        onTick(cachedItem, cachedPlayer, cachedItemState)
     }
 
-    protected open fun onActivate(item: ItemStack, player: PlayerEntity) = Unit
+    protected open fun onActivate(item: ItemStack, player: PlayerEntity, state: ItemState) = Unit
 
-    protected open fun onTick(item: ItemStack, player: PlayerEntity) = Unit
+    protected open fun onTick(item: ItemStack, player: PlayerEntity, state: ItemState) = Unit
 
-    protected open fun onCall(context: CallContext, item: ItemStack, player: PlayerEntity): String = CallResponse.SUCCESS
+    protected open fun onCall(context: String, item: ItemStack, player: PlayerEntity, state: ItemState): String = CallResponse.SUCCESS
 }
