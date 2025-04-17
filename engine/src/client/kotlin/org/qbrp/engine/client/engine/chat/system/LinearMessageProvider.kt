@@ -9,7 +9,10 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
 
-class LinearMessageProvider(val filter: (HandledMessage) -> Boolean = { true }) : Provider {
+class LinearMessageProvider(
+    // Мапа с фильтрами: ключ — название фильтра, значение — лямбда, фильтрующая сообщения.
+    val filters: MutableMap<String, (HandledMessage) -> Boolean> = mutableMapOf()
+) : Provider {
     private val allMessages: MutableMap<String, HandledMessage> = mutableMapOf()
     private val cachedSnapshot: AtomicReference<MutableList<ChatHudLine.Visible>> = AtomicReference(mutableListOf())
     private val taskQueue = ConcurrentLinkedQueue<Runnable>()
@@ -31,8 +34,8 @@ class LinearMessageProvider(val filter: (HandledMessage) -> Boolean = { true }) 
                     allMessages.values.forEach { line ->
                         TextUpdateCallback.EVENT.invoker().modifyText(line.text, line) ?: line.text
                     }
-                    updateCachedSnapshot() }
-                )
+                    updateCachedSnapshot()
+                })
                 ticksCompleted = 0
             }
         }
@@ -79,7 +82,10 @@ class LinearMessageProvider(val filter: (HandledMessage) -> Boolean = { true }) 
     private fun updateCachedSnapshot() {
         // Создаем новый список сообщений и пересчитываем кэш
         val newSnapshot = allMessages.values.toList()
-        val processed = newSnapshot.reversed().filter { filter(it) }.flatMap { it.text }.toMutableList()
+        // Если мапа фильтров пуста, то берем все сообщения, иначе оставляем только те, которые проходят все фильтры.
+        val processed = newSnapshot.reversed().filter {
+            if (filters.isEmpty()) true else filters.values.all { predicate -> predicate(it) }
+        }.flatMap { it.text }.toMutableList()
         cachedSnapshot.set(processed) // Атомарно обновляем кэш
     }
 }
