@@ -1,10 +1,13 @@
 package org.qbrp.core.resources.data.config
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.gson.annotations.SerializedName
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.data.Data
+import org.qbrp.core.resources.data.YamlData
 import org.qbrp.engine.chat.core.system.ChatGroup
 import org.qbrp.engine.time.Period
+import java.io.File
 
 data class ServerConfigData(
     val resources: Resources = Resources(),
@@ -13,12 +16,15 @@ data class ServerConfigData(
     val music: Music = Music(),
     val chat: Chat = Chat(),
     val time: Time = Time(),
-    val players: Players = Players()
-) : Data() {
+    val players: Players = Players(),
+    val spectators: Spectators = Spectators()
+) : YamlData() {
 
     val disabledModules: List<String> = listOf()
 
-    override fun toFile(): String = gson.toJson(this).also { ServerResources.getLogger().log(this.toString()) }
+    override fun toFile(): String = throw UnsupportedOperationException()
+
+    data class Spectators(val formatTooltip: String = "<gold>/qbs - спавн, /ignoreqbs - убрать эту надпись")
 
     data class Chat(
         val chatGroups: List<ChatGroup> = listOf(),
@@ -29,6 +35,7 @@ data class ServerConfigData(
     ) {
         data class Commands(val formatMe: String = "{playerDisplayName} &e* &f{text}",
                             val formatDo: String = "{playerDisplayName} &d( &f{text} &d)",
+                            val formatLdo: String = "{playerDisplayName} &d( &f{text} &d)",
                             val formatGdo: String = "{playerDisplayName} &d( &f{text} &d)",
                             val formatRoll: String = "{playerDisplayName} &b* &f{text} &b- &a{roll}%",
                             val formatPm: String = "<#554436>(( <#F4A460><bold>ᴘᴍ</bold> <#c97e3d>{playerName} <#F4A460>▸ <#c97e3d><recipientName><#F4A460>: {text} <#554436>))")
@@ -68,25 +75,25 @@ data class ServerConfigData(
 
     data class HTTP(
         val port: Int = 25008,
-        @SerializedName("resource_pack_path")
+        @JsonProperty("resource_pack_path")
         val resourcePack: String = "qbrp/resources/resourcepack.zip"
     )
 
     data class Resources(
-        @SerializedName("pack_mc_meta")
+        @JsonProperty("pack_mc_meta")
         val packMcMeta: Pack = Pack()
     ) {
 
         data class Pack(
             val description: String = "",
 
-            @SerializedName("pack_format")
+            @JsonProperty("pack_format")
             val packFormat: Int = 15 // Используем правильное имя поля, чтобы оно соответствовало JSON
         )
     }
 
     data class Databases(
-        @SerializedName("node_uri")
+        @JsonProperty("node_uri")
         val nodeUri: String = "0.0.0.0",
         val items: String = "items",
         val blocks: String = "serverBlocks",
@@ -100,7 +107,13 @@ data class ServerConfigData(
         val periods: List<Period> = listOf(),
         val formatDo: String = "&6&l{time}",
         val doFrequency: Int = 2,
+        val sendNotificationsOnNewPeriod: Boolean = true,
         val rpTimeOffset: Int = 0
-    ) {
+    )
+
+    companion object {
+        fun fromFile(file: File): ServerConfigData {
+            return mapper.readValue(file.readText(), ServerConfigData::class.java)
+        }
     }
 }

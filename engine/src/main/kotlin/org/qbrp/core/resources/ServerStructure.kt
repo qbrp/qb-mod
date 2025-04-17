@@ -29,7 +29,7 @@ class ServerStructure: Structure(File("qbrp")) {
     val youtubeToken = open("token.youtube-token", StringData::class.java)
 
     private fun openConfig() = (open(
-        "config.json",
+        "config.yml",
         ServerConfigData::class.java,
         GsonBuilder()
             .setPrettyPrinting()
