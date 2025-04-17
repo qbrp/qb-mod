@@ -23,6 +23,7 @@ abstract class QbModule(private val name: String) : KoinComponent {
 
     fun sendStateInformation(player: ServerPlayerEntity) {
         NetworkManager.sendMessage(player, Message(Messages.moduleUpdate(name), BooleanContent(isEnabled())))
+        NetworkManager.sendMessage(player, Message(Messages.moduleClientUpdate(name), BooleanContent(isEnabled())))
     }
 
     open fun getName(): String = name
