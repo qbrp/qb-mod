@@ -1,5 +1,6 @@
 package org.qbrp.engine.chat.addons
 
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
@@ -11,17 +12,16 @@ import org.qbrp.engine.chat.addons.groups.ChatGroupsAPI
 import org.qbrp.engine.chat.addons.tools.MessageTextTools
 import org.qbrp.engine.chat.core.events.MessageReceivedEvent
 import org.qbrp.engine.chat.core.events.MessageSenderPipeline
+import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.chat.core.system.TextTagsTransformer
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
+import org.qbrp.system.modules.ModuleAPI
 import org.qbrp.system.utils.format.Format.formatMinecraft
 
-@Autoload(LoadPriority.ADDON)
+@Autoload(LoadPriority.ADDON, both = true)
 class Mentions(): ChatAddon("mentions") {
     private val server: MinecraftServer by inject()
-    init {
-        dependsOn { Engine.isApiAvailable<ChatGroupsAPI>() }
-    }
 
     override fun load() {
         MessageReceivedEvent.EVENT.register { message ->
@@ -48,12 +48,13 @@ class Mentions(): ChatAddon("mentions") {
                 } else if (it == "here") {
                     sender.addTargets((Engine.getAPI<ChatGroupsAPI>()!!
                         .fetchGroup(message)?.getPlayersCanSee(message.getAuthorEntity()!!) ?: emptyList()) as List<ServerPlayerEntity>)
+                } else {
+                    sender.addTarget(server.playerManager.getPlayer(it) ?: return@forEach)
                 }
-                sender.addTarget(server.playerManager.getPlayer(it) ?: return@register ActionResult.PASS)
             }
             MessageTextTools.setTextContent(message, TextTagsTransformer.replaceTagsWithFormat(
                 MessageTextTools.getTextContent(message), "mention") { tag, value ->
-                "&e&l@${value}&r&f"
+                "<bold><yellow>@${value}</yellow></bold>"
             })
             ActionResult.PASS
         }

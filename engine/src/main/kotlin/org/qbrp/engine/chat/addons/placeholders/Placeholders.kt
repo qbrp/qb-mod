@@ -18,7 +18,7 @@ class Placeholders: QbModule("placeholders"), PlaceholdersAPI {
         val placeholders = message.getTags().getValueComponents("value")
         var updatedText = message.getText()
         placeholders.filterKeys(filter).forEach { (key, value) ->
-            updatedText = updatedText.replace("{${key.split(".")[0]}}", value)
+            updatedText = updatedText.replace("{${key}}", value)
         }
         message.setText(updatedText, false)
     }

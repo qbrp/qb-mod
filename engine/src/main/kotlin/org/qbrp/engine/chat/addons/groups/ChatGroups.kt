@@ -106,6 +106,8 @@ class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
         return storage.getGroup(name)
     }
 
+    override fun getStorage(): ChatGroupsStorage = this.storage
+
     override fun addGroup(group: ChatGroup) { storage.addGroup(group) }
 
     private fun initGroups() {
