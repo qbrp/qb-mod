@@ -1,6 +1,8 @@
 package org.qbrp.engine.chat.core.system
 
 import PermissionManager.hasPermission
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.network.ServerPlayerEntity
 import org.qbrp.engine.chat.core.messages.ChatMessage
@@ -13,11 +15,12 @@ import org.qbrp.system.networking.messages.types.StringContent
 import org.qbrp.system.utils.world.getPlayersInRadius
 import kotlin.collections.set
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 open class ChatGroup(
     val name: String,
     val simpleName: String = "",
     val prefix: String = "",
-    val color: String = "",
+    val color: String = "#FFFFFFF",
     val radius: Int = 16,
     val components: List<MessageComponent>? = listOf(),
     val format: String = "{playerName}: {text}",

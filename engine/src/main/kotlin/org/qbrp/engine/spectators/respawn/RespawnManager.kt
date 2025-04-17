@@ -4,12 +4,15 @@ import net.minecraft.command.argument.GameModeArgumentType.gameMode
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.world.GameMode
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.qbrp.core.game.player.events.PlayerChangeGameModeEvent
 import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.keybinds.ServerKeybindCallback
+import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.view.View
 
-class RespawnManager {
+class RespawnManager: KoinComponent {
     private val cachedGameModes = mutableMapOf<ServerPlayerEntity, GameMode>()
     private val notSpawnPlayers: MutableMap<String, ServerPlayerEntity> = mutableMapOf()
 
@@ -48,7 +51,7 @@ class RespawnManager {
         if (!notSpawnPlayers.containsKey(player.name.string)) {
             notSpawnPlayers[player.name.string] = player
             player.changeGameMode(GameMode.SPECTATOR)
-            View.vanillaHud.setActionBarStatus(player, "&6Выберите место появления и напишите /qbs. Чтобы убрать эту надпись, введите /ingoreqbs")
+            View.vanillaHud.setActionBarStatus(player, get<ServerConfigData>().spectators.formatTooltip)
         }
     }
 

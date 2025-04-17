@@ -65,6 +65,15 @@ class TimeCommands(private val api: TimeAPI): ServerModCommand {
     }
 
     @SubCommand
+    class Broadcast: CallbackCommand() {
+        @Execute(operatorLevel = 4)
+        fun execute(ctx: CommandContext<ServerCommandSource>, deps: Deps) {
+            val time = (deps.get("time") as TimeAPI)
+            time.broadcastTime()
+        }
+    }
+
+    @SubCommand
     class Period {
 
         @SubCommand

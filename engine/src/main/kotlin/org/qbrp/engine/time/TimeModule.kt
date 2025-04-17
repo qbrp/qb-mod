@@ -67,5 +67,7 @@ class TimeModule(): QbModule("time"), TimeAPI {
 
     override fun setCycleEnabled(enabled: Boolean) { this.enabled = enabled }
 
+    override fun broadcastTime(time: Int, name: String) = get<TimeNotifications>().broadcastTimeDo(time, name)
+
     var enabled = true
 }

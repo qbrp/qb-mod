@@ -40,8 +40,6 @@ import su.plo.voice.api.server.audio.source.ServerDirectSource
 class MusicManagerModule : QbModule("music"), KoinComponent, MusicManagerAPI {
     private val logger = Loggers.get("musicManager")
 
-    override fun getName() = "musicManager"
-
     override fun getTracks(): List<Track> = get<MusicStorage>().getAllTracks()
 
     override fun load() {

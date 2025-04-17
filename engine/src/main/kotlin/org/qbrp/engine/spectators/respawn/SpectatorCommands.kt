@@ -38,7 +38,7 @@ class SpectatorCommands(): ServerModCommand, KoinComponent {
                     players.forEach { player ->
                         get<RespawnManager>().giveSpectator(player)
                     }
-                    ctx.source.sendMessage("Режим спавна назначен игрокам ${players.joinToString(", ")}".asMiniMessage())
+                    ctx.source.sendMessage("Режим спавна назначен игрокам ${players.map { it.name.string }.joinToString(", ")}".asMiniMessage())
                     1
                 }
             )

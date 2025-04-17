@@ -10,4 +10,5 @@ interface TimeAPI: ModuleAPI {
     fun setRpTime(time: Int)
     fun getFormattedRpTime(): String
     fun setCycleEnabled(enabled: Boolean)
+    fun broadcastTime(time: Int = getRpTime(), period: String = getCurrentPeriod()!!.name)
 }

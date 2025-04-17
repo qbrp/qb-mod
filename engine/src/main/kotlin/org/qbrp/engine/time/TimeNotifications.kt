@@ -22,9 +22,8 @@ class TimeNotifications(): KoinComponent {
                 .apply {
                     getTagsBuilder()
                         .placeholder("name", "&bВремя")
-                        .placeholder("time.roundRpTime",
-                            StringContent(TimeUtils.minutesToTime(TimeUtils.roundMinutesToNearestHalfHour(time))).toString())
-                        .placeholder("time.rpTime", StringContent(TimeUtils.minutesToTime(time)).toString())
+                        .placeholder("time.roundRpTime", TimeUtils.minutesToTime(TimeUtils.roundMinutesToNearestHalfHour(time)))
+                        .placeholder("time.rpTime", TimeUtils.minutesToTime(time))
                         .placeholder("time.period", name)
                 }
         )
