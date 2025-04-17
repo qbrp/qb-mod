@@ -22,6 +22,7 @@ class ComponentTypeFactory {
         registerComponentType("text", ::TextContent)
         registerComponentType("boolean", ::BooleanContent)
         registerComponentType("int", ::IntContent)
+        registerComponentType("integer", ::IntContent)
         registerComponentType("long", ::LongContent)
         registerComponentType("double", ::DoubleContent)
         registerComponentType("cluster", ::Cluster)

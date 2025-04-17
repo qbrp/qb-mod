@@ -25,6 +25,21 @@ fun List<PlayerEntity>.getPlayersInRadius(
     }
 }
 
+fun List<ServerPlayerEntity>.getPlayersInRadius(
+    player: ServerPlayerEntity,
+    radius: Double,
+    handleNegativeInt: Boolean = false,
+    includeSource: Boolean = false
+): List<ServerPlayerEntity> {
+    val radiusSquared = radius * radius
+    if (handleNegativeInt && radius.toInt() == -1) {
+        return player.serverWorld.players
+    }
+    return filter {
+        (includeSource || it !== player) && it.squaredDistanceTo(player) <= radiusSquared
+    }
+}
+
 
 fun playSoundForPlayer(player: ServerPlayerEntity, soundId: String, volume: Float = 1.0f, pitch: Float = 1.0f) {
     val pos: Vec3d = player.pos // Получаем позицию игрока

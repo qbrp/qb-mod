@@ -166,8 +166,9 @@ object Format {
         return Format.format(this)
     }
 
-    fun String.miniMessage(): Component {
-        return MiniMessage.miniMessage().deserialize(this)
+    fun String.miniMessage(): String {
+        val component = MiniMessage.miniMessage().deserialize(this)
+        return GsonComponentSerializer.gson().serialize(component)
     }
 
     fun String.asMiniMessage(): Text {

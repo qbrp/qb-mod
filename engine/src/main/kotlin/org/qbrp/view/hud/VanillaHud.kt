@@ -2,6 +2,7 @@ package org.qbrp.view.hud
 
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
+import org.qbrp.system.utils.format.Format.asMiniMessage
 import org.qbrp.system.utils.format.Format.formatMinecraft
 import kotlin.concurrent.fixedRateTimer
 
@@ -20,8 +21,8 @@ class VanillaHud: ActionBarHud {
         player: ServerPlayerEntity,
         statusMessage: String
     ) {
-        if (statusMessage == "") sendActionBarMsg(player, "".formatMinecraft())
-        actionBarStatuses[player] = statusMessage.formatMinecraft()
+        if (statusMessage == "") sendActionBarMsg(player, Text.of(""))
+        actionBarStatuses[player] = statusMessage.asMiniMessage()
     }
 
     private fun handleActionBarStatus() {

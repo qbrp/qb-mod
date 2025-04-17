@@ -16,5 +16,7 @@ object Messages {
     const val REGISTRATION_REQUEST = "request_registration"
     const val REGISTRATION_RESPONSE = "registration_response"
 
+    fun invokeCommand(name: String): String = "invoke_command_$name"
     fun moduleUpdate(name: String): String = "module_update_$name"
+    fun moduleClientUpdate(name: String): String = "module_update_${name}-client"
 }
