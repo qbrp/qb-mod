@@ -12,6 +12,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.io.UnsafeIoApi
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
+import org.qbrp.core.game.player.interaction.InteractionManager
 import org.qbrp.core.game.player.registration.LoginResult
 import org.qbrp.core.game.player.registration.PlayerRegistrationCallback
 import org.qbrp.system.database.DatabaseService
@@ -28,7 +29,7 @@ data class ServerPlayerSession(
     val database = Database()
     val handler = PlayerHandler(this)
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    //val interactionManager = InteractionManager(this)
+    val interactionManager = InteractionManager(this)
 
     fun onDisconnect() {
         scope.launch {
@@ -94,7 +95,9 @@ data class ServerPlayerSession(
             val filter = Filters.eq("uuid", accountUuid)
             val update = Updates.combine(
                 Updates.set("appliedCharacterName", characterName),
-                Updates.set("characters.$[elem].appliedLook", account!!.appliedCharacter!!.appearance.look)
+                Updates.set("minecraftNicknames", account!!.minecraftNicknames),
+                Updates.set("characters.$[elem].appliedLook", account!!.appliedCharacter!!.appearance.look),
+                Updates.set("social", account!!.social)
             )
             val options = UpdateOptions().arrayFilters(listOf(Filters.eq("elem.name", characterName)))
             service.db!!.getCollection("data").updateOne(filter, update, options)

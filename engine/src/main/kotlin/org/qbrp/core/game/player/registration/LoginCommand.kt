@@ -17,10 +17,11 @@ import org.qbrp.system.networking.messages.Message
 import org.qbrp.system.networking.messages.Messages
 import org.qbrp.system.networking.messages.types.StringContent
 import org.qbrp.system.networking.messaging.NetworkManager
+import org.qbrp.system.utils.format.Format.asMiniMessage
 import java.util.UUID
 
 class LoginCommand: ServerModCommand {
-    val chatAPI = Engine.getAPI<ChatAPI>()!!
+    val chatAPI = Engine.getAPI<ChatAPI>()
 
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         dispatcher.register(
@@ -66,51 +67,70 @@ class LoginCommand: ServerModCommand {
     }
 
     private fun handleBlankResult(ctx: CommandContext<ServerCommandSource>) {
-        chatAPI.sendMessage(ctx.source.player!!,
-            ChatMessage(
-                SYSTEM_MESSAGE_AUTHOR,
-                "<red>Отправьте код вашего аккаунта через команду /login <код>.")
-                .apply {
-                    getTagsBuilder()
-                        .component("channel", "registration")
-                        .component("static", true)
-                }
-        )
+        if (chatAPI != null) {
+            chatAPI.sendMessage(ctx.source.player!!,
+                ChatMessage(
+                    SYSTEM_MESSAGE_AUTHOR,
+                    "<red>Отправьте код вашего аккаунта через команду /login <код>."
+                )
+                    .apply {
+                        getTagsBuilder()
+                            .component("channel", "registration")
+                            .component("static", true)
+                    }
+            )
+        } else {
+            ctx.source.player!!.sendMessage("<red>Отправьте код вашего аккаунта через команду /login <код>".asMiniMessage())
+        }
     }
 
     private fun handleNotFoundResult(ctx: CommandContext<ServerCommandSource>, code: String) {
-        chatAPI.sendMessage(ctx.source.player!!, ChatMessage(
-            SYSTEM_MESSAGE_AUTHOR,
-            "<red>Аккаунт с кодом $code не был найден.",
-        ).apply {
-            getTagsBuilder()
-                .component("channel", "registration")
-                .component("static", true)
-        })
+        if (chatAPI != null) {
+            chatAPI.sendMessage(ctx.source.player!!, ChatMessage(
+                SYSTEM_MESSAGE_AUTHOR,
+                "<red>Аккаунт с кодом $code не был найден.",
+            ).apply {
+                getTagsBuilder()
+                    .component("channel", "registration")
+                    .component("static", true)
+            })
+        } else {
+            ctx.source.player!!.sendMessage("<red>Аккаунт с кодом $code не был найден.".asMiniMessage())
+        }
     }
 
     private fun handleAlreadyRegistered(ctx: CommandContext<ServerCommandSource>) {
-        chatAPI.sendMessage(ctx.source.player!!, ChatMessage(
-            SYSTEM_MESSAGE_AUTHOR,
-            "<red>Имя игрока уже привязано к аккаунту.",
-        ).apply {
-            getTagsBuilder()
-                .component("channel", "registration")
-                .component("static", true)
-        })
+        if (chatAPI != null) {
+            chatAPI.sendMessage(ctx.source.player!!, ChatMessage(
+                SYSTEM_MESSAGE_AUTHOR,
+                "<red>Имя игрока уже привязано к аккаунту.",
+            ).apply {
+                getTagsBuilder()
+                    .component("channel", "registration")
+                    .component("static", true)
+            })
+        } else {
+            ctx.source.player!!.sendMessage("<red>Имя игрока уже привязано к аккаунту.".asMiniMessage())
+        }
     }
 
     private fun handleSuccessResult(ctx: CommandContext<ServerCommandSource>, data: ServerPlayerSession, uuid: UUID) {
-        NetworkManager.sendMessage(ctx.source.player!!,
-            Message(Messages.REGISTRATION_RESPONSE, StringContent(uuid.toString())))
-        chatAPI.sendMessage(ctx.source.player!!, ChatMessage(
-            SYSTEM_MESSAGE_AUTHOR,
-            "<green>Вход в аккаунт выполнен. Приятной игры.",
-        ).apply {
-            getTagsBuilder()
-                .component("channel", "default")
-                .component("static", false)
-        })
+        if (chatAPI != null) {
+            NetworkManager.sendMessage(
+                ctx.source.player!!,
+                Message(Messages.REGISTRATION_RESPONSE, StringContent(uuid.toString()))
+            )
+            chatAPI.sendMessage(ctx.source.player!!, ChatMessage(
+                SYSTEM_MESSAGE_AUTHOR,
+                "<green>Вход в аккаунт выполнен. Приятной игры.",
+            ).apply {
+                getTagsBuilder()
+                    .component("channel", "default")
+                    .component("static", false)
+            })
+        } else {
+            ctx.source.player!!.sendMessage("<green>Вход в аккаунт выполнен. Приятной игры.".asMiniMessage())
+        }
     }
 
 }

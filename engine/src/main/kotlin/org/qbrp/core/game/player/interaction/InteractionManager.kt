@@ -1,6 +1,7 @@
 package org.qbrp.core.game.player.interaction
 
 import org.qbrp.core.game.player.ServerPlayerSession
+import org.qbrp.core.game.player.interaction.model.BaseInteraction
 
 class InteractionManager(private val session: ServerPlayerSession) {
     companion object {
@@ -15,11 +16,5 @@ class InteractionManager(private val session: ServerPlayerSession) {
 
     fun changeInteractionMode(interactionMode: InteractionMode) {
 
-    }
-
-    init {
-        //InteractEvents.getOrCreate(Interactions.BASE).register { plr, intent ->
-           // intent
-        //}
     }
 }

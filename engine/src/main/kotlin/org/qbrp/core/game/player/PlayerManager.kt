@@ -73,13 +73,14 @@ object PlayerManager: ServerModCommand {
         AccountSyncCommand().register(dispatcher)
     }
 
-    fun getPlayerLookingAt(player: ServerPlayerEntity): ServerPlayerEntity? {
+    fun getPlayerLookingAt(player: ServerPlayerEntity, gameMode: GameMode? = null): ServerPlayerEntity? {
         val world = player.world
         val lookDirection = player.rotationVector // Предполагается, что это направление взгляда
         val start = player.eyePos // Начальная точка луча (глаза игрока)
         val end = start.add(lookDirection.multiply(5.0)) // Конечная точка луча (5 блоков)
 
         val entities = world.server!!.playerManager.playerList.getPlayersInRadius(player, 5.0)
+            .filter { if (gameMode != null) (it as? ServerPlayerEntity)?.interactionManager?.gameMode == gameMode else true }
 
         var closestEntity: ServerPlayerEntity? = null
         var closestDistance = Double.MAX_VALUE

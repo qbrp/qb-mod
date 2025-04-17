@@ -11,26 +11,22 @@ import org.qbrp.engine.chat.core.events.MessageReceivedEvent
 
 class PlayerHandler(private val session: ServerPlayerSession) {
 
-    init {
-        // Блокировка смена режима игры, если игрок не авторизован
-        PlayerChangeGameModeEvent.EVENT.register() { player, gameMode ->
-            if (player.name.string == session.entity.name.string && !session.isAuthorized() && gameMode != GameMode.SPECTATOR) {
-                ActionResult.PASS
-            } else
-                ActionResult.PASS
-        }
+    companion object {
+        init {
+            // Блокировка отправки сообщений
+            MessageReceivedEvent.EVENT.register() { message ->
+                if (!PlayerManager.getPlayerSession(message.getAuthorEntity() ?: return@register ActionResult.FAIL).isAuthorized()) {
+                    ActionResult.FAIL
+                } else
+                    ActionResult.PASS
+            }
 
-        // Блокировка отправки сообщений
-        MessageReceivedEvent.EVENT.register() { message ->
-            if (message.getAuthorEntity() == session.entity && !session.isAuthorized()) {
-                ActionResult.FAIL
-            } else
-                ActionResult.PASS
-        }
-
-        // Обработка тика
-        ServerTickEvents.END_WORLD_TICK.register { server ->
-            handleTick()
+            // Обработка тика
+            ServerTickEvents.END_WORLD_TICK.register { server ->
+                PlayerManager.playersList.forEach { player ->
+                    player.handler.handleTick()
+                }
+            }
         }
     }
 
