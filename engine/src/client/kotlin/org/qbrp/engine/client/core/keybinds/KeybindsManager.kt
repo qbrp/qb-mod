@@ -1,5 +1,6 @@
 package org.qbrp.engine.client.core.keybinds
 
+import icyllis.modernui.core.Core
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.option.KeyBinding
@@ -8,6 +9,7 @@ import org.lwjgl.glfw.GLFW
 import org.qbrp.engine.client.EngineClient
 import org.qbrp.engine.client.engine.chat.ClientChatAPI
 import org.qbrp.engine.client.render.Render
+import org.qbrp.engine.client.render.hud.GameScreen
 import org.qbrp.engine.client.system.networking.ClientNetworkManager
 
 class KeybindsManager {
@@ -25,7 +27,7 @@ class KeybindsManager {
                 "Информация",
                 GLFW.GLFW_KEY_G,
             ), "information") {
-            println("ingof")
+
         }
         registerKeyBinding(
             createKeybinding(
