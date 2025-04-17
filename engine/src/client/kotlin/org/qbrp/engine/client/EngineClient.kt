@@ -16,7 +16,6 @@ import org.qbrp.system.modules.ModuleAPI
 class EngineClient : ClientModInitializer {
 
     companion object {
-        lateinit var render: Render
         val moduleManager = ClientModuleManager()
         val keybindsManager = KeybindsManager()
         val registrationManager = RegistrationManager()
@@ -38,8 +37,7 @@ class EngineClient : ClientModInitializer {
             moduleManager.initialize()
         }
 
-        render = Render()
-            .apply { initialize() }
+        Render.initialize()
 
         ClientReceivers.register()
         keybindsManager.registerKeyBindings()
