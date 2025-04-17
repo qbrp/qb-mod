@@ -15,14 +15,15 @@ import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
 
 @Autoload(LoadPriority.ADDON, EnvType.CLIENT)
-class Channels: ClientChatAddon("channels") {
+class Channels : ClientChatAddon("channels") {
     private lateinit var providersCache: MutableMap<String, Provider>
 
     override fun load() {
         providersCache = mutableMapOf<String, Provider>("default" to get<MessageStorage>().provider)
         MessageAddedEvent.EVENT.register { message, storage ->
             providersCache.values.forEach {
-                if (it != get<MessageStorage>().provider && message.getTags().getComponentData<Boolean>("static") == false) it.onMessageAdded(message, storage)
+                if (it != get<MessageStorage>().provider && message.getTags().getComponentData<Boolean>("static") == false)
+                    it.onMessageAdded(message, storage)
             }
             message.getTags().getComponentData<String>("clearChannel")?.let {
                 providersCache.remove(it)
@@ -32,8 +33,11 @@ class Channels: ClientChatAddon("channels") {
         MessageAddedEvent.EVENT.register { message, storage ->
             val channel = message.getTags().getComponentData<String>("channel") ?: return@register ActionResult.PASS
             val provider = providersCache[channel] ?: run {
-                val newProvider =
-                    LinearMessageProvider { it.message.getTags().getComponentData<String>("channel") == channel }
+                val newProvider = LinearMessageProvider(
+                    mutableMapOf("channel" to { handledMessage ->
+                        handledMessage.message.getTags().getComponentData<String>("channel") == channel
+                    })
+                )
                 providersCache[channel] = newProvider
                 newProvider
             }
