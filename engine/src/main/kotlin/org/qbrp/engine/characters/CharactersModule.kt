@@ -33,25 +33,16 @@ class CharactersModule: QbModule("characters") {
             }
         }
         CommandsRepository.add(listOf(get<ApplyCharacterCommand>(), get<ApplyLookCommand>()))
-        registerKeybindReceiver("information")
-        ServerKeybindCallback.getOrCreateEvent("information").register { player ->
-            println("Просмотр информации")
-            val session = PlayerManager.getPlayerSession(player)
-            PlayerManager.getPlayerLookingAt(player)?.let {
-                val character = PlayerManager.getPlayerSession(it).account?.appliedCharacter
-                if (character != null) {
-                    session.entity.sendMessage(
-                        "${character.formattedName}<newline>&d( &7${character.appearance.composeDescription()}&d )&r"
-                            .asMiniMessage())
-                }
-            }
-            ActionResult.PASS
+        get<AppearanceManager>().apply {
+            registerKeybindHandler()
+            registerAppearanceReadTimer()
         }
     }
 
     override fun getKoinModule() = module {
         single { ApplyCharacterCommand(this@CharactersModule) }
         single { ApplyLookCommand(this@CharactersModule) }
+        single { AppearanceManager() }
     }
 
     fun getCharacter(session: ServerPlayerSession): Character {
@@ -65,6 +56,9 @@ class CharactersModule: QbModule("characters") {
         try {
             session.account!!.appliedCharacterName = name
             val character = getCharacter(session)
+            session.entity.server.commandManager.executeWithPrefix(
+                session.entity.server.commandSource, "scale reset ${session.entity.name.string}"
+            )
             session.entity.server.commandManager.executeWithPrefix(
                 session.entity.server.commandSource, "scale set pehkui:base ${character.scaleFactor} ${session.entity.name.string}"
             )
