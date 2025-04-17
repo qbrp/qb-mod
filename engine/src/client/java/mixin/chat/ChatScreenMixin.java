@@ -143,7 +143,6 @@ class ChatScreenMixin extends Screen {
            api.endTyping(player);
         }
 
-        chatText = this.normalize(api.getTextTransformer().getTransformedMessage(chatText));
         if (chatText.isEmpty()) {
             return true;
         } else {

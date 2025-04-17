@@ -43,9 +43,10 @@ public abstract class ChatHudMixin {
         // Инициализируем api, если он еще не установлен
         if (api == null) {
             api = ((ChatModuleClient) Objects.requireNonNull(EngineClient.Companion.getModuleManager().getModule("chat-client"))).getAPI();
+        } else {
+            // Обновляем visibleMessages из api
+            this.visibleMessages = api.getMessageProvider().provide(api.getStorage());
         }
-        // Обновляем visibleMessages из api
-        this.visibleMessages = api.getMessageProvider().provide(api.getStorage());
     }
 
     @Inject(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;ILnet/minecraft/client/gui/hud/MessageIndicator;Z)V",
