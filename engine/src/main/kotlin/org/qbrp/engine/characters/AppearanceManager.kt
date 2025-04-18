@@ -66,15 +66,21 @@ class AppearanceManager: KoinComponent {
                 val notRead = PlayerManager.playersList
                 .filter { it.isAuthorized()
                         && it.entity != player.entity
-                        && it.entity.interactionManager.gameMode != GameMode.SPECTATOR }
+                        && it.entity.interactionManager.gameMode != GameMode.SPECTATOR
+                        && player.entity.canSee(it.entity) }
+                // Авторизован ли игрок, не спектатор ли он
                 .map { it.entity }
                 .getPlayersInRadius(player.entity, 8.0)
                 .map { PlayerManager.getPlayerSession(it) }
-                .filter { it.account?.appliedCharacter != null && !player.account!!.social.isAppearanceRead(it.account!!) }
+                // Получаем сессии игроков в радиусе
+                .filter { it.account?.appliedCharacter != null
+                        && !player.account!!.social.isAppearanceRead(it.account!!)
+                }
                 .filter {
                     val state = readStates[it]
                     if (state != null) {
-                        if (state.data == it.account!!.appliedCharacter!!.appearance.composeDescription()) {
+                        val appearance = it.account!!.appliedCharacter!!.appearance
+                        if (state.data == appearance.composeDescription() && appearance.look.description != null) {
                             System.currentTimeMillis() > readStates[it]!!.time + WAIT_TIME
                         } else {
                             true
