@@ -76,15 +76,16 @@ class AppearanceManager: KoinComponent {
                 .filter { it.account?.appliedCharacter != null
                         && !player.account!!.social.isAppearanceRead(it.account!!)
                 }
-                .filter {
-                    val state = readStates[it]
-                    if (state != null) {
-                        val appearance = it.account!!.appliedCharacter!!.appearance
-                        if (state.data == appearance.composeDescription() && appearance.look.description != null) {
-                            System.currentTimeMillis() > readStates[it]!!.time + WAIT_TIME
-                        } else {
-                            true
-                        }
+                .filter { account ->
+                    val state = readStates[account] ?: return@filter true
+                    val appearance = account.account!!.appliedCharacter!!.appearance
+                    val description = appearance.look.description
+
+                    if (description == null) return@filter false
+
+                    val composed = appearance.composeDescription()
+                    if (state.data == composed) {
+                        System.currentTimeMillis() > state.time + WAIT_TIME
                     } else {
                         true
                     }
@@ -92,7 +93,7 @@ class AppearanceManager: KoinComponent {
                 if (notRead.isNotEmpty()) {
                     player.entity.sendMessage(
                         "<red>⬥ <gold>Вы не прочитали описание внешности ${
-                            notRead.joinToString("&6, ") { it.account!!.appliedCharacter!!.formattedName }
+                            notRead.joinToString("&6, ") { it.displayName }
                         }".asMiniMessage()
                     )
                     notRead.forEach {
