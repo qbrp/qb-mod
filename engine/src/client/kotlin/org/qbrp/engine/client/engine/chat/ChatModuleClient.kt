@@ -1,5 +1,6 @@
 package org.qbrp.engine.client.engine.chat
 
+import config.ClientConfig
 import net.fabricmc.api.EnvType
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
@@ -44,8 +45,7 @@ class ChatModuleClient(): QbModule("chat-client"), ClientChatAPI {
     lateinit var networking: ClientChatNetworking
 
     companion object {
-        const val TEXT_UPDATE_TICK_RATE = 5
-        var MAX_MESSAGE_LENGTH = 456
+        var MAX_MESSAGE_LENGTH = 256
     }
 
     override fun getKoinModule() = module {

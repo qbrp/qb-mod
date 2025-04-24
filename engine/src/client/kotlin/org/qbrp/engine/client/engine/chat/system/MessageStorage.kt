@@ -1,5 +1,6 @@
 package org.qbrp.engine.client.engine.chat.system
 
+import config.ClientConfig
 import net.minecraft.client.MinecraftClient
 import org.qbrp.engine.chat.addons.tools.MessageTextTools
 import org.qbrp.engine.chat.core.messages.ChatMessage
@@ -58,8 +59,12 @@ class MessageStorage {
             if (message.getTags().getComponentData<Boolean>("bubble") == true && message.authorName == client.player?.name?.string) {
                 client.player?.networkHandler?.sendCommand("/cb ${MessageTextTools.getTextContent(message)}")
             }
-            if (getSize() > 300) {
-                messages.subList(0, messages.size - 5).clear()
+            if (getSize() > ClientConfig.chatSize) {
+                val toRemove = messages.subList(messages.size - 4, messages.size).toList()
+                toRemove.forEach {
+                    provider.onMessageDeleted(it.uuid, this@MessageStorage)
+                }
+                messages.subList(messages.size - 4, messages.size).clear()
             }
         }
         if (message.handleVanilla() && message.authorName == client.player?.name?.string) {

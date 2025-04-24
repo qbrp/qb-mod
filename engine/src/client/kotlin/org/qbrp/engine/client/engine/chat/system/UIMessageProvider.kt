@@ -1,5 +1,6 @@
 package org.qbrp.engine.client.engine.chat.system
 
+import config.ClientConfig
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.gui.hud.ChatHudLine
 import org.qbrp.engine.chat.core.messages.ChatMessage
@@ -28,7 +29,7 @@ class UIMessageProvider(val name: String) : Provider {
         }
 
         ClientTickEvents.END_WORLD_TICK.register { client ->
-            if (ticksCompleted++ > ChatModuleClient.TEXT_UPDATE_TICK_RATE) {
+            if (ticksCompleted++ > ClientConfig.chatTickRate) {
                 taskQueue.add(Runnable {
                     allMessages.values.forEach { line ->
                         TextUpdateCallback.EVENT.invoker().modifyText(line.text, line) ?: line.text

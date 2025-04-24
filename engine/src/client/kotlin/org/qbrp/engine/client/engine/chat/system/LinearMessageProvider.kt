@@ -1,6 +1,8 @@
 package org.qbrp.engine.client.engine.chat.system
 
+import config.ClientConfig
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.hud.ChatHudLine
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.client.engine.chat.ChatModuleClient
@@ -14,6 +16,7 @@ class LinearMessageProvider(
     val filters: MutableMap<String, (HandledMessage) -> Boolean> = mutableMapOf()
 ) : Provider {
     private val allMessages: MutableMap<String, HandledMessage> = mutableMapOf()
+    private val cachedMessages: MutableList<ChatHudLine.Visible> = mutableListOf()
     private val cachedSnapshot: AtomicReference<MutableList<ChatHudLine.Visible>> = AtomicReference(mutableListOf())
     private val taskQueue = ConcurrentLinkedQueue<Runnable>()
 
@@ -24,12 +27,12 @@ class LinearMessageProvider(
                 while (taskQueue.isNotEmpty()) {
                     taskQueue.poll()?.run()
                 }
-                Thread.sleep(10)
+                Thread.sleep(5)
             }
         }
 
         ClientTickEvents.END_WORLD_TICK.register { client ->
-            if (ticksCompleted++ > ChatModuleClient.TEXT_UPDATE_TICK_RATE) {
+            if (ticksCompleted++ > ClientConfig.chatTickRate && ClientConfig.chatTickRate != -1) {
                 taskQueue.add(Runnable {
                     allMessages.values.forEach { line ->
                         TextUpdateCallback.EVENT.invoker().modifyText(line.text, line) ?: line.text
@@ -72,6 +75,7 @@ class LinearMessageProvider(
     override fun onClear(storage: MessageStorage) {
         taskQueue.add(Runnable {
             allMessages.clear()
+            cachedMessages.clear()
             storage.getMessages(0, 2000).forEach {
                 onMessageAdded(it, storage)
             }
@@ -81,11 +85,21 @@ class LinearMessageProvider(
 
     private fun updateCachedSnapshot() {
         // Создаем новый список сообщений и пересчитываем кэш
-        val newSnapshot = allMessages.values.toList()
-        // Если мапа фильтров пуста, то берем все сообщения, иначе оставляем только те, которые проходят все фильтры.
-        val processed = newSnapshot.reversed().filter {
-            if (filters.isEmpty()) true else filters.values.all { predicate -> predicate(it) }
-        }.flatMap { it.text }.toMutableList()
-        cachedSnapshot.set(processed) // Атомарно обновляем кэш
+        if (ClientConfig.handleMessagesOnReceive) {
+            val newSnapshot = allMessages.values.toList()
+            if (!ClientConfig.filterHandledMessages) {
+                // Если мапа фильтров пуста, то берем все сообщения, иначе оставляем только те, которые проходят все фильтры.
+                val processed = newSnapshot.reversed().filter {
+                    if (filters.isEmpty()) true else filters.values.all { predicate -> predicate(it) }
+                }.flatMap { it.text }.toMutableList()
+                cachedSnapshot.set(processed) // Атомарно обновляем кэш
+            } else {
+                // Если мапа фильтров пуста, то берем все сообщения, иначе оставляем только те, которые проходят все фильтры.
+                val processed = newSnapshot.reversed().flatMap { it.text }.toMutableList()
+                cachedSnapshot.set(processed) // Атомарно обновляем кэш
+            }
+        } else {
+            cachedSnapshot.set(cachedMessages.toMutableList())
+        }
     }
 }

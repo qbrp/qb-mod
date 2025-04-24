@@ -5,15 +5,19 @@ import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.hud.MessageIndicator;
 import net.minecraft.network.message.MessageSignatureData;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import org.qbrp.engine.Engine;
 import org.qbrp.engine.chat.core.messages.ChatMessage;
 import org.qbrp.engine.chat.core.messages.VanillaChatMessage;
 import org.qbrp.engine.client.EngineClient;
 import org.qbrp.engine.client.engine.chat.ChatModuleClient;
 import org.qbrp.engine.client.engine.chat.ClientChatAPI;
+import org.qbrp.engine.client.engine.chat.system.HandledMessage;
+import org.qbrp.engine.client.engine.chat.system.events.MessageAddedEvent;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
@@ -29,12 +33,27 @@ public abstract class ChatHudMixin {
     @Shadow
     private List<ChatHudLine.Visible> visibleMessages;
 
+    @Shadow private boolean hasUnreadNewMessages;
+
+    @Shadow public abstract void scroll(int scroll);
+
+    @Shadow private int scrolledLines;
+
+    @Shadow protected abstract boolean isChatFocused();
+
     // Поле для хранения api, изначально null
     @Unique
     private ClientChatAPI api;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
+        MessageAddedEvent.Companion.getEVENT().register((message, storage) -> {
+            if (isChatFocused() && scrolledLines > 0) {
+                int size = HandledMessage.Companion.from(message).getText().size();
+                scroll(0);
+            }
+            return ActionResult.SUCCESS;
+        });
         // Ничего не делаем здесь, оставляем visibleMessages как есть (инициализируется пустым списком в ChatHud)
     }
 
@@ -54,7 +73,8 @@ public abstract class ChatHudMixin {
             cancellable = true)
     private void onAddMessage(Text message, MessageSignatureData signature, int ticks, MessageIndicator indicator, boolean refresh, CallbackInfo ci) {
         if (api != null) {
-            api.addMessage(VanillaChatMessage.Companion.create(message, SYSTEM_MESSAGE_AUTHOR));
+            ChatMessage msg = VanillaChatMessage.Companion.create(message, SYSTEM_MESSAGE_AUTHOR);
+            api.addMessage(msg);
             //ci.cancel();
         }
     }
@@ -66,4 +86,5 @@ public abstract class ChatHudMixin {
             ci.cancel(); // Отменяем оригинальный метод
         }
     }
+
 }
