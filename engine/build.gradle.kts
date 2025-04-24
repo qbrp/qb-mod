@@ -58,6 +58,9 @@ repositories {
         name = "Ladysnake Mods"
         url = uri("https://maven.ladysnake.org/releases")
     }
+    maven {
+        url = uri("https://api.modrinth.com/maven")
+    }
 
     maven("https://maven.nucleoid.xyz/") { name = "Nucleoid" }
 }
@@ -125,8 +128,11 @@ dependencies {
     include(implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")!!)
     include(implementation("net.kyori:adventure-text-minimessage:4.14.0")!!)
     include(implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.0")!!)
-
+    include(implementation("com.fasterxml.jackson.datatype:jackson-datatype-guava:2.17.+")!!)
     compileOnly("net.luckperms:api:5.4")
+
+    //Конфигурация
+    modImplementation(("maven.modrinth:midnightlib:${project.property("midnightlib_version")}")  )
 
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_version")}")
 }
