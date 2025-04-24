@@ -1,10 +1,10 @@
 package org.qbrp.engine.client.core
 
-import net.minecraft.client.MinecraftClient
-import org.qbrp.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
-import org.qbrp.engine.chat.core.messages.ChatMessage
-import org.qbrp.engine.client.EngineClient
 import org.qbrp.engine.client.core.resources.ClientResources
+import org.qbrp.engine.client.system.networking.ClientNetworkManager
+import org.qbrp.system.networking.messages.Message
+import org.qbrp.system.networking.messages.Messages
+import org.qbrp.system.networking.messages.types.StringContent
 
 class RegistrationManager {
     fun autoLogin() {
@@ -13,6 +13,9 @@ class RegistrationManager {
     }
 
     fun login(code: String) {
-        MinecraftClient.getInstance().player?.networkHandler?.sendCommand("login $code")
+        ClientNetworkManager.sendMessage(
+            Message(Messages.AUTH, StringContent(code))
+        )
+        //MinecraftClient.getInstance().player?.networkHandler?.sendCommand("login $code")
     }
 }

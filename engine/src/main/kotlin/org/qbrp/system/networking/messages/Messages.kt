@@ -13,8 +13,9 @@ object Messages {
 
     const val SERVER_INFORMATION = "server_information"
 
-    const val REGISTRATION_REQUEST = "request_registration"
-    const val REGISTRATION_RESPONSE = "registration_response"
+    const val AUTH = "registration_response"
+
+    const val INVOKE_COMMAND = "invoke_command"
 
     fun invokeCommand(name: String): String = "invoke_command_$name"
     fun moduleUpdate(name: String): String = "module_update_$name"

@@ -21,6 +21,7 @@ object ClientHandlers {
             ClientNetworkManager.sendMessage(
                 Message(Messages.HANDLE_VERSION, StringContent(VersionChecker.getVersionObject().toString()))
             )
+            EngineClient.registrationManager.autoLogin()
         }
     }
 }
