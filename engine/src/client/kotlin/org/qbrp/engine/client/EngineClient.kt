@@ -1,8 +1,11 @@
 package org.qbrp.engine.client
+import config.ClientConfig
+import eu.midnightdust.lib.config.MidnightConfig
 import net.fabricmc.api.ClientModInitializer
 import org.koin.core.context.startKoin
 import org.qbrp.engine.Engine
 import icyllis.modernui.mc.ModernUIClient
+import org.qbrp.core.Core
 import org.qbrp.engine.client.core.RegistrationManager
 import org.qbrp.engine.client.core.events.ClientHandlers
 import org.qbrp.engine.client.core.events.ClientReceivers
@@ -30,6 +33,7 @@ class EngineClient : ClientModInitializer {
     }
 
     override fun onInitializeClient() {
+        MidnightConfig.init(Core.MOD_ID, ClientConfig::class.java)
         //ClientResources.downloadPack()
         ClientHandlers.registerEvents()
 
