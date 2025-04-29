@@ -17,6 +17,8 @@ object Messages {
 
     const val INVOKE_COMMAND = "invoke_command"
 
+    const val MOD_IDS = ""
+
     fun invokeCommand(name: String): String = "invoke_command_$name"
     fun moduleUpdate(name: String): String = "module_update_$name"
     fun moduleClientUpdate(name: String): String = "module_update_${name}-client"
