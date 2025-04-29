@@ -4,21 +4,19 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.Text
-import org.qbrp.core.game.commands.CommandBuilder
-import org.qbrp.core.game.commands.Deps
-import org.qbrp.core.game.commands.annotations.Arg
-import org.qbrp.core.game.commands.annotations.Command
-import org.qbrp.core.game.commands.annotations.Execute
-import org.qbrp.core.game.commands.annotations.Provider
-import org.qbrp.core.game.commands.annotations.SubCommand
-import org.qbrp.core.game.commands.templates.CallbackCommand
-import org.qbrp.core.game.registry.ServerModCommand
+import org.qbrp.core.mc.commands.CommandBuilder
+import org.qbrp.core.mc.commands.Deps
+import org.qbrp.core.mc.commands.annotations.Arg
+import org.qbrp.core.mc.commands.annotations.Command
+import org.qbrp.core.mc.commands.annotations.Execute
+import org.qbrp.core.mc.commands.annotations.Provider
+import org.qbrp.core.mc.commands.annotations.SubCommand
+import org.qbrp.core.mc.commands.templates.CallbackCommand
+import org.qbrp.core.mc.registry.ServerModCommand
 import org.qbrp.core.regions.model.Cuboid
 import org.qbrp.core.regions.RegionSelection
 import org.qbrp.core.regions.Regions
 import org.qbrp.core.regions.model.RegionView
-import org.qbrp.system.utils.format.Format.formatMinecraft
 
 @Command("qbrg")
 class RegionCommands: ServerModCommand {

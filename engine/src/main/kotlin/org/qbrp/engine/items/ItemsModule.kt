@@ -2,7 +2,7 @@ package org.qbrp.engine.items
 
 import org.koin.core.component.get
 import org.koin.dsl.module
-import org.qbrp.core.game.registry.CommandsRepository
+import org.qbrp.core.mc.registry.CommandsRepository
 import org.qbrp.engine.items.model.ItemLoader
 import org.qbrp.engine.items.model.ItemManager
 import org.qbrp.engine.items.storage.ItemCommand

@@ -1,9 +1,7 @@
 package org.qbrp.engine.chat.addons.rp
 
 import org.koin.core.component.get
-import org.qbrp.core.ServerCore
-import org.qbrp.core.game.registry.CommandsRepository
-import org.qbrp.core.resources.data.config.ConfigInitializationCallback
+import org.qbrp.core.mc.registry.CommandsRepository
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAddon

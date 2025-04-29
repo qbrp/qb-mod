@@ -6,7 +6,7 @@ import com.mojang.brigadier.context.CommandContext
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import org.qbrp.engine.items.model.ItemManager
-import org.qbrp.core.game.registry.ServerModCommand
+import org.qbrp.core.mc.registry.ServerModCommand
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.content.ItemStorage
 import org.qbrp.system.utils.keys.Key

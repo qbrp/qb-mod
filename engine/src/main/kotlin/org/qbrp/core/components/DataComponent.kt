@@ -1,15 +1,8 @@
 package org.qbrp.core.components
 
-import com.fasterxml.jackson.core.TreeNode
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.google.gson.Gson
-import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
-import org.qbrp.core.game.items.components.meta.ItemRender
-import org.qbrp.core.resources.data.Data
 
 open class DataComponent(
     var type: String = "",

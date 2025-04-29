@@ -6,16 +6,16 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import org.qbrp.core.ServerCore
-import org.qbrp.core.game.registry.ServerModCommand
-import org.qbrp.core.game.commands.CommandBuilder
-import org.qbrp.core.game.commands.DependencyFabric
-import org.qbrp.core.game.commands.Deps
-import org.qbrp.core.game.commands.annotations.Arg
-import org.qbrp.core.game.commands.annotations.Command
-import org.qbrp.core.game.commands.annotations.Execute
-import org.qbrp.core.game.commands.annotations.Provider
-import org.qbrp.core.game.commands.templates.CallbackCommand
-import org.qbrp.core.game.commands.templates.ListProvider
+import org.qbrp.core.mc.registry.ServerModCommand
+import org.qbrp.core.mc.commands.CommandBuilder
+import org.qbrp.core.mc.commands.DependencyFabric
+import org.qbrp.core.mc.commands.Deps
+import org.qbrp.core.mc.commands.annotations.Arg
+import org.qbrp.core.mc.commands.annotations.Command
+import org.qbrp.core.mc.commands.annotations.Execute
+import org.qbrp.core.mc.commands.annotations.Provider
+import org.qbrp.core.mc.commands.templates.CallbackCommand
+import org.qbrp.core.mc.commands.templates.ListProvider
 import org.qbrp.engine.music.plasmo.playback.PlayerSelectionHandler
 import org.qbrp.system.utils.format.Format.formatMinecraft
 

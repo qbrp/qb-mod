@@ -8,6 +8,8 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import org.qbrp.core.mc.player.PlayerManager
+import org.qbrp.core.mc.player.PlayerObject
 import kotlin.compareTo
 
 fun List<PlayerEntity>.getPlayersInRadius(
@@ -37,6 +39,21 @@ fun List<ServerPlayerEntity>.getPlayersInRadius(
     }
     return filter {
         (includeSource || it !== player) && it.squaredDistanceTo(player) <= radiusSquared
+    }
+}
+
+fun List<PlayerObject>.getPlayersSessionsInRadius(
+    player: ServerPlayerEntity,
+    radius: Double,
+    handleNegativeInt: Boolean = false,
+    includeSource: Boolean = false
+): List<PlayerObject> {
+    val radiusSquared = radius * radius
+    if (handleNegativeInt && radius.toInt() == -1) {
+        return PlayerManager.playersList.toList()
+    }
+    return filter {
+        (includeSource || it.entity !== player) && it.entity.squaredDistanceTo(player) <= radiusSquared
     }
 }
 

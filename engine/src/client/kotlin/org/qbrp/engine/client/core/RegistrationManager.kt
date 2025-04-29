@@ -1,5 +1,6 @@
 package org.qbrp.engine.client.core
 
+import net.minecraft.client.MinecraftClient
 import org.qbrp.engine.client.core.resources.ClientResources
 import org.qbrp.engine.client.system.networking.ClientNetworkManager
 import org.qbrp.system.networking.messages.Message

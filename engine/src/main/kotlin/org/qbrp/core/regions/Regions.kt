@@ -1,8 +1,7 @@
 package org.qbrp.core.regions
 
-import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
-import org.qbrp.core.game.commands.templates.ListProvider
+import org.qbrp.core.mc.commands.templates.ListProvider
 import org.qbrp.core.regions.model.Cuboid
 import org.qbrp.core.regions.model.Region
 import org.qbrp.core.resources.ServerResources

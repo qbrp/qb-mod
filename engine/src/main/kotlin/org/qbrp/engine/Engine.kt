@@ -1,6 +1,7 @@
 package org.qbrp.engine
 
 import org.koin.core.component.KoinComponent
+import org.qbrp.core.EngineInitializedEvent
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.engine.chat.ChatModule
 import org.qbrp.engine.damage.DamageControllerModule
@@ -28,5 +29,6 @@ class Engine: KoinComponent {
 
     fun initialize() {
         moduleManager.initialize()
+        EngineInitializedEvent.EVENT.invoker().event()
     }
 }

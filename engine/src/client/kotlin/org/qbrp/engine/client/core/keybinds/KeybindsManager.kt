@@ -1,11 +1,13 @@
 package org.qbrp.engine.client.core.keybinds
 
-import icyllis.modernui.core.Core
+import eu.midnightdust.lib.config.MidnightConfig
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 import org.lwjgl.glfw.GLFW
+import org.qbrp.core.Core
 import org.qbrp.engine.client.EngineClient
 import org.qbrp.engine.client.engine.chat.ClientChatAPI
 import org.qbrp.engine.client.render.Render
@@ -35,6 +37,13 @@ class KeybindsManager {
                 GLFW.GLFW_KEY_L,
             ), "clear_system_msgs") {
             EngineClient.getAPI<ClientChatAPI>()?.clearSystemMessages()
+        }
+        registerKeyBinding(
+            createKeybinding(
+                "Настройки",
+                GLFW.GLFW_KEY_EQUAL,
+            ), "settings") {
+            MinecraftClient.getInstance().setScreen(MidnightConfig.getScreen(MinecraftClient.getInstance().currentScreen, Core.MOD_ID))
         }
     }
 

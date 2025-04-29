@@ -1,20 +1,14 @@
 package org.qbrp.engine.time
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
-import net.minecraft.server.MinecraftServer
 import org.koin.core.component.get
-import org.koin.core.module.Module
 import org.koin.dsl.module
-import org.qbrp.core.game.registry.CommandsRepository
-import org.qbrp.core.resources.data.config.ServerConfigData
-import org.qbrp.core.resources.data.config.ServerConfigData.Time
+import org.qbrp.core.mc.registry.CommandsRepository
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.addons.BroadcasterAPI
 import org.qbrp.engine.chat.addons.groups.ChatGroupsAPI
 import org.qbrp.system.modules.Autoload
-import org.qbrp.system.modules.ModuleAPI
 import org.qbrp.system.modules.QbModule
-import org.qbrp.system.utils.log.Loggers
 
 /*
 !!!ШТОБ НЕ ПУТАТЬСЯ!!!

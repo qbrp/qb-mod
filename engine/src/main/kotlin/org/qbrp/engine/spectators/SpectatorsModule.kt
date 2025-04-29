@@ -1,11 +1,9 @@
 package org.qbrp.engine.spectators
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
-import net.minecraft.server.network.ServerPlayerEntity
 import org.koin.core.component.get
-import org.koin.core.module.Module
 import org.koin.dsl.module
-import org.qbrp.core.game.registry.CommandsRepository
+import org.qbrp.core.mc.registry.CommandsRepository
 import org.qbrp.engine.spectators.respawn.RespawnManager
 import org.qbrp.engine.spectators.respawn.SpectatorCommands
 import org.qbrp.system.modules.Autoload

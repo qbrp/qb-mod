@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.CommandManager.argument
 import net.minecraft.server.command.ServerCommandSource
-import org.qbrp.core.game.registry.ServerModCommand
+import org.qbrp.core.mc.registry.ServerModCommand
 import java.util.UUID
 
 class TaskManager: ServerModCommand {

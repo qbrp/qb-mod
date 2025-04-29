@@ -11,9 +11,9 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundEvents
 import org.koin.core.component.get
 import org.koin.dsl.module
-import org.qbrp.core.game.player.PlayerManager
-import org.qbrp.core.game.registry.CommandsRepository
-import org.qbrp.core.game.registry.ServerModCommand
+import org.qbrp.core.mc.player.PlayerManager
+import org.qbrp.core.mc.registry.CommandsRepository
+import org.qbrp.core.mc.registry.ServerModCommand
 import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine

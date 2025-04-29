@@ -16,7 +16,7 @@ import org.litote.kmongo.KMongo
 import org.qbrp.system.utils.log.Loggers
 import kotlin.text.toList
 
-open class DatabaseService(protected val url: String, protected val dbName: String) {
+open class DatabaseService(protected val url: String, protected open val dbName: String) {
     protected var client: MongoClient? = null
     var db: MongoDatabase? = null
     protected val logger = Loggers.get("database")

@@ -1,16 +1,11 @@
 package org.qbrp.engine.items.model
 
 import kotlinx.coroutines.runBlocking
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
-import net.minecraft.entity.Entity
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.server.network.ServerPlayerEntity
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.qbrp.core.components.DataComponent
-import org.qbrp.core.components.ItemComponent
-import org.qbrp.core.game.Game
+import org.qbrp.core.mc.Game
 import org.qbrp.core.resources.content.ItemConfig
 
 class ItemManager(): KoinComponent {

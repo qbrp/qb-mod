@@ -1,8 +1,7 @@
 package org.qbrp.engine.chat.addons.placeholders
 
 import net.minecraft.util.ActionResult
-import org.qbrp.core.game.player.PlayerManager
-import org.qbrp.engine.chat.ChatAddon
+import org.qbrp.core.mc.player.PlayerManager
 import org.qbrp.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
 import org.qbrp.engine.chat.core.events.MessageReceivedEvent
 import org.qbrp.engine.chat.core.events.MessageSendEvent

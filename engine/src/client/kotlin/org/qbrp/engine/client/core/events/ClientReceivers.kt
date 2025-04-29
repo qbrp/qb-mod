@@ -32,6 +32,10 @@ object ClientReceivers {
             ClientResources.root.setAutoLoginCode(message.getContent())
             true
         }.register()
+        ClientReceiver<ClientReceiverContext>("registration_request", Signal::class) { message, context, receiver ->
+            EngineClient.registrationManager.autoLogin()
+            true
+        }.register()
         ClientReceiver<ClientReceiverContext>(SERVER_INFORMATION, Cluster::class) { message, context, receiver ->
             ClientNetworkManager.handleServerInfo(message.getContent())
             true

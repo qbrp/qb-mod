@@ -1,20 +1,13 @@
 package org.qbrp.engine.chat.addons.records
 
-import com.mojang.brigadier.CommandDispatcher
-import net.minecraft.server.command.CommandManager
-import net.minecraft.server.command.ServerCommandSource
 import org.koin.core.component.get
 import org.koin.core.module.Module
 import org.koin.dsl.module
-import org.qbrp.core.game.registry.CommandsRepository
-import org.qbrp.core.game.registry.ServerModCommand
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.units.TextUnit
 import org.qbrp.engine.chat.ChatAddon
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.system.modules.Autoload
-import org.qbrp.system.modules.LoadPriority
-import org.qbrp.system.modules.ModuleAPI
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

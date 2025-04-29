@@ -5,9 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
-import org.qbrp.core.game.registry.ServerModCommand
+import org.qbrp.core.mc.registry.ServerModCommand
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAPI
 import org.qbrp.engine.chat.addons.records.Line

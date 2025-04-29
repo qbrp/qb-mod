@@ -7,14 +7,11 @@ import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.qbrp.core.game.commands.CommandBuilder
-import org.qbrp.core.game.commands.Deps
-import org.qbrp.core.game.commands.annotations.Arg
-import org.qbrp.core.game.commands.annotations.Command
-import org.qbrp.core.game.commands.annotations.Execute
-import org.qbrp.core.game.commands.templates.CallbackCommand
-import org.qbrp.core.game.registry.ServerModCommand
-import org.qbrp.engine.Engine
+import org.qbrp.core.mc.commands.CommandBuilder
+import org.qbrp.core.mc.commands.Deps
+import org.qbrp.core.mc.commands.annotations.Command
+import org.qbrp.core.mc.commands.annotations.Execute
+import org.qbrp.core.mc.registry.ServerModCommand
 import org.qbrp.system.utils.format.Format.asMiniMessage
 
 class SpectatorCommands(): ServerModCommand, KoinComponent {

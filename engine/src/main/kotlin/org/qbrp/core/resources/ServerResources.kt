@@ -2,7 +2,7 @@ package org.qbrp.core.resources
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import org.qbrp.core.game.registry.CommandsRepository
+import org.qbrp.core.mc.registry.CommandsRepository
 import org.qbrp.core.resources.commands.ResourcesCommands
 import org.qbrp.core.resources.data.config.KreisyEmojiConfig
 import org.qbrp.core.resources.structure.Structure

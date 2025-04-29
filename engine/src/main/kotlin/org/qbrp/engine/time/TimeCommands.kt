@@ -3,17 +3,15 @@ package org.qbrp.engine.time
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
 import net.minecraft.server.command.ServerCommandSource
-import org.qbrp.core.game.commands.CommandBuilder
-import org.qbrp.core.game.commands.DependencyFabric
-import org.qbrp.core.game.commands.Deps
-import org.qbrp.core.game.commands.annotations.Arg
-import org.qbrp.core.game.commands.annotations.Command
-import org.qbrp.core.game.commands.annotations.Execute
-import org.qbrp.core.game.commands.annotations.SubCommand
-import org.qbrp.core.game.commands.templates.CallbackCommand
-import org.qbrp.core.game.registry.ServerModCommand
-import org.qbrp.core.resources.data.config.ServerConfigData
-import org.qbrp.engine.Engine
+import org.qbrp.core.mc.commands.CommandBuilder
+import org.qbrp.core.mc.commands.DependencyFabric
+import org.qbrp.core.mc.commands.Deps
+import org.qbrp.core.mc.commands.annotations.Arg
+import org.qbrp.core.mc.commands.annotations.Command
+import org.qbrp.core.mc.commands.annotations.Execute
+import org.qbrp.core.mc.commands.annotations.SubCommand
+import org.qbrp.core.mc.commands.templates.CallbackCommand
+import org.qbrp.core.mc.registry.ServerModCommand
 
 @Command("qbtime")
 class TimeCommands(private val api: TimeAPI): ServerModCommand {

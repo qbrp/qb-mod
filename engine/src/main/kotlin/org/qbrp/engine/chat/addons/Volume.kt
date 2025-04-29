@@ -14,8 +14,8 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import org.koin.core.component.get
-import org.qbrp.core.game.registry.CommandsRepository
-import org.qbrp.core.game.registry.ServerModCommand
+import org.qbrp.core.mc.registry.CommandsRepository
+import org.qbrp.core.mc.registry.ServerModCommand
 import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine

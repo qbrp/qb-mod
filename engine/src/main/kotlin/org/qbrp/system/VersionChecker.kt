@@ -15,7 +15,7 @@ object VersionChecker {
 
     val CURRENT_VERSION: Version = Version.fromString(getVersion())
 
-    val COMPATIBLE_CLIENT_VERSION: Version = CURRENT_VERSION
+    val COMPATIBLE_CLIENT_VERSION: Version = Version.fromString("Alpha-2.4.2")
 
     val INCOMPATIBLE_CLIENT_VERSION: Version = Version.fromString("Alpha-2.4.0")
 
@@ -54,11 +54,19 @@ object VersionChecker {
             }
             CompatibleState.COMPATIBLE -> { }
             else -> player.networkHandler.disconnect(
-                ("<red>Версия вашего мода engine ($version) несовместима с версией мода сервера." +
+                checkReason(version, "<red>Версия вашего мода engine ($version) несовместима с версией мода сервера." +
                         "<newline>Обновите мод до минимально допустимой ($INCOMPATIBLE_CLIENT_VERSION) или последней ($CURRENT_VERSION).").asMiniMessage()
             )
         }
         players.remove(player)
+    }
+
+    private fun checkReason(version: String, text: String): String {
+        return if (version == CURRENT_VERSION.toString()) {
+            "<red>Сервер загружается. Попробуйте зайти позже.<newline>Если эта ошибка наблюдается после 2-3 минут, свяжитесь с администратором."
+        } else {
+            text
+        }
     }
 
     private fun kickIfInList(player: ServerPlayerEntity) {

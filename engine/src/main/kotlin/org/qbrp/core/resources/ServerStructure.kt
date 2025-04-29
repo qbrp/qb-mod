@@ -2,7 +2,7 @@ package org.qbrp.core.resources
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
-import org.qbrp.core.game.Game
+import org.qbrp.core.mc.Game
 import org.qbrp.core.resources.content.DirectoryStorage
 import org.qbrp.core.resources.data.StringData
 import org.qbrp.core.resources.data.config.ConfigInitializationCallback
@@ -26,6 +26,7 @@ class ServerStructure: Structure(File("qbrp")) {
     val blocks = addStructure("blocks")
     val resources = Resources(this, config)
 
+    val idGen = open("idgen", IdGenData::class.java).apply { autoInitialization = true }
     val youtubeToken = open("token.youtube-token", StringData::class.java)
 
     private fun openConfig() = (open(

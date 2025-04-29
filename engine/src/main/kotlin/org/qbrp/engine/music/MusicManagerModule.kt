@@ -6,8 +6,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.qbrp.core.ServerCore
-import org.qbrp.core.game.registry.CommandsRepository
-import org.qbrp.core.game.registry.ServerModCommand
+import org.qbrp.core.mc.registry.CommandsRepository
+import org.qbrp.core.mc.registry.ServerModCommand
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.music.plasmo.*
@@ -17,7 +17,6 @@ import org.qbrp.engine.music.plasmo.model.audio.Playable
 import org.qbrp.engine.music.plasmo.model.audio.Playlist
 import org.qbrp.engine.music.plasmo.model.audio.Queue
 import org.qbrp.engine.music.plasmo.model.audio.Track
-import org.qbrp.engine.music.plasmo.model.audio.playback.PlaybackSessionManager
 import org.qbrp.engine.music.plasmo.model.audio.playback.PlaybackSessionManagerImpl
 import org.qbrp.engine.music.plasmo.model.audio.playback.Radio
 import org.qbrp.engine.music.plasmo.model.audio.shadow.ShadowQueue
@@ -31,7 +30,6 @@ import org.qbrp.engine.music.plasmo.view.MusicViewCommand
 import org.qbrp.system.database.DatabaseService
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.QbModule
-import org.qbrp.system.modules.ModuleAPI
 import org.qbrp.system.utils.log.Loggers
 import su.plo.voice.api.server.PlasmoVoiceServer
 import su.plo.voice.api.server.audio.source.ServerDirectSource

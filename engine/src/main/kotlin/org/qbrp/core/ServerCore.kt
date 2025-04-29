@@ -5,10 +5,10 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.minecraft.server.MinecraftServer
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import org.qbrp.core.game.events.Handlers
-import org.qbrp.core.game.events.ServerReceivers
-import org.qbrp.core.game.player.PlayerManager
-import org.qbrp.core.game.registry.CommandsRepository
+import org.qbrp.core.mc.events.Handlers
+import org.qbrp.core.mc.events.ServerReceivers
+import org.qbrp.core.mc.player.PlayerManager
+import org.qbrp.core.mc.registry.CommandsRepository
 import org.qbrp.core.keybinds.ServerKeybinds
 import org.qbrp.core.regions.Regions
 import org.qbrp.core.regions.commands.RegionCommands
