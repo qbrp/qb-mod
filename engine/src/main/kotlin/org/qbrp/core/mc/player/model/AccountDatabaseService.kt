@@ -22,12 +22,27 @@ class AccountDatabaseService : ObjectDatabaseService(ServerResources.getConfig()
 
     fun saveAccountGameState(account: Account, updates: List<Bson>) = scope.launch(Dispatchers.IO) {
         val accountUuid = account.uuid.toString()
-        val characterName = account.appliedCharacterName
-        val filter = Filters.eq("uuid", accountUuid)
-        val update = Updates.combine(updates)
-        val options = UpdateOptions().arrayFilters(listOf(Filters.eq("elem.name", characterName)))
-        db!!.getCollection("data").updateOne(filter, update, options)
+        val filter      = Filters.eq("uuid", accountUuid)
+        val collection  = db!!.getCollection("data")
+        val combined    = Updates.combine(updates)
+
+        // Проверяем, есть ли среди Bson-апдейтов обращение к $[elem]
+        val needsArrayFilter = updates.any {
+            // простая проверка по JSON-строке — достаточно для наших целей
+            it.toBsonDocument().toJson().contains("\$[elem]")
+        }
+
+        if (needsArrayFilter) {
+            // Если да — подставляем опцию с фильтром по name
+            val opts = UpdateOptions()
+                .arrayFilters(listOf(Filters.eq("elem.name", account.appliedCharacterName)))
+            collection.updateOne(filter, combined, opts)
+        } else {
+            // Иначе — просто обновляем без arrayFilters
+            collection.updateOne(filter, combined)
+        }
     }
+
 
     @UnsafeIoApi
     suspend fun save(account: Account) = withContext(Dispatchers.IO) {

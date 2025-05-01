@@ -19,8 +19,4 @@ open class Prefab(val id: String, val category: String, val components: MutableL
             components.forEach { obj.state.addComponentIfNotExist(it.component()) }
         }
     }
-
-    interface PrefabField {
-        fun component(): Component
-    }
 }

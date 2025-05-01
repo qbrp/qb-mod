@@ -34,5 +34,9 @@ abstract class BaseObject(
 
     open fun tick() = Unit
 
+    inline fun <reified T> getComponent(): T? {
+        return state.getComponent<T>()
+    }
+
     open fun getJsonField(): ObjectJsonField = ObjectJsonField(id, name, state, eternal)
 }

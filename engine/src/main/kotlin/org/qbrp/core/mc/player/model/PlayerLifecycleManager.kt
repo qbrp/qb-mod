@@ -28,7 +28,7 @@ class PlayerLifecycleManager(
 
     override fun save(obj: PlayerObject) {
         super.save(obj)
-        val updates = (obj.state.components as List<PlayerBehaviour>)
+        val updates = (obj.state.behaviours as List<PlayerBehaviour>)
             .flatMap { it.onAccountSave(obj.account, accounts.db!!) } +
                 Updates.set("minecraftNicknames", obj.account.minecraftNicknames)
         accounts.saveAccountGameState(obj.account, updates)

@@ -32,6 +32,7 @@ data class ServerConfigData(
         val leaveMessage: String = "- {player}",
         val commands: Commands = Commands(),
         val volume: Volume = Volume(),
+        val hidePlayerNameChat: Boolean = true,
     ) {
         data class Commands(val formatMe: String = "{playerDisplayName} &e* &f{text}",
                             val formatDo: String = "{playerDisplayName} &d( &f{text} &d)",
@@ -56,9 +57,13 @@ data class ServerConfigData(
                           val distortionLevel: Int = 10,
                           val maxDistortion: Int = 60,
                           val minDistortion: Int = 60,
+                          val maxOffset: Int = 7,
+                          val vectorCount: Int = 60,
+                          val stopVectorVolumeModifier: Int = 1,
                           val minVolume: Int = 5,
                           val minOverhearVolume: Int = 0,
-                          val artifacts: List<String> = listOf("#", "-", "...", "*", "~", "^")) {
+                          val artifacts: List<String> = listOf("#", "-", "...", "*", "~", "^"),
+                          val debug: Boolean = false) {
             fun getVolumeLevelFor(volume: Int): VolumeLevel {
                 return volumeLevels.findLast { volume > it.value } ?: volumeLevels.first()
             }

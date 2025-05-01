@@ -2,6 +2,7 @@ package org.qbrp.core.mc.player
 
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
+import net.minecraft.util.ActionResult
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import org.qbrp.core.game.lifecycle.Lifecycle
@@ -9,10 +10,17 @@ import org.qbrp.core.game.model.State
 import org.qbrp.core.game.model.tick.Tick
 import org.qbrp.core.mc.McObject
 import org.qbrp.core.mc.player.model.AccountDatabaseService
+import org.qbrp.core.mc.player.model.PlayerBehaviour
 import org.qbrp.core.mc.player.registration.PlayerRegistrationCallback
+import org.qbrp.engine.chat.core.messages.ChatMessage
+import org.qbrp.engine.chat.core.messages.MessageSender
 import org.qbrp.engine.players.characters.Character
 import org.qbrp.engine.players.characters.appearance.Appearance
 import org.qbrp.engine.players.nicknames.NicknamesModule
+import org.qbrp.system.networking.messages.Message
+import org.qbrp.system.networking.messages.Messages
+import org.qbrp.system.networking.messages.types.StringContent
+import org.qbrp.system.networking.messaging.NetworkManager
 import org.qbrp.system.utils.format.Format.asMiniMessage
 
 class PlayerObject(
@@ -41,6 +49,15 @@ class PlayerObject(
         }
     }
 
+    fun onMessageSend(sender: MessageSender, message: ChatMessage): ActionResult {
+        state.behaviours.forEach {
+            it as PlayerBehaviour
+            val result = it.onMessage(sender, message)
+            if (result != ActionResult.PASS) return result
+        }
+        return ActionResult.PASS
+    }
+
     fun setSpeed(speed: Int) {
         this.speed = speed
     }
@@ -57,7 +74,7 @@ class PlayerObject(
         get() = displayName.asMiniMessage()
 
     fun executeCommand(command: String) {
-        entity.server.commandManager.executeWithPrefix(entity.commandSource, command)
+        NetworkManager.sendMessage(entity, Message(Messages.INVOKE_COMMAND, StringContent(command)))
     }
 
     fun getLookingAt() = PlayerManager.getPlayerLookingAt(this.entity)

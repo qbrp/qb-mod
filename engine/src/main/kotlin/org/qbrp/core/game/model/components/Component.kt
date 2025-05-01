@@ -2,7 +2,8 @@ package org.qbrp.core.game.model.components
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.qbrp.core.game.model.State
-import org.qbrp.core.game.prefabs.Prefab.PrefabField
+import org.qbrp.core.game.prefabs.PrefabField
+import java.util.UUID
 
 abstract class Component(): PrefabField {
     @JsonIgnore protected var state: State? = null

@@ -78,7 +78,8 @@ object PlayerManager: ServerModCommand, KoinComponent {
         val end = start.add(lookDirection.multiply(5.0)) // Конечная точка луча (5 блоков)
 
         val entities = world.server!!.playerManager.playerList.getPlayersInRadius(player, 5.0)
-            .filter { if (gameMode != null) (it as? ServerPlayerEntity)?.interactionManager?.gameMode == gameMode else true }
+            .filter { it.interactionManager?.gameMode != GameMode.SPECTATOR }
+            .filter { if (gameMode != null) it.interactionManager?.gameMode == gameMode else true }
 
         var closestEntity: ServerPlayerEntity? = null
         var closestDistance = Double.MAX_VALUE

@@ -17,16 +17,10 @@ class CjfDeserializer
         p: JsonParser,
         ctxt: DeserializationContext
     ): ComponentJsonField {
-        // читаем узел целиком
         val node = p.codec.readTree<JsonNode>(p)
         val type = node.get("type").asText()
         val dataNode = node.get("data")
-        // узнаём класс по type
-        val klass = GlobalContext.get()
-            .get<ComponentsRegistry>()
-            .getComponent(type)
-        // конвертим dataNode сразу в нужный класс
-        val data = ComponentJsonField.MAPPER.treeToValue(dataNode, klass) as Component
-        return ComponentJsonField(type, data)
+        return ComponentJsonField(type, dataNode)
     }
+
 }

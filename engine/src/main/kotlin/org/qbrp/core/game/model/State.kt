@@ -13,15 +13,19 @@ import org.qbrp.core.game.model.tick.Tick
 import org.qbrp.core.game.model.components.exception.ComponentNotFoundException
 import org.qbrp.core.game.model.components.json.ComponentJsonField
 import org.qbrp.core.game.model.objects.BaseObject
+import org.qbrp.system.utils.log.Loggers
 
 open class State @JsonCreator constructor(
     @JsonProperty("components")
-    components: MutableList<ComponentJsonField> = mutableListOf()
+    val jsonComponents: MutableList<ComponentJsonField> = mutableListOf()
 ) {
-    @JsonIgnore private val registry = GlobalContext.get().get<ComponentsRegistry>()
-    @JsonIgnore private var behaviours = mutableListOf<Behaviour>()
-    @JsonIgnore open lateinit var obj: BaseObject
-    @JsonIgnore open var tickables = mutableListOf<Tick<*>>()
+    companion object {
+        private val REGISTRY = GlobalContext.get().get<ComponentsRegistry>()
+        private val LOGGER = Loggers.get("game", "components")
+    }
+    var behaviours = mutableListOf<Behaviour>()
+    open lateinit var obj: BaseObject
+    open var tickables = mutableListOf<Tick<*>>()
     @JsonIgnore val components: MutableMap<String, Component> = mutableMapOf()
 
     fun putObject(obj: BaseObject) {
@@ -33,10 +37,23 @@ open class State @JsonCreator constructor(
         return this.obj as T
     }
 
-    init {
-        components.forEach {
-            addComponent(it.data, it.type.split("#").getOrNull(1) ?: registry.getComponentName(it.data))
+    fun loadJson(list: List<ComponentJsonField>) {
+        list.forEach {
+            val name = it.getComponentName()
+            try {
+                addComponent(it.toComponent(), name)
+            } catch (ex: Exception) {
+                if (ex is ComponentNotFoundException) {
+                    LOGGER.warn("Компонент $name не был найден в реестре и был пропущен")
+                } else {
+                    throw ex
+                }
+            }
         }
+    }
+
+    init {
+        loadJson(jsonComponents)
     }
 
     private fun updateCaches() {
@@ -46,7 +63,7 @@ open class State @JsonCreator constructor(
 
     fun addComponentIfNotExist(
         component: Component,
-        name: String = registry.getComponentName(component),
+        name: String = REGISTRY.getComponentName(component),
         enable: Boolean = true
     ) {
         // Проверяем, нет ли уже компонента того же конкретного класса
@@ -58,7 +75,7 @@ open class State @JsonCreator constructor(
     }
 
 
-    fun addComponent(component: Component, name: String = registry.getComponentName(component), enable: Boolean = true) {
+    fun addComponent(component: Component, name: String = REGISTRY.getComponentName(component), enable: Boolean = true) {
         components[name] = component
             .apply {
                 putState(this@State)
@@ -68,7 +85,7 @@ open class State @JsonCreator constructor(
         updateCaches()
     }
 
-    fun removeComponent(component: Component, name: String = registry.getComponentName(component)) {
+    fun removeComponent(component: Component, name: String = REGISTRY.getComponentName(component)) {
         components[name]?.apply {
             if (this is Activateable) this.disable()
             if (this is Loadable) this.unload()
@@ -115,10 +132,5 @@ open class State @JsonCreator constructor(
 
     fun getComponentByName(name: String): Component? {
         return components[name]
-    }
-
-    @JsonIgnore
-    fun getJsonField(): List<ComponentJsonField> {
-        return components.mapNotNull { (key, value) -> if (value.save) ComponentJsonField(key, value) else null }
     }
 }

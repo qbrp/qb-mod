@@ -1,12 +1,15 @@
 package org.qbrp.core.mc.player.model
 
 import com.mongodb.client.MongoDatabase
+import net.minecraft.util.ActionResult
 import org.bson.conversions.Bson
 import org.qbrp.core.game.model.components.Behaviour
 import org.qbrp.core.mc.player.Account
 import org.qbrp.core.mc.player.PlayerObject
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAPI
+import org.qbrp.engine.chat.core.messages.ChatMessage
+import org.qbrp.engine.chat.core.messages.MessageSender
 import org.qbrp.system.utils.format.Format.asMiniMessage
 
 open class PlayerBehaviour: Behaviour() {
@@ -25,6 +28,8 @@ open class PlayerBehaviour: Behaviour() {
             player.entity.sendMessage(text.asMiniMessage())
         }
     }
+
+    open fun onMessage(sender: MessageSender, message: ChatMessage): ActionResult = ActionResult.PASS
 
     open fun onAccountSave(account: Account, db: MongoDatabase) = emptyList<Bson>()
 }
