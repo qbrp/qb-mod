@@ -2,16 +2,22 @@ package org.qbrp.engine.chat.addons
 
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.block.Block
+import net.minecraft.network.packet.s2c.play.ParticleS2CPacket
+import net.minecraft.particle.ParticleTypes
 import net.minecraft.registry.Registries
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.registry.tag.TagKey
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
+import net.minecraft.util.hit.BlockHitResult
+import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import net.minecraft.world.RaycastContext
 import net.minecraft.world.World
 import org.koin.core.component.get
 import org.qbrp.core.mc.registry.CommandsRepository
@@ -33,7 +39,10 @@ import org.qbrp.system.networking.messages.types.IntContent
 import org.qbrp.system.utils.Tracer
 import org.qbrp.system.utils.format.Format.asMiniMessage
 import org.qbrp.system.utils.log.Loggers
+import kotlin.math.cos
+import kotlin.math.floor
 import kotlin.math.max
+import kotlin.math.sin
 import kotlin.random.Random
 
 @Autoload(LoadPriority.ADDON)
@@ -89,6 +98,66 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
         return config.defaultVolumeBlockModifier
     }
 
+    fun findOffsetOrigins(
+        origin: Vec3d,
+        world: World
+    ): List<Vec3d> {
+        val positions = mutableListOf<Vec3d>()
+        val step = 1.0
+        val maxOffset = config.maxOffset
+        val dirCount = config.vectorCount
+
+        // 12 направлений по окружности
+        val angles = (0 until dirCount).map { it * 2.0 * Math.PI / dirCount }
+        val dirs = angles.map { ang -> Vec3d(-sin(ang), 0.0, cos(ang)) }
+        val yLevels = listOf(-1.0, 0.0, 1.0)
+
+        yLevels.forEach { yOff ->
+            dirs.forEach { dir ->
+                var start = Vec3d(origin.x, origin.y + yOff, origin.z)
+                var dist = 0.0
+                while (dist < maxOffset) {
+                    val next = start.add(dir.multiply(step))
+                    val bp = BlockPos(
+                        floor(next.x).toInt(),
+                        floor(next.y).toInt(),
+                        floor(next.z).toInt()
+                    )
+                    val mod = getBlockVolumeModifier(bp, world)
+                    if (mod > config.stopVectorVolumeModifier) {
+                        positions.add(start)
+                        return@forEach
+                    }
+                    start = next
+                    dist += step
+                }
+                // если не встретили — добавляем последнюю точку
+                positions.add(start)
+            }
+        }
+
+        return positions
+    }
+
+
+    fun generateSphereDirections(samples: Int): List<Vec3d> {
+        val directions = mutableListOf<Vec3d>()
+        val goldenAngle = Math.PI * (3 - Math.sqrt(5.0))  // Примерно 2.39996...
+
+        for (i in 0 until samples) {
+            val y = 1 - (i.toDouble() / (samples - 1)) * 2  // от 1 до -1
+            val radius = Math.sqrt(1 - y * y)
+            val theta = goldenAngle * i
+
+            val x = Math.cos(theta) * radius
+            val z = Math.sin(theta) * radius
+
+            directions.add(Vec3d(x, y, z))
+        }
+
+        return directions
+    }
+
     override fun load() {
         loadConfig()
         ConfigInitializationCallback.EVENT.register { config ->
@@ -133,39 +202,68 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
         }
 
         // Изменение Volume
-        MessageSendEvent.EVENT.register { sender, message, receiver, networking ->
+        MessageSendEvent.register { sender, message, receiver, networking ->
             val tags = message.getTags()
-            if (tags.getComponentData<Boolean>("handleVolume") != true) { return@register ActionResult.PASS }
+            if (tags.getComponentData<Boolean>("handleVolume") != true) {
+                return@register ActionResult.PASS
+            }
+
             val volume = tags.getComponentData<Int>("volume") ?: return@register ActionResult.PASS
             val sourceX = tags.getComponentData<Int>("sourceX") ?: return@register ActionResult.PASS
             val sourceY = tags.getComponentData<Int>("sourceY") ?: return@register ActionResult.PASS
             val sourceZ = tags.getComponentData<Int>("sourceZ") ?: return@register ActionResult.PASS
 
-            var volumeEdit = 0.0
-            Tracer.tracePathAndModify(Vec3d(sourceX.toDouble(), sourceY.toDouble(), sourceZ.toDouble()), Vec3d(receiver.x, receiver.y, receiver.z)) { pos ->
-                volumeEdit -= getBlockVolumeModifier(pos, receiver.world) + 0.1
-                true
+            val originBase = Vec3d(sourceX.toDouble(), sourceY.toDouble(), sourceZ.toDouble())
+            val target     = Vec3d(receiver.x, receiver.y, receiver.z)
+
+            val offsetOrigins = findOffsetOrigins(originBase, receiver.world)
+
+            // Для каждого направления: сначала находим “продвинутый” origin, потом запускаем трассировку
+            val volumeEdits = (offsetOrigins + originBase).map { dir ->
+                if (config.debug) sendParticlePacket(
+                    world    = receiver.world as ServerWorld,
+                    pos      = BlockPos(dir.x.toInt(), dir.y.toInt(), dir.z.toInt()),
+                    count    = 1,
+                    offsetX  = 0.0,
+                    offsetY  = 0.0,
+                    offsetZ  = 0.0,
+                    speed    = 0.0
+                )
+                // 2) собственно считаем спад громкости
+                var edit = 0.0
+                Tracer.tracePathAndModify(dir, target) { pos ->
+                    edit -= getBlockVolumeModifier(pos, receiver.world) + 0.1
+                    true
+                }
+                edit
             }
-            val newVolume = (volume + volumeEdit).toInt()
+            // Берём максимальное значение
 
-            if (newVolume <= (if (overhearPlayers[receiver] == true) config.minOverhearVolume else config.minVolume)) return@register ActionResult.FAIL
+            //println("Изменения: ${volumeEdits.joinToString(", ")}")
 
+            val maxCaseReduction = volumeEdits.max()
+            val newVolume = (volume + maxCaseReduction).toInt()
+
+            println("Новая громкость - $newVolume (${maxCaseReduction})")
+
+            // Проверяем порог слышимости
+            val minAllowed = if (overhearPlayers[receiver] == true) config.minOverhearVolume else config.minVolume
+            if (newVolume <= minAllowed) {
+                return@register ActionResult.FAIL
+            }
+
+            // Записываем новый уровень громкости в теги
             message.apply {
                 setTags(getTagsBuilder()
                     .component("volume", IntContent(newVolume))
                     .component("volumeHandled", true))
             }
 
-            if (message.getAuthorEntity() == receiver) {
-                log(message)
-                message.getTagsBuilder()
-                    .component("log", true)
-            }
             ActionResult.PASS
         }
 
         // Форматирование
-        MessageSendEvent.EVENT.register() { sender, message, receiver, networking ->
+        MessageSendEvent.register() { sender, message, receiver, networking ->
             val tags = message.getTags()
             if (tags.getComponentData<Boolean>("format") != true) { return@register ActionResult.PASS }
             val volume = tags.getComponentData<Int>("volume") ?: return@register ActionResult.PASS
@@ -222,5 +320,25 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
             }
         }
         return result.toString()
+    }
+
+    fun sendParticlePacket(world: ServerWorld, pos: BlockPos, count: Int, offsetX: Double, offsetY: Double, offsetZ: Double, speed: Double) {
+        val packet = ParticleS2CPacket(
+            ParticleTypes.SMOKE,          // Тип частицы, например, ParticleTypes.SMOKE
+            false,                 // Долгоживущая частица (false для обычных)
+            pos.x + 0.5,           // X координата (центр блока)
+            pos.y + 0.5,           // Y координата (центр блока)
+            pos.z + 0.5,           // Z координата (центр блока)
+            offsetX.toFloat(),               // Смещение по X
+            offsetY.toFloat(),               // Смещение по Y
+            offsetZ.toFloat(),               // Смещение по Z
+            speed.toFloat(),                 // Скорость движения частиц
+            count                  // Количество частиц
+        )
+
+        // Отправка пакета всем игрокам в мире
+        world.players.forEach { player ->
+            player.networkHandler.sendPacket(packet)
+        }
     }
 }

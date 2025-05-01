@@ -11,9 +11,12 @@ import org.qbrp.engine.chat.core.messages.Sender
 class MessageHandler(val server: MinecraftServer) {
 
     fun handleReceivedMessage(message: ChatMessage, responseNetworking: ServerChatNetworking) {
+        val time = System.nanoTime()
         if (MessageReceivedEvent.Companion.EVENT.invoker().onMessageReceived(message) != ActionResult.FAIL) {
             getSender(message, responseNetworking).send(message)
         }
+        val timeTotal = System.nanoTime() - time
+        println("Время, затраченное на обработку: ${timeTotal / 1000000} ms (${timeTotal})")
     }
 
     fun getSender(message: ChatMessage, responseNetworking: ServerChatNetworking): Sender {

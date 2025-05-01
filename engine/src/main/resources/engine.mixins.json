@@ -16,6 +16,7 @@
   },
   "mixins": [
     "ChatMessageC2SPacketMixin",
-    "ServerPlayerInteractionManagerMixin"
+    "ServerPlayerInteractionManagerMixin",
+    "WhisperCommandMixin"
   ]
 }

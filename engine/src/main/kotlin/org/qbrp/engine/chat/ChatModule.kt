@@ -21,7 +21,7 @@ import org.qbrp.system.networking.ServerInformationComposer
 import org.qbrp.system.networking.messages.Message
 import org.qbrp.system.utils.log.Loggers
 
-@Autoload(both = true)
+@Autoload(6, both = true)
 class ChatModule() : QbModule("chat"), ChatAPI {
     companion object {
         const val SYSTEM_MESSAGE_AUTHOR = "system"
@@ -58,7 +58,9 @@ class ChatModule() : QbModule("chat"), ChatAPI {
             .apply { addTarget(player) }
             .send(ChatMessage(authorName, message))
 
-    override fun handleMessage(message: ChatMessage) = get<MessageHandler>().handleReceivedMessage(message, get())
+    override fun handleMessage(message: ChatMessage) {
+        get<MessageHandler>().handleReceivedMessage(message, get())
+    }
 
     fun handleMessagePacket(message: Message) = get<ServerChatNetworking>().handleMessagePacket(message)
 }

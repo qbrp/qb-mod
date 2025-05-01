@@ -5,6 +5,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAPI
@@ -34,18 +35,20 @@ class Broadcaster: ChatAddon("broadcaster"), BroadcasterAPI {
     override fun getAPI(): BroadcasterAPI = this
 
     override fun getKoinModule() = module {
-        single { ChatGroup(
-            name = "broadcast",
-            simpleName = "вещание",
-            color = "#e4717a",
-            radius = -1,
-            format = "<light_purple><bold>*<reset> {name} <reset><light_purple>(<reset> {text} <light_purple>)<reset>"
-        ) }
+        single(named("broadcastGroup")) {
+            ChatGroup(
+                name = "broadcast",
+                simpleName = "вещание",
+                color = "#e4717a",
+                radius = -1,
+                format = "<light_purple><bold>*<reset> {name} <reset><light_purple>(<reset> {text} <light_purple>)<reset>"
+            )
+        }
         single { this }
     }
 
     override fun broadcastGlobalDo(message: ChatMessage) {
-        ChatGroups.handle(message, get<ChatGroup>(), Engine.getAPI<ChatGroupsAPI>()?.getGroup("default")!!)
+        ChatGroups.handle(message, get<ChatGroup>(named("broadcastGroup")), Engine.getAPI<ChatGroupsAPI>()?.getGroup("default")!!)
         chatModuleAPI.createSender().apply {
             addTargets(server.playerManager.playerList)
             send(message)

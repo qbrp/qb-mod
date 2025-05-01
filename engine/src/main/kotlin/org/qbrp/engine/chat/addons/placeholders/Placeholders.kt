@@ -40,9 +40,9 @@ class Placeholders: QbModule("placeholders"), PlaceholdersAPI {
             ActionResult.PASS
         }
 
-        MessageSendEvent.EVENT.register { _, message, receiver, _ ->
+        MessageSendEvent.register( { _, message, receiver, _ ->
             handle(message)
             ActionResult.PASS
-        }
+        }, MessageSendEvent.Companion.Priority.LAST)
     }
 }

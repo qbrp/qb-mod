@@ -18,6 +18,7 @@ import org.qbrp.system.modules.LoadPriority
 import org.qbrp.system.modules.QbModule
 import org.qbrp.system.networking.messages.Message
 import org.qbrp.system.networking.messages.Messages
+import org.qbrp.system.networking.messages.types.Signal
 import org.qbrp.system.networking.messages.types.StringContent
 import org.qbrp.system.networking.messaging.NetworkManager
 import java.util.concurrent.CompletableFuture
@@ -43,6 +44,13 @@ class Ignore: QbModule("chat-addon-ignore"), ServerModCommand {
                     1
                 }
             )
+        )
+        dispatcher.register(CommandManager.literal("spy")
+            .executes { ctx ->
+                NetworkManager.sendMessage(ctx.source.player!!,
+                    Message(Messages.invokeCommand("spy"), Signal()))
+                1
+            }
         )
     }
 

@@ -16,7 +16,7 @@ class Sounds: ChatAddon("sounds") {
 
     override fun load() {
         super.load()
-        MessageSendEvent.EVENT.register() { sender, message, receiver, networking ->
+        MessageSendEvent.register() { sender, message, receiver, networking ->
             message.getTags().getComponentData<String>("sound")?.also {
                 if (it != "") {
                     try {

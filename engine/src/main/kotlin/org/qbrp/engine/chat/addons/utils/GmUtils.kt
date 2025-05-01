@@ -18,7 +18,7 @@ import org.qbrp.system.utils.format.Format.asMiniMessage
 class GmUtils: ChatAddon("gm-utils") {
     override fun load() {
         super.load()
-        MessageSendEvent.EVENT.register { _, message, receiver, _ ->
+        MessageSendEvent.register { _, message, receiver, _ ->
             if (message.getTags().isComponentExists("gm") && receiver.hasPermission("chat.gm-util")) {
                 val page = Page(
                     "ГМ-меню: ${message.getAuthorEntity()?.name?.string}",

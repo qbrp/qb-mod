@@ -38,8 +38,7 @@ open class MessageSender(private val networking: ServerChatNetworking, private v
 
     override fun send(message: ChatMessage) {
         val receivers = targets.filter {
-            MessageSendEvent.EVENT.invoker()
-                .onMessageSend(this, message.copy(), it, networking) == ActionResult.SUCCESS
+            MessageSendEvent.EVENT.onMessageSend(this, message.copy(), it, networking) == ActionResult.SUCCESS
         }
         if (message.getTags().getComponentData<Boolean>("log") != true) {
             message.getText()

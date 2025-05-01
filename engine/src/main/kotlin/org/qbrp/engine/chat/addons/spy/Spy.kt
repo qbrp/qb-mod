@@ -31,7 +31,7 @@ import org.qbrp.system.networking.messages.types.StringContent
 
 
 @Autoload(LoadPriority.ADDON)
-class Spy(): ChatAddon("spy"), ServerModCommand {
+class Spy(): ChatAddon("spy") {
     private val server: MinecraftServer by inject()
     private val chatGroupsAPI = Engine.getAPI<ChatGroupsAPI>()
     private lateinit var spyManager: SpyManager
@@ -39,7 +39,6 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
     override fun load() {
         super.load()
         spyManager = get()
-        CommandsRepository.add(this)
 
         MessageHandledEvent.EVENT.register { message, receivers ->
             if (message.authorName == ChatModule.SYSTEM_MESSAGE_AUTHOR) return@register ActionResult.PASS
@@ -50,7 +49,6 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
                 .filterNot { it in receivers }
                 .filter { chatGroupsAPI!!.fetchGroup(message)?.playerHasReadPermission(it) == true }
                 .filter { it.hasPermission("chat.spy") }
-                .filter { spyManager.playerCanSpy(it) }
                 .toMutableList()
             if (!spyPlayers.isEmpty()) {
                 val sender = chatAPI.createSender().apply {
@@ -60,7 +58,7 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
                     setText("&6[S]&r ${getText().replace("{radar}", "")}")
                     setTags(getTagsBuilder()
                         .component("sound", "")
-                        .component("spy", StringContent())
+                        .component("spy", true)
                         .component("handleVolume", false)
                         .component("spectators", false)
                         .component("radar", false))
@@ -78,29 +76,5 @@ class Spy(): ChatAddon("spy"), ServerModCommand {
 
     fun getSpyPlayers(): List<ServerPlayerEntity> {
         return server.playerManager.playerList
-    }
-
-    override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
-        dispatcher.register(
-            CommandBuilder()
-                .buildTree(SpyCommand::class.java)
-                .getCommand()
-                .getLiteral()
-        )
-    }
-
-    @Command("qbspy")
-    class SpyCommand(): CallbackCommand(), KoinComponent {
-        @Execute(permission = "chat.spy")
-        fun execute(ctx: CommandContext<ServerCommandSource>, deps: Deps) {
-            try {
-                val spyManager = get<SpyManager>()
-                val player = ctx.source.player!!
-                spyManager.toggleIgnoreSpy(player)
-                callback(ctx, "Слежка ${if (spyManager.playerCanSpy(player)) "включена" else "выключена"}")
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
     }
 }
