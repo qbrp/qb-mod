@@ -31,6 +31,7 @@ class Anticheat: QbModule("anticheat") {
             if (!context.player.hasPermissionLevel(4)) {
                 val modList = message.getContent<List<String>>()
                 val restrictedMods = mutableListOf<String>()
+                println(modList)
                 mods.forEach {
                     if (modList.contains<String>(it.id)) {
                         it.ifFounded(context.player)
