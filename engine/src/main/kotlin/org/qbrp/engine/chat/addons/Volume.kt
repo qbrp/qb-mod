@@ -239,12 +239,8 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
             }
             // Берём максимальное значение
 
-            //println("Изменения: ${volumeEdits.joinToString(", ")}")
-
             val maxCaseReduction = volumeEdits.max()
             val newVolume = (volume + maxCaseReduction).toInt()
-
-            println("Новая громкость - $newVolume (${maxCaseReduction})")
 
             // Проверяем порог слышимости
             val minAllowed = if (overhearPlayers[receiver] == true) config.minOverhearVolume else config.minVolume
