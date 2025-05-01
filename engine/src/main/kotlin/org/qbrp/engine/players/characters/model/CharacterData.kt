@@ -13,6 +13,10 @@ data class CharacterData(
     val height: Int,
     val id: Int
 ) {
+    @JsonIgnore
+    fun getTextWithColorTag(text: String): String {
+        return "<gradient:${colors[0]}:${colors[1]}>$text</gradient>"
+    }
 
     @get:JsonIgnore
     val formattedName: String

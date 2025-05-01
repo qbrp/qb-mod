@@ -87,7 +87,7 @@ class LinearMessageProvider(
         // Создаем новый список сообщений и пересчитываем кэш
         if (ClientConfig.handleMessagesOnReceive) {
             val newSnapshot = allMessages.values.toList()
-            if (!ClientConfig.filterHandledMessages) {
+            if (ClientConfig.filterHandledMessages) {
                 // Если мапа фильтров пуста, то берем все сообщения, иначе оставляем только те, которые проходят все фильтры.
                 val processed = newSnapshot.reversed().filter {
                     if (filters.isEmpty()) true else filters.values.all { predicate -> predicate(it) }

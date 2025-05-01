@@ -19,6 +19,7 @@ import org.qbrp.core.game.model.storage.GlobalStorage
 import org.qbrp.core.game.model.storage.Storage
 import org.qbrp.core.game.model.tick.Tick
 import org.qbrp.core.game.prefabs.Prefab
+import org.qbrp.core.game.prefabs.PrefabField
 import org.qbrp.core.game.prefabs.RuntimePrefabStorage
 import org.qbrp.core.mc.player.model.PlayerPrefab
 import org.qbrp.core.resources.data.config.ServerConfigData
@@ -41,7 +42,7 @@ class GameEngine : QbModule("game-engine"), GameAPI {
         registry.register(TestPrint::class.java)
         registry.register(TestInvoke::class.java)
         registry.register(Appearance::class.java)
-        getPlayerPrefab().components += Appearance()
+        getPlayerPrefab().components += PrefabField { Appearance() }
         //test()
         EngineInitializedEvent.EVENT.register() {
             Engine.moduleManager.modules.forEach { module ->

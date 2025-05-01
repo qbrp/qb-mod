@@ -4,6 +4,8 @@ import com.mojang.datafixers.kinds.App
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.qbrp.core.game.ComponentsRegistry
+import org.qbrp.core.game.prefabs.Prefab
+import org.qbrp.core.game.prefabs.PrefabField
 import org.qbrp.core.mc.player.PlayerObject
 import org.qbrp.core.mc.player.registration.PlayerRegistrationCallback
 import org.qbrp.core.mc.registry.CommandsRepository
@@ -18,7 +20,7 @@ import org.qbrp.engine.players.characters.appearance.AppearanceNotifications
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.GameModule
 
-@Autoload(9)
+@Autoload
 class CharactersModule: GameModule("characters") {
     init {
         dependsOn { Engine.isApiAvailable<ChatAPI>() }
@@ -39,7 +41,7 @@ class CharactersModule: GameModule("characters") {
     override fun registerComponents(registry: ComponentsRegistry) {
         registry.register(Character::class.java)
         registry.register(AppearanceNotifications::class.java)
-        gameAPI.getPlayerPrefab().components += AppearanceNotifications()
+        gameAPI.getPlayerPrefab().components += PrefabField { AppearanceNotifications() }
     }
 
     override fun getKoinModule() = module {

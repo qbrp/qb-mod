@@ -19,23 +19,24 @@ class AppearanceManager: KoinComponent {
                     val session = PlayerManager.getPlayerSession(it)
                     val appearance = session.state.getComponent<Appearance>()
                     val character = session.state.getComponent<Character>()?.data
-                    if (character != null && appearance != null && appearance.tooltip != "") {
+                    if (character != null && appearance != null && appearance.description != "") {
                         sendAppearanceDescription(
                             session.displayName,
-                            appearance.tooltip,
+                            appearance.description,
                             player
                         )
                         if (appearance.look != character.appearance.defaultLook
-                            && character.appearance.look.description != null) {
+                            && appearance.look?.description != null) {
 
                             sendAppearanceDescription(
                                 session.displayName,
-                                appearance.tooltip,
+                                appearance.look!!.description!!,
                                 player
                             )
                         }
-                        PlayerManager.getPlayerSession(player)
-                            .state.getComponent<AppearanceNotifications>()?.read(character)
+                        PlayerManager.getPlayerSession(player).
+                            state.getComponent<AppearanceNotifications>()?.read(session)
+
                     }
                 }
             }

@@ -11,16 +11,12 @@ data class AppearanceData(val description: String, val looks: MutableList<Look>,
 
     @get:JsonIgnore
     val look: Look
-        get() = appliedLook ?: defaultLook
+        get() = looks.find { it.name == appliedLookName } ?: defaultLook
 
-    var appliedLook: Look? = null
+    val appliedLookName: String = defaultLook.name
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class Look(val name: String, val skinUrl: String?, val description: String?) {
-        @get:JsonIgnore
-        val textDescription: String
-            get() = if(description != null) "\n" + description else ""
-
         fun getColoredName(character: CharacterData): String {
             return "<${character.colors[0]}>${name}"
         }

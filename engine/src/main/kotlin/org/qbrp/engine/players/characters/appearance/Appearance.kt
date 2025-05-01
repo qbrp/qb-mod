@@ -8,14 +8,17 @@ import org.qbrp.engine.characters.model.CharacterData
 import org.qbrp.engine.players.characters.Character
 
 class Appearance: PlayerBehaviour() {
-    @JsonIgnore var tooltip = ""
-    var look: Look? = null
+    @JsonIgnore var look: Look? = null
+    var description = ""
 
-    private var skinUrl = look?.skinUrl
+    var tooltip = description
+
+    private var skinUrl: String? = null
     private var model = "slim"
 
     fun updateLook(look: Look) {
         this.look = look
+        skinUrl = look.skinUrl
         applyLook()
     }
 
@@ -24,19 +27,15 @@ class Appearance: PlayerBehaviour() {
     }
 
     fun applyLook() {
-        try {
-            tooltip = composeDescription()
-            if (look?.skinUrl != null) {
-                player.executeCommand("""skin url "$skinUrl" $model""")
+        look?.let {
+            try {
+                if (skinUrl != null) {
+                    player.executeCommand("""skin url "$skinUrl" $model""")
+                }
+                sendMessage("<gray>Применён облик ${it.name}")
+            } catch (e: NullPointerException) {
+                sendMessage("<gray>Персонаж не найден.")
             }
-            sendMessage("<gray>Применён облик $look")
-        } catch (e: NullPointerException) {
-            sendMessage("<gray>Персонаж не найден.")
         }
-    }
-
-    private fun composeDescription(): String {
-        val character = getComponent<Character>()?.data ?: return ""
-        return "${character.appearance.description}${look?.textDescription}"
     }
 }

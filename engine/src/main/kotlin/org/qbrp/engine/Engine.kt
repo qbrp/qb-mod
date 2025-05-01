@@ -24,6 +24,10 @@ class Engine: KoinComponent {
             return moduleManager.isApiAvailable<T>()
         }
 
+        fun isModuleEnabled(name: String): Boolean {
+            return moduleManager.isModuleEnabled(name)
+        }
+
         val globalLogger = Loggers.get("engine")
     }
 
