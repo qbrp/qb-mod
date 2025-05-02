@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Shadow public abstract Text getName();
-    @Unique private Text customDisplayName = Text.literal("Unammed");
+    @Unique private Text customDisplayName = Text.literal("Загрузка имени...");
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
