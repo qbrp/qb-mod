@@ -3,6 +3,7 @@ package org.qbrp.core.mc.player.model
 import com.mongodb.client.MongoDatabase
 import net.minecraft.util.ActionResult
 import org.bson.conversions.Bson
+import org.koin.core.context.GlobalContext
 import org.qbrp.core.game.model.components.Behaviour
 import org.qbrp.core.mc.player.Account
 import org.qbrp.core.mc.player.PlayerObject
@@ -15,6 +16,7 @@ import org.qbrp.system.utils.format.Format.asMiniMessage
 open class PlayerBehaviour: Behaviour() {
     companion object {
         const val TICK_RATE = 1
+        val KOIN = GlobalContext.get()
     }
 
     protected val player: PlayerObject

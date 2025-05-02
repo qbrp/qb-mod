@@ -24,6 +24,7 @@ import org.qbrp.engine.music.plasmo.model.priority.Priorities
 import org.qbrp.engine.music.plasmo.model.priority.Priority
 import org.qbrp.engine.music.plasmo.model.selectors.Selector
 import org.qbrp.engine.music.plasmo.playback.PlayerSelectionHandler
+import org.qbrp.engine.music.plasmo.playback.lavaplayer.AudioManager
 import org.qbrp.engine.music.plasmo.playback.player.MusicPlayerManager
 import org.qbrp.engine.music.plasmo.playback.player.PlayerState
 import org.qbrp.engine.music.plasmo.view.MusicViewCommand
@@ -41,6 +42,7 @@ class MusicManagerModule : QbModule("music"), KoinComponent, MusicManagerAPI {
     override fun getTracks(): List<Track> = get<MusicStorage>().getAllTracks()
 
     override fun load() {
+        AudioManager.registerSources()
         get<MusicDatabaseService>().db.connect()
         get<MusicStorage>().apply {
             loadFromDatabase()

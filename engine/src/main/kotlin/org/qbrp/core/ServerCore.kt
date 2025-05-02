@@ -15,7 +15,6 @@ import org.qbrp.core.regions.commands.RegionCommands
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.engine.Engine
-import org.qbrp.engine.music.plasmo.playback.lavaplayer.AudioManager
 import org.qbrp.system.networking.ServerInformation
 import org.qbrp.system.networking.http.WebServer
 import org.qbrp.system.utils.log.InformationMessage
@@ -35,7 +34,6 @@ class ServerCore : DedicatedServerModInitializer {
         ServerResources.buildContent()
         webServer = WebServer().also { it.start() }
         Handlers.registerServerEvents()
-        AudioManager.registerSources()
         Regions.load()
         PlayerManager.loadCommand()
         ServerLifecycleEvents.SERVER_STARTED.register { server ->

@@ -38,10 +38,4 @@ object Handlers {
         })
     }
 
-    fun registerBaseEvents() {
-        ServerTickEvents.END_WORLD_TICK.register { server ->
-            TimerUpdater.update()
-        }
-    }
-
 }

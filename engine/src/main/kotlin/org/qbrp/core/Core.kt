@@ -9,6 +9,5 @@ class Core: ModInitializer {
 
     override fun onInitialize() {
         Game.init()
-        Handlers.registerBaseEvents()
     }
 }

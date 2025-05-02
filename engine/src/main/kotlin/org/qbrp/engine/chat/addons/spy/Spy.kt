@@ -12,13 +12,6 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.module.Module
 import org.koin.dsl.module
-import org.qbrp.core.mc.commands.CommandBuilder
-import org.qbrp.core.mc.commands.Deps
-import org.qbrp.core.mc.commands.annotations.Command
-import org.qbrp.core.mc.commands.annotations.Execute
-import org.qbrp.core.mc.commands.templates.CallbackCommand
-import org.qbrp.core.mc.registry.CommandsRepository
-import org.qbrp.core.mc.registry.ServerModCommand
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAddon
 import org.qbrp.engine.chat.ChatModule
