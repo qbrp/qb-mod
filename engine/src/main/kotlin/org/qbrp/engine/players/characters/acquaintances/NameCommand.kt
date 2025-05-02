@@ -24,7 +24,7 @@ class NameCommand: ServerModCommand {
                         ctx.source.sendMessage("<red>Игрок не применил персонажа.".asMiniMessage())
                         return@executes 1
                     }
-                    player.getComponent<ChatNickRename>()!!.setName(character, getName(ctx))
+                    player.getComponent<NamesPerception>()!!.setName(character, getName(ctx))
                     notify(ctx, getName(ctx), character)
                     1
                 }))
@@ -36,7 +36,7 @@ class NameCommand: ServerModCommand {
                         ctx.source.sendMessage("<red>Игрок не применил персонажа.".asMiniMessage())
                         return@executes 1
                     }
-                    player.getComponent<ChatNickRename>()!!.setName(character, getName(ctx))
+                    player.getComponent<NamesPerception>()!!.setName(character, getName(ctx))
                     notify(ctx, getName(ctx), character)
                     1
                 }))

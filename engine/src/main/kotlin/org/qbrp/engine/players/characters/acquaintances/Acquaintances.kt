@@ -21,8 +21,8 @@ class Acquaintances(): GameModule("acquaintances") {
     }
 
     override fun registerComponents(registry: ComponentsRegistry) {
-        registry.register(ChatNickRename::class.java)
-        gameAPI.getPlayerPrefab().components += PrefabField { ChatNickRename() }
+        registry.register(NamesPerception::class.java)
+        gameAPI.getPlayerPrefab().components += PrefabField { NamesPerception() }
     }
 
 }

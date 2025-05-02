@@ -8,35 +8,38 @@ import org.qbrp.core.mc.player.PlayerManager
 import org.qbrp.core.keybinds.ServerKeybindCallback
 import org.qbrp.core.keybinds.ServerKeybinds.registerKeybindReceiver
 import org.qbrp.engine.players.characters.Character
+import org.qbrp.engine.players.characters.acquaintances.NamesPerception
 import org.qbrp.system.utils.format.Format.asMiniMessage
 
 class AppearanceManager: KoinComponent {
     fun registerKeybindHandler() {
         registerKeybindReceiver("information")
         ServerKeybindCallback.getOrCreateEvent("information").register { player ->
+            val plrObject = PlayerManager.getPlayerSession(player)
             PlayerManager.getPlayerLookingAt(player)?.let {
                 if (it.interactionManager.gameMode != GameMode.SPECTATOR) {
                     val session = PlayerManager.getPlayerSession(it)
                     val appearance = session.state.getComponent<Appearance>()
-                    val character = session.state.getComponent<Character>()?.data
+                    val character = session.state.getComponent<Character>()
                     if (character != null && appearance != null && appearance.description != "") {
+                        val displayName = plrObject.getComponent<NamesPerception>()?.getName(character) ?: session.displayName
+                        val characterData = character.data
                         sendAppearanceDescription(
-                            session.displayName,
+                            displayName,
                             appearance.description,
                             player
                         )
-                        if (appearance.look != character.appearance.defaultLook
+                        if (appearance.look != characterData.appearance.defaultLook
                             && appearance.look?.description != null) {
 
                             sendAppearanceDescription(
-                                session.displayName,
+                                displayName,
                                 appearance.look!!.description!!,
                                 player
                             )
                         }
                         PlayerManager.getPlayerSession(player).
                             state.getComponent<AppearanceNotifications>()?.read(session)
-
                     }
                 }
             }

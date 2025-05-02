@@ -12,7 +12,7 @@ import org.qbrp.engine.chat.core.messages.MessageSender
 import org.qbrp.engine.players.characters.Character
 import org.qbrp.engine.players.characters.model.social.SocialKey
 
-class ChatNickRename: PlayerBehaviour() {
+class NamesPerception: PlayerBehaviour() {
     companion object {
         var HIDE_PLAYER_NAMES_CHAT = true
         init {
@@ -38,13 +38,21 @@ class ChatNickRename: PlayerBehaviour() {
         renamesList.add(RenameEntry(key, name))
     }
 
+    @JsonIgnore
+    fun getName(character: Character): String {
+        val rename = renamesList.find { it.socialKey == character.getSocialKey() }?.name
+        return if (rename != null) character.data.getTextWithColorTag(rename) else getUnknownName(character)
+    }
+
+    @JsonIgnore
+    fun getUnknownName(character: Character): String {
+        return character.data.bioCategory.displayName
+    }
+
     override fun onMessage(sender: MessageSender, message: ChatMessage): ActionResult {
         val author = PlayerManager.getPlayerSession(message.getAuthorEntity() ?: return ActionResult.PASS)
         val character = author.state.getComponent<Character>() ?: return ActionResult.PASS
-        val key = character.getSocialKey()
-        val entry = renamesList.find { it.socialKey == key }
-
-        val renameText = entry?.name ?: if (HIDE_PLAYER_NAMES_CHAT) "???" else return ActionResult.PASS
+        val renameText = getName(character)
         val coloredName = character.data.getTextWithColorTag(renameText)
 
         message.getTagsBuilder()
