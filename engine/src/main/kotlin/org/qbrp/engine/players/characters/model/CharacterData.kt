@@ -2,16 +2,17 @@ package org.qbrp.engine.characters.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import org.qbrp.engine.players.characters.model.BioCategory
+import java.util.UUID
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class CharacterData(
     val name: String,
     val colors: List<String> = listOf("#FFFFFF", "#FFFFFF"),
-    val bodyParts: List<String>,
     val appearance: AppearanceData,
-    val sex: Sex,
+    val bioCategory: BioCategory,
     val height: Int,
-    val id: Int
+    val id: Int = UUID.randomUUID().hashCode(),
 ) {
     @JsonIgnore
     fun getTextWithColorTag(text: String): String {
