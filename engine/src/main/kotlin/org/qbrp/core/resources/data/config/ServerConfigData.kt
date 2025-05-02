@@ -33,6 +33,7 @@ data class ServerConfigData(
         val commands: Commands = Commands(),
         val volume: Volume = Volume(),
         val hidePlayerNameChat: Boolean = true,
+        val characterColoringFactor: Double = 0.25,
     ) {
         data class Commands(val formatMe: String = "{playerDisplayName} &e* &f{text}",
                             val formatDo: String = "{playerDisplayName} &d( &f{text} &d)",
