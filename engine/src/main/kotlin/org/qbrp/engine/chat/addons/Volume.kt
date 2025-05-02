@@ -279,7 +279,7 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
             if (distort) processedMessage = distort(processedMessage, distortionStrength)
         }
 
-        return MessageFormatTools.addFormatting(processedMessage, formatSymbol)
+        return MessageFormatTools.addFormatting(message, formatSymbol)
     }
 
     private fun distort(message: String, strength: Int): String {
