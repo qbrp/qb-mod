@@ -8,13 +8,11 @@ import net.minecraft.server.network.ServerPlayerEntity
 import org.qbrp.core.mc.registry.ServerModCommand
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAPI
-import org.qbrp.engine.chat.addons.records.Line
-import org.qbrp.engine.chat.addons.records.RecordsAPI
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.chat.core.system.ChatGroup
 import kotlin.random.Random
 
-class MessageCommand(val name: String, val group: ChatGroup, val record: (ServerPlayerEntity, String) -> Line): ServerModCommand {
+class MessageCommand(val name: String, val group: ChatGroup): ServerModCommand {
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         dispatcher.register(
             CommandManager.literal(name)
@@ -37,7 +35,6 @@ class MessageCommand(val name: String, val group: ChatGroup, val record: (Server
                     .placeholder("roll", Random.nextInt(0, 101).toString())
                     .component("group", group.name)
             }
-            Engine.getAPI<RecordsAPI>()!!.addLine(message, record(player, text))
             Engine.getAPI<ChatAPI>()!!.handleMessage(message)
         } catch (ex: IllegalArgumentException) {
             ex.printStackTrace()

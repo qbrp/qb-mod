@@ -1,34 +1,29 @@
 package org.qbrp.engine.chat.addons.records
 
-import com.google.gson.Gson
-import net.minecraft.command.argument.UuidArgumentType.uuid
-import net.minecraft.util.ActionResult
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.qbrp.core.resources.data.Data
-import org.qbrp.engine.Engine
-import org.qbrp.engine.chat.ChatAPI
 import org.qbrp.engine.chat.addons.tools.MessageTextTools
-import org.qbrp.engine.chat.core.events.MessageReceivedEvent
 import org.qbrp.engine.chat.core.messages.ChatMessage
 
 class Record: Data(), KoinComponent {
-    private val lines = mutableMapOf<String, Line>()
+    private val messages = mutableListOf<JsonNode>()
 
-    init {
-        MessageReceivedEvent.EVENT.register { message ->
-            addLine(message)
-            ActionResult.PASS
+    fun addMessage(message: ChatMessage) {
+        messages.add(MAPPER.valueToTree(message))
+    }
+
+    override fun toFile(): String = MAPPER
+        .writerWithDefaultPrettyPrinter()      // опционально
+        .writeValueAsString(messages)
+
+    companion object {
+        private val MAPPER = ObjectMapper().apply {
+            registerModule(SimpleModule().apply {
+                addSerializer(ChatMessage::class.java, ChatMessageSerializer())
+            })
         }
     }
-
-    fun addLine(uuid: String, line: Line) {
-        lines[uuid] = line
-    }
-
-    fun addLine(msg: ChatMessage, line: Line = Message(msg.authorName, MessageTextTools.getTextContent(msg))) {
-        lines[msg.uuid] = line
-    }
-
-    override fun toFile(): String = gson.toJson(lines)
 }

@@ -26,8 +26,6 @@ import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAddon
-import org.qbrp.engine.chat.addons.records.RecordsAPI
-import org.qbrp.engine.chat.addons.records.Replica
 import org.qbrp.engine.chat.addons.tools.MessageFormatTools
 import org.qbrp.engine.chat.addons.tools.MessageTextTools
 import org.qbrp.engine.chat.core.events.MessageReceivedEvent
@@ -193,11 +191,6 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
                     .component("sourceZ", IntContent(pos.z))
                     .component("volume", IntContent(config.defaultVolume + volume)))
             }
-            Engine.getAPI<RecordsAPI>()!!.addLine(
-                message,
-                Replica(message.authorName, MessageTextTools.getTextContent(message), volume)
-            )
-
             ActionResult.PASS
         }
 

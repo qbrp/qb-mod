@@ -6,8 +6,6 @@ import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.ChatAddon
 import org.qbrp.engine.chat.addons.groups.ChatGroupsAPI
-import org.qbrp.engine.chat.addons.records.Action
-import org.qbrp.engine.chat.addons.records.Do
 import org.qbrp.engine.chat.core.messages.ChatMessageTagsBuilder
 import org.qbrp.engine.chat.core.system.ChatGroup
 import org.qbrp.system.modules.Autoload
@@ -38,14 +36,14 @@ class RPCommands(): ChatAddon("rp-commands") {
             format = config.formatLdo,
             radius = 60,
             ClusterBuilder()
-                .component("ignoreVolume", true))) { plr, text -> Do(plr.name.string, text, "do")}
+                .component("ignoreVolume", true)))
         )
         CommandsRepository.add(MessageCommand("gdo", createCommandChatGroup(
             name = "gdo",
             format = config.formatGdo,
             radius = -1,
             ClusterBuilder()
-                .component("ignoreVolume", true))) { plr, text -> Do(plr.name.string, text, "ldo")}
+                .component("ignoreVolume", true)))
         )
     }
 
@@ -53,9 +51,6 @@ class RPCommands(): ChatAddon("rp-commands") {
         CommandsRepository.add(
             MessageCommand(name, createCommandChatGroup
                 (name, format, components = defaultComponents.components(components)))
-            { plr, text ->
-                Action(plr.name.string, text, name)
-            }
         )
     }
 

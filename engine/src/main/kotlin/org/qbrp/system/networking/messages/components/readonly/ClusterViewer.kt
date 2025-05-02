@@ -1,10 +1,11 @@
 package org.qbrp.system.networking.messages.components.readonly
 
+import io.netty.util.internal.UnstableApi
 import org.qbrp.system.networking.messages.components.Component
 import org.qbrp.system.networking.messages.types.ReceiveContent
 import org.qbrp.system.networking.messages.types.StringContent
 
-open class ClusterViewer(private val components: List<Component> = listOf()) {
+open class ClusterViewer(@UnstableApi val components: List<Component> = listOf()) {
 
     fun isComponentExists(name: String): Boolean {
         return components.stream().anyMatch { component -> component.name == name }

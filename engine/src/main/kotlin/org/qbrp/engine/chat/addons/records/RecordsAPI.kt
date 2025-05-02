@@ -5,7 +5,5 @@ import org.qbrp.system.modules.ModuleAPI
 import kotlin.collections.set
 
 interface RecordsAPI: ModuleAPI {
-    fun addLine(uuid: String, line: Line)
-    fun addLine(msg: ChatMessage, line: Line = Message(msg.authorName, msg.getText()))
-    fun saveRecord()
+    fun addMessage(message: ChatMessage)
 }

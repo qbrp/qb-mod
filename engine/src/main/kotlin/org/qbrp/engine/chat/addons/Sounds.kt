@@ -1,11 +1,7 @@
 package org.qbrp.engine.chat.addons
 
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket
-import net.minecraft.registry.Registries
 import net.minecraft.util.ActionResult
-import net.minecraft.util.Identifier
 import org.qbrp.engine.chat.ChatAddon
-import org.qbrp.engine.chat.addons.records.Action
 import org.qbrp.engine.chat.core.events.MessageSendEvent
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
