@@ -50,26 +50,36 @@ class PlayerLifecycleManager(
                             fabric.newInstance(player, auth)
                         }
                         prefab.put(playerObject)
-                        onCreated(playerObject)
-                        PlayerRegistrationCallback.EVENT.invoker().onRegister(playerObject, PlayerManager)
+                        player.server.execute() {
+                            onCreated(playerObject)
+                            PlayerRegistrationCallback.EVENT.invoker().onRegister(playerObject, PlayerManager)
+                        }
                     }
-
                     LoginResult.NOT_FOUND -> {
-                        player.networkHandler.disconnect(
-                            "<red>Аккаунт не был найден. Возможно, вы не зарегистрировались в системе или ввели не тот пароль.".asMiniMessage()
-                        )
+                        player.server.execute {
+                            player.networkHandler.disconnect(
+                                "<red>Аккаунт не найден.".asMiniMessage()
+                            )
+                        }
                     }
 
                     LoginResult.ALREADY_LINKED -> {
-                        player.networkHandler.disconnect(
-                            "<red>Имя игрока уже привязано к аккаунту.".asMiniMessage()
-                        )
+                        player.server.execute {
+                            player.networkHandler.disconnect(
+                                "<red>Имя уже привязано к другому аккаунту.".asMiniMessage()
+                            )
+                        }
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                player.networkHandler.disconnect("<red>Возникла неожиданная ошибка при входе на сервер: ${e.message}".asMiniMessage())
+                player.server.execute {
+                    player.networkHandler.disconnect(
+                        "<red>Ошибка при входе: ${e.message}".asMiniMessage()
+                    )
+                }
             }
+
         }
     }
     fun handleDisconnected(player: ServerPlayerEntity) {

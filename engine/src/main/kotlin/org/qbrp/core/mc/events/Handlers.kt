@@ -8,8 +8,6 @@ import net.minecraft.util.ActionResult
 import org.qbrp.core.mc.player.PlayerManager
 import org.qbrp.core.mc.player.registration.PlayerRegistrationCallback
 import org.qbrp.core.regions.RegionSelection
-import org.qbrp.system.utils.time.TimerUpdater
-import org.qbrp.core.visual.VisualDataStorage
 import org.qbrp.engine.Engine
 import org.qbrp.system.VersionChecker
 import org.qbrp.system.networking.ServerInformation
@@ -25,11 +23,7 @@ object Handlers {
             ServerInformation.send(handler.player)
             PlayerManager.lifecycleManager.handleDisconnected(handler.player)
         }
-        PlayerRegistrationCallback.EVENT.register { session, _ ->
-            VisualDataStorage.loadPlayer(player = session.entity)
-        }
         ServerPlayConnectionEvents.DISCONNECT.register { handler, server ->
-            VisualDataStorage.unloadPlayer(player = handler.player,)
             PlayerManager.lifecycleManager.handleDisconnected(handler.player)
         }
         UseBlockCallback.EVENT.register(UseBlockCallback { player, world, hand, hitResult ->
