@@ -1,6 +1,5 @@
 package org.qbrp.engine.client.engine.chat.system.events
 
-import config.ClientConfig
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.client.gui.hud.ChatHudLine

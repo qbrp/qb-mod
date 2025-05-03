@@ -2,10 +2,8 @@ package org.qbrp.engine.client.engine.chat.system
 
 import config.ClientConfig
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.hud.ChatHudLine
 import org.qbrp.engine.chat.core.messages.ChatMessage
-import org.qbrp.engine.client.engine.chat.ChatModuleClient
 import org.qbrp.engine.client.engine.chat.system.events.TextUpdateCallback
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicReference

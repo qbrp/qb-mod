@@ -21,11 +21,12 @@ class Todo : ClientChatAddon("todo") {
 
     private fun transformText(input: String): String {
         val regex = Regex("""\*\s*(.+?)\s*\*""")
-        return regex.replace(input) { match ->
+        val text = MessageTextTools.stripBracedContent(input)
+        return regex.replace(text) { match ->
             val start = match.range.first
             val end = match.range.last
-            val before = input.substring(0, start)
-            val after = input.substring(end + 1)
+            val before = text.substring(0, start)
+            val after = text.substring(end + 1)
             val hasBefore = before.trim().isNotEmpty()
             val hasAfter = after.trim().isNotEmpty()
             val content = match.groupValues[1]

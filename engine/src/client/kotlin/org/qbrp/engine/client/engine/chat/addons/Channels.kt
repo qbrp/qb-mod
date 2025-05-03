@@ -3,8 +3,6 @@ package org.qbrp.engine.client.engine.chat.addons
 import net.fabricmc.api.EnvType
 import net.minecraft.util.ActionResult
 import org.koin.core.component.get
-import org.qbrp.engine.chat.ChatAddon
-import org.qbrp.engine.chat.addons.records.Action
 import org.qbrp.engine.client.engine.chat.ClientChatAddon
 import org.qbrp.engine.client.engine.chat.system.LinearMessageProvider
 import org.qbrp.engine.client.engine.chat.system.MessageStorage

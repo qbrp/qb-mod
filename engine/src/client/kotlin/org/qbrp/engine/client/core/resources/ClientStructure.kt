@@ -1,5 +1,6 @@
 package org.qbrp.engine.client.core.resources
 
+import config.ClientConfig
 import icyllis.modernui.graphics.Image
 import org.qbrp.core.resources.structure.ImagesStructure
 import org.qbrp.engine.client.core.resources.data.ClientConfigData
@@ -37,12 +38,12 @@ class ClientStructure(path: File): Structure(path) {
     }
 
     fun setAutoLoginCode(code: String) {
-        configData.account.code = code
+        ClientConfig.accountCode = code
         save()
     }
 
     fun getAutoLoginCode(): String {
-        return configData.account.code
+        return ClientConfig.accountCode
     }
 
     fun getChatMessagesLog(requiredTotal: Int): List<ChatData.MessageDTO> {

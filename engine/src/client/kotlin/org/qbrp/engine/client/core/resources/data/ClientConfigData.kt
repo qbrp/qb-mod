@@ -6,8 +6,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 data class ClientConfigData(
-    val resources: Resources = Resources(),
-    val account: Account  = Account()
+    val resources: Resources = Resources()
 ) : Data()
 {
     override fun toFile(): String {
@@ -21,10 +20,6 @@ data class ClientConfigData(
 
         val downloadUrl: String
             get() = "http://$host:$port/$request"
-    }
-
-    class Account {
-        var code: String = "NONE"
     }
 
 }
