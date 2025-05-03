@@ -60,11 +60,11 @@ class MessageStorage {
                 client.player?.networkHandler?.sendCommand("/cb ${MessageTextTools.getTextContent(message)}")
             }
             if (getSize() > ClientConfig.chatSize) {
-                val toRemove = messages.subList(messages.size - 4, messages.size).toList()
+                val toRemove = messages.subList(0, 4).toList()
                 toRemove.forEach {
                     provider.onMessageDeleted(it.uuid, this@MessageStorage)
                 }
-                messages.subList(messages.size - 4, messages.size).clear()
+                messages.subList(0, 4).clear()
             }
         }
         if (message.handleVanilla() && message.authorName == client.player?.name?.string) {
