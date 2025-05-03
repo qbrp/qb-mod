@@ -3,9 +3,11 @@ package org.qbrp.engine.players.characters
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.mojang.datafixers.kinds.App
 import com.mongodb.client.MongoDatabase
+import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Updates
 import org.bson.conversions.Bson
 import org.qbrp.core.mc.player.Account
+import org.qbrp.core.mc.player.model.AccountUpdate
 import org.qbrp.core.mc.player.model.PlayerBehaviour
 import org.qbrp.engine.Engine
 import org.qbrp.engine.characters.model.AppearanceData
@@ -20,10 +22,15 @@ class Character(var data: CharacterData): PlayerBehaviour() {
         apply()
     }
 
-    override fun onAccountSave(account: Account, db: MongoDatabase): List<Bson> {
-        return listOf(
-            Updates.set("appliedCharacterName", data.name),
-            Updates.set("characters.$[elem].appliedLookName", getComponentOrThrow<Appearance>().look?.name)
+    override fun onAccountSave(account: Account, db: MongoDatabase): AccountUpdate {
+        return AccountUpdate(
+            updates = listOf(
+                Updates.set("appliedCharacterName", data.name),
+                Updates.set("characters.$[elem].appliedLookName", getComponentOrThrow<Appearance>().look?.name)
+            ),
+            arrayFilters = listOf(
+                Filters.eq("elem.name", account.appliedCharacterName)
+            )
         )
     }
 
@@ -34,13 +41,12 @@ class Character(var data: CharacterData): PlayerBehaviour() {
 
     fun apply() {
         val entity = player.entity
+        val commands = player.entity.server.commandManager
         try {
-            entity.server.commandManager.executeWithPrefix(
-                entity.server.commandSource, "scale reset ${player.name}"
-            )
-            player.entity.server.commandManager.executeWithPrefix(
-                entity.server.commandSource, "scale set pehkui:base ${data.scaleFactor} ${player.name}"
-            )
+            commands.executeWithPrefix(entity.server.commandSource, "scale reset ${player.name}")
+            commands.executeWithPrefix(entity.server.commandSource, "scale set pehkui:base ${data.scaleFactor} ${player.name}")
+            commands.executeWithPrefix(entity.server.commandSource, "scale set pehkui:held_item ${1/(data.scaleFactor)} ${player.name}")
+
             setDescriptionTooltip()
             getComponent<Appearance>()?.apply {
                 setModelFromAppearance(data.appearance)

@@ -16,6 +16,7 @@ import org.qbrp.core.mc.player.registration.PlayerRegistrationCallback
 import org.qbrp.engine.Engine
 import org.qbrp.engine.game.GameAPI
 import org.qbrp.system.utils.format.Format.asMiniMessage
+import kotlin.concurrent.fixedRateTimer
 
 class PlayerLifecycleManager(
     override val storage: PlayerStorage,
@@ -23,17 +24,28 @@ class PlayerLifecycleManager(
     override val fabric: PlayerSerializer
 ) : LifecycleManager<PlayerObject>(storage, db, fabric), KoinComponent {
 
-    private val scope = CoroutineScope(Dispatchers.IO)
     private val accounts = PlayerManager.accountDatabase
+
+    init {
+        startSaveTimer()
+    }
+
+    fun startSaveTimer() {
+        fixedRateTimer("qbrp/SavePlayerObjTimer", true, 0L, 1000L * 60L) {
+            storage.getAll().forEach {
+                save(it)
+            }
+        }
+    }
 
     override fun save(obj: PlayerObject) {
         super.save(obj)
         val updates = (obj.state.behaviours as List<PlayerBehaviour>)
-            .flatMap { it.onAccountSave(obj.account, accounts.db!!) } +
-                Updates.set("minecraftNicknames", obj.account.minecraftNicknames)
+            .map {
+                it.onAccountSave(obj.account, accounts.db!!)
+            } + AccountUpdate(listOf(Updates.set("minecraftNicknames", obj.account.minecraftNicknames)))
         accounts.saveAccountGameState(obj.account, updates)
     }
-
 
     fun handleConnected(player: ServerPlayerEntity, auth: String) {
         scope.launch {

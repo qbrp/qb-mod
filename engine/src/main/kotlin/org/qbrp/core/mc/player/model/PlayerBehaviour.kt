@@ -33,5 +33,5 @@ open class PlayerBehaviour: Behaviour() {
 
     open fun onMessage(sender: MessageSender, message: ChatMessage): ActionResult = ActionResult.PASS
 
-    open fun onAccountSave(account: Account, db: MongoDatabase) = emptyList<Bson>()
+    open fun onAccountSave(account: Account, db: MongoDatabase) = AccountUpdate(emptyList())
 }

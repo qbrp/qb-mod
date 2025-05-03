@@ -20,26 +20,21 @@ class AccountDatabaseService : ObjectDatabaseService(ServerResources.getConfig()
     override val dbName = "players"
     val scope = CoroutineScope(Dispatchers.IO)
 
-    fun saveAccountGameState(account: Account, updates: List<Bson>) = scope.launch(Dispatchers.IO) {
+    fun saveAccountGameState(account: Account, updates: List<AccountUpdate>) = scope.launch(Dispatchers.IO) {
         val accountUuid = account.uuid.toString()
         val filter      = Filters.eq("uuid", accountUuid)
         val collection  = db!!.getCollection("data")
-        val combined    = Updates.combine(updates)
 
-        // Проверяем, есть ли среди Bson-апдейтов обращение к $[elem]
-        val needsArrayFilter = updates.any {
-            // простая проверка по JSON-строке — достаточно для наших целей
-            it.toBsonDocument().toJson().contains("\$[elem]")
-        }
+        val bsonUpdates     = updates.flatMap { it.updates }
+        val allArrayFilters = updates.flatMap { it.arrayFilters }.distinct()
 
-        if (needsArrayFilter) {
-            // Если да — подставляем опцию с фильтром по name
-            val opts = UpdateOptions()
-                .arrayFilters(listOf(Filters.eq("elem.name", account.appliedCharacterName)))
-            collection.updateOne(filter, combined, opts)
+        val combinedUpdate = Updates.combine(bsonUpdates)
+
+        if (allArrayFilters.isNotEmpty()) {
+            val opts = UpdateOptions().arrayFilters(allArrayFilters)
+            collection.updateOne(filter, combinedUpdate, opts)
         } else {
-            // Иначе — просто обновляем без arrayFilters
-            collection.updateOne(filter, combined)
+            collection.updateOne(filter, combinedUpdate)
         }
     }
 
@@ -72,6 +67,7 @@ class AccountDatabaseService : ObjectDatabaseService(ServerResources.getConfig()
     suspend fun login(playerName: String, uuid: String): LoginResult = withContext(Dispatchers.IO) {
         get(uuid)?.let {
             if (!isNicknameAlreadyRegistered(playerName)) {
+                it.updateRegisteredNicknames(playerName)
                 LoginResult.SUCCESS
             } else {
                 LoginResult.ALREADY_LINKED
