@@ -26,8 +26,6 @@ import org.qbrp.engine.players.nicknames.NicknameCommand
 import org.qbrp.system.utils.world.getPlayersInRadius
 
 object PlayerManager: ServerModCommand, KoinComponent {
-    private lateinit var defaultSpeeds: Map<GameMode, Int>
-
     val playerStorage = PlayerStorage()
     val playerDatabase = PlayerDatabaseService().apply { connect() }
     val accountDatabase = AccountDatabaseService().apply { connect() }
@@ -38,21 +36,9 @@ object PlayerManager: ServerModCommand, KoinComponent {
         get() = playerStorage.getAll()
 
     init {
-        ConfigInitializationCallback.EVENT.register {
-            loadDefaultSpeeds()
-        }
         EngineInitializedEvent.EVENT.register {
             Engine.getAPI<GameAPI>()!!.addWorldTickTask(playerStorage)
         }
-    }
-
-    private fun loadDefaultSpeeds() {
-        defaultSpeeds = mapOf(
-            GameMode.SURVIVAL to ServerResources.getConfig().players.defaultSurvivalSpeed,
-            GameMode.CREATIVE to ServerResources.getConfig().players.defaultCreativeSpeed,
-            GameMode.SPECTATOR to ServerResources.getConfig().players.defaultSpectatorSpeed,
-            GameMode.ADVENTURE to ServerResources.getConfig().players.defaultCreativeSpeed,
-        )
     }
 
     fun loadCommand() = CommandsRepository.add(this)
@@ -61,12 +47,7 @@ object PlayerManager: ServerModCommand, KoinComponent {
     fun getPlayerSession(name: String): PlayerObject? = playerStorage.getByPlayerName(name)
     fun getPlayerSession(player: ServerPlayerEntity): PlayerObject = playerStorage.getByPlayer(player)
 
-    fun getDefaultSpeed(gameMode: GameMode): Int {
-        return defaultSpeeds[gameMode]!!
-    }
-
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
-        PlayerManagerCommand().register(dispatcher)
         NicknameCommand().register(dispatcher)
         AccountSyncCommand().register(dispatcher)
     }
