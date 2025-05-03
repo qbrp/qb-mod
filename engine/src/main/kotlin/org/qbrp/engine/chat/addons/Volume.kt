@@ -13,8 +13,6 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
-import net.minecraft.util.hit.BlockHitResult
-import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.RaycastContext
@@ -129,7 +127,7 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
                     start = next
                     dist += step
                 }
-                // если не встретили — добавляем последнюю точку
+                // если не встретили - добавляем последнюю точку
                 positions.add(start)
             }
         }
@@ -137,13 +135,13 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
         return positions
     }
 
-
+    // Не нужно. Метод весьма кривой
     fun generateSphereDirections(samples: Int): List<Vec3d> {
         val directions = mutableListOf<Vec3d>()
-        val goldenAngle = Math.PI * (3 - Math.sqrt(5.0))  // Примерно 2.39996...
+        val goldenAngle = Math.PI * (3 - Math.sqrt(5.0))
 
         for (i in 0 until samples) {
-            val y = 1 - (i.toDouble() / (samples - 1)) * 2  // от 1 до -1
+            val y = 1 - (i.toDouble() / (samples - 1)) * 2
             val radius = Math.sqrt(1 - y * y)
             val theta = goldenAngle * i
 

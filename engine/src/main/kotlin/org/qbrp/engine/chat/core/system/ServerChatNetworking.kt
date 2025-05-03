@@ -1,7 +1,6 @@
 package org.qbrp.engine.chat.core.system
 
 import net.minecraft.server.network.ServerPlayerEntity
-import org.qbrp.core.visual.VisualDataStorage
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.system.networking.messages.Message
 import org.qbrp.system.networking.messages.Messages
@@ -22,17 +21,11 @@ class ServerChatNetworking(val handler: MessageHandler): ChatNetworking() {
             true
         }).register()
         ServerReceiver<ServerReceiverContext>(START_TYPING, Signal::class, { message, context, receiver ->
-            VisualDataStorage.getPlayer(context.player.name.string)?.apply {
-                isWriting = true
-                broadcastHardUpdate()
-            }
+            // TODO
             true
         }).register()
         ServerReceiver<ServerReceiverContext>(END_TYPING, Signal::class, { message, context, receiver ->
-            VisualDataStorage.getPlayer(context.player.name.string)?.apply {
-                isWriting = false
-                broadcastHardUpdate()
-            }
+            // TODO
             true
         }).register()
     }

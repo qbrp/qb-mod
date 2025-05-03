@@ -17,7 +17,7 @@ class CharacterChatColoringModule: ChatAddon("character-chat-coloring") {
     override fun load() {
         super.load()
         MessageSendEvent.register() { sender, message, receiver, networking ->
-            val player = PlayerManager.getPlayerSession(message.getAuthorEntity() ?: return@register ActionResult.PASS)
+            val player = PlayerManager.getPlayerSession(message.authorName) ?: return@register ActionResult.PASS
             val character = player.getComponent<Character>() ?: return@register ActionResult.PASS
             val rpNameColor = character.data.colors.first()
             message.getTagsBuilder()
