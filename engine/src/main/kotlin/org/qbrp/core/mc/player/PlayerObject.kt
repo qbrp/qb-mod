@@ -30,8 +30,6 @@ class PlayerObject(
 ): McObject(entity.name.string, PlayerManager.lifecycleManager as Lifecycle<McObject>) {
 
     val database = Database(PlayerManager.accountDatabase)
-    val handler = PlayerHandler(this)
-    var speed: Int? = null
 
     override val pos: Vec3d
         get() = entity.pos
@@ -58,14 +56,6 @@ class PlayerObject(
         return ActionResult.PASS
     }
 
-    fun setSpeed(speed: Int) {
-        this.speed = speed
-    }
-
-    fun resetSpeed() {
-        this.speed = null
-    }
-
     val displayName: String
         get() = state.getComponent<NicknamesModule.NicknameManager>()?.getDisplayName()
             ?: entity.name.string
@@ -83,9 +73,7 @@ class PlayerObject(
 
         fun updateAccount(account: Account) {
             try {
-                this@PlayerObject.account = account.apply {
-                    updateRegisteredNicknames(this@PlayerObject.entity.name.string)
-                }
+                this@PlayerObject.account = account
             } catch (e: Exception) {
                 e.printStackTrace()
             }
