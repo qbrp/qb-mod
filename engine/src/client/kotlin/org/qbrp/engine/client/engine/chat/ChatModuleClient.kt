@@ -3,10 +3,8 @@ package org.qbrp.engine.client.engine.chat
 import net.fabricmc.api.EnvType
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.world.World
 import org.koin.core.component.get
 import org.koin.dsl.module
-import org.qbrp.core.visual.VisualDataStorage
 import org.qbrp.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.chat.core.messages.ChatMessageTagsBuilder
@@ -45,15 +43,8 @@ class ChatModuleClient(): QbModule("chat-client"), ClientChatAPI {
         MAX_MESSAGE_LENGTH = ServerInformation.VIEWER?.getComponentData<Int>("engine.maxMessageLength") ?: 456
     }
 
-    override fun isPlayerWriting(player: PlayerEntity): Boolean { return VisualDataStorage.getPlayer(player.name.string)?.isWriting == true }
+    override fun isPlayerWriting(player: PlayerEntity): Boolean = TODO()
 
-    override fun getWritingPlayers(world: World): List<PlayerEntity> {
-        return world.players
-            .mapNotNull { player ->
-                val data = VisualDataStorage.getPlayer(player.name.string)
-                if (data?.isWriting == true) player else null
-            }
-    }
     override fun endTyping(player: PlayerEntity) { networking.sendEndTypingStatus() }
     override fun startTyping(player: PlayerEntity) { networking.sendStartTypingStatus()}
 
