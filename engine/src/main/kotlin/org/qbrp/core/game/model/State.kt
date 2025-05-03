@@ -28,6 +28,13 @@ open class State @JsonCreator constructor(
     open var tickables = mutableListOf<Tick<*>>()
     @JsonIgnore val components: MutableMap<String, Component> = mutableMapOf()
 
+    fun putObjectAndEnableBehaviours(obj: BaseObject) {
+        putObject(obj)
+        behaviours.forEach {
+            if (this is Activateable) it.enable()
+        }
+    }
+
     fun putObject(obj: BaseObject) {
         this.obj = obj
     }
@@ -64,7 +71,7 @@ open class State @JsonCreator constructor(
     fun addComponentIfNotExist(
         component: Component,
         name: String = REGISTRY.getComponentName(component),
-        enable: Boolean = true
+        enable: Boolean = false
     ) {
         // Проверяем, нет ли уже компонента того же конкретного класса
         val exists = getComponentByName(name) != null
@@ -75,7 +82,7 @@ open class State @JsonCreator constructor(
     }
 
 
-    fun addComponent(component: Component, name: String = REGISTRY.getComponentName(component), enable: Boolean = true) {
+    fun addComponent(component: Component, name: String = REGISTRY.getComponentName(component), enable: Boolean = false) {
         components[name] = component
             .apply {
                 putState(this@State)

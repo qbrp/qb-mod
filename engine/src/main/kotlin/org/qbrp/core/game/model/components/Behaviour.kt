@@ -7,7 +7,6 @@ abstract class Behaviour : Component(), Loadable, Activateable {
     open fun onUnload() = Unit
 
     override fun load() {
-        enable()
         onLoad()
     }
     override fun unload() {
