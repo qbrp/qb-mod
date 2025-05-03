@@ -10,7 +10,7 @@ import org.qbrp.core.game.serialization.SerializeFabric
 import org.qbrp.system.database.DatabaseService
 
 open class ObjectDatabaseService(url: String, val tableName: String) : DatabaseService(url, "gameStorage") {
-    open fun <T: ObjectJsonField> saveObject(obj: T) {
+    open suspend fun <T: ObjectJsonField> saveObject(obj: T) {
         val json = SerializeFabric.MAPPER.writeValueAsString(obj)
         val document = Document.parse(json)
         val filter = Filters.eq("id", obj.id)

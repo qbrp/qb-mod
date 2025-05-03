@@ -1,5 +1,8 @@
 package org.qbrp.core.game.lifecycle
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.qbrp.core.game.database.ObjectDatabaseService
 import org.qbrp.core.game.model.objects.BaseObject
 import org.qbrp.core.game.model.storage.Storage
@@ -10,10 +13,11 @@ open class LifecycleManager<T : BaseObject>(
     protected open val db: ObjectDatabaseService,
     protected open val fabric: SerializeFabric<T, *>
 ): Lifecycle<T> {
+    protected val scope = CoroutineScope(Dispatchers.IO)
 
     open override fun onCreated(obj: T) {
         storage.add(obj)
-        obj.state.putObject(obj)
+        obj.state.putObjectAndEnableBehaviours(obj)
     }
 
     open override fun unload(obj: T) {
@@ -25,6 +29,10 @@ open class LifecycleManager<T : BaseObject>(
     }
 
     open override fun save(obj: T) {
-        if (!obj.ephemeral) db.saveObject(fabric.toJson(obj))
+        if (!obj.ephemeral) {
+            scope.launch {
+                db.saveObject(fabric.toJson(obj))
+            }
+        }
     }
 }
