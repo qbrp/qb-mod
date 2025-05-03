@@ -22,7 +22,7 @@ class AppearanceManager: KoinComponent {
                     val appearance = session.state.getComponent<Appearance>()
                     val character = session.state.getComponent<Character>()
                     if (character != null && appearance != null && appearance.description != "") {
-                        val displayName = plrObject.getComponent<NamesPerception>()?.getName(character) ?: session.displayName
+                        val displayName = plrObject.getComponent<NamesPerception>()?.getName(session) ?: session.displayName
                         val characterData = character.data
                         sendAppearanceDescription(
                             displayName,

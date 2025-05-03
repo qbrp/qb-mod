@@ -14,6 +14,9 @@ object MessageTextTools {
         }
     }
 
+    fun stripBracedContent(input: String): String =
+        input.replace(Regex("\\{[^}]*}"), "")
+
     fun getTextContent(message: ChatMessage): String {
         val text = message.getTags().getComponentData<String>("textContent")
         if (text == null) return message.getText()

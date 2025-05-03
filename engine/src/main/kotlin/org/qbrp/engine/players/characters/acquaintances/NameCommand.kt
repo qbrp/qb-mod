@@ -40,6 +40,15 @@ class NameCommand: ServerModCommand {
                     notify(ctx, getName(ctx), character)
                     1
                 }))
+        dispatcher.register(CommandManager.literal("ignorename")
+                .executes { ctx ->
+                    val player = PlayerManager.getPlayerSession(ctx.source.player ?: return@executes 0)
+                    val ignore = !player.getComponent<NamesPerception>()!!.ignore
+                    player.getComponent<NamesPerception>()!!.ignore = ignore
+                    val text = "Переименование имени ${if (ignore) "запрещено" else "разрешено"}"
+                    ctx.source.sendMessage("<green>$text".asMiniMessage())
+                    1
+                })
     }
     private fun notify(ctx: CommandContext<ServerCommandSource>, nick: String, character: Character) {
         ctx.source.sendMessage("<gray>Установлено имя ${character.data.getTextWithColorTag(nick)}".asMiniMessage())

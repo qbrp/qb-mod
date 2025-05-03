@@ -15,7 +15,7 @@ object VersionChecker {
 
     val CURRENT_VERSION: Version = Version.fromString(getVersion())
 
-    val COMPATIBLE_CLIENT_VERSION: Version = Version.fromString("Alpha-3.0.0")
+    val COMPATIBLE_CLIENT_VERSION: Version = Version.fromString(getVersion())
 
     val INCOMPATIBLE_CLIENT_VERSION: Version = Version.fromString("Alpha-2.4.2")
 

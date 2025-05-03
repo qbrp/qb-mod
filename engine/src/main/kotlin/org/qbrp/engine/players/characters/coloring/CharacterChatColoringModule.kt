@@ -28,10 +28,11 @@ class CharacterChatColoringModule: ChatAddon("character-chat-coloring") {
                 val text = MessageTextTools
                 val originalColor = parseHexToRgb(MessageFormatTools.getFormattingHex(message) ?: "#FFFFFFF")
                 val rpNameColorRgb = parseHexToRgb(rpNameColor)
-                val newColor = blendColors(originalColor, rpNameColorRgb, get<ServerConfigData>().chat.characterColoringFactor)
+                val config = get<ServerConfigData>()
+                val factor = config.chat.characterColoringFactor
+                val newColor = blendColors(originalColor, rpNameColorRgb, factor)
                 text.setTextContent(message, format.stripLeadingColor(text.getTextContent(message)))
                 text.setTextContent(message, format.setFormatting(message, "<${newColor}>"))
-                println()
             }
             ActionResult.PASS
         }
