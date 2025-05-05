@@ -1,10 +1,8 @@
 package org.qbrp.engine.players.characters
 
-import com.mojang.datafixers.kinds.App
 import org.koin.core.component.get
 import org.koin.dsl.module
 import org.qbrp.core.game.ComponentsRegistry
-import org.qbrp.core.game.prefabs.Prefab
 import org.qbrp.core.game.prefabs.PrefabField
 import org.qbrp.core.mc.player.PlayerObject
 import org.qbrp.core.mc.player.registration.PlayerRegistrationCallback
@@ -13,7 +11,6 @@ import org.qbrp.engine.Engine
 import org.qbrp.engine.players.characters.appearance.AppearanceManager
 import org.qbrp.engine.characters.ApplyCharacterCommand
 import org.qbrp.engine.characters.ApplyLookCommand
-import org.qbrp.engine.characters.model.AppearanceData
 import org.qbrp.engine.characters.model.CharacterData
 import org.qbrp.engine.chat.ChatAPI
 import org.qbrp.engine.players.characters.appearance.AppearanceNotifications
