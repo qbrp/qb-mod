@@ -22,8 +22,6 @@ object ServerResources {
     fun getConfig() = root.config
     fun reloadConfig() = root.reloadConfig()
 
-    fun getItems() = root.items
-
     fun buildResources() {
         root = ServerStructure()
 //        root.resources.bakeResourcePack()
@@ -35,10 +33,6 @@ object ServerResources {
             val plugin = addBranch("ChatEmojiPlugin")
             return plugin.open("config.yml", KreisyEmojiConfig::class.java).data as KreisyEmojiConfig
         }
-    }
-
-    fun buildContent() {
-        root.items.openDirectories()
     }
 
     fun parseJson(file: File): JsonObject? =

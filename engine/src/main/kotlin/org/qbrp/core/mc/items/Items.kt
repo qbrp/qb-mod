@@ -1,8 +1,8 @@
 package org.qbrp.core.mc.items
 
 import org.qbrp.core.mc.items.groups.ItemGroups
-import org.qbrp.engine.items.model.QbItem
 import org.qbrp.core.resources.structure.integrated.Parents
+import org.qbrp.engine.items.QbItem
 import org.qbrp.system.utils.log.Loggers
 
 class Items() {

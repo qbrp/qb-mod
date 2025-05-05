@@ -22,8 +22,6 @@ class ServerStructure: Structure(File("qbrp")) {
     var config = openConfig()
 
     val records = addBranch("records")
-    val items = DirectoryStorage(this)
-    val blocks = addStructure("blocks")
     val resources = Resources(this, config)
 
     val idGen = open("idgen", IdGenData::class.java).apply { autoInitialization = true }
@@ -71,9 +69,5 @@ class ServerStructure: Structure(File("qbrp")) {
             pack.bake(File(config.http.resourcePack))
         }
 
-    }
-
-    fun printData() {
-        logger.log("<<Предметы:>> ${items.contentRegistry.size}")
     }
 }
