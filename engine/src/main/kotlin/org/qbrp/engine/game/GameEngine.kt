@@ -1,26 +1,28 @@
 package org.qbrp.engine.game
 
-import com.mojang.datafixers.kinds.App
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
+import jdk.jfr.internal.LongMap
 import net.minecraft.server.world.ServerWorld
 import org.koin.core.component.get
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.qbrp.core.EngineInitializedEvent
-import org.qbrp.core.ServerCore
+import org.qbrp.core.assets.prefabs.Prefab
 import org.qbrp.core.game.ComponentsRegistry
 import org.qbrp.core.game.database.ObjectDatabaseService
 import org.qbrp.core.game.lifecycle.LifecycleManager
+import org.qbrp.core.game.model.Stateful
 import org.qbrp.core.game.model.components.test.TestInvoke
 import org.qbrp.core.game.model.components.test.TestPrint
+import org.qbrp.core.game.model.objects.BaseEntity
 import org.qbrp.core.game.model.objects.BaseObject
 import org.qbrp.core.game.model.objects.TestObject
 import org.qbrp.core.game.model.storage.GlobalStorage
 import org.qbrp.core.game.model.storage.Storage
 import org.qbrp.core.game.model.tick.Tick
-import org.qbrp.core.game.prefabs.Prefab
+import org.qbrp.core.game.prefabs.RuntimePrefab
 import org.qbrp.core.game.prefabs.PrefabField
 import org.qbrp.core.game.prefabs.RuntimePrefabStorage
+import org.qbrp.core.game.serialization.ObjectJsonField
 import org.qbrp.core.mc.player.model.PlayerPrefab
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
@@ -28,7 +30,6 @@ import org.qbrp.engine.game.loop.GameTicker
 import org.qbrp.engine.players.characters.appearance.Appearance
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.GameModule
-import org.qbrp.system.modules.ModuleAPI
 import org.qbrp.system.modules.QbModule
 
 @Autoload(10)
@@ -71,16 +72,10 @@ class GameEngine : QbModule("game-engine"), GameAPI {
                 connect()
             }
         }
-//        single<LifecycleManager<BaseObject>>(qualifier = named("baseLifecycleManager")) {
-//            LifecycleManager(
-//                get<Storage<Long, BaseObject>>(),
-//                get<ObjectDatabaseService>(qualifier = named("baseDatabaseService"))
-//            )
-//        }
         single { GameTicker() }
     }
 
-    override fun getPlayerPrefab(): Prefab.Tag {
+    override fun getPlayerPrefab(): RuntimePrefab.Tag {
         return get<RuntimePrefabStorage>().getPrefabTag("load", "player")!!
     }
 
@@ -91,4 +86,14 @@ class GameEngine : QbModule("game-engine"), GameAPI {
     override fun addWorldTickTask(tickable: Tick<ServerWorld>) {
         get<GameTicker>().addWorldTickTask(tickable)
     }
+
+    override fun <T : BaseObject> instantiate(
+        obj: T,
+        prefab: Prefab.Tag
+    ): T {
+        prefab.mergeAndPut(obj as Stateful)
+        obj.lifecycle.onCreated(obj)
+        return obj
+    }
+
 }
