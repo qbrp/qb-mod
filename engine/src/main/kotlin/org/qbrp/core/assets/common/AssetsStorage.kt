@@ -1,0 +1,17 @@
+package org.qbrp.core.assets.common
+
+class AssetsStorage {
+    private val assets: MutableMap<String, Asset> = mutableMapOf()
+
+    fun addAsset(key: String, asset: Asset) {
+        assets[key] = asset
+    }
+
+    fun removeAsset(name: String) {
+        assets.remove(name)
+    }
+
+    fun <T : Asset> getAsset(name: String): T? {
+        return assets[name] as? T
+    }
+}
