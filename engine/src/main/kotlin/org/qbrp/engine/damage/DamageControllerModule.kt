@@ -23,12 +23,12 @@ class DamageControllerModule: QbModule("damage-controller"), DamageControllerAPI
 
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         dispatcher.register(CommandManager.literal("ignoredamage")
-            .requires { it.player?.hasPermission("damage-controller.ignoredamage") ?: false }
-            .then(argument("enabled", BoolArgumentType.bool()))
-            .executes { ctx ->
-                enabled = BoolArgumentType.getBool(ctx, "enabled")
-                1
-            }
+            .requires { it.player?.hasPermission("damage-controller.ignoredamage") == true }
+            .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                .executes { ctx ->
+                    enabled = BoolArgumentType.getBool(ctx, "enabled")
+                    1
+                })
         )
     }
 }
