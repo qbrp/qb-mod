@@ -9,9 +9,9 @@ import org.qbrp.core.game.model.storage.Storage
 import org.qbrp.core.game.serialization.SerializeFabric
 
 open class LifecycleManager<T : BaseObject>(
-    protected open val storage: Storage<Long, T>,
-    protected open val db: ObjectDatabaseService,
-    protected open val fabric: SerializeFabric<T, *>
+    open val storage: Storage<Long, T>,
+    open val db: ObjectDatabaseService,
+    open val fabric: SerializeFabric<T, *>
 ): Lifecycle<T> {
     protected val scope = CoroutineScope(Dispatchers.IO)
 
