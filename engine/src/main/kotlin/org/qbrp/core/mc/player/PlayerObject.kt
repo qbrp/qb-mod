@@ -1,6 +1,7 @@
 package org.qbrp.core.mc.player
 
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.stat.Stat
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.Vec3d
@@ -26,7 +27,7 @@ import org.qbrp.system.utils.format.Format.asMiniMessage
 class PlayerObject(
     val entity: ServerPlayerEntity,
     var account: Account,
-    override var state: State = State()
+    override val state: State = State()
 ): McObject(entity.name.string, PlayerManager.lifecycleManager as Lifecycle<McObject>) {
 
     val database = Database(PlayerManager.accountDatabase)
