@@ -15,7 +15,12 @@ import org.qbrp.system.networking.messaging.NetworkManager
 abstract class QbModule(private val name: String) : KoinComponent {
     var priority: Int = 5
     var serverState: Boolean = true
+    var isRuntimeStateChangeEnabled = false
     private val dependencies: MutableList<() -> Boolean> = mutableListOf()
+
+    protected fun enableRuntimeStateChange() {
+        isRuntimeStateChangeEnabled = true
+    }
 
     protected fun dependsOn(condition: () -> Boolean) {
         dependencies.add(condition)
@@ -31,8 +36,16 @@ abstract class QbModule(private val name: String) : KoinComponent {
     open fun getAPI(): ModuleAPI? = null
     open fun load() = Unit
 
-    open fun onDisable() = Unit
-    open fun onEnable() = Unit
+    protected open fun onDisable() = Unit
+    protected open fun onEnable() = Unit
+
+    fun enable() {
+        onEnable()
+    }
+
+    fun disable() {
+        onDisable()
+    }
 
     open fun isEnabled(): Boolean {
         val isNotDisabled = if (FabricLoader.getInstance().environmentType != EnvType.CLIENT) !ServerResources.getConfig().disabledModules.contains(getName()) else true

@@ -13,7 +13,6 @@ import org.qbrp.engine.characters.ApplyCharacterCommand
 import org.qbrp.engine.characters.ApplyLookCommand
 import org.qbrp.engine.characters.model.CharacterData
 import org.qbrp.engine.chat.ChatAPI
-import org.qbrp.engine.players.characters.appearance.AppearanceNotifications
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.GameModule
 
@@ -37,8 +36,6 @@ class CharactersModule: GameModule("characters") {
 
     override fun registerComponents(registry: ComponentsRegistry) {
         registry.register(Character::class.java)
-        registry.register(AppearanceNotifications::class.java)
-        gameAPI.getPlayerPrefab().components += PrefabField { AppearanceNotifications() }
     }
 
     override fun getKoinModule() = module {

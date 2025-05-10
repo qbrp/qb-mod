@@ -33,7 +33,6 @@ class TimeModule(): QbModule("time"), TimeAPI {
         single { PeriodManager(get(), get()) }
     }
 
-
     override fun getAPI(): TimeAPI = this
 
     override fun load() {
@@ -45,6 +44,15 @@ class TimeModule(): QbModule("time"), TimeAPI {
         ServerTickEvents.END_SERVER_TICK.register {
             if (enabled) periodManager.handleTick()
         }
+        enableRuntimeStateChange()
+    }
+
+    override fun onEnable() {
+        setCycleEnabled(true)
+    }
+
+    override fun onDisable() {
+        setCycleEnabled(false)
     }
 
     override fun getRpTime() = periodManager.getRpTime()

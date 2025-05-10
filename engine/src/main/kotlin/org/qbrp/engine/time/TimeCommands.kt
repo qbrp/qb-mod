@@ -42,15 +42,6 @@ class TimeCommands(private val api: TimeAPI): ServerModCommand {
     }
 
     @SubCommand
-    class Enabled(@Arg val state: Boolean): CallbackCommand() {
-        @Execute(operatorLevel = 4)
-        fun execute(ctx: CommandContext<ServerCommandSource>, deps: Deps) {
-            (deps.get("time") as TimeAPI).setCycleEnabled(state)
-            callback(ctx, "Модуль времени ${if (!state) "выключен" else "включен"}")
-        }
-    }
-
-    @SubCommand
     class Info: CallbackCommand() {
         @Execute(operatorLevel = 4)
         fun execute(ctx: CommandContext<ServerCommandSource>, deps: Deps) {

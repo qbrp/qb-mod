@@ -28,6 +28,10 @@ class Engine: KoinComponent {
             return moduleManager.isModuleEnabled(name)
         }
 
+        inline fun <reified T : QbModule> isModuleAvailable(): Boolean {
+            return moduleManager.isModuleAvailable<T>()
+        }
+
         val globalLogger = Loggers.get("engine")
     }
 

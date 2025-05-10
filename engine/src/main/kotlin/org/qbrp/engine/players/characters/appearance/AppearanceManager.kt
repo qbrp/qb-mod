@@ -39,7 +39,7 @@ class AppearanceManager: KoinComponent {
                             )
                         }
                         PlayerManager.getPlayerSession(player).
-                            state.getComponent<AppearanceNotifications>()?.read(session)
+                            state.getComponent<AppearanceNotificationsModule.AppearanceNotifications>()?.read(session)
                     }
                 }
             }
