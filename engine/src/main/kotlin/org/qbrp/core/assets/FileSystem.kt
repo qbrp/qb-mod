@@ -2,8 +2,10 @@ package org.qbrp.core.assets
 
 import org.qbrp.core.assets.common.Key
 import java.io.File
+import java.nio.file.Path
 
 object FileSystem {
+    val ASSETS = getOrCreate("qbrp/assets", true)
     val PREFABS = getOrCreate("qbrp/assets/prefabs", true)
 
     fun ensureFileExists(path: String, defaultContent: String = ""): File {
@@ -20,9 +22,11 @@ object FileSystem {
         return file
     }
 
-    fun getOrCreate(path: String, isDirectory: Boolean): File {
-        val file = File(path)
+    fun getOrCreate(path: String, isDirectory: Boolean = false): File {
+        return getOrCreate(File(path), isDirectory)
+    }
 
+    fun getOrCreate(file: File, isDirectory: Boolean = false): File {
         return if (isDirectory) {
             if (!file.exists()) {
                 file.mkdirs()
@@ -35,5 +39,9 @@ object FileSystem {
             }
             file
         }
+    }
+
+    fun getOrCreate(path: Path, isDirectory: Boolean): File {
+        return getOrCreate(path.toFile(), isDirectory)
     }
 }
