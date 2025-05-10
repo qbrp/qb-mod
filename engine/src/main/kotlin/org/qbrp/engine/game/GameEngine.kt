@@ -11,6 +11,8 @@ import org.qbrp.core.game.ComponentsRegistry
 import org.qbrp.core.game.database.ObjectDatabaseService
 import org.qbrp.core.game.lifecycle.LifecycleManager
 import org.qbrp.core.game.model.Stateful
+import org.qbrp.core.game.model.components.Behaviour
+import org.qbrp.core.game.model.components.Component
 import org.qbrp.core.game.model.components.test.TestInvoke
 import org.qbrp.core.game.model.components.test.TestPrint
 import org.qbrp.core.game.model.objects.BaseEntity
@@ -96,4 +98,21 @@ class GameEngine : QbModule("game-engine"), GameAPI {
         return obj
     }
 
+    override fun enableComponent(
+        component: Component,
+        storage: Storage<Long, *>
+    ) {
+        storage.getAll().forEach {
+            (it.state.getComponentByName(get<ComponentsRegistry>().getComponentName(component)) as? Behaviour)?.enable()
+        }
+    }
+
+    override fun disableComponent(
+        component: Component,
+        storage: Storage<Long, *>
+    ) {
+        storage.getAll().forEach {
+            (it.state.getComponentByName(get<ComponentsRegistry>().getComponentName(component)) as? Behaviour)?.disable()
+        }
+    }
 }

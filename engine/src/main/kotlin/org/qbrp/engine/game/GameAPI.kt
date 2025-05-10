@@ -5,8 +5,10 @@ import org.qbrp.core.assets.prefabs.Prefab
 import org.qbrp.core.game.lifecycle.Lifecycle
 import org.qbrp.core.game.lifecycle.LifecycleManager
 import org.qbrp.core.game.model.Stateful
+import org.qbrp.core.game.model.components.Component
 import org.qbrp.core.game.model.objects.BaseEntity
 import org.qbrp.core.game.model.objects.BaseObject
+import org.qbrp.core.game.model.storage.Storage
 import org.qbrp.core.game.model.tick.Tick
 import org.qbrp.core.game.prefabs.RuntimePrefab
 import org.qbrp.core.game.serialization.ObjectJsonField
@@ -17,4 +19,6 @@ interface GameAPI: ModuleAPI {
     fun addTickTask(tickable: Tick<Unit>)
     fun addWorldTickTask(tickable: Tick<ServerWorld>)
     fun <T: BaseObject> instantiate(obj: T, prefab: Prefab.Tag): T
+    fun enableComponent(component: Component, storage: Storage<Long, *>)
+    fun disableComponent(component: Component, storage: Storage<Long, *>)
 }
