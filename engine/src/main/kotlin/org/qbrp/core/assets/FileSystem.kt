@@ -1,12 +1,19 @@
 package org.qbrp.core.assets
 
-import org.qbrp.core.assets.common.Key
+import org.qbrp.system.modules.ModuleFileSystemAPI
+import org.qbrp.system.modules.QbModule
 import java.io.File
+import java.io.FileOutputStream
 import java.nio.file.Path
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
-object FileSystem {
+object FileSystem: ModuleFileSystemAPI {
     val ASSETS = getOrCreate("qbrp/assets", true)
     val PREFABS = getOrCreate("qbrp/assets/prefabs", true)
+    val MODULES = getOrCreate("qbrp/modules", true)
+
+    val CLIENT_SERVER_PACKS = getOrCreate("qbrp-client/serverpacks", true)
 
     fun ensureFileExists(path: String, defaultContent: String = ""): File {
         val file = File(path)
@@ -20,6 +27,17 @@ object FileSystem {
             file.writeText(defaultContent)
         }
         return file
+    }
+
+    fun zipDirectoryTo(outputZip: File, baseDir: Path) {
+        ZipOutputStream(FileOutputStream(outputZip)).use { zos ->
+            baseDir.toFile().walkTopDown().filter { it.isFile }.forEach { file ->
+                val relPath = baseDir.relativize(file.toPath()).toString().replace(File.separatorChar, '/')
+                zos.putNextEntry(ZipEntry(relPath))
+                file.inputStream().use { it.copyTo(zos) }
+                zos.closeEntry()
+            }
+        }
     }
 
     fun getOrCreate(path: String, isDirectory: Boolean = false): File {
@@ -43,5 +61,17 @@ object FileSystem {
 
     fun getOrCreate(path: Path, isDirectory: Boolean): File {
         return getOrCreate(path.toFile(), isDirectory)
+    }
+
+    override fun createModuleFile(name: String) {
+        getOrCreate(MODULES.resolve(name), true)
+    }
+
+    override fun getModuleFile(name: String): File {
+        return MODULES.resolve(name)
+    }
+
+    override fun getModuleFile(module: QbModule): File {
+        return getModuleFile(module.getName())
     }
 }
