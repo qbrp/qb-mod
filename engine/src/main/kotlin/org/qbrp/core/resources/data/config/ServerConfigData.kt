@@ -15,7 +15,6 @@ data class ServerConfigData(
     val databases: Databases = Databases(),
     val music: Music = Music(),
     val chat: Chat = Chat(),
-    val time: Time = Time(),
     val players: Players = Players(),
     val spectators: Spectators = Spectators()
 ) : YamlData() {
@@ -81,8 +80,6 @@ data class ServerConfigData(
 
     data class HTTP(
         val port: Int = 25008,
-        @JsonProperty("resource_pack_path")
-        val resourcePack: String = "qbrp/resources/resourcepack.zip"
     )
 
     data class Resources(
@@ -108,14 +105,6 @@ data class ServerConfigData(
         val groups: String = "chatGroups")
 
     data class Music(val priorities: List<String> = listOf())
-
-    data class Time(
-        val periods: List<Period> = listOf(),
-        val formatDo: String = "&6&l{time}",
-        val doFrequency: Int = 2,
-        val sendNotificationsOnNewPeriod: Boolean = true,
-        val rpTimeOffset: Int = 0
-    )
 
     companion object {
         fun fromFile(file: File): ServerConfigData {

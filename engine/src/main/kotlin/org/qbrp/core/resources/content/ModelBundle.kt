@@ -17,33 +17,9 @@ class ModelBundle(
 ) {
     val customModelData = PackContent.genCustomModelData()
 
-    val textures = loadTextures(model, directory.parent.toString())
+    val textures: List<String> = TODO()
     val modelUnit = packStructure.addModel(model).apply {
         (data as ModelData).processTextures(textures)
         save()
-    }
-
-    init {
-        packStructure.itemTypes.children.forEach { itemType ->
-            val file = itemType as TextUnit
-            val data = file.data as PredicatesData
-            data.addPredicate(
-                modelUnit.pathString().getRelative("models").pathToJsonFormat().removeExtensions(), customModelData
-            )
-        }
-    }
-
-    fun loadTextures(model: ModelData, modelPath: String): List<String> {
-        return model.textures.values.map { texture ->
-            val textureUnit = packStructure.addTexture(
-                Paths.get(
-                    ServerResources.getRootBranch().resources.itemResource.pathString(),
-                    texture.replace(":", "/")
-                        .replace("./", "$modelPath/")
-                        .replace("resources", "") + ".png"
-                )
-            )
-            "qbrp:" + textureUnit.path.toString().getRelative("textures").pathToJsonFormat().removeExtensions()
-        }
     }
 }
