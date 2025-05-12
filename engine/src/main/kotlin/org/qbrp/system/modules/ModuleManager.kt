@@ -5,6 +5,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.loadKoinModules
 import org.qbrp.core.ServerCore
+import org.qbrp.core.assets.FileSystem
 import org.qbrp.system.networking.messaging.NetworkManager
 import org.qbrp.system.utils.log.Loggers
 import org.reflections.Reflections
@@ -90,6 +91,7 @@ open class ModuleManager: KoinComponent {
                 val instance = clazz.getDeclaredConstructor().newInstance() as QbModule
 
                 if (instance.isEnabled()) {
+                    if(instance.createFile) FileSystem.createModuleFile(instance.getName())
                     logger.success("Загружен ${instance.getName()}")
                 } else {
                     ServerCore.informationMessage.addWarnComponent("Модуль ${instance.getName()} отключен.")

@@ -10,29 +10,38 @@ import org.qbrp.engine.Engine
 import org.qbrp.system.modules.QbModule
 import org.qbrp.system.utils.format.Format.asMiniMessage
 
-class StateCommand: ServerModCommand {
+class ModuleCommand: ServerModCommand {
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         dispatcher.register(CommandManager.literal("module")
             .then(CommandManager.argument("name", StringArgumentType.word())
             .suggests(ModuleSuggestionProvider())
-                .then(CommandManager.literal("disable")
+                .then(CommandManager.argument("script", StringArgumentType.word())
+                    .suggests(ModuleScriptsSuggestionProvider())
                     .executes() { ctx ->
-                        if (checkRuntimeStateChanging(ctx)) {
-                            getModule(ctx).disable()
-                            ctx.source.sendMessage("<green>Модуль ${getModuleName(ctx)} отключен".asMiniMessage())
-                        }
-                        1
-                    })
-                .then(CommandManager.literal("enable")
-                    .executes() { ctx ->
-                        if (checkRuntimeStateChanging(ctx)) {
-                            getModule(ctx).enable()
-                            ctx.source.sendMessage("<green>Модуль ${getModuleName(ctx)} включен".asMiniMessage())
+                        val script = getScript(ctx)
+                        if (script == "disable") {
+                            if (checkRuntimeStateChanging(ctx)) {
+                                getModule(ctx).disable()
+                                ctx.source.sendMessage("<green>Модуль ${getModuleName(ctx)} отключен".asMiniMessage())
+                            }
+                        } else if (script == "enable") {
+                            if (checkRuntimeStateChanging(ctx)) {
+                                getModule(ctx).enable()
+                                ctx.source.sendMessage("<green>Модуль ${getModuleName(ctx)} включен".asMiniMessage())
+                            }
+                        } else {
+                            getModule(ctx).runScript(script).also {
+                                ctx.source.sendMessage(it.asMiniMessage())
+                            }
                         }
                         1
                     })
             )
         )
+    }
+
+    private fun getScript(ctx: CommandContext<ServerCommandSource>): String {
+        return StringArgumentType.getString(ctx, "script")
     }
 
     private fun checkRuntimeStateChanging(ctx: CommandContext<ServerCommandSource>): Boolean {
