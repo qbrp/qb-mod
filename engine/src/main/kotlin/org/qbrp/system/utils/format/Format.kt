@@ -161,7 +161,7 @@ object Format {
         return stripAllFormatting(this)
     }
 
-    @Deprecated("Использовать .miniMessage")
+    @Deprecated("Использовать .asMiniMessage")
     fun String.formatMinecraft(): Text {
         return Format.format(this)
     }
