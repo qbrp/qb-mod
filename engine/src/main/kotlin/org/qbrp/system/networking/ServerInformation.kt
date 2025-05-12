@@ -1,15 +1,14 @@
 package org.qbrp.system.networking
 
 import net.minecraft.server.network.ServerPlayerEntity
-import org.qbrp.core.ServerCore
-import org.qbrp.system.networking.messages.Message
-import org.qbrp.system.networking.messages.Messages.SERVER_INFORMATION
 import org.qbrp.system.networking.messages.components.readonly.ClusterViewer
-import org.qbrp.system.networking.messaging.NetworkManager
 
 object ServerInformation {
     val COMPOSER = ServerInformationComposer()
     var VIEWER: ClusterViewer? = null
+    val DOWNLOAD_PORT: Int?
+        get() = VIEWER?.getComponentData<Int>("engine.web.download_port")
+
 
     fun send() = COMPOSER.send()
     fun send(player: ServerPlayerEntity) = COMPOSER.send(player)
