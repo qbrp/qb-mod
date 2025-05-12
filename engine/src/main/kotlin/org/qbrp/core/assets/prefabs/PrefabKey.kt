@@ -1,6 +1,6 @@
 package org.qbrp.core.assets.prefabs
 
-import org.qbrp.core.assets.common.Key
+import org.qbrp.core.assets.common.AssetKey
 
-open class PrefabKey(val category: String, val name: String): Key("prefabs/${category}/$name") {
+open class PrefabKey(val category: String, val name: String): AssetKey("prefabs/${category}/$name") {
 }
