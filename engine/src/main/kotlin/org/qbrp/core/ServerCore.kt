@@ -17,7 +17,6 @@ import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.engine.Engine
 import org.qbrp.system.networking.ServerInformation
-import org.qbrp.system.networking.http.WebServer
 import org.qbrp.system.utils.log.InformationMessage
 import org.qbrp.view.View
 
