@@ -1,13 +1,14 @@
 package org.qbrp.core.assets.common.files
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.qbrp.core.assets.common.Asset
-import org.qbrp.core.assets.common.AssetKey
 import org.qbrp.core.assets.common.Key
-import org.qbrp.core.game.serialization.GameMapper
 import java.io.File
 
-class JsonFileReference<T : Asset>(override val key: Key, private val clazz: Class<T>) : FileReference<T> {
-    val path = key.getId() + ".json"
+class YamlFileReference<T : Asset>(override val key: Key, private val clazz: Class<T>) : FileReference<T> {
+    val path = key.getId() + ".yml"
 
     override fun exists(): Boolean {
         val file = File(path)
@@ -33,6 +34,6 @@ class JsonFileReference<T : Asset>(override val key: Key, private val clazz: Cla
     }
 
     companion object {
-        val MAPPER = GameMapper
+        val MAPPER = ObjectMapper(YAMLFactory()).apply { registerKotlinModule() }
     }
 }

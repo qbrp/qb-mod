@@ -1,14 +1,14 @@
 package org.qbrp.core.assets.prefabs
 
 import org.qbrp.core.assets.FileSystem
-import org.qbrp.core.assets.ServerAssets
+import org.qbrp.core.assets.Assets
 import org.qbrp.core.assets.common.files.JsonFileReference
 
 object Prefabs: PrefabsAPI {
     val importer = PrefabImporter()
 
     override fun <T : Prefab> getByKey(key: PrefabKey): T? {
-        return (ServerAssets.getByKey<Prefab>(key) ?: importer.loadPrefab(key)) as T?
+        return (Assets.getByKey<Prefab>(key) ?: importer.loadPrefab(key)) as T?
     }
 
     fun registerPrefabCategory(name: String) {
