@@ -15,6 +15,9 @@ import org.qbrp.core.mc.player.registration.LoginResult
 import org.qbrp.core.mc.player.registration.PlayerRegistrationCallback
 import org.qbrp.engine.Engine
 import org.qbrp.engine.game.GameAPI
+import org.qbrp.system.networking.messages.Message
+import org.qbrp.system.networking.messages.Messages
+import org.qbrp.system.networking.messages.types.Signal
 import org.qbrp.system.utils.format.Format.asMiniMessage
 import kotlin.concurrent.fixedRateTimer
 
@@ -28,6 +31,12 @@ class PlayerLifecycleManager(
 
     init {
         startSaveTimer()
+    }
+
+    override fun onCreated(obj: PlayerObject) {
+        super.onCreated(obj)
+        PlayerRegistrationCallback.EVENT.invoker().onRegister(obj, PlayerManager)
+        obj.sendNetworkMessage(Message(Messages.AUTH, Signal()))
     }
 
     fun startSaveTimer() {
@@ -64,7 +73,6 @@ class PlayerLifecycleManager(
                         prefab.put(playerObject)
                         player.server.execute() {
                             onCreated(playerObject)
-                            PlayerRegistrationCallback.EVENT.invoker().onRegister(playerObject, PlayerManager)
                         }
                     }
                     LoginResult.NOT_FOUND -> {

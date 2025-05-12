@@ -48,6 +48,10 @@ class PlayerObject(
         }
     }
 
+    fun sendNetworkMessage(message: Message) {
+        NetworkManager.sendMessage(entity, message)
+    }
+
     fun onMessageSend(sender: MessageSender, message: ChatMessage): ActionResult {
         state.behaviours.forEach {
             it as PlayerBehaviour
