@@ -17,7 +17,7 @@ object ClientReceivers {
 
     fun register() {
         ClientReceiver<ClientReceiverContext>(Messages.AUTH, StringContent::class) { message, context, receiver ->
-            ClientResources.root.setAutoLoginCode(message.getContent())
+            ClientAuthEvent.EVENT.invoker().onAuth(context.handler)
             true
         }.register()
         ClientReceiver<ClientReceiverContext>("registration_request", Signal::class) { message, context, receiver ->

@@ -1,8 +1,12 @@
 package org.qbrp.engine.client.core.events
 
+import dev.felnull.specialmodelloader.api.SpecialModelLoaderAPI
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.util.ModelIdentifier
+import net.minecraft.util.Identifier
 import org.qbrp.engine.client.EngineClient
 import org.qbrp.engine.client.system.networking.ClientNetworkManager
 import org.qbrp.system.VersionChecker
