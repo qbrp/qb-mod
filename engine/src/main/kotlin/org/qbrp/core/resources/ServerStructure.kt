@@ -22,8 +22,6 @@ class ServerStructure: Structure(File("qbrp")) {
     var config = openConfig()
 
     val records = addBranch("records")
-    val resources = Resources(this, config)
-
     val idGen = open("idgen", IdGenData::class.java).apply { autoInitialization = true }
     val youtubeToken = open("token.youtube-token", StringData::class.java)
 
@@ -66,7 +64,7 @@ class ServerStructure: Structure(File("qbrp")) {
                     } // Парсим все модельки и делаем из них ModelBundle
 
             pack.structure.mod.pasteNonStructured(packOverride.path) // Добавляем overrides
-            pack.bake(File(config.http.resourcePack))
+            //pack.bake(File(config.http.resourcePack))
         }
 
     }
