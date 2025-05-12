@@ -14,12 +14,9 @@ data class ClientConfigData(
     }
 
     class Resources {
-        val host: String = "imperialhell.org:25002"
+        val host: String = "imperialhell.org"
         val port: Int = 25008
         val request: String = "resourcepack.zip"
-
-        val downloadUrl: String
-            get() = "http://$host:$port/$request"
     }
 
 }

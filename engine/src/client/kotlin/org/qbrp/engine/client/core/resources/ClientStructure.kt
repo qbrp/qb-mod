@@ -37,11 +37,6 @@ class ClientStructure(path: File): Structure(path) {
         return (mainMenuImages.content(Key("image$index")) as TextureUnit).createMuiImage()
     }
 
-    fun setAutoLoginCode(code: String) {
-        ClientConfig.accountCode = code
-        save()
-    }
-
     fun getAutoLoginCode(): String {
         return ClientConfig.accountCode
     }
