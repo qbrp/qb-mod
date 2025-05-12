@@ -5,6 +5,8 @@ import org.koin.core.component.get
 import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
+import org.qbrp.engine.time.config.PeriodsConfig
+import org.qbrp.engine.time.config.TimeConfig
 import org.qbrp.system.utils.log.Loggers
 import kotlin.math.round
 
@@ -13,17 +15,8 @@ class PeriodManager(
     private val notifications: TimeNotifications,
 ): KoinComponent {
     private val logger = Loggers.get("time")
-    private var config: ServerConfigData.Time = get<ServerConfigData>().time
-
-    init {
-        ConfigInitializationCallback.EVENT.register { config ->
-            this.config = config.time
-            this.periods = this.config.periods
-            setRpTime(getRpTime())
-        }
-    }
-
-    private var periods: List<Period> = config.periods
+    var config: TimeConfig = get()
+    var periods: List<Period> = get<PeriodsConfig>().periods
     private var currentPeriodIndex = 0
     private val completedPeriods: MutableList<Period> = mutableListOf()
 

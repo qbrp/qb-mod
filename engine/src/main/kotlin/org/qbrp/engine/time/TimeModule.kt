@@ -7,6 +7,8 @@ import org.qbrp.core.mc.registry.CommandsRepository
 import org.qbrp.engine.Engine
 import org.qbrp.engine.chat.addons.BroadcasterAPI
 import org.qbrp.engine.chat.addons.groups.ChatGroupsAPI
+import org.qbrp.engine.time.config.PeriodsConfig
+import org.qbrp.engine.time.config.TimeConfig
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.QbModule
 
@@ -25,9 +27,12 @@ class TimeModule(): QbModule("time"), TimeAPI {
     init {
         dependsOn { Engine.isApiAvailable<BroadcasterAPI>() }
         dependsOn { Engine.isApiAvailable<ChatGroupsAPI>() }
+        createModuleFileOnInit()
     }
 
     override fun getKoinModule() = module {
+        single { createConfig(TimeConfig()) }
+        single { createConfig(PeriodsConfig()) }
         single { WorldTimeManager(get()) }
         single { TimeNotifications() }
         single { PeriodManager(get(), get()) }
@@ -44,6 +49,13 @@ class TimeModule(): QbModule("time"), TimeAPI {
         ServerTickEvents.END_SERVER_TICK.register {
             if (enabled) periodManager.handleTick()
         }
+
+        onConfigReloadScript {
+            periodManager.config = requireConfig()
+            periodManager.periods = requireConfig<PeriodsConfig>().periods
+            get<TimeNotifications>().config = requireConfig<TimeConfig>()
+        }
+
         enableRuntimeStateChange()
     }
 
