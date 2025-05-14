@@ -32,8 +32,8 @@ class PrivateMessages: ChatAddon("pms"), ServerModCommand {
         dependsOn { Engine.isApiAvailable<ChatGroupsAPI>() }
     }
 
-    override fun load() {
-        super.load()
+    override fun onLoad() {
+        super.onLoad()
         CommandsRepository.add(this)
         ConfigInitializationCallback.EVENT.register() {
             Engine.getAPI<ChatGroupsAPI>()!!.addGroup(get<PmChatGroup>())

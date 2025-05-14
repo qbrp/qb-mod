@@ -9,7 +9,7 @@ abstract class ChatAddon(name: String) : QbModule("chat-addon-${name}") {
         dependsOn { Engine.isApiAvailable<ChatAPI>() }
     }
 
-    override fun load() {
+    override fun onLoad() {
         chatAPI = Engine.moduleManager.getAPI<ChatAPI>()!!
         chatAPI.loadAddon(this)
     }

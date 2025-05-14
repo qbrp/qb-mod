@@ -5,7 +5,7 @@ import org.qbrp.core.game.model.components.methods.InvokeReference
 import org.qbrp.core.game.model.components.test.TestInvoke
 import org.qbrp.core.game.model.components.test.TestPrint
 
-class TestObject(name: String, override val lifecycle: Lifecycle<BaseObject>): BaseObject(name, lifecycle = lifecycle) {
+class TestObject(override val lifecycle: Lifecycle<BaseObject>): BaseObject(lifecycle = lifecycle) {
 
     init {
         state.addComponent(TestPrint())

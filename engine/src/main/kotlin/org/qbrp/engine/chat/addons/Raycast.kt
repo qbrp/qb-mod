@@ -9,7 +9,7 @@ import org.qbrp.system.modules.LoadPriority
 @Autoload(LoadPriority.ADDON)
 class Raycast: ChatAddon("raycast") {
 
-    override fun load() {
+    override fun onLoad() {
         MessageSendEvent.register() { sender, message, receiver, networking ->
             if (message.getTags().getComponentData<Boolean>("raycast") == true) {
                 if (message.getAuthorEntity()?.canSee(receiver) != true) {

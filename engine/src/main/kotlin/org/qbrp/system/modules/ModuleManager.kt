@@ -6,10 +6,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.context.loadKoinModules
 import org.qbrp.core.ServerCore
 import org.qbrp.core.assets.FileSystem
-import org.qbrp.system.networking.messaging.NetworkManager
 import org.qbrp.system.utils.log.Loggers
 import org.reflections.Reflections
-import kotlin.text.count
 
 open class ModuleManager: KoinComponent {
     val modules: MutableList<QbModule> = ArrayList()
@@ -27,7 +25,7 @@ open class ModuleManager: KoinComponent {
     }
 
     fun isModuleEnabled(name: String): Boolean {
-        return modules.find { it.getName() == name }?.isEnabled() == true
+        return modules.find { it.getName() == name }?.shouldLoad() == true
     }
 
     inline fun <reified T : QbModule> isModuleAvailable(): Boolean {
@@ -90,7 +88,7 @@ open class ModuleManager: KoinComponent {
                 // Создаем экземпляр модуля
                 val instance = clazz.getDeclaredConstructor().newInstance() as QbModule
 
-                if (instance.isEnabled()) {
+                if (instance.shouldLoad()) {
                     if(instance.createFile) FileSystem.createModuleFile(instance.getName())
                     logger.success("Загружен ${instance.getName()}")
                 } else {
@@ -98,9 +96,8 @@ open class ModuleManager: KoinComponent {
                     return@forEach
                 }
 
-                instance.priority = priority
-                loadKoinModules(instance.getKoinModule())
                 instance.load()
+                instance.priority = priority
                 init(instance)
 
             } catch (e: Exception) {

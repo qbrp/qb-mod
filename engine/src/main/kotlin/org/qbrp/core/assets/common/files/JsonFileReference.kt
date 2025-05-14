@@ -1,5 +1,6 @@
 package org.qbrp.core.assets.common.files
 
+import org.qbrp.core.assets.FileSystem
 import org.qbrp.core.assets.common.Asset
 import org.qbrp.core.assets.common.AssetKey
 import org.qbrp.core.assets.common.Key
@@ -21,7 +22,7 @@ class JsonFileReference<T : Asset>(override val key: Key, private val clazz: Cla
     }
 
     override fun write(data: T) {
-        val file = File(path)
+        val file = FileSystem.getOrCreate(File(path))
         val content = serialize(data)  // Сериализация данных
         file.writeText(content)
     }

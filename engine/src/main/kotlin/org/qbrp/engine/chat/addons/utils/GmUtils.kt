@@ -3,11 +3,7 @@ package org.qbrp.engine.chat.addons.utils
 import PermissionManager.hasPermission
 import net.minecraft.util.ActionResult
 import org.qbrp.engine.chat.ChatAddon
-import org.qbrp.engine.chat.addons.tools.MessageTextTools
 import org.qbrp.engine.chat.core.events.MessageSendEvent
-import org.qbrp.engine.chat.core.events.MessageSenderPipeline
-import org.qbrp.engine.chat.core.events.MessageUpdateEvent
-import org.qbrp.engine.chat.core.system.TextTagsTransformer
 import org.qbrp.engine.chat.ui.model.Button
 import org.qbrp.engine.chat.ui.model.Page
 import org.qbrp.system.modules.Autoload
@@ -16,8 +12,8 @@ import org.qbrp.system.utils.format.Format.asMiniMessage
 
 @Autoload(LoadPriority.ADDON)
 class GmUtils: ChatAddon("gm-utils") {
-    override fun load() {
-        super.load()
+    override fun onLoad() {
+        super.onLoad()
         MessageSendEvent.register { _, message, receiver, _ ->
             if (message.getTags().isComponentExists("gm") && receiver.hasPermission("chat.gm-util")) {
                 val page = Page(

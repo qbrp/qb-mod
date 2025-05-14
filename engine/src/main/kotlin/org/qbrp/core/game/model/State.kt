@@ -28,6 +28,15 @@ open class State @JsonCreator constructor(
     open var tickables = mutableListOf<Tick<*>>()
     @JsonIgnore val components: MutableMap<String, Component> = mutableMapOf()
 
+    fun copy(): State {
+        val newState = State()
+        components.forEach { (k, v) ->
+            newState.addComponent(v, k)
+        }
+        newState.putObject(obj)
+        return newState
+    }
+
     fun putObjectAndEnableBehaviours(obj: BaseObject) {
         putObject(obj)
         behaviours.forEach {

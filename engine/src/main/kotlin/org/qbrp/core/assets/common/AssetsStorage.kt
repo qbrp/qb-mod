@@ -4,7 +4,7 @@ class AssetsStorage {
     private val assets: MutableMap<String, Asset> = mutableMapOf()
 
     fun addAsset(key: String, asset: Asset) {
-        assets[key] = asset
+        assets[key] = asset.apply { onPutInStorage(key, this@AssetsStorage) }
     }
 
     fun removeAsset(name: String) {

@@ -13,6 +13,10 @@ object FileSystem: ModuleFileSystemAPI {
     val PREFABS = getOrCreate("qbrp/assets/prefabs", true)
     val MODULES = getOrCreate("qbrp/modules", true)
 
+    val MINECRAFT_RESOURCEPACKS = getOrCreate("resourcepacks", true)
+
+    val HTTP_SERVER_ASSETS = getOrCreate("qbrp/server", true)
+
     val CLIENT_SERVER_PACKS = getOrCreate("qbrp-client/serverpacks", true)
 
     fun ensureFileExists(path: String, defaultContent: String = ""): File {

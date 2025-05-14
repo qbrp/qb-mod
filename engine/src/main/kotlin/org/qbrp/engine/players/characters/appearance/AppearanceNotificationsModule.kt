@@ -26,8 +26,9 @@ class AppearanceNotificationsModule: GameModule("appearance-notifications") {
         dependsOn { Engine.isModuleAvailable<CharactersModule>() }
     }
 
-    override fun load() {
-        enableRuntimeStateChange()
+    override fun onLoad() {
+        allowDynamicLoading()
+        allowDynamicActivation()
     }
 
     override fun registerComponents(registry: ComponentsRegistry) {
@@ -35,13 +36,9 @@ class AppearanceNotificationsModule: GameModule("appearance-notifications") {
         gameAPI.getPlayerPrefab().components += PrefabField { AppearanceNotifications() }
     }
 
-    override fun onEnable() {
-        gameAPI.enableComponent(AppearanceNotifications(), PlayerManager.playerStorage)
-    }
+    override fun onEnable() { gameAPI.enableComponent(AppearanceNotifications(), PlayerManager.playerStorage) }
 
-    override fun onDisable() {
-        gameAPI.disableComponent(AppearanceNotifications(), PlayerManager.playerStorage)
-    }
+    override fun onDisable() { gameAPI.disableComponent(AppearanceNotifications(), PlayerManager.playerStorage) }
 
     class AppearanceNotifications @JsonCreator constructor(
         @JsonProperty("readStates")

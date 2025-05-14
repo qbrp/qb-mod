@@ -7,6 +7,7 @@ plugins {
     id("maven-publish")
     id("com.gradleup.shadow") version "8.3.5"
     kotlin("plugin.serialization") version "2.1.0"
+    kotlin("plugin.scripting") version "1.9.10"
 }
 
 version = project.property("mod_version") as String
@@ -61,6 +62,10 @@ repositories {
     maven {
         url = uri("https://api.modrinth.com/maven")
     }
+    maven {
+        name = "FelNull Maven"
+        url = uri("https://maven.felnull.dev")
+    }
 
     maven("https://maven.nucleoid.xyz/") { name = "Nucleoid" }
 }
@@ -83,8 +88,21 @@ dependencies {
     }
     include(implementation("net.kyori:adventure-text-serializer-gson:4.14.0")!!)
 
+    // Корутины
     include(implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")!!)
     include(implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")!!)
+
+    // Скрипты
+    implementation(kotlin("stdlib"))
+    include(implementation("org.jetbrains.kotlin:kotlin-scripting-common")!!)
+    include(implementation("org.jetbrains.kotlin:kotlin-scripting-jvm")!!)
+    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm-host")
+    include(implementation("org.jetbrains.kotlin:kotlin-scripting-dependencies")!!)
+    include(implementation("org.jetbrains.kotlin:kotlin-scripting-dependencies-maven")!!)
+
+    //Obj Model Loader
+    modApi("dev.felnull:special-model-loader:1.2.0")
+    include("dev.felnull:special-model-loader:1.2.0")
 
     // ModernUI зависимости
     implementation("icyllis.modernui:ModernUI-Core:${project.property("modernui_core_version")}")

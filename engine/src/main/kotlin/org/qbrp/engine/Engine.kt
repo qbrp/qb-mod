@@ -1,5 +1,6 @@
 package org.qbrp.engine
 
+import com.fasterxml.jackson.databind.JsonSerializable.Base
 import org.koin.core.component.KoinComponent
 import org.qbrp.core.EngineInitializedEvent
 import org.qbrp.core.resources.ServerResources

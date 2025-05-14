@@ -6,8 +6,8 @@ import org.qbrp.core.game.serialization.ObjectJsonField
 
 class PlayerJsonField(id: Long,
                       val accountUuid: String,
-                      state: State, name: String):
-    ObjectJsonField(accountUuid.hashCode().toLong(), name, state, false) {
+                      state: State, var name: String):
+    ObjectJsonField(accountUuid.hashCode().toLong(), state, false) {
 
     fun upsertForPlayer(entity: ServerPlayerEntity) {
         name = entity.name.string

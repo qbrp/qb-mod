@@ -3,6 +3,8 @@ package config;
 import eu.midnightdust.lib.config.MidnightConfig;
 
 public class ClientConfig extends MidnightConfig {
+    @Entry(category = "account", name = "Код")
+    public static String accountCode = "NONE";
 
     @Entry(category = "chat", name = "Вместимость чата")
     public static int chatSize = 1000;
@@ -17,8 +19,5 @@ public class ClientConfig extends MidnightConfig {
 
     @Entry(category = "chat", name = "Обновление сообщений при получении")
     public static boolean handleMessagesOnReceive = true;
-
-    @Entry(category = "account", name = "Код")
-    public static String accountCode = "NONE";
 
 }

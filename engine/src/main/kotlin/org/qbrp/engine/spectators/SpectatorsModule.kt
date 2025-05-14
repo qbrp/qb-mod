@@ -20,7 +20,7 @@ class SpectatorsModule: QbModule("spectators") {
         single { SpectatorCommands() }
     }
 
-    override fun load() {
+    override fun onLoad() {
         CommandsRepository.add(get<SpectatorCommands>())
         spectatorRespawn = get()
         ServerPlayConnectionEvents.JOIN.register { handler, sender, server ->

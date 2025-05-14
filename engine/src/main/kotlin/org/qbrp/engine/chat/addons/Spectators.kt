@@ -12,7 +12,7 @@ import org.qbrp.system.modules.LoadPriority
 
 @Autoload(LoadPriority.ADDON)
 class Spectators(): ChatAddon("spectators") {
-    override fun load() {
+    override fun onLoad() {
         MessageSendEvent.register { sender, message, receiver, _ ->
             if (message.getTags().getComponentData<Boolean>("spectators") == true
                 && message.getAuthorEntity()?.interactionManager?.gameMode == GameMode.SPECTATOR

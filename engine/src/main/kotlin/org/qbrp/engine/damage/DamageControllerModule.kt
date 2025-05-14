@@ -15,7 +15,7 @@ import org.qbrp.system.modules.QbModule
 class DamageControllerModule: QbModule("damage-controller"), DamageControllerAPI, ServerModCommand {
     var enabled: Boolean = true
 
-    override fun load() {
+    override fun onLoad() {
         CommandsRepository.add(this)
     }
 
@@ -31,4 +31,6 @@ class DamageControllerModule: QbModule("damage-controller"), DamageControllerAPI
                 })
         )
     }
+
+    override fun isEnabled(): Boolean = enabled
 }

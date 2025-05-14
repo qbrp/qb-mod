@@ -2,7 +2,6 @@ package org.qbrp.core.mc.player.model
 
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.world.World
 import org.qbrp.core.game.model.storage.GlobalStorage
 import org.qbrp.core.game.model.tick.Tick
 import org.qbrp.core.mc.player.PlayerObject

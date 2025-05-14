@@ -23,7 +23,7 @@ class RPCommands(): ChatAddon("rp-commands") {
 
     }
 
-    override fun load() {
+    override fun onLoad() {
         registerCommands()
     }
 

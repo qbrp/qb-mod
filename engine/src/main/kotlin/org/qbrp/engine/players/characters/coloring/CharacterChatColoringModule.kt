@@ -14,8 +14,8 @@ import org.qbrp.system.modules.LoadPriority
 
 @Autoload(LoadPriority.ADDON - 1)
 class CharacterChatColoringModule: ChatAddon("character-chat-coloring") {
-    override fun load() {
-        super.load()
+    override fun onLoad() {
+        super.onLoad()
         MessageSendEvent.register() { sender, message, receiver, networking ->
             val player = PlayerManager.getPlayerSession(message.authorName) ?: return@register ActionResult.PASS
             val character = player.getComponent<Character>() ?: return@register ActionResult.PASS

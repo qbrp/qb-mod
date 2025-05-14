@@ -5,7 +5,7 @@ import org.qbrp.core.game.model.Stateful
 import org.qbrp.core.game.model.components.json.ComponentJsonField
 import org.qbrp.engine.items.PrefabEntryKey
 
-open class Prefab(id: String, val components: List<ComponentJsonField>, val tags: List<Tag>): Asset(id) {
+open class Prefab(id: String, val components: List<ComponentJsonField>, val tags: List<Tag>): Asset() {
     fun mergeTagWith(obj: Stateful, key: PrefabEntryKey) {
         tags.find { it.id == key.tag }?.mergeAndPut(obj)
     }
@@ -19,8 +19,6 @@ open class Prefab(id: String, val components: List<ComponentJsonField>, val tags
         val components: List<ComponentJsonField>,
         @Transient var parentPrefab: Prefab? = null
     ) {
-        val prefabName get() = parentPrefab?.name ?: "unknown"
-
         fun mergedWith() = parentPrefab!!.components + components
 
         fun mergeAndPut(obj: Stateful) {

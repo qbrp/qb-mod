@@ -10,7 +10,7 @@ import org.qbrp.system.modules.LoadPriority
 
 @Autoload(LoadPriority.ADDON, EnvType.CLIENT)
 class Static: ClientChatAddon("static") {
-    override fun load() {
+    override fun onLoad() {
         TextUpdateCallback.EVENT.register { text, message ->
             if (message.message.getTags().getComponentData<Boolean>("static") == true) {
                 message.update(message.message,MinecraftClient.getInstance().inGameHud?.ticks ?: 0)

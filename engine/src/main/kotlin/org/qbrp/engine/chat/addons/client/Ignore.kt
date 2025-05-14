@@ -29,7 +29,7 @@ class Ignore: QbModule("chat-addon-ignore"), ServerModCommand {
         dependsOn { Engine.isApiAvailable<ChatAPI>() }
     }
 
-    override fun load() {
+    override fun onLoad() {
         CommandsRepository.add(this)
     }
 

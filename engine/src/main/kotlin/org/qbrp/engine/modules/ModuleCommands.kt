@@ -6,7 +6,7 @@ import org.qbrp.system.modules.QbModule
 
 @Autoload
 class ModuleCommands: QbModule("module-commands") {
-    override fun load() {
+    override fun onLoad() {
         CommandsRepository.add(ModuleCommand())
     }
 }

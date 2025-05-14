@@ -28,7 +28,7 @@ class Broadcaster: ChatAddon("broadcaster"), BroadcasterAPI {
 
     private val logger = Loggers.get("chat", "broadcast")
 
-    override fun load() {
+    override fun onLoad() {
         chatModuleAPI = Engine.moduleManager.getAPI<ChatAPI>()!!
     }
 

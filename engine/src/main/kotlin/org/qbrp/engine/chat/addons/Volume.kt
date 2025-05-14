@@ -154,7 +154,7 @@ class Volume(): ChatAddon("volume"), ServerModCommand {
         return directions
     }
 
-    override fun load() {
+    override fun onLoad() {
         loadConfig()
         ConfigInitializationCallback.EVENT.register { config ->
             this.config = config.chat.volume

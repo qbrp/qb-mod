@@ -15,15 +15,12 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class ClientStructure(path: File): Structure(path) {
-    val config = open("config.json", ClientConfigData::class.java)
-    val configData = config.data as ClientConfigData
     val mainMenu = addBranch("main_menu")
     private val mainMenuImages = ImagesStructure("images", mainMenu)
     private val mainMenuImageDescriptions = mainMenu.open("descriptions.json", MainMenuImagesData::class.java).data as MainMenuImagesData
 
     init {
         mainMenuImages.openImages()
-        config.save()
     }
 
     val chatLogs = addBranch("chat_logs")

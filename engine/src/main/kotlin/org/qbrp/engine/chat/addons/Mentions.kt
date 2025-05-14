@@ -23,7 +23,7 @@ import org.qbrp.system.utils.format.Format.formatMinecraft
 class Mentions(): ChatAddon("mentions") {
     private val server: MinecraftServer by inject()
 
-    override fun load() {
+    override fun onLoad() {
         MessageReceivedEvent.EVENT.register { message ->
             val pattern = Regex("@[A-Za-z0-9_]+")
             message.getTagsBuilder().apply {

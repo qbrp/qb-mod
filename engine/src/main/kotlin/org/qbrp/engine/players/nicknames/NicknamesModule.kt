@@ -11,7 +11,7 @@ import org.qbrp.system.utils.format.Format.miniMessage
 
 @Autoload(5)
 class NicknamesModule: GameModule("nicknames") {
-    override fun load() {
+    override fun onLoad() {
         CommandsRepository.add(NicknameCommand())
         gameAPI.getPlayerPrefab().components += NicknameManager()
     }

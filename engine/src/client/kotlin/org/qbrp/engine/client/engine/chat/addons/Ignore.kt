@@ -27,7 +27,7 @@ class Ignore: ClientChatAddon("ignore") {
         return words.contains(message.getTags().getComponentData<String>("mention")) == true
     }
 
-    override fun load() {
+    override fun onLoad() {
         val chatAPI = EngineClient.getAPI<ClientChatAPI>()!!
         ClientReceiver<ClientReceiverContext>(Messages.invokeCommand("ignore"),
             StringContent::class) { message, context, receiver ->

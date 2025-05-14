@@ -22,7 +22,7 @@ import org.qbrp.system.utils.format.Format.asMiniMessage
 
 @Autoload
 class PlayerAttributesModule: GameModule("player-attributes"), ServerModCommand {
-    override fun load() {
+    override fun onLoad() {
         CommandsRepository.add(this)
     }
 

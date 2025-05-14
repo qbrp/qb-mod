@@ -40,8 +40,8 @@ class Whisper: ChatAddon("whisper"), ServerModCommand {
         }
     }
 
-    override fun load() {
-        super.load()
+    override fun onLoad() {
+        super.onLoad()
         CommandsRepository.add(this)
     }
 
@@ -55,7 +55,7 @@ class Whisper: ChatAddon("whisper"), ServerModCommand {
                             ctx.source.sendMessage("<red>Вы не смотрите на игрока.".asMiniMessage())
                             return@executes 0
                         }
-                        val message = ChatMessage(author.playerName, StringArgumentType.getString(ctx, "text"))
+                        val message = ChatMessage(author.name, StringArgumentType.getString(ctx, "text"))
                         ChatGroups.handle(message, Engine.getAPI<ChatGroupsAPI>()?.getGroup("whisper") ?: get<ChatGroup>())
 
                         chatAPI.createSender().apply {

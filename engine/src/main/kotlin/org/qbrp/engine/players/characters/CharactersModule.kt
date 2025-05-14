@@ -22,7 +22,7 @@ class CharactersModule: GameModule("characters") {
         dependsOn { Engine.isApiAvailable<ChatAPI>() }
     }
 
-    override fun load() {
+    override fun onLoad() {
         PlayerRegistrationCallback.EVENT.register { session, manager ->
             if (!session.account.characters.isEmpty()) {
                 setCharacter(session, session.account.appliedCharacter!!)

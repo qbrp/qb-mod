@@ -16,7 +16,7 @@ import org.qbrp.system.modules.LoadPriority
 class Channels : ClientChatAddon("channels") {
     private lateinit var providersCache: MutableMap<String, Provider>
 
-    override fun load() {
+    override fun onLoad() {
         providersCache = mutableMapOf<String, Provider>("default" to get<MessageStorage>().provider)
         MessageAddedEvent.EVENT.register { message, storage ->
             providersCache.values.forEach {

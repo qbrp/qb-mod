@@ -9,8 +9,8 @@ import org.qbrp.system.modules.Autoload
 @Autoload(0)
 class PlayerBehaviourIntegration: ChatAddon("player-behaviour-integration") {
 
-    override fun load() {
-        super.load()
+    override fun onLoad() {
+        super.onLoad()
         MessageSendEvent.register() { sender, message, receiver, networking ->
             PlayerManager.getPlayerSession(message.authorName)?.onMessageSend(sender, message) ?: ActionResult.PASS
         }

@@ -12,7 +12,7 @@ import org.qbrp.system.networking.messages.Messages
 
 @Autoload(env = EnvType.CLIENT)
 class Anticheat: QbModule("anticheat") {
-    override fun load() {
+    override fun onLoad() {
         ClientPlayConnectionEvents.JOIN.register { handler, sender, client ->
             ClientNetworkManager.sendMessage(
                 Message(Messages.MOD_IDS, ModIdListContent().apply {

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import org.qbrp.core.game.lifecycle.Lifecycle
 
 abstract class BaseEntity<T : BaseEntity<T>>(
-    open val name: String,
+    open val id: Any,
     @JsonIgnore open val lifecycle: Lifecycle<T>
 ) {
     open fun unload() {

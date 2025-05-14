@@ -1,7 +1,6 @@
 package org.qbrp.core.mc.player
 
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.stat.Stat
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.Vec3d
@@ -12,10 +11,8 @@ import org.qbrp.core.game.model.tick.Tick
 import org.qbrp.core.mc.McObject
 import org.qbrp.core.mc.player.model.AccountDatabaseService
 import org.qbrp.core.mc.player.model.PlayerBehaviour
-import org.qbrp.core.mc.player.registration.PlayerRegistrationCallback
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.chat.core.messages.MessageSender
-import org.qbrp.engine.players.characters.Character
 import org.qbrp.engine.players.characters.appearance.Appearance
 import org.qbrp.engine.players.nicknames.NicknamesModule
 import org.qbrp.system.networking.messages.Message
@@ -28,13 +25,13 @@ class PlayerObject(
     val entity: ServerPlayerEntity,
     var account: Account,
     override val state: State = State()
-): McObject(entity.name.string, PlayerManager.lifecycleManager as Lifecycle<McObject>) {
+): McObject(PlayerManager.lifecycleManager as Lifecycle<McObject>) {
 
     val database = Database(PlayerManager.accountDatabase)
 
     override val pos: Vec3d
         get() = entity.pos
-    val playerName: String
+    val name: String
         get() = entity.name.string
 
     override fun getTooltip(): String {

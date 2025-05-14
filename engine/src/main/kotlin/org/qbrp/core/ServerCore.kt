@@ -16,6 +16,7 @@ import org.qbrp.core.regions.commands.RegionCommands
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.engine.Engine
+import org.qbrp.system.networking.InfoNames
 import org.qbrp.system.networking.ServerInformation
 import org.qbrp.system.utils.log.InformationMessage
 import org.qbrp.view.View
@@ -30,6 +31,7 @@ class ServerCore : DedicatedServerModInitializer {
 
     override fun onInitializeServer() {
         ServerResources.buildResources()
+        ServerInformation.COMPOSER.component(InfoNames.SERVER_NAME, ServerResources.getConfig().serverName)
         Handlers.registerServerEvents()
         Regions.load()
         PlayerManager.loadCommand()

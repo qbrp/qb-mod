@@ -22,7 +22,6 @@ class ServerStructure: Structure(File("qbrp")) {
     var config = openConfig()
 
     val records = addBranch("records")
-    val idGen = open("idgen", IdGenData::class.java).apply { autoInitialization = true }
     val youtubeToken = open("token.youtube-token", StringData::class.java)
 
     private fun openConfig() = (open(

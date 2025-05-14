@@ -4,7 +4,6 @@ import org.qbrp.core.game.model.State
 
 open class ObjectJsonField(
     val id: Long,
-    var name: String,
     val state: State,
     val eternal: Boolean) {
 }

@@ -30,7 +30,7 @@ class ChatModule() : QbModule("chat"), ChatAPI {
 
     private val logger = Loggers.get("chatModule")
 
-    override fun load() {
+    override fun onLoad() {
         ServerInformation.COMPOSER.component("engine.maxMessageLength", MAX_MESSAGE_LENGTH)
     }
 

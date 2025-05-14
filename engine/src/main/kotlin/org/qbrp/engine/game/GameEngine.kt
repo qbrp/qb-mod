@@ -38,7 +38,7 @@ import org.qbrp.system.modules.QbModule
 class GameEngine : QbModule("game-engine"), GameAPI {
     override fun getAPI(): GameAPI = this
 
-    override fun load() {
+    override fun onLoad() {
         val registry = get<ComponentsRegistry>()
         val prefabsStorage = get<RuntimePrefabStorage>()
         prefabsStorage.addPrefab(PlayerPrefab())
@@ -59,7 +59,7 @@ class GameEngine : QbModule("game-engine"), GameAPI {
 
     fun test() {
         val lifecycle = get<LifecycleManager<BaseObject>>(qualifier = named("baseLifecycleManager"))
-        TestObject("test", lifecycle).apply {
+        TestObject(lifecycle).apply {
             script()
             save()
         }

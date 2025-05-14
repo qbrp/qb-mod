@@ -2,15 +2,14 @@ package org.qbrp.core.game
 
 import org.qbrp.core.resources.IdGenData
 import org.qbrp.core.resources.ServerResources
+import java.util.prefs.Preferences
 
 object IDGenerator {
-    private val idGen get() = ServerResources.getRootBranch().idGen
-    private val idGenData get() = idGen.data as IdGenData
-
+    val prefs = Preferences.userNodeForPackage(IDGenerator::class.java)
     fun nextId(): Long {
-        return idGenData.id++.also {
-            idGen.save()
-        }
+        val id = prefs.getLong("lastId", 0L) + 1
+        prefs.putLong("lastId", id)
+        return id
     }
 
 }

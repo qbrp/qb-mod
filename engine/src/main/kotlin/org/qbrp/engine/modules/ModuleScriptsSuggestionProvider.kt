@@ -18,8 +18,15 @@ class ModuleScriptsSuggestionProvider : SuggestionProvider<ServerCommandSource> 
     ): CompletableFuture<Suggestions> {
         val module = Engine.moduleManager.getModule<QbModule>(StringArgumentType.getString(context, "name"))!!
 
-        builder.suggest("disable")
-        builder.suggest("enable")
+        if (module.isDynamicLoadingAllowed) {
+            builder.suggest("reload")
+            builder.suggest("load")
+            builder.suggest("unload")
+        }
+        if (module.isDynamicActivationAllowed) {
+            builder.suggest("disable")
+            builder.suggest("enable")
+        }
         module.listScripts().forEach {
             builder.suggest(it)
         }

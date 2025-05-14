@@ -5,6 +5,7 @@ import org.qbrp.core.assets.common.files.FilePathReference
 import org.qbrp.engine.client.EngineClient
 import org.qbrp.engine.client.core.assets.DownloadKey
 import org.qbrp.engine.client.core.assets.DownloadZipFileReference
+import org.qbrp.engine.client.core.assets.DownloadZipFileReference.Companion.LOGGER
 import java.io.File
 import java.net.NoRouteToHostException
 
@@ -12,7 +13,7 @@ class VersionedPackDownloadReference(
     key: PackDownloadKey,
 ) : DownloadZipFileReference<ServerPack>(key, { ServerPack(it) }) {
     val existingPack =
-        try { FilePathReference<ServerPack>(ServerPackKey(key.serverName), { ServerPack(it) }).read() }
+        try { FilePathReference<ServerPack>(ServerPackKey(key.path), { ServerPack(it) }).read() }
         catch (e: Exception) { null }
     val versionProvider: (File) -> String = { existingPack?.version ?: "NONE" }
 
@@ -36,7 +37,7 @@ class VersionedPackDownloadReference(
 
             val response = CLIENT.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
-                    println("Ошибка получения версии: ${response.code}")
+                    LOGGER.log("Ошибка получения версии: ${response.code}")
                     throw RuntimeException("Versioning error for ${reqUrl}: ${response.code}")
                 } else {
                     response.body?.string()
@@ -45,18 +46,19 @@ class VersionedPackDownloadReference(
             if (response == "up-to-date") {
                 return existingPack!!
             } else {
+                LOGGER.log("Получена ссылка скачивания ресурсов: $response")
                 download("${key.downloadUrl}/$response")
                 return factory(path)
             }
         } catch (e: Exception) {
             val msg = when (e) {
                 is NoRouteToHostException -> "Хост ${key.downloadUrl} недоступен"
-                else -> e.localizedMessage
+                else -> e.message
             }
             if (existingPack != null) {
                 return existingPack
             } else {
-                EngineClient.notificationsManager.sendSystemMessage("Ошибка загрузки", e.message.toString())
+                EngineClient.notificationsManager.sendSystemMessage("Ошибка загрузки", msg.toString())
                 throw e
             }
         }

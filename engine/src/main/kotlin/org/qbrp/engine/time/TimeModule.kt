@@ -40,23 +40,20 @@ class TimeModule(): QbModule("time"), TimeAPI {
 
     override fun getAPI(): TimeAPI = this
 
-    override fun load() {
+    override fun onLoad() {
         CommandsRepository.add(TimeCommands(getAPI()))
 
         periodManager = get<PeriodManager>()
         worldTimeManager = get<WorldTimeManager>()
 
-        ServerTickEvents.END_SERVER_TICK.register {
-            if (enabled) periodManager.handleTick()
+        once {
+            ServerTickEvents.END_SERVER_TICK.register {
+                ifEnabled { if (enabled) periodManager.handleTick() }
+            }
         }
 
-        onConfigReloadScript {
-            periodManager.config = requireConfig()
-            periodManager.periods = requireConfig<PeriodsConfig>().periods
-            get<TimeNotifications>().config = requireConfig<TimeConfig>()
-        }
-
-        enableRuntimeStateChange()
+        allowDynamicLoading()
+        allowDynamicActivation()
     }
 
     override fun onEnable() {

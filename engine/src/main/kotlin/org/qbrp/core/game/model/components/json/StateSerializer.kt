@@ -13,14 +13,15 @@ class StateSerializer : StdSerializer<State>(State::class.java) {
         gen: JsonGenerator,
         provider: SerializerProvider
     ) {
+        val state = value.copy()
         gen.writeStartObject()
         gen.writeArrayFieldStart("components")
 
         val componentsToSave = mutableListOf<ComponentJsonField>()
-        value.jsonComponents.forEach {
-            if (value.components[it.getComponentName()] == null) componentsToSave.add(it)
+        state.jsonComponents.forEach {
+            if (state.components[it.getComponentName()] == null) componentsToSave.add(it)
         }
-        value.components.forEach { (key, value) ->
+        state.components.forEach { (key, value) ->
             if (value.save) componentsToSave.add(ComponentJsonField(key, GameMapper.valueToTree(value)))
         }
         componentsToSave.forEach {

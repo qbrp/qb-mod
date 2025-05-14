@@ -35,7 +35,7 @@ class ChatModuleClient(): QbModule("chat-client"), ClientChatAPI {
 
     override fun getAPI(): ClientChatAPI = this
 
-    override fun load() {
+    override fun onLoad() {
         messageStorage = get<MessageStorage>()
         networking = get<ClientChatNetworking>().apply {
             registerReceivers()

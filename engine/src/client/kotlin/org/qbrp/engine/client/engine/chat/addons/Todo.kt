@@ -11,8 +11,8 @@ import org.qbrp.system.modules.LoadPriority
 @Autoload(LoadPriority.ADDON, EnvType.CLIENT, false)
 class Todo : ClientChatAddon("todo") {
 
-    override fun load() {
-        super.load()
+    override fun onLoad() {
+        super.onLoad()
         MessageAddedEvent.EVENT.register { message, sender ->
             message.setText(transformText(message.getText()))
             ActionResult.PASS

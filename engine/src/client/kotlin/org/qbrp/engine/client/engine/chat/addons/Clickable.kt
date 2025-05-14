@@ -12,7 +12,7 @@ import org.qbrp.system.modules.LoadPriority
 
 @Autoload(LoadPriority.ADDON, EnvType.CLIENT)
 class Clickable: ClientChatAddon("clickable") {
-    override fun load() {
+    override fun onLoad() {
         ChatFormatEvent.EVENT.register { message, text ->
             TextTagsTransformer.replaceTagsWithFormat(message.getText(), "player_nick_clickable") { tag, value ->
                 val groupPrefix = message.getTags().getComponentData<String>("group")?.let {

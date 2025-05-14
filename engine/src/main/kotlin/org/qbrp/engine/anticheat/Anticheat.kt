@@ -26,7 +26,7 @@ class Anticheat: QbModule("anticheat") {
         RestrictedMod("voxelmap", "Voxel Map", minimap)
     )
 
-    override fun load() {
+    override fun onLoad() {
         ServerReceiver<ServerReceiverContext>(Messages.MOD_IDS, ModIdListContent::class, { message, context, receiver ->
             if (!context.player.hasPermissionLevel(4)) {
                 val modList = message.getContent<List<String>>()

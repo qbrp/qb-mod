@@ -9,7 +9,7 @@
 //import org.qbrp.core.mc.registry.ServerModCommand
 //import org.qbrp.core.resources.ServerResources
 //import org.qbrp.core.resources.content.ItemStorage
-//import org.qbrp.system.utils.keys.Key
+//import org.qbrp.system.utils.keys.AssetKey
 //
 //class ItemCommand(val manager: ItemManager): ServerModCommand {
 //    override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
@@ -50,7 +50,7 @@
 //    }
 //
 //
-//    private fun getDir(ctx: CommandContext<ServerCommandSource>, name: String = getDirArg(ctx)): ItemStorage = (ServerResources.getItems().registry(Key(name)) as ItemStorage)
+//    private fun getDir(ctx: CommandContext<ServerCommandSource>, name: String = getDirArg(ctx)): ItemStorage = (ServerResources.getItems().registry(AssetKey(name)) as ItemStorage)
 //
 //    private fun getDirArg(ctx: CommandContext<ServerCommandSource>): String {
 //        return StringArgumentType.getString(ctx, "directory")

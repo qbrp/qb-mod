@@ -40,7 +40,7 @@ class Groups: ClientChatAddon("groups"), ClientChatGroupsAPI {
         )
     }
 
-    override fun load() {
+    override fun onLoad() {
         MessageSendEvent.EVENT.register { message ->
             for (group in get<ChatGroupsStorage>().getAllGroups()) {
                 if (group.isInMessage(message) && group.name != "default") {

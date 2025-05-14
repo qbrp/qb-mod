@@ -13,7 +13,7 @@ class Limitation: ChatAddon("limitation") {
     private val limitationMap = ConcurrentHashMap<String, Int>()
     private val scope = CoroutineScope(Dispatchers.Default)
 
-    override fun load() {
+    override fun onLoad() {
         MessageReceivedEvent.EVENT.register { message ->
             val player = message.getAuthorEntity() ?: return@register ActionResult.PASS
             if (player.hasPermission("chat.limit.ignore") == true) {

@@ -16,7 +16,7 @@ class Acquaintances(): GameModule("acquaintances") {
         dependsOn { Engine.isModuleEnabled("characters") }
     }
 
-    override fun load() {
+    override fun onLoad() {
         CommandsRepository.add(NameCommand())
     }
 

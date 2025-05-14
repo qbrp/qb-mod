@@ -18,20 +18,34 @@ class ModuleCommand: ServerModCommand {
                 .then(CommandManager.argument("script", StringArgumentType.word())
                     .suggests(ModuleScriptsSuggestionProvider())
                     .executes() { ctx ->
+
+
                         val script = getScript(ctx)
-                        if (script == "disable") {
-                            if (checkRuntimeStateChanging(ctx)) {
+                        when (script) {
+                            "disable" -> if (checkRuntimeStateChanging(ctx)) {
                                 getModule(ctx).disable()
                                 ctx.source.sendMessage("<green>Модуль ${getModuleName(ctx)} отключен".asMiniMessage())
                             }
-                        } else if (script == "enable") {
-                            if (checkRuntimeStateChanging(ctx)) {
+                            "enable" -> if (checkRuntimeStateChanging(ctx)) {
                                 getModule(ctx).enable()
                                 ctx.source.sendMessage("<green>Модуль ${getModuleName(ctx)} включен".asMiniMessage())
                             }
-                        } else {
-                            getModule(ctx).runScript(script).also {
-                                ctx.source.sendMessage(it.asMiniMessage())
+                            "load" -> if (checkRuntimeStateChanging(ctx)) {
+                                getModule(ctx).load()
+                                ctx.source.sendMessage("<green>Модуль ${getModuleName(ctx)} загружен".asMiniMessage())
+                            }
+                            "unload" -> if (checkRuntimeStateChanging(ctx)) {
+                                getModule(ctx).unload()
+                                ctx.source.sendMessage("<green>Модуль ${getModuleName(ctx)} выгружен".asMiniMessage())
+                            }
+                            "reload" -> if (checkRuntimeStateChanging(ctx)) {
+                                getModule(ctx).reload()
+                                ctx.source.sendMessage("<green>Модуль ${getModuleName(ctx)} перезагружен".asMiniMessage())
+                            }
+                            else -> {
+                                getModule(ctx).runScript(script).also {
+                                    ctx.source.sendMessage(it.asMiniMessage())
+                                }
                             }
                         }
                         1
@@ -45,7 +59,7 @@ class ModuleCommand: ServerModCommand {
     }
 
     private fun checkRuntimeStateChanging(ctx: CommandContext<ServerCommandSource>): Boolean {
-        if (!getModule(ctx).isRuntimeStateChangeEnabled) {
+        if (!getModule(ctx).isDynamicActivationAllowed) {
             ctx.source.sendMessage("<red>Изменения состояния модуля в рантайме недоступно.".asMiniMessage())
             return false
         }

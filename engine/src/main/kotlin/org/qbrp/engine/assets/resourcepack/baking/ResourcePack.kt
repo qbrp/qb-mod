@@ -8,6 +8,8 @@ class ResourcePack(val path: File) {
     val qbrp = getOrCreate(path.resolve("assets/qbrp"), true)
     val models = getOrCreate(qbrp.resolve("models"), true)
     val textures = getOrCreate(qbrp.resolve("textures"), true)
+    private val packMcMetaData = PackMcMeta(PackMcMeta.Pack("qbrp Content Pack"))
+    val packMcMeta = getOrCreate(path.resolve("pack.mcmeta")).writeText(Json.encodeToString(packMcMetaData))
 
     fun addTexture(file: File, textureName: String = file.nameWithoutExtension, relativePath: String = "") {
         if (file.extension != "png" && file.extension != "jpg") {

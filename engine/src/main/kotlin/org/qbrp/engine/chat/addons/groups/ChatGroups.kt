@@ -34,8 +34,8 @@ class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
 
     override fun getAPI(): ChatGroupsAPI = this
 
-    override fun load() {
-        super.load()
+    override fun onLoad() {
+        super.onLoad()
         storage = get()
         ConfigInitializationCallback.EVENT.register { updatedConfig ->
             config = updatedConfig.chat

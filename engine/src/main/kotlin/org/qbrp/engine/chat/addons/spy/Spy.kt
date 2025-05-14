@@ -1,13 +1,9 @@
 package org.qbrp.engine.chat.addons.spy
 
 import PermissionManager.hasPermission
-import com.mojang.brigadier.CommandDispatcher
-import com.mojang.brigadier.context.CommandContext
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.module.Module
@@ -20,7 +16,6 @@ import org.qbrp.engine.chat.core.events.MessageHandledEvent
 
 import org.qbrp.system.modules.Autoload
 import org.qbrp.system.modules.LoadPriority
-import org.qbrp.system.networking.messages.types.StringContent
 
 
 @Autoload(LoadPriority.ADDON)
@@ -29,8 +24,8 @@ class Spy(): ChatAddon("spy") {
     private val chatGroupsAPI = Engine.getAPI<ChatGroupsAPI>()
     private lateinit var spyManager: SpyManager
 
-    override fun load() {
-        super.load()
+    override fun onLoad() {
+        super.onLoad()
         spyManager = get()
 
         MessageHandledEvent.EVENT.register { message, receivers ->

@@ -6,6 +6,9 @@ import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.toast.SystemToast
 import net.minecraft.client.util.ModelIdentifier
@@ -44,7 +47,7 @@ class EngineClient : ClientModInitializer {
             val client = MinecraftClient.getInstance()
             val networkHandler = client.networkHandler
             return networkHandler?.connection?.address?.toString()
-                ?.replace("/", "")
+                ?.split("/")?.last()
                 ?.split(":")?.first()
         }
     }

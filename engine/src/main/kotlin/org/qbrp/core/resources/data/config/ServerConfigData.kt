@@ -2,6 +2,8 @@ package org.qbrp.core.resources.data.config
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.gson.annotations.SerializedName
+import net.minecraft.server.MinecraftServer
+import org.qbrp.core.ServerCore
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.data.Data
 import org.qbrp.core.resources.data.YamlData
@@ -10,6 +12,7 @@ import org.qbrp.engine.time.Period
 import java.io.File
 
 data class ServerConfigData(
+    val serverName: String = ServerCore.server.serverIp,
     val resources: Resources = Resources(),
     val http: HTTP = HTTP(),
     val databases: Databases = Databases(),

@@ -15,7 +15,7 @@ class PatchesModule: QbModule("patches"), PatchesAPI {
         createModuleFileOnInit()
     }
 
-    override fun load() {
+    override fun onLoad() {
         getModuleFile()
     }
 

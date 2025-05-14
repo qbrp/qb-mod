@@ -14,8 +14,8 @@ class ChatUI: ChatAddon("ui") {
         single { TaskManager() }
     }
 
-    override fun load() {
-        super.load()
+    override fun onLoad() {
+        super.onLoad()
         CommandsRepository.add(listOf(get<TaskManager>()))
     }
 

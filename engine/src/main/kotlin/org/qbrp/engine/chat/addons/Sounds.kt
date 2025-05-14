@@ -10,8 +10,8 @@ import org.qbrp.system.utils.world.playSoundForPlayer
 @Autoload(LoadPriority.ADDON)
 class Sounds: ChatAddon("sounds") {
 
-    override fun load() {
-        super.load()
+    override fun onLoad() {
+        super.onLoad()
         MessageSendEvent.register() { sender, message, receiver, networking ->
             message.getTags().getComponentData<String>("sound")?.also {
                 if (it != "") {

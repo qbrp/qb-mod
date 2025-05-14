@@ -26,7 +26,7 @@ import kotlin.math.sqrt
 
 @Autoload(LoadPriority.ADDON, EnvType.CLIENT)
 class Radar(): ClientChatAddon("radar") {
-    override fun load() {
+    override fun onLoad() {
         TextUpdateCallback.EVENT.register { text, line ->
             if (line.message.getTags().getComponentData<Boolean>("radar") == true) {
                 line.update(getTextWithRadar(line.message))

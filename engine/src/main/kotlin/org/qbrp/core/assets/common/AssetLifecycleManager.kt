@@ -7,7 +7,7 @@ class AssetLifecycleManager(val storage: AssetsStorage): Lifecycle<Asset> {
     override fun onCreated(obj: Asset) = Unit
 
     override fun unload(obj: Asset) {
-        storage.removeAsset(obj.name)
+        storage.removeAsset(obj.key)
     }
 
     override fun save(obj: Asset) {

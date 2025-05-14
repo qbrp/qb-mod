@@ -24,7 +24,7 @@ class Placeholders: QbModule("placeholders"), PlaceholdersAPI {
 
     override fun getAPI(): PlaceholdersAPI = this
 
-    override fun load() {
+    override fun onLoad() {
         MessageReceivedEvent.EVENT.register { message ->
             val author = message.getAuthorEntity()
             val name = author?.name?.string ?: SYSTEM_MESSAGE_AUTHOR

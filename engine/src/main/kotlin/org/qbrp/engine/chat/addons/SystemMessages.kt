@@ -1,7 +1,6 @@
 package org.qbrp.engine.chat.addons
 
 import net.minecraft.server.network.ServerPlayerEntity
-import org.koin.core.component.get
 import org.qbrp.core.resources.data.config.ConfigInitializationCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.Engine
@@ -21,8 +20,8 @@ class SystemMessages(): ChatAddon("system-messages"), ModuleAPI {
         dependsOn { Engine.isApiAvailable<BroadcasterAPI>() }
     }
 
-    override fun load() {
-        super.load()
+    override fun onLoad() {
+        super.onLoad()
         ConfigInitializationCallback.EVENT.register { updatedConfig ->
             config = updatedConfig.chat
         }

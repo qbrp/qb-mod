@@ -41,7 +41,7 @@ class MusicManagerModule : QbModule("music"), KoinComponent, MusicManagerAPI {
 
     override fun getTracks(): List<Track> = get<MusicStorage>().getAllTracks()
 
-    override fun load() {
+    override fun onLoad() {
         AudioManager.registerSources()
         get<MusicDatabaseService>().db.connect()
         get<MusicStorage>().apply {

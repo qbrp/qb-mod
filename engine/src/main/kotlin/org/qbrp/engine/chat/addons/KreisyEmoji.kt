@@ -14,7 +14,7 @@ import org.qbrp.system.modules.QbModule
 
 @Autoload(LoadPriority.ADDON)
 class KreisyEmoji(): QbModule("kreisy-emoji") {
-    override fun load() {
+    override fun onLoad() {
         val emojiMap: MutableMap<String, String> = mutableMapOf()
         get<KreisyEmojiConfig>().emojis.forEach { name, emoji ->
             emojiMap[":$name:"] = emoji.symbol

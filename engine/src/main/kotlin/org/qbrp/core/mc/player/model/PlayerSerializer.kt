@@ -10,7 +10,7 @@ import org.qbrp.core.mc.player.PlayerObject
 class PlayerSerializer(val accounts: AccountDatabaseService): SerializeFabric<PlayerObject, PlayerJsonField>() {
 
     override fun toJson(plr: PlayerObject): PlayerJsonField {
-        return PlayerJsonField(plr.id, plr.account.uuid, plr.state, plr.playerName)
+        return PlayerJsonField(plr.id, plr.account.uuid, plr.state, plr.name)
     }
 
     override fun fromJson(json: PlayerJsonField): PlayerObject {
