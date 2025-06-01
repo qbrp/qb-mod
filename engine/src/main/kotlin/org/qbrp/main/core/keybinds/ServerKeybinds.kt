@@ -3,7 +3,7 @@ package org.qbrp.main.core.keybinds
 import org.koin.core.component.get
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.QbModule
-import org.qbrp.main.core.utils.networking.info.ServerInfoAPI
+import org.qbrp.main.core.info.ServerInfoAPI
 import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
 import org.qbrp.main.core.utils.networking.messages.types.ClusterListContent
 import org.qbrp.main.core.utils.networking.messages.types.Signal

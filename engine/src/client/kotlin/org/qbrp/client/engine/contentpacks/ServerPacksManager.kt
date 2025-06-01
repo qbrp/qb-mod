@@ -2,7 +2,6 @@ package org.qbrp.client.engine.contentpacks
 
 import net.fabricmc.api.EnvType
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
-import net.minecraft.client.util.telemetry.TelemetryEventProperty.CLIENT_ID
 import org.koin.core.component.get
 import org.koin.core.module.Module
 import org.qbrp.main.core.Core
@@ -13,7 +12,6 @@ import org.qbrp.client.engine.auth.ClientAuthEvent
 import org.qbrp.client.engine.notifications.ClientNotificationsAPI
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.QbModule
-import org.qbrp.main.core.utils.networking.info.ServerInformationGetEvent
 import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
 import org.qbrp.main.engine.assets.web.WebServerModule
 

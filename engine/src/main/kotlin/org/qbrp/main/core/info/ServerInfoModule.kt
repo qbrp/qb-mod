@@ -1,12 +1,10 @@
-package org.qbrp.main.core.utils.networking.info
+package org.qbrp.main.core.info
 
 import net.fabricmc.api.EnvType
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.minecraft.server.network.ServerPlayerEntity
-import org.koin.core.module.Module
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.QbModule
-import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
 import org.qbrp.main.engine.ModInitializedEvent
 
 @Autoload(env = EnvType.SERVER)

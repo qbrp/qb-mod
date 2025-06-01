@@ -1,4 +1,4 @@
-package org.qbrp.main.core.utils.networking.info
+package org.qbrp.main.core.info
 
 import net.minecraft.server.network.ServerPlayerEntity
 import org.qbrp.main.core.Core

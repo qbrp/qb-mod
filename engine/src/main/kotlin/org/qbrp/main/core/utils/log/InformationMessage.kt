@@ -15,7 +15,7 @@ class InformationMessage(val authors: String, val version: String, val modulesCo
         components.forEach { logger.log(it) }
     }
 
-    fun getAsciiArt() = """
+    private fun getAsciiArt() = """
          _____  ______   ______  _____     ${"|".color(ConsoleColors.PURPLE)} ${authors.color(ConsoleColors.PURPLE)}
         |   __| |_____] |_____/ |_____]    ${"|".color(ConsoleColors.CYAN)} ${version.color(ConsoleColors.CYAN)}
         |____\| |_____] |    \_ |          ${"|".color(ConsoleColors.GREEN)} ${"Загружено $modulesCount модулей".color(ConsoleColors.GREEN)}

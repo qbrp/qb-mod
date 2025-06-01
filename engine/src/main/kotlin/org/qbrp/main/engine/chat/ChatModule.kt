@@ -1,7 +1,6 @@
  package org.qbrp.main.engine.chat
 
 import net.minecraft.server.network.ServerPlayerEntity
-import org.koin.core.component.get
 import org.koin.core.context.GlobalContext
 import org.qbrp.deprecated.resources.data.config.ServerConfigData
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
@@ -10,7 +9,7 @@ import org.qbrp.main.engine.chat.core.system.MessageHandler
 import org.qbrp.main.engine.chat.core.system.ServerChatNetworking
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.QbModule
-import org.qbrp.main.core.utils.networking.info.ServerInfoAPI
+import org.qbrp.main.core.info.ServerInfoAPI
 import org.qbrp.main.core.utils.networking.messages.Message
 import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
 import org.qbrp.main.core.utils.log.LoggerUtil

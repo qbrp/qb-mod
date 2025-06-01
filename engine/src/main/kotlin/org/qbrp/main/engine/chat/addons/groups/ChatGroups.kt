@@ -17,7 +17,7 @@ import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.main.engine.chat.core.system.ChatGroup
 import org.qbrp.main.engine.chat.core.system.ChatGroupsStorage
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.utils.networking.info.ServerInfoAPI
+import org.qbrp.main.core.info.ServerInfoAPI
 import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
 import org.qbrp.main.core.utils.networking.messages.types.ClusterListContent
 

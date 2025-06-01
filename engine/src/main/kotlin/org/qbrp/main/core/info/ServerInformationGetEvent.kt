@@ -1,4 +1,4 @@
-package org.qbrp.main.core.utils.networking.info
+package org.qbrp.main.core.info
 
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory

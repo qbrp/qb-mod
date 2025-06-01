@@ -5,7 +5,6 @@ import net.fabricmc.api.EnvType
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
 import org.koin.core.component.get
-import org.koin.dsl.module
 import org.lwjgl.glfw.GLFW
 import org.qbrp.client.ClientCore
 import org.qbrp.client.core.keybinds.ClientKeybindsAPI
@@ -18,11 +17,9 @@ import org.qbrp.client.engine.chat.system.MessageStorage
 import org.qbrp.client.engine.chat.system.Typer
 import org.qbrp.client.engine.chat.system.logs.ChatLogger
 import org.qbrp.main.core.Core
-import org.qbrp.main.core.assets.FileSystem
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.QbModule
-import org.qbrp.main.core.utils.networking.info.ServerInfoAPI
-import org.qbrp.main.core.utils.networking.info.ServerInformationGetEvent
+import org.qbrp.main.core.info.ServerInformationGetEvent
 import org.qbrp.main.core.utils.networking.messages.Message
 import org.qbrp.main.engine.chat.ChatModule
 

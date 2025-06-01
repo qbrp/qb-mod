@@ -10,7 +10,7 @@ import org.qbrp.main.core.modules.LoadPriority
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.assets.resourcepack.versioning.ResourcePackVersionsAPI
 import org.qbrp.main.core.modules.QbModule
-import org.qbrp.main.core.utils.networking.info.ServerInfoAPI
+import org.qbrp.main.core.info.ServerInfoAPI
 import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
 import java.net.InetSocketAddress
 

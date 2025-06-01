@@ -16,7 +16,7 @@ import org.qbrp.main.core.keybinds.ServerKeyBind
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.LoadPriority
 import org.qbrp.main.core.modules.QbModule
-import org.qbrp.main.core.utils.networking.info.ServerInformationGetEvent
+import org.qbrp.main.core.info.ServerInformationGetEvent
 import org.qbrp.main.core.utils.networking.messages.components.Cluster
 
 @Autoload(LoadPriority.LOWEST, env = EnvType.CLIENT)

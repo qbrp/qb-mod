@@ -10,7 +10,7 @@ import org.qbrp.client.engine.chat.system.events.MessageSendEvent
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.LoadPriority
 import org.qbrp.main.core.modules.ModuleAPI
-import org.qbrp.main.core.utils.networking.info.ServerInformationGetEvent
+import org.qbrp.main.core.info.ServerInformationGetEvent
 import org.qbrp.main.core.utils.networking.messages.components.Cluster
 import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
 

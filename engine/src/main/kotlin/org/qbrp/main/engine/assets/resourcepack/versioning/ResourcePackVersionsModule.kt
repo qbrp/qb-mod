@@ -1,22 +1,16 @@
 package org.qbrp.main.engine.assets.resourcepack.versioning
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.koin.core.component.get
 import org.qbrp.main.core.assets.FileSystem
 import org.qbrp.main.core.assets.FileSystem.getOrCreate
-import org.qbrp.main.core.game.serialization.GameMapper
 import org.qbrp.main.engine.Engine
-import org.qbrp.main.engine.assets.patches.Manifest
 import org.qbrp.main.engine.assets.patches.PatchesAPI
 import org.qbrp.main.engine.assets.resourcepack.baking.ResourcePackAPI
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.LoadPriority
 import org.qbrp.main.core.modules.QbModule
 import org.qbrp.main.core.utils.networking.InfoNames.CONTENTPACKS_ENABLED
-import org.qbrp.main.core.utils.networking.info.ServerInfoAPI
-import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
+import org.qbrp.main.core.info.ServerInfoAPI
 import java.io.File
 
 @Autoload(LoadPriority.MODULE - 1)

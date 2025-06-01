@@ -23,7 +23,6 @@ object LoggerUtil {
         register(Logger(enabled = false,"serverNetwork", "sending"))
         register(Logger(enabled = false,"serverNetwork", "receiving"))
         register(Logger(enabled = false,"resources", "debug"))
-        register(Logger(enabled = true,"itemRegistry", "mechanics"))
         register(Logger(enabled = true,"regions"))
         register(Logger(enabled = true,"chatGroups"))
         register(Logger(enabled = true,"chatModule"))
@@ -37,7 +36,6 @@ object LoggerUtil {
         register(Logger(enabled = true,"info"))
         register(Logger(enabled = true,"engine"))
         register(Logger(enabled = true,"modules"))
-        register(Logger(enabled = true,"itemRegistry"))
         register(Logger(enabled = true,"build"))
         register(Logger(enabled = true,"game", "components"))
     }

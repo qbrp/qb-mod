@@ -6,7 +6,7 @@ import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.LoadPriority
 import org.qbrp.main.core.modules.QbModule
 import org.qbrp.main.core.utils.networking.ClientReceiver
-import org.qbrp.main.core.utils.networking.info.ServerInformationGetEvent
+import org.qbrp.main.core.info.ServerInformationGetEvent
 import org.qbrp.main.core.utils.networking.messages.Messages.SERVER_INFORMATION
 import org.qbrp.main.core.utils.networking.messages.components.Cluster
 import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
