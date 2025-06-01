@@ -23,8 +23,7 @@ class ApplicationLoader : DedicatedServerModInitializer {
     override fun onInitializeServer() {
         val informationMessage = InformationMessage(
             "lain1wakura",
-            VersionsUtil.getVersion().toString(),
-            modulesCount)
+            VersionsUtil.getVersion().toString())
 
         startKoin {
             modules(
@@ -47,9 +46,9 @@ class ApplicationLoader : DedicatedServerModInitializer {
             if (!initialized) { handler.disconnect("<red>Engine инициализируется.<newline>Перезайдите через несколько секунд.".asMiniMessage()) }
         }
 
-        ModInitializedEvent.Companion.EVENT.register {
+        ModInitializedEvent.EVENT.register {
             ConfigInitializationCallback.EVENT.invoker().onConfigUpdated(ServerResources.getConfig())
-            informationMessage.print()
+            informationMessage.print(modulesCount)
         }
     }
 }

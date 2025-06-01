@@ -4,18 +4,18 @@ import org.qbrp.main.engine.Engine
 import org.qbrp.main.core.utils.format.ConsoleColors
 import org.qbrp.main.core.utils.format.ConsoleColors.color
 
-class InformationMessage(val authors: String, val version: String, val modulesCount: Int) {
+class InformationMessage(val authors: String, val version: String) {
     private val components: MutableList<String> = mutableListOf()
     private val logger = LoggerUtil.get("info")
 
-    fun print() {
-        getAsciiArt().lines().forEach {
+    fun print(modulesCount: Int) {
+        getAsciiArt(modulesCount).lines().forEach {
             logger.log(it.color(ConsoleColors.BLUE).color(ConsoleColors.BOLD))
         }
         components.forEach { logger.log(it) }
     }
 
-    private fun getAsciiArt() = """
+    private fun getAsciiArt(modulesCount: Int) = """
          _____  ______   ______  _____     ${"|".color(ConsoleColors.PURPLE)} ${authors.color(ConsoleColors.PURPLE)}
         |   __| |_____] |_____/ |_____]    ${"|".color(ConsoleColors.CYAN)} ${version.color(ConsoleColors.CYAN)}
         |____\| |_____] |    \_ |          ${"|".color(ConsoleColors.GREEN)} ${"Загружено $modulesCount модулей".color(ConsoleColors.GREEN)}
