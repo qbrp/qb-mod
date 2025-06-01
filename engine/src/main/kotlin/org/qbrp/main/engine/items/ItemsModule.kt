@@ -20,7 +20,7 @@ import org.qbrp.main.core.storage.StorageAPI
 import org.qbrp.main.engine.items.model.ItemObject
 
 @Autoload
-class ItemsModule: GameModule("itemRegistry") {
+class ItemsModule: GameModule("items") {
     init {
         dependsOn { Core.isApiAvailable<PrefabsAPI>() }
     }

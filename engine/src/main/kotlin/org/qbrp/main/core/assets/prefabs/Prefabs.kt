@@ -1,6 +1,8 @@
 package org.qbrp.main.core.assets.prefabs
 
+import org.koin.core.Koin
 import org.koin.core.component.get
+import org.koin.core.module.Module
 import org.qbrp.main.core.Core
 import org.qbrp.main.core.assets.AssetsAPI
 import org.qbrp.main.core.assets.FileSystem
@@ -16,6 +18,8 @@ class Prefabs: QbModule("prefabs"), PrefabsAPI {
     override fun onLoad() {
         initializePrefabs()
     }
+
+    override fun getKoinModule() = onlyApi<PrefabsAPI>(this)
 
     override fun <T : Prefab> getByKey(key: PrefabKey): T? {
         return (get<AssetsAPI>().getByKey<Prefab>(key) ?: importer.loadPrefab(key)) as T?
