@@ -1,11 +1,14 @@
-package org.qbrp.main.engine.assets.resourcepack.baking
+package org.qbrp.main.engine.assets.resourcepack
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.qbrp.main.core.assets.FileSystem.getOrCreate
+import org.qbrp.main.engine.assets.resourcepack.models.JsonModel
+import org.qbrp.main.engine.assets.resourcepack.models.Model
+import org.qbrp.main.engine.assets.resourcepack.models.ObjModel
 import java.io.File
 
-class ResourcePack(val path: File) {
+class ResourcePackBuilder(val path: File) {
     val qbrp = getOrCreate(path.resolve("assets/qbrp"), true)
     val models = getOrCreate(qbrp.resolve("models"), true)
     val textures = getOrCreate(qbrp.resolve("textures"), true)
@@ -60,7 +63,7 @@ class ResourcePack(val path: File) {
         getOrCreate(modelPath)
 
         val jsonString = when (model) {
-            is ObjModel  -> Json.encodeToString(ObjModel.serializer(), model)
+            is ObjModel -> Json.encodeToString(ObjModel.serializer(), model)
             is JsonModel -> Json.encodeToString(JsonModel.serializer(), model)
             else -> throw IllegalArgumentException()
         }

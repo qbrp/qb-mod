@@ -8,7 +8,7 @@ import org.qbrp.deprecated.resources.data.config.ServerConfigData
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.LoadPriority
 import org.qbrp.main.engine.Engine
-import org.qbrp.main.engine.assets.resourcepack.versioning.ResourcePackVersionsAPI
+import org.qbrp.main.engine.assets.contentpacks.versioning.ContentPackManagerAPI
 import org.qbrp.main.core.modules.QbModule
 import org.qbrp.main.core.info.ServerInfoAPI
 import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
@@ -20,7 +20,7 @@ class WebServerModule: QbModule("web-server") {
     val server: Server = Server(listen = InetSocketAddress(port))
 
     init {
-        dependsOn { Engine.isApiAvailable<ResourcePackVersionsAPI>() }
+        dependsOn { Engine.isApiAvailable<ContentPackManagerAPI>() }
     }
 
     companion object {
@@ -38,7 +38,7 @@ class WebServerModule: QbModule("web-server") {
     }
 
     fun start() {
-        val resourcePacksApi = requireApi<ResourcePackVersionsAPI>()
+        val resourcePacksApi = requireApi<ContentPackManagerAPI>()
         server.assets("/", AssetsHandler(FileSystem.HTTP_SERVER_ASSETS.toPath()))
         server.apply {
             context("/update").get("/checkVersion/:version") {

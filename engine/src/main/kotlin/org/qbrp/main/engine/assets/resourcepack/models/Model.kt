@@ -1,4 +1,4 @@
-package org.qbrp.main.engine.assets.resourcepack.baking
+package org.qbrp.main.engine.assets.resourcepack.models
 
 
 interface Model {

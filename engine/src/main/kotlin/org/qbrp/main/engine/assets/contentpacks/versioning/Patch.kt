@@ -1,21 +1,20 @@
-package org.qbrp.main.engine.assets.resourcepack.versioning
+package org.qbrp.main.engine.assets.contentpacks.versioning
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.qbrp.main.engine.assets.patches.Manifest
-import org.qbrp.main.engine.assets.patches.PatchesAPI
+import org.qbrp.main.engine.assets.contentpacks.patches.Manifest
+import org.qbrp.main.engine.assets.contentpacks.patches.PatchesAPI
 import java.io.File
 
 class Patch(
-    private val oldVersion: ContentPackVersion,
-    private val newVersion: ContentPackVersion,
+    private val oldVersion: VersionEntry,
+    private val newVersion: VersionEntry,
     private val patchesApi: PatchesAPI,
     private val patchesBaseDir: File
 ) {
     private val targetDir = patchesBaseDir.resolve("${oldVersion.version}-${newVersion.version}")
 
     fun create(): File {
-        // 1) Читаем существующие manifests:
         val oldManifest = Json.decodeFromString<Manifest>(
             oldVersion.manifestFile.readText()
         )
@@ -23,14 +22,11 @@ class Patch(
             newVersion.manifestFile.readText()
         )
 
-        // 2) Получаем diff:
         val diff = oldManifest.diff(newManifest)
 
-        // 3) Генерируем патч из готового zip новой версии:
         val zipOut = targetDir.resolve("zip")
-        patchesApi.generateChangesPatch(newVersion.zipDir, zipOut, diff)
+        patchesApi.generateChangesPatch(newVersion.contentPackDir, zipOut, diff)
 
-        // 4) Пишем diff.json:
         zipOut.resolve("diff.json").writeText(Json.encodeToString(diff))
 
         return targetDir

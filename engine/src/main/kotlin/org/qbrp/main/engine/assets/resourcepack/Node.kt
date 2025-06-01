@@ -1,8 +1,11 @@
-package org.qbrp.main.engine.assets.resourcepack.baking
+package org.qbrp.main.engine.assets.resourcepack
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.qbrp.main.core.assets.FileSystem
+import org.qbrp.main.engine.assets.resourcepack.models.JsonModel
+import org.qbrp.main.engine.assets.resourcepack.models.Model
+import org.qbrp.main.engine.assets.resourcepack.models.ObjModel
 import java.io.File
 
 @Serializable
@@ -14,7 +17,8 @@ data class Node(val type: String,
                 @SerialName("flip_v") val flipV: Boolean = false,
                 @SerialName("test_item") val createTestItem: Boolean = false,
                 val parent: String = "item/generated",
-                val id: String = getAllowedName(model.split("/").last())) {
+                val modelId: String = getAllowedName(model.split("/").last()),
+                val id: String) {
 
     companion object {
         val OBJ_LOADER_PARENT = "special-model-loader:builtin/obj"
@@ -58,8 +62,9 @@ data class Node(val type: String,
         }
     }
 
-    fun getPackContainerPath() = "$resourceType/$id"
-    fun getPackContainerPath(type: String) = "$type/$resourceType/$id"
+    fun getResourceLocation() = getPackPath("models/${getPackContainerPath()}/$modelId.json")
+    fun getPackContainerPath() = "$resourceType/$modelId"
+    fun getPackContainerPath(type: String) = "$type/$resourceType/$modelId"
 
     fun createModel(): Model {
         return if (type == "obj") createObjModel()
@@ -70,15 +75,15 @@ data class Node(val type: String,
     fun createJsonModel(): JsonModel {
         return JsonModel(
             parent = parent,
-            model = getPackPath("models/${getPackContainerPath()}/${id}.obj"),
-            textures = mapOf("layer0" to getPackPath(id)),
+            model = getPackPath("models/${getPackContainerPath()}/${modelId}.obj"),
+            textures = mapOf("layer0" to getPackPath(modelId)),
         )
     }
 
     fun createObjModel(): ObjModel {
         return ObjModel(
             parent = OBJ_LOADER_PARENT,
-            model = getPackPath("models/${getPackContainerPath()}/${id}.json"),
+            model = getPackPath("models/${getPackContainerPath()}/${modelId}.json"),
             display = display
         )
     }

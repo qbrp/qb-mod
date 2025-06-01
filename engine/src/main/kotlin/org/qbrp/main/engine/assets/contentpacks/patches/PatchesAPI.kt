@@ -1,4 +1,4 @@
-package org.qbrp.main.engine.assets.patches
+package org.qbrp.main.engine.assets.contentpacks.patches
 
 import org.qbrp.main.core.modules.ModuleAPI
 import java.io.File
