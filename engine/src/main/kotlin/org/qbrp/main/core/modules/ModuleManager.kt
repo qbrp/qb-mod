@@ -4,13 +4,17 @@ import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.network.ServerPlayerEntity
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.component.inject
 import org.koin.core.context.loadKoinModules
 import org.qbrp.main.core.assets.FileSystem
+import org.qbrp.main.core.utils.log.InformationMessage
 import org.qbrp.main.core.utils.log.LoggerUtil
 import org.reflections.Reflections
 
 open class ModuleManager(open val ignoreEnvironment: Boolean = false): KoinComponent {
     val modules: MutableList<QbModule> = ArrayList()
+    val modulesCount: Int get() = modules.size
+    private val informationMessage by inject<InformationMessage>()
     protected open val logger = LoggerUtil.get("modules")
 
     protected open fun init(module: QbModule): QbModule {
@@ -81,11 +85,11 @@ open class ModuleManager(open val ignoreEnvironment: Boolean = false): KoinCompo
                 if (QbModule::class.java.isAssignableFrom(clazz)) {
                     clazz to (clazz.getAnnotation(Autoload::class.java)?.priority ?: LoadPriority.ADDON)
                 } else {
-                    //Core.informationMessage.addErrorComponent("Класс ${clazz.simpleName} не реализует org.qbrp.main.core.modules.QbModule")
+                    informationMessage.addErrorComponent("Класс ${clazz.simpleName} не реализует org.qbrp.main.core.modules.QbModule")
                     null
                 }
             } catch (e: Exception) {
-                //Core.informationMessage.addErrorComponent("Ошибка при проверке модуля ${clazz.simpleName}: ${e.message}")
+                informationMessage.addErrorComponent("Ошибка при проверке модуля ${clazz.simpleName}: ${e.message}")
                 e.printStackTrace()
                 null
             }
@@ -103,7 +107,7 @@ open class ModuleManager(open val ignoreEnvironment: Boolean = false): KoinCompo
                     if(instance.createFile) FileSystem.createModuleFile(instance.getName())
                     logger.success("Загружен ${instance.getName()}")
                 } else {
-                    //Core.informationMessage.addWarnComponent("Модуль ${instance.getName()} отключен.")
+                    informationMessage.addWarnComponent("Модуль ${instance.getName()} отключен.")
                     return@forEach
                 }
 
@@ -113,7 +117,7 @@ open class ModuleManager(open val ignoreEnvironment: Boolean = false): KoinCompo
                 init(instance)
 
             } catch (e: Exception) {
-                //Core.informationMessage.addErrorComponent("Ошибка при создании экземпляра модуля ${clazz.simpleName}: ${e.message}")
+                informationMessage.addErrorComponent("Ошибка при создании экземпляра модуля ${clazz.simpleName}: ${e.message}")
                 e.printStackTrace()
             }
         }

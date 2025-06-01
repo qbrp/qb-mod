@@ -7,13 +7,12 @@ import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.MinecraftServer
 import org.koin.core.component.get
 import org.qbrp.main.core.assets.AssetsAPI
-import org.qbrp.main.core.assets.prefabs.Prefabs
 import org.qbrp.main.deprecated.resources.ServerResources
 import org.qbrp.deprecated.resources.data.config.ConfigInitializationCallback
 import org.qbrp.deprecated.resources.data.config.ServerConfigData
 import org.qbrp.main.ApplicationLayer
 import org.qbrp.main.engine.ModInitializedEvent
-import org.qbrp.main.core.utils.networking.info.ServerInfoAPI
+import org.qbrp.main.core.info.ServerInfoAPI
 import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
 object Core: ApplicationLayer("org.qbrp.main.core") {
     val ASSETS: AssetsAPI by lazy { get() }
@@ -39,10 +38,6 @@ object Core: ApplicationLayer("org.qbrp.main.core") {
                 ServerResources.buildResources()
                 super.initialize()
                 get<ServerInfoAPI>().COMPOSER.component(SERVER_NAME, get<ServerConfigData>().serverName)
-            }
-
-            ModInitializedEvent.Companion.EVENT.register {
-                ConfigInitializationCallback.EVENT.invoker().onConfigUpdated(ServerResources.getConfig())
             }
         }
     }
