@@ -6,17 +6,17 @@ import java.io.File
 
 class VersionedPackDownloadReference(
     key: PackDownloadKey,
-) : DownloadZipFileReference<ServerPack>(key, { ServerPack(it) }) {
+) : DownloadZipFileReference<ClientContentPack>(key, { ClientContentPack(it) }) {
     val existingPack =
-        try { FilePathReference<ServerPack>(ServerPackKey(key.path), { ServerPack(it) }).read() }
+        try { FilePathReference<ClientContentPack>(ContentPackKey(key.path), { ClientContentPack(it) }).read() }
         catch (e: Exception) { null }
     val versionProvider: (File) -> String = { existingPack?.version ?: "NONE" }
 
-    suspend fun readWithoutRequest(): ServerPack {
+    suspend fun readWithoutRequest(): ClientContentPack {
         return existingPack ?: readAsync()
     }
 
-    override suspend fun readAsync(): ServerPack {
+    override suspend fun readAsync(): ClientContentPack {
         try {
             //key.validateHost()
             fun getDownloadUrl(host: String, request: String): String {

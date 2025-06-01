@@ -16,7 +16,7 @@ import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
 import org.qbrp.main.engine.assets.web.WebServerModule
 
 @Autoload(env = EnvType.CLIENT)
-class ServerPacksManager: QbModule("server-packs"), ServerPacksAPI {
+class ClientContentPackManager: QbModule("server-packs"), ClientContentPacksAPI {
     init {
         ClientEngine.isApiAvailable<ClientNotificationsAPI>()
     }
@@ -41,13 +41,13 @@ class ServerPacksManager: QbModule("server-packs"), ServerPacksAPI {
         }
     }
 
-    override fun getKoinModule(): Module = inner<ServerPacksAPI>(this) {  }
+    override fun getKoinModule(): Module = inner<ClientContentPacksAPI>(this) {  }
 
     fun applyPack(host: String, port: Int, name: String) {
         val notifications = get<ClientNotificationsAPI>()
         try {
             requireServerPack(host, port, name) {
-                ServerContentPackEvents.ON_APPLY.invoker().onApply(it)
+                ContentPackEvents.ON_APPLY.invoker().onApply(it)
                     notifications.sendSystemMessage(
                     "Ассеты", "Применен набор ассетов сервера <aqua>${name}"
                 )
@@ -58,7 +58,7 @@ class ServerPacksManager: QbModule("server-packs"), ServerPacksAPI {
         }
     }
 
-    fun requireServerPack(host: String, port: Int, name: String, onComplete: (ServerPack) -> Unit) {
+    fun requireServerPack(host: String, port: Int, name: String, onComplete: (ClientContentPack) -> Unit) {
         val serverHost = "$host:$port"
         val downloadUrl = "http://$serverHost"
         val downloadKey = PackDownloadKey(name, downloadUrl, serverHost)
@@ -66,9 +66,9 @@ class ServerPacksManager: QbModule("server-packs"), ServerPacksAPI {
         return Core.ASSETS.getOrLoadAsync(reference, { onComplete(it) }, { throw it })
     }
 
-    override fun getCurrentPack(): ServerPack {
+    override fun getCurrentPack(): ClientContentPack {
         TODO()
     }
 
-    override fun getAPI(): ServerPacksAPI = this
+    override fun getAPI(): ClientContentPacksAPI = this
 }
