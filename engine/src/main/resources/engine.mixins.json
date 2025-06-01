@@ -15,7 +15,6 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "ChatMessageC2SPacketMixin",
     "ServerPlayerInteractionManagerMixin",
     "WhisperCommandMixin"
   ]

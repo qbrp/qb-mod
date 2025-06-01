@@ -13,7 +13,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.Window;
 import org.apache.logging.log4j.Marker;
 import org.lwjgl.system.MemoryUtil;
-import org.qbrp.engine.client.render.hud.GameScreen;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -78,9 +77,9 @@ public class UIManagerMixin {
                     .commit();
             mRoot.mHandler.post(this::restoreLayoutTransition);
         }
-        if (!(screen.getFragment() instanceof GameScreen)) {
-            mScreen = screen;
-        }
+        //if (!(screen.getFragment() instanceof GameScreen)) {
+            //mScreen = screen;
+        //}
         // ensure it's resized
         MinecraftClient minecraft = MinecraftClient.getInstance();
         resize(minecraft.getWindow().getWidth(), minecraft.getWindow().getHeight());

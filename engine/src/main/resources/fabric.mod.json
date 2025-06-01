@@ -11,13 +11,10 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "org.qbrp.engine.client.EngineClient"
+      "org.qbrp.client.ClientApplicationLoader"
     ],
     "server": [
-      "org.qbrp.core.ServerCore"
-    ],
-    "main": [
-      "org.qbrp.core.Core"
+      "org.qbrp.main.ApplicationLoader"
     ]
   },
   "mixins": [

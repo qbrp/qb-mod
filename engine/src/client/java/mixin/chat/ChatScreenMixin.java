@@ -1,7 +1,6 @@
 package mixin.chat;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatInputSuggestor;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -10,11 +9,10 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.StringHelper;
 import org.apache.commons.lang3.StringUtils;
-import org.qbrp.engine.Engine;
-import org.qbrp.engine.client.EngineClient;
-import org.qbrp.engine.client.engine.chat.ChatModuleClient;
-import org.qbrp.engine.client.engine.chat.ClientChatAPI;
-import org.qbrp.engine.client.engine.chat.system.Typer;
+import org.qbrp.client.ClientCore;
+import org.qbrp.client.engine.ClientEngine;
+import org.qbrp.client.engine.chat.ChatModuleClient;
+import org.qbrp.client.engine.chat.ClientChatAPI;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,7 +20,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
@@ -52,7 +49,7 @@ class ChatScreenMixin extends Screen {
     private void onChatOpen(CallbackInfo ci) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player != null) {
-            Objects.requireNonNull((ChatModuleClient) EngineClient.Companion.getModuleManager().getModule("chat-client")).getAPI().startTyping(player);
+            Objects.requireNonNull((ChatModuleClient) ClientEngine.INSTANCE.getModule("chat-client")).getAPI().startTyping(player);
         }
         this.chatField.setMaxLength(456);
     }
@@ -71,7 +68,7 @@ class ChatScreenMixin extends Screen {
 //        this.setInitialFocus(this.chatField);
 //        if (this.chatField instanceof TransfromTextFieldWidget) {
 //            ((TransfromTextFieldWidget) this.chatField).setRenderedTextTransformer(text ->
-//                    Objects.requireNonNull(EngineClient.Companion.getChatModuleAPI())
+//                    Objects.requireNonNull(ClientCore.Companion.getChatModuleAPI())
 //                            .getTextTransformer()
 //                            .getColorTransformedMessage(text)
 //            );
@@ -83,7 +80,7 @@ class ChatScreenMixin extends Screen {
     private void onChatClose(CallbackInfo ci) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player != null) {
-            Objects.requireNonNull((ChatModuleClient) EngineClient.Companion.getModuleManager().getModule("chat-client")).getAPI().endTyping(player);
+            Objects.requireNonNull((ChatModuleClient) ClientEngine.INSTANCE.getModule("chat-client")).getAPI().endTyping(player);
         }
     }
 
@@ -101,7 +98,7 @@ class ChatScreenMixin extends Screen {
 //    )
 //    private void redirectFill(DrawContext context, int x1, int y1, int x2, int y2, int color) {
 //        int bgColor = this.client.options.getTextBackgroundColor(Integer.MIN_VALUE);
-//        Typer.TypingMessageContext typingContext = Objects.requireNonNull(EngineClient.Companion.getChatModuleAPI()).getTypingContextFromText(chatField.getText());
+//        Typer.TypingMessageContext typingContext = Objects.requireNonNull(ClientCore.Companion.getChatModuleAPI()).getTypingContextFromText(chatField.getText());
 //        String tagsNames = typingContext.calculateMetaInfoNames();
 //
 //        if (getTypingMessage() != null && !tagsNames.isEmpty()) {
@@ -137,7 +134,7 @@ class ChatScreenMixin extends Screen {
      */
     @Overwrite
     public boolean sendMessage(String chatText, boolean addToHistory) {
-        ClientChatAPI api = Objects.requireNonNull((ChatModuleClient) EngineClient.Companion.getModuleManager().getModule("chat-client")).getAPI();
+        ClientChatAPI api = Objects.requireNonNull((ChatModuleClient) ClientEngine.INSTANCE.getModule("chat-client")).getAPI();
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player != null) {
            api.endTyping(player);
@@ -155,7 +152,7 @@ class ChatScreenMixin extends Screen {
                 this.client.player.networkHandler.sendChatCommand(chatText.substring(1));
             } else {
                 assert this.client.player != null;
-                if (EngineClient.Companion.getModuleManager().isModuleEnabled("chat-client")) {
+                if (ClientCore.INSTANCE.isModuleEnabled("chat-client")) {
                     api.sendMessageToServer(api.createMessageFromContext(api.getTypingContextFromText(chatText)));
                 } else {
                     this.client.player.networkHandler.sendChatMessage(chatText);

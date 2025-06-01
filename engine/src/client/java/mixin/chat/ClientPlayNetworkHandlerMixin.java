@@ -1,38 +1,53 @@
 package mixin.chat;
 
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.message.MessageHandler;
 import net.minecraft.text.Text;
-import org.qbrp.engine.Engine;
-import org.qbrp.engine.chat.core.messages.ChatMessage;
-import org.qbrp.engine.chat.core.messages.VanillaChatMessage;
-import org.qbrp.engine.client.EngineClient;
-import org.qbrp.engine.client.engine.chat.ChatModuleClient;
-import org.qbrp.engine.client.engine.chat.ClientChatAPI;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.qbrp.client.engine.ClientEngine;
+import org.qbrp.client.ClientCore;
+import org.qbrp.client.engine.chat.ClientChatAPI;
+import org.qbrp.client.engine.chat.ChatModuleClient;
+import org.qbrp.main.engine.chat.core.messages.ChatMessage;
+import org.qbrp.main.engine.chat.core.messages.VanillaChatMessage;
 
-import java.util.Objects;
-
-import static org.qbrp.engine.chat.ChatModule.SYSTEM_MESSAGE_AUTHOR;
+import static org.qbrp.main.engine.chat.ChatModule.SYSTEM_MESSAGE_AUTHOR;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin {
 
-    @Redirect(method = "onGameMessage",
-            at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/client/network/message/MessageHandler;onGameMessage(Lnet/minecraft/text/Text;Z)V"))
-    private void redirectOnGameMessage(net.minecraft.client.network.message.MessageHandler instance, Text message, boolean overlay) {
-        if (EngineClient.Companion.getModuleManager().isModuleEnabled("chat-client")) {
-            if (!overlay) {
-                ChatMessage chatMessage = VanillaChatMessage.Companion.create(message, SYSTEM_MESSAGE_AUTHOR);
-                Objects.requireNonNull((ChatModuleClient) EngineClient.Companion.getModuleManager().getModule("chat")).getAPI().addMessage(chatMessage);
-            } else {
-                instance.onGameMessage(message, overlay);
-            }
-        } else {
-            instance.onGameMessage(message, overlay);
+    @Redirect(
+            method = "onGameMessage",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/network/message/MessageHandler;onGameMessage(Lnet/minecraft/text/Text;Z)V"
+            )
+    )
+    private void redirectOnGameMessage(
+            MessageHandler handler,
+            Text message,
+            boolean overlay
+    ) {
+        if (overlay || !ClientEngine.INSTANCE.isModuleEnabled("chat-client")) {
+            handler.onGameMessage(message, overlay);
+            return;
         }
-        // В целом, не особо то и нужно
+
+        ChatModuleClient chatModule = ClientCore.INSTANCE.getModule("chat");
+        if (chatModule == null) {
+            handler.onGameMessage(message, overlay);
+            return;
+        }
+        ClientChatAPI api = (ClientChatAPI) chatModule.getAPI();
+        if (api == null) {
+            handler.onGameMessage(message, overlay);
+            return;
+        }
+
+        // Create and add custom chat message
+        ChatMessage chatMessage = VanillaChatMessage.Companion.create(message, SYSTEM_MESSAGE_AUTHOR);
+        api.addMessage(chatMessage);
     }
 }

@@ -74,10 +74,12 @@ val includeDependency by extra(
     System.getenv("INCLUDE_DEPENDENCY")?.toBoolean() ?: false
 )
 dependencies {
-    // Основные зависимости
     implementation(kotlin("reflect"))
+
+    // Reflections
     include(implementation("org.reflections:reflections:0.10.2")!!)
     include(implementation("org.javassist:javassist:3.28.0-GA")!!)
+
     minecraft("com.mojang:minecraft:${project.property("minecraft_version")}")
     mappings("net.fabricmc:yarn:${project.property("yarn_mappings")}:v2")
     modImplementation("net.fabricmc:fabric-loader:${project.property("loader_version")}")
@@ -87,6 +89,7 @@ dependencies {
         modImplementation(include("net.kyori:adventure-platform-fabric:${project.property("adventure_version")}")!!)
     }
     include(implementation("net.kyori:adventure-text-serializer-gson:4.14.0")!!)
+
 
     // Корутины
     include(implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")!!)
@@ -125,10 +128,12 @@ dependencies {
     include(implementation(project.dependencies.platform("io.insert-koin:koin-bom:${project.property("koin_version")}"))!!)
     include(implementation("io.insert-koin:koin-core")!!)
 
-    include(implementation("org.mongodb:mongodb-driver-sync:5.2.1")!!)
-    include(implementation("org.mongodb:mongodb-driver-core:5.2.1")!!)
-    include(implementation("org.mongodb:bson:5.2.1")!!)
-    include(implementation("org.mongodb:bson-record-codec:5.2.1")!!)
+    // KMongo
+    include(implementation("org.litote.kmongo:kmongo-coroutine:5.2.0")!!)
+    include(implementation("org.mongodb:mongodb-driver-sync:5.2.0")!!)
+    include(implementation("org.mongodb:mongodb-driver-core:5.2.0")!!)
+    include(implementation("org.mongodb:bson:5.2.0")!!)
+    include(implementation("org.mongodb:bson-record-codec:5.2.0")!!)
     include(implementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")!!)
     include(implementation("com.fasterxml.jackson.core:jackson-core:2.17.1")!!)
     include(implementation("com.fasterxml.jackson.core:jackson-annotations:2.17.1")!!)
@@ -142,11 +147,13 @@ dependencies {
     include(implementation("org.litote.kmongo:kmongo-property:5.1.0")!!)
     include(implementation("org.litote.kmongo:kmongo-shared:5.1.0")!!)
     include(implementation("de.undercouch:bson4jackson:2.15.1")!!)
-    include(implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")!!)
-    include(implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")!!)
-    include(implementation("net.kyori:adventure-text-minimessage:4.14.0")!!)
     include(implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.0")!!)
     include(implementation("com.fasterxml.jackson.datatype:jackson-datatype-guava:2.17.+")!!)
+
+    // Kyori Adventure
+    include(implementation("net.kyori:adventure-text-minimessage:4.14.0")!!)
+
+    // LuckPerms
     compileOnly("net.luckperms:api:5.4")
 
     //Конфигурация

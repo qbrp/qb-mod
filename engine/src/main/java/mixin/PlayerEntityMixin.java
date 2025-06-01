@@ -7,8 +7,9 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
-import org.qbrp.core.mc.player.PlayerManager;
-import org.qbrp.core.mc.player.PlayerObject;
+import org.qbrp.main.core.mc.player.PlayersModule;
+import org.qbrp.main.core.mc.player.PlayerObject;
+import org.qbrp.main.core.mc.player.PlayersUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -30,7 +31,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     private void loadData() {
         String name = this.getName().getString();
         if (name != null && !name.isEmpty()) {
-            PlayerObject data = PlayerManager.INSTANCE.getPlayerSession(name);
+            PlayerObject data = PlayersUtil.INSTANCE.getPlayerSession(name);
             if (data != null) {
                 customDisplayName = data.getDisplayNameText();
             }
