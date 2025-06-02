@@ -16,5 +16,5 @@ class VersionRepository(
         VersionEntry(version, FileSystem.getOrCreate(baseDir.resolve(version), true), get())
 
     fun getPatch(old: String, new: String): File =
-        patchesDir.resolve("$old-$new")
+        FileSystem.getOrCreate(patchesDir.resolve("$old-$new"), true)
 }
