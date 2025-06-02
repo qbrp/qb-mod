@@ -10,10 +10,16 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.minecraft.client.MinecraftClient;
 import org.jetbrains.annotations.Nullable;
+import org.qbrp.client.ClientCore;
+import org.qbrp.client.ModelRepo;
+import org.qbrp.client.core.resources.ModelRepository;
+import org.qbrp.main.core.modules.QbModule;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Objects;
 
 @Mixin(ItemRenderer.class)
 public abstract class ItemRendererMixin {
@@ -32,40 +38,20 @@ public abstract class ItemRendererMixin {
             int seed,
             CallbackInfoReturnable<BakedModel> cir
     ) {
-        BakedModel original = cir.getReturnValue();
         if (!stack.hasNbt()) return;
 
         var nbt = stack.getNbt();
         assert nbt != null;
         if (!nbt.contains("QbrpModel", 8)) return;
 
-        String tag = nbt.getString("QbrpModel");            // e.g. "tactical_tomahawk#inventory"
-        String[] parts = tag.split("#", 2);
-        String modelName = parts[0];                        // "tactical_tomahawk"
-        String variant   = parts.length > 1 ? parts[1] : "inventory";
+        String tag = nbt.getString("QbrpModel");
+        ModelRepository modelRepo = (ModelRepository) ((QbModule) Objects.requireNonNull(ClientCore.INSTANCE.getModule("model-loader"))).getAPI();
+        assert modelRepo != null;
 
-        // 1) namespace:path — если нет ":", то дописываем "qbrp:"
-        Identifier baseId = modelName.contains(":")
-                ? Identifier.tryParse(modelName)
-                : new Identifier("qbrp", modelName);
+        ModelIdentifier id = modelRepo.getResourceLocation(tag);
 
-        // 2) путь к файлу — Minecraft сам ищет по resourcePath "models/<baseId.path>.json"
-        //    но для предметов чаще всего это assets/.../models/item/<name>.json
-        //    поэтому, если путь не содержит "/", допишем подпапку "item/"
-        Identifier fullId = baseId.getPath().contains("/")
-                ? baseId
-                : new Identifier(baseId.getNamespace(), "models/item/" + baseId.getPath());
-
-        ModelIdentifier modelId = new ModelIdentifier(fullId, variant);
-
-        // Получаем уже запечённую модель
         BakedModelManager mgr = MinecraftClient.getInstance().getBakedModelManager();
-        BakedModel custom = mgr.getModel(modelId);
+        BakedModel custom = mgr.getModel(id);
         cir.setReturnValue(custom);
-        return;
-
-//        if (custom != null) {
-//            cir.setReturnValue(custom);
-//        }
     }
 }

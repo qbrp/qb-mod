@@ -13,7 +13,7 @@ import java.io.File
 class ClientContentPack(path: File): ContentPack(
     path,
     JsonFileReference(SimpleKey(path.resolve("manifest")), PackManifest::class).read(),
-    JsonFileReference(SimpleKey(path.resolve("manifest")), ModelsList::class).read(),
+    JsonFileReference(SimpleKey(path.resolve("modellist")), ModelsList::class).read(),
     ) {
 
     companion object {

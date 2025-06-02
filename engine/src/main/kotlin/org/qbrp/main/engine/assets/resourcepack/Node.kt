@@ -62,7 +62,7 @@ data class Node(val type: String,
         }
     }
 
-    fun getResourceLocation() = getPackPath("models/${getPackContainerPath()}/$modelId.json")
+    fun getResourceLocation() = "$modelId/$modelId"
     fun getPackContainerPath() = "$resourceType/$modelId"
     fun getPackContainerPath(type: String) = "$type/$resourceType/$modelId"
 

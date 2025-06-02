@@ -59,7 +59,7 @@ class ResourcePackBakerModule: QbModule("resourcepack-baker"), ResourcePackAPI {
     override fun createModelsList(nodes: List<Node>): ModelsList {
         val idsMap = mutableMapOf<String, String>()
         nodes.forEach { node ->
-            idsMap[node.id] = node.getPackContainerPath(node.getResourceLocation())
+            idsMap[node.id] = node.getResourceLocation()
         }
         return ModelsList(idsMap)
     }

@@ -63,7 +63,7 @@ class ClientContentPackManager: QbModule("server-packs"), ClientContentPacksAPI 
         val downloadUrl = "http://$serverHost"
         val downloadKey = PackDownloadKey(name, downloadUrl, serverHost)
         val reference = VersionedPackDownloadReference(downloadKey)
-        return Core.ASSETS.getOrLoadAsync(reference, { onComplete(it) }, { throw it })
+        return Core.ASSETS.loadAsync(reference, { onComplete(it) }, { throw it })
     }
 
     override fun getCurrentPack(): ClientContentPack {
