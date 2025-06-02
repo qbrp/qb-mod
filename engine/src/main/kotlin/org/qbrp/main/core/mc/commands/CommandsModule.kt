@@ -13,7 +13,7 @@ class CommandsModule: QbModule("commands"), CommandsAPI {
     private var commands = mutableListOf<CommandRegistryEntry>()
 
     override fun onEnable() {
-        ServerLifecycleEvents.SERVER_STARTING.register {
+        ServerLifecycleEvents.SERVER_STARTED.register {
             registerCommands(it.commandManager.dispatcher)
         }
     }

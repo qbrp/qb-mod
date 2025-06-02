@@ -10,10 +10,6 @@ class ItemRegistry() {
     val baseItems = mutableListOf<ItemDefinition>()
     val itemGroups = InventoryGroupsRegistry()
 
-    init {
-        registerItem(ItemDefinition("abstract_item", QbItem()))
-    }
-
     fun getItem(name: String): ItemDefinition {
         return baseItems.find { it.name == name } ?: throw IllegalArgumentException("$name not found")
     }
