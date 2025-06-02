@@ -18,13 +18,6 @@ class ContentPackBuilder(val file: File,
     private val modelsListFile = file.resolve("modellist.json")
     private var modelsList: ModelsList? = null
 
-    fun bake(version: String) {
-        val nodes = resourcePackAPI.scanNodes()
-        bakeResourcePack(nodes)
-        bakeModelsList(nodes)
-        bakeManifest(version)
-    }
-
     fun bakeResourcePack(nodes: List<Node>): ContentPackBuilder {
         resourcePack = ResourcePackBuilder(resourcePackFile)
         resourcePackAPI.createModelPackFiles(resourcePack!!, nodes)
