@@ -77,10 +77,6 @@ class Assets: QbModule("assets"), AssetsAPI {
         onComplete: (T) -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        storage.getAsset<T>(ref.key.getId())?.let {
-            onComplete(it)
-            return
-        }
         defaultScope.launch(Dispatchers.IO) {
             try {
                 if (!ref.exists()) throw FileNotFoundException("Файл ${ref.key.getId()} не существует")
