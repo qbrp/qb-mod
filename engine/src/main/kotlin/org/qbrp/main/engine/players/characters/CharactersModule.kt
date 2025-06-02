@@ -17,6 +17,7 @@ import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.GameModule
 import org.koin.core.component.get
 import org.qbrp.main.core.mc.commands.CommandsAPI
+import org.qbrp.main.engine.players.characters.appearance.Appearance
 
 @Autoload
 class CharactersModule: GameModule("characters") {
@@ -39,6 +40,7 @@ class CharactersModule: GameModule("characters") {
 
     override fun registerComponents(registry: ComponentsRegistry) {
         registry.register(Character::class.java)
+        registry.register(Appearance::class.java)
     }
 
     override fun getKoinModule() = module {
