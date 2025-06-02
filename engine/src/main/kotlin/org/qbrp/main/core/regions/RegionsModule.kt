@@ -46,7 +46,7 @@ class RegionsModule(): QbModule("regions"), RegionsAPI {
         loadRegions()
         get<CommandsAPI>().add(RegionCommands(this, getLocal()))
         UseBlockCallback.EVENT.register(UseBlockCallback { player, world, hand, hitResult ->
-            get<RegionSelection>().handleInteraction(player as ServerPlayerEntity, hand, hitResult)
+            getLocal<RegionSelection>().handleInteraction(player as ServerPlayerEntity, hand, hitResult)
             ActionResult.PASS
         })
     }
