@@ -1,5 +1,6 @@
 package mixin.chat;
 
+import net.minecraft.block.ChestBlock;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.message.MessageHandler;
 import net.minecraft.text.Text;
@@ -40,11 +41,7 @@ public class ClientPlayNetworkHandlerMixin {
             handler.onGameMessage(message, overlay);
             return;
         }
-        ClientChatAPI api = (ClientChatAPI) chatModule.getAPI();
-        if (api == null) {
-            handler.onGameMessage(message, overlay);
-            return;
-        }
+        ClientChatAPI api = chatModule.getAPI();
 
         // Create and add custom chat message
         ChatMessage chatMessage = VanillaChatMessage.Companion.create(message, SYSTEM_MESSAGE_AUTHOR);
