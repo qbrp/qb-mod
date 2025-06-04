@@ -20,12 +20,16 @@ import org.qbrp.main.core.modules.GameModule
 import org.qbrp.main.core.storage.StorageAPI
 import org.qbrp.main.core.storage.TableAccess
 import org.qbrp.main.engine.Engine
-import org.qbrp.main.engine.items.components.Tooltip
+import org.qbrp.main.engine.items.components.tooltip.Brief
+import org.qbrp.main.engine.items.components.tooltip.Description
+import org.qbrp.main.engine.items.components.tooltip.TooltipManager
 import org.qbrp.main.engine.synchronization.impl.FuncProvider
 import org.qbrp.main.engine.synchronization.impl.SynchronizerChannelSender
 import org.qbrp.main.engine.items.model.ServerItemObject
 import org.qbrp.main.engine.synchronization.SynchronizationAPI
+import org.qbrp.main.engine.synchronization.impl.LocalMessageSender
 import org.qbrp.main.engine.synchronization.`interface`.Synchronizer
+import org.qbrp.main.engine.synchronization.`interface`.components.ObjectMessageSender
 
 @Autoload
 class ItemsModule: GameModule("items") {
@@ -38,6 +42,7 @@ class ItemsModule: GameModule("items") {
     companion object {
         val SETTINGS = Settings().maxCount(1)
         val ITEMS_CHANNEL = "items"
+        val ITEMS_MESSAGING_CHANNEL = "items_messaging"
     }
 
     fun giveItemPrefab(key: PrefabEntryKey, player: PlayerObject): Boolean {
@@ -65,7 +70,9 @@ class ItemsModule: GameModule("items") {
             giveItemPrefab(PrefabEntryKey("item", "test", "default"), player)
         }
         ComponentRegistryInitializationEvent.EVENT.register {
-            it.register(Tooltip::class.java)
+            it.register(TooltipManager::class.java)
+            it.register(Brief::class.java)
+            it.register(Description::class.java)
         }
 
         gameAPI.addWorldTickTask(getLocal<ItemTicker>())
@@ -82,5 +89,6 @@ class ItemsModule: GameModule("items") {
         single { ItemFabric(gameAPI, this@ItemsModule, get()) }
         single { ItemLifecycle(get(), get(), get(), this@ItemsModule, get()) }
         single { ItemTicker(get()) }
+        single<ObjectMessageSender> { LocalMessageSender(ITEMS_MESSAGING_CHANNEL) }
     }
 }

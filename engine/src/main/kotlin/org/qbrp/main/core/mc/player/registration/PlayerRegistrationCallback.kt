@@ -3,7 +3,6 @@ package org.qbrp.main.core.mc.player.registration
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.util.ActionResult
-import org.qbrp.main.core.mc.player.PlayersModule
 import org.qbrp.main.core.mc.player.PlayerObject
 import org.qbrp.main.core.mc.player.PlayersAPI
 

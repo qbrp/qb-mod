@@ -7,7 +7,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
-import org.qbrp.main.core.mc.player.PlayersModule;
 import org.qbrp.main.core.mc.player.PlayerObject;
 import org.qbrp.main.core.mc.player.PlayersUtil;
 import org.spongepowered.asm.mixin.Mixin;

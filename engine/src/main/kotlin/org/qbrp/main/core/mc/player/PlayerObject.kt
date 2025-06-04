@@ -5,7 +5,6 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.Vec3d
-import org.qbrp.main.core.game.lifecycle.Lifecycle
 import org.qbrp.main.core.game.model.State
 import org.qbrp.main.core.game.loop.Tick
 import org.qbrp.main.core.mc.McObject

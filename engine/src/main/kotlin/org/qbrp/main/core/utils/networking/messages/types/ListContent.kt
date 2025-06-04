@@ -4,7 +4,7 @@ import net.minecraft.network.PacketByteBuf
 import kotlin.collections.List
 
 open class ListContent<T>(val writer: (PacketByteBuf, T) -> Unit, val reader: (PacketByteBuf) -> T) : BilateralContent() {
-    var list: List<T> = emptyList()
+    open var list: List<T> = emptyList()
     override fun write(buf: PacketByteBuf): PacketByteBuf {
         super.write(buf);
         buf.writeCollection(list, writer)

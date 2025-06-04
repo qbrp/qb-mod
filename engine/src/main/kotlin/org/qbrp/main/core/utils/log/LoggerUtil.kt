@@ -18,7 +18,7 @@ object LoggerUtil {
         register(Logger(enabled = true,"resources"))
         register(Logger(enabled = true,"timers"))
         register(Logger(enabled = false,"network", "sending"))
-        register(Logger(enabled = true,"network", "receiving"))
+        register(Logger(enabled = false,"network", "receiving"))
         register(Logger(enabled = true,"downloading"))
         register(Logger(enabled = false,"serverNetwork", "sending"))
         register(Logger(enabled = false,"serverNetwork", "receiving"))

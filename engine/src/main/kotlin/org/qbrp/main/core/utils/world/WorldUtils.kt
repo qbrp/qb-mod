@@ -7,7 +7,6 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundCategory
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec3d
-import org.qbrp.main.core.mc.player.PlayersModule
 import org.qbrp.main.core.mc.player.PlayerObject
 import org.qbrp.main.core.mc.player.PlayersUtil
 
