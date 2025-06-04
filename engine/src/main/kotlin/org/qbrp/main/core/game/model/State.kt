@@ -2,6 +2,7 @@ package org.qbrp.main.core.game.model
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import org.koin.core.context.GlobalContext
 import org.qbrp.main.core.Core
 import org.qbrp.main.core.game.ComponentsRegistry
 import org.qbrp.main.core.game.model.components.Activateable
@@ -20,7 +21,7 @@ import org.qbrp.main.core.game.GameEngine
 open class State constructor(val jsonComponents: Collection<ComponentJsonField> = mutableListOf()
 ) {
     companion object {
-        private val REGISTRY = Core.getModule<GameEngine>().getLocal<ComponentsRegistry>()
+        private val REGISTRY = GlobalContext.get().get<ComponentsRegistry>()
         private val LOGGER = LoggerUtil.get("game", "components")
     }
     var behaviours = mutableListOf<Behaviour>()
@@ -33,13 +34,16 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
         (tickables as MutableList<Tick<T>>).forEach { it.tick(ctx) }
     }
 
+    //java.util.ConcurrentModificationException: null
     fun copy(): State {
-        val newState = State()
-        components.forEach { (k, v) ->
-            newState.addComponent(v, k)
+        synchronized(this) {
+            val newState = State()
+            components.forEach { (k, v) ->
+                newState.addComponent(v, k)
+            }
+            newState.putObject(obj)
+            return newState
         }
-        newState.putObject(obj)
-        return newState
     }
 
     fun putObjectAndEnableBehaviours(obj: BaseObject) {
@@ -128,6 +132,12 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
         val newComp = factory()
         addComponent(newComp)
         return newComp
+    }
+
+    inline fun getComponentOrAdd(name: String, factory: () -> Component) {
+        getComponentByName(name).let { return }
+        val newComp = factory()
+        addComponent(newComp)
     }
 
     inline fun <reified T : Component> replaceComponent(noinline factory: () -> T): T {
