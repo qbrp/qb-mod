@@ -1,7 +1,6 @@
 package org.qbrp.main.engine.anticheat
 
 import net.minecraft.server.MinecraftServer
-import org.koin.core.component.get
 import org.koin.core.context.GlobalContext
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.QbModule
@@ -27,7 +26,7 @@ class Anticheat: QbModule("anticheat") {
     )
 
     override fun onLoad() {
-        ServerReceiver<ServerReceiverContext>(Messages.MOD_IDS, ModIdListContent::class, { message, context, receiver ->
+        ServerReceiver<ServerReceiverContext>(Messages.MOD_IDS, StringListContent::class, { message, context, receiver ->
             if (!context.player.hasPermissionLevel(4)) {
                 val modList = message.getContent<List<String>>()
                 val restrictedMods = mutableListOf<String>()

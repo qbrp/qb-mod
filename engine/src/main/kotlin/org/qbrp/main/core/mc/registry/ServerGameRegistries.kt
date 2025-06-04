@@ -12,8 +12,11 @@ import org.qbrp.main.core.modules.LoadPriority
 import org.qbrp.main.core.modules.QbModule
 import org.qbrp.main.engine.items.QbItem
 
-open class GameRegistries: QbModule("registries") {
-    override fun getKoinModule() = module {
-        single { ItemRegistry() }
+class ServerGameRegistries: GameRegistries() {
+    override fun onEnable() {
+        get<ItemRegistry>().apply {
+            registerItem(ItemDefinition("abstract_item", QbItem()))
+            registerItem(ItemDefinition("undefined", QbItem()))
+        }
     }
 }

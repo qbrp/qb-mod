@@ -13,6 +13,7 @@ import org.qbrp.deprecated.resources.data.config.ServerConfigData
 import org.qbrp.main.ApplicationLayer
 import org.qbrp.main.engine.ModInitializedEvent
 import org.qbrp.main.core.info.ServerInfoAPI
+import org.qbrp.main.core.mc.registry.GameRegistries
 import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
 object Core: ApplicationLayer("org.qbrp.main.core") {
     val ASSETS: AssetsAPI by lazy { get() }
@@ -29,6 +30,7 @@ object Core: ApplicationLayer("org.qbrp.main.core") {
     }
 
     override fun initialize() {
+        get<GameRegistries>().enable()
         if (FabricLoader.getInstance().environmentType == EnvType.CLIENT) {
             eu.midnightdust.lib.config.MidnightConfig.init(MOD_ID, ClientConfig::class.java)
             super.initialize()

@@ -2,9 +2,12 @@ package org.qbrp.client
 import net.fabricmc.api.ClientModInitializer
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
+import org.qbrp.client.core.registry.ClientGameRegistries
 import org.qbrp.client.engine.ClientEngine
 import org.qbrp.deprecated.resources.data.config.ConfigInitializationCallback
 import org.qbrp.main.core.Core
+import org.qbrp.main.core.mc.registry.GameRegistries
+import org.qbrp.main.core.mc.registry.ServerGameRegistries
 import org.qbrp.main.core.utils.log.InformationMessage
 import org.qbrp.main.core.versions.VersionsUtil
 import org.qbrp.main.deprecated.resources.ServerResources
@@ -22,14 +25,14 @@ class ClientApplicationLoader : ClientModInitializer {
             modules(
                 module {
                     single { informationMessage }
+                    single<GameRegistries> { ClientGameRegistries() }
                 }
-            ) //TODO: Добавить конфиг
+            )
             Core.initialize()
             ClientCore.initialize()
             Engine.initialize()
             ClientEngine.initialize()
-        }
-        ModInitializedEvent.EVENT.register {
+            ModInitializedEvent.EVENT.invoker().event()
             informationMessage.print(modulesCount)
         }
     }

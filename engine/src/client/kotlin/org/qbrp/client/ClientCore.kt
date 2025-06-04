@@ -1,7 +1,6 @@
 package org.qbrp.client
 
 import dev.felnull.specialmodelloader.api.event.SpecialModelLoaderEvents
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.minecraft.client.MinecraftClient
 import org.qbrp.main.core.Core
 import org.qbrp.main.ApplicationLayer
@@ -13,13 +12,6 @@ object ClientCore: ApplicationLayer("org.qbrp.client.core") {
         return networkHandler?.connection?.address?.toString()
             ?.split("/")?.last()
             ?.split(":")?.first()
-    }
-
-    fun initializeAnd(runnable: Runnable) {
-        initialize()
-        ClientLifecycleEvents.CLIENT_STARTED.register {
-            runnable.run()
-        }
     }
 
     override fun initialize() {

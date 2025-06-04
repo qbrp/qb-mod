@@ -10,6 +10,9 @@ import org.koin.dsl.module
 import org.qbrp.deprecated.resources.data.config.ConfigInitializationCallback
 import org.qbrp.main.deprecated.resources.ServerResources
 import org.qbrp.main.core.Core
+import org.qbrp.main.core.mc.registry.GameRegistries
+import org.qbrp.main.core.mc.registry.ServerGameRegistries
+import org.qbrp.main.core.mc.registry.items.ItemRegistry
 import org.qbrp.main.core.utils.format.Format.asMiniMessage
 import org.qbrp.main.core.utils.log.InformationMessage
 import org.qbrp.main.core.versions.VersionsUtil
@@ -30,6 +33,7 @@ class ApplicationLoader : DedicatedServerModInitializer {
                 module {
                     single { ServerResources.getConfig() }
                     single { informationMessage }
+                    single<GameRegistries> { ServerGameRegistries() }
                 }
             )
             ServerLifecycleEvents.SERVER_STARTING.register { server ->
