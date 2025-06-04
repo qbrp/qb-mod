@@ -37,7 +37,7 @@ data class Node(val type: String,
         val mtlText = mtlFile.readLines()
         val modifiedLines = mutableListOf<String>()
         for (line in mtlText) {
-            modifiedLines.add(line)
+            if (!line.startsWith("map_Kd")) modifiedLines.add(line)
             if (line.contains("newmtl")) {
                 val materialName = line.split("newmtl ").last()
                 materialTextures[materialName]?.let {
@@ -75,7 +75,7 @@ data class Node(val type: String,
     fun createJsonModel(): JsonModel {
         return JsonModel(
             parent = parent,
-            model = getPackPath("models/${getPackContainerPath()}/${modelId}.obj"),
+            model = getPackPath("models/${getPackContainerPath()}/${modelId}.json"),
             textures = mapOf("layer0" to getPackPath(modelId)),
         )
     }
@@ -83,8 +83,9 @@ data class Node(val type: String,
     fun createObjModel(): ObjModel {
         return ObjModel(
             parent = OBJ_LOADER_PARENT,
-            model = getPackPath("models/${getPackContainerPath()}/${modelId}.json"),
-            display = display
+            model = getPackPath("models/${getPackContainerPath()}/${modelId}.obj"),
+            display = display,
+            flipV = flipV,
         )
     }
 

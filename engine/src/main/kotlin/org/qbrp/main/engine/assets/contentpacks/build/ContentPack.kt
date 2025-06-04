@@ -1,7 +1,7 @@
 package org.qbrp.main.engine.assets.contentpacks.build
 
 import org.qbrp.main.core.assets.common.Asset
-import org.qbrp.main.engine.assets.contentpacks.versioning.PackManifest
+import org.qbrp.main.engine.assets.contentpacks.PackManifest
 import org.qbrp.main.engine.assets.resourcepack.ModelsList
 import java.io.File
 

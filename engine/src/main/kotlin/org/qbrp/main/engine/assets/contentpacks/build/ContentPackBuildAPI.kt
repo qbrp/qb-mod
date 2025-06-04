@@ -1,6 +1,6 @@
 package org.qbrp.main.engine.assets.contentpacks.build
 
-import org.qbrp.main.engine.assets.contentpacks.versioning.VersionEntry
+import org.qbrp.main.engine.assets.contentpacks.VersionEntry
 import java.io.File
 
 interface ContentPackBuildAPI {

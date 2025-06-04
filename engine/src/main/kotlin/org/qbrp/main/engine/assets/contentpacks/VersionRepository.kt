@@ -1,4 +1,4 @@
-package org.qbrp.main.engine.assets.contentpacks.versioning
+package org.qbrp.main.engine.assets.contentpacks
 
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -16,5 +16,5 @@ class VersionRepository(
         VersionEntry(version, FileSystem.getOrCreate(baseDir.resolve(version), true), get())
 
     fun getPatch(old: String, new: String): File =
-        FileSystem.getOrCreate(patchesDir.resolve("$old-$new"), true)
+        patchesDir.resolve("$old-$new")
 }

@@ -1,7 +1,7 @@
 package org.qbrp.main.engine.assets.build
 
 import org.qbrp.main.engine.Engine
-import org.qbrp.main.engine.assets.contentpacks.versioning.ContentPackManagerAPI
+import org.qbrp.main.engine.assets.contentpacks.ContentPackManagerAPI
 import org.qbrp.main.core.modules.QbModule
 import org.qbrp.main.core.utils.log.LoggerUtil
 import java.io.File

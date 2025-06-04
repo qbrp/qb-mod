@@ -1,4 +1,4 @@
-package org.qbrp.main.engine.assets.contentpacks.versioning
+package org.qbrp.main.engine.assets.contentpacks
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
