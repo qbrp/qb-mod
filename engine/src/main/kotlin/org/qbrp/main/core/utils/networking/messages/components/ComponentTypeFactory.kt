@@ -10,6 +10,7 @@ import org.qbrp.main.core.utils.networking.messages.types.IntContent
 import org.qbrp.main.core.utils.networking.messages.types.LongContent
 import org.qbrp.main.core.utils.networking.messages.types.StringContent
 import org.qbrp.main.core.utils.networking.messages.types.TextContent
+import org.qbrp.main.engine.anticheat.StringListContent
 import kotlin.reflect.KClass
 
 class ComponentTypeFactory {
@@ -27,6 +28,7 @@ class ComponentTypeFactory {
         registerComponentType("double", ::DoubleContent)
         registerComponentType("cluster", ::Cluster)
         registerComponentType("clusterList", ::ClusterListContent)
+        registerComponentType("stringList", ::StringListContent)
         registerComponentType("chatMessageTagsCluster", ::ChatMessageTagsCluster)
     }
 

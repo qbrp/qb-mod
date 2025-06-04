@@ -7,7 +7,6 @@ class ClusterListContent : ListContent<Cluster>(
         cluster.write(buf)
     },
     reader = { buf ->
-        val startIndex = buf.readerIndex()
         val cluster = Cluster().convert(buf)
         cluster
     }
