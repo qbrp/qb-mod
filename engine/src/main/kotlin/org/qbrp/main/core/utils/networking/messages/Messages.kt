@@ -15,6 +15,7 @@ object Messages {
 
     const val MOD_IDS = ""
 
+    fun syncChannel(name: String) = "sync_$name"
     fun invokeCommand(name: String): String = "invoke_command_$name"
     fun moduleUpdate(name: String): String = "module_update_$name"
     fun moduleClientUpdate(name: String): String = "module_update_${name}-client"
