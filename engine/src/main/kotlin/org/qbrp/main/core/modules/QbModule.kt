@@ -5,6 +5,7 @@ import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.network.ServerPlayerEntity
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
@@ -112,12 +113,11 @@ abstract class QbModule(private val name: String) : KoinComponent {
     open fun onUnload() = Unit
 
     fun load() {
+        loadKoinModules(getKoinModule())
         onLoad()
-        enable()
     }
 
     fun unload() {
-        disable()
         unloadKoinModules(getKoinModule())
         onUnload()
     }
@@ -128,10 +128,12 @@ abstract class QbModule(private val name: String) : KoinComponent {
     }
 
     fun enable() {
+        load()
         onEnable()
     }
 
     fun disable() {
+        unload()
         onDisable()
     }
 

@@ -19,6 +19,7 @@ open class ModuleManager(open val ignoreEnvironment: Boolean = false): KoinCompo
 
     protected open fun init(module: QbModule): QbModule {
         modules.add(module)
+        module.enable()
         return modules.last()
     }
 
@@ -111,8 +112,6 @@ open class ModuleManager(open val ignoreEnvironment: Boolean = false): KoinCompo
                     return@forEach
                 }
 
-                loadKoinModules(instance.getKoinModule())
-                instance.load()
                 instance.priority = priority
                 init(instance)
 
