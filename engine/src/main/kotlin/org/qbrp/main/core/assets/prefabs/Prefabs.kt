@@ -25,6 +25,10 @@ class Prefabs: QbModule("prefabs"), PrefabsAPI {
         return (get<AssetsAPI>().getByKey<Prefab>(key) ?: importer.loadPrefab(key)) as T?
     }
 
+    override fun <T : Prefab> loadByKey(key: PrefabKey): T? {
+        return importer.loadPrefab(key) as T?
+    }
+
     override fun registerPrefabCategory(name: String) {
         FileSystem.PREFABS.resolve(name).mkdirs()
     }
