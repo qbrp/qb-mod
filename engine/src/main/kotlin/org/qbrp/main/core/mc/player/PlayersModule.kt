@@ -11,7 +11,6 @@ import org.koin.core.component.get
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.qbrp.main.core.database.Databases
-import org.qbrp.main.core.game.ComponentsRegistry
 import org.qbrp.main.core.game.prefabs.PrefabField
 import org.qbrp.main.core.game.prefabs.RuntimePrefab
 import org.qbrp.main.core.game.prefabs.RuntimePrefabStorage
@@ -43,10 +42,6 @@ class PlayersModule: GameModule("players"), CommandRegistryEntry, KoinComponent,
 
     companion object {
         val PLAYER_PREFAB = RuntimePrefab("player", "load")
-    }
-
-    override fun registerComponents(registry: ComponentsRegistry) {
-        registry.register(Appearance::class.java)
     }
 
     override fun getKoinModule(): Module = innerWithApi({
@@ -92,6 +87,7 @@ class PlayersModule: GameModule("players"), CommandRegistryEntry, KoinComponent,
 
     override fun getPlayerSession(name: String): PlayerObject? = storage.getByPlayerName(name)
     override fun getPlayerSession(player: ServerPlayerEntity): PlayerObject = storage.getByPlayer(player)
+    override fun getPlayerSessionOrNull(player: ServerPlayerEntity): PlayerObject? = storage.getByPlayerOrNull(player)
     override fun getPlayers(): Collection<PlayerObject> = storage.getAll()
 
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {

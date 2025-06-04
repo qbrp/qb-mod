@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.world.GameMode
 import org.koin.core.component.get
-import org.qbrp.main.core.game.ComponentsRegistry
+import org.qbrp.main.core.game.ComponentRegistryInitializationEvent
 import org.qbrp.main.core.game.loop.Tick
 import org.qbrp.main.core.game.prefabs.PrefabField
 import org.qbrp.main.core.mc.player.PlayerObject
@@ -31,16 +31,15 @@ class AppearanceNotificationsModule: GameModule("appearance-notifications") {
     override fun onLoad() {
         allowDynamicLoading()
         allowDynamicActivation()
+        ComponentRegistryInitializationEvent.EVENT.register {
+            it.register(AppearanceNotification::class.java)
+            Deps.PLAYER_PREFAB.components += PrefabField { AppearanceNotification() }
+        }
     }
 
-    override fun registerComponents(registry: ComponentsRegistry) {
-        registry.register(AppearanceNotification::class.java)
-        Deps.PLAYER_PREFAB.components += PrefabField { AppearanceNotification() }
-    }
+    override fun onEnable() { get<PlayersAPI>().storage.enableComponent(AppearanceNotification()) }
 
-    override fun onEnable() { gameAPI.enableComponent(AppearanceNotification(), get<PlayersAPI>().storage) }
-
-    override fun onDisable() { gameAPI.disableComponent(AppearanceNotification(), get<PlayersAPI>().storage) }
+    override fun onDisable() { get<PlayersAPI>().storage.disableComponent(AppearanceNotification()) }
 
     @Serializable
     class AppearanceNotification(

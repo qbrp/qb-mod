@@ -16,6 +16,7 @@ import org.qbrp.main.engine.chat.ChatAPI
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.GameModule
 import org.koin.core.component.get
+import org.qbrp.main.core.game.ComponentRegistryInitializationEvent
 import org.qbrp.main.core.mc.commands.CommandsAPI
 import org.qbrp.main.engine.players.characters.appearance.Appearance
 
@@ -36,11 +37,10 @@ class CharactersModule: GameModule("characters") {
         getLocal<AppearanceManager>().apply {
             registerKeybindHandler()
         }
-    }
-
-    override fun registerComponents(registry: ComponentsRegistry) {
-        registry.register(Character::class.java)
-        registry.register(Appearance::class.java)
+        ComponentRegistryInitializationEvent.EVENT.register {
+            it.register(Character::class.java)
+            it.register(Appearance::class.java)
+        }
     }
 
     override fun getKoinModule() = module {

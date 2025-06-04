@@ -10,7 +10,4 @@ open class GameModule(name: String): QbModule(name) {
         dependsOn { Core.isApiAvailable<GameAPI>() }
     }
     protected val gameAPI = Engine.getAPI<GameAPI>()!!
-
-    open fun registerComponents(registry: ComponentsRegistry) = Unit
-
 }

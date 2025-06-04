@@ -19,19 +19,19 @@ import org.qbrp.main.core.modules.GameModule
 import org.qbrp.main.core.utils.Deps
 import org.qbrp.main.core.utils.format.Format.asMiniMessage
 import org.koin.core.component.get
+import org.qbrp.main.core.game.ComponentRegistryInitializationEvent
 import org.qbrp.main.core.mc.commands.CommandsAPI
 
 @Autoload
 class PlayerAttributesModule: GameModule("player-attributes"), CommandRegistryEntry {
     override fun onLoad() {
         get<CommandsAPI>().add(this)
-    }
-
-    override fun registerComponents(registry: ComponentsRegistry) {
-        registry.register(PlayerAttributes::class.java)
-        registry.register(PlayerAttributesHandler::class.java)
-        Deps.PLAYER_PREFAB.components += PrefabField { PlayerAttributes() }
-        Deps.PLAYER_PREFAB.components += PrefabField { PlayerAttributesHandler() }
+        ComponentRegistryInitializationEvent.EVENT.register {
+            it.register(PlayerAttributes::class.java)
+            it.register(PlayerAttributesHandler::class.java)
+            Deps.PLAYER_PREFAB.components += PrefabField { PlayerAttributes() }
+            Deps.PLAYER_PREFAB.components += PrefabField { PlayerAttributesHandler() }
+        }
     }
 
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {

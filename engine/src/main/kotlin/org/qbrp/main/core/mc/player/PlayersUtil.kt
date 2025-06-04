@@ -13,6 +13,7 @@ object PlayersUtil: KoinComponent {
     fun getPlayer(name: String) = Core.server.playerManager.getPlayer(name)
     fun getPlayerSession(name: String): PlayerObject? = get<PlayersAPI>().getPlayerSession(name)
     fun getPlayerSession(player: ServerPlayerEntity): PlayerObject = get<PlayersAPI>().getPlayerSession(player)
+    fun getPlayerSessionOrNull(player: ServerPlayerEntity): PlayerObject? = get<PlayersAPI>().getPlayerSessionOrNull(player)
 
     fun getLookDirection(player: PlayerEntity): Vec3d {
         val rotation = player.rotationVector

@@ -10,6 +10,7 @@ import org.qbrp.main.core.modules.GameModule
 import org.qbrp.main.core.modules.LoadPriority
 import org.qbrp.main.core.utils.Deps
 import org.koin.core.component.get
+import org.qbrp.main.core.game.ComponentRegistryInitializationEvent
 import org.qbrp.main.core.mc.commands.CommandsAPI
 
 @Autoload(LoadPriority.ADDON - 1)
@@ -21,11 +22,9 @@ class Acquaintances(): GameModule("acquaintances") {
 
     override fun onLoad() {
         get<CommandsAPI>().add(NameCommand())
+        ComponentRegistryInitializationEvent.EVENT.register {
+            it.register(NamesPerception::class.java)
+            Deps.PLAYER_PREFAB.components += PrefabField { NamesPerception() }
+        }
     }
-
-    override fun registerComponents(registry: ComponentsRegistry) {
-        registry.register(NamesPerception::class.java)
-        Deps.PLAYER_PREFAB.components += PrefabField { NamesPerception() }
-    }
-
 }
