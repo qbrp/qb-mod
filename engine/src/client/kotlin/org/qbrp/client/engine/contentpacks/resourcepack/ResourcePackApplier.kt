@@ -24,11 +24,12 @@ class ResourcePackApplier: QbModule("resourcepack-applier") {
         val rpm = MinecraftClient.getInstance().resourcePackManager
         ContentPackEvents.ON_APPLY.register { pack ->
             // Включаем ресурспак
-            val profile = if (getLastContentPackVersion() != pack.version) pack.getPackProfileAndCopyTo() else pack.resourcePackProfile
-            if (!rpm.enabledProfiles.contains(profile)) {
+            val versionsMatch = getLastContentPackVersion() == pack.version
+            val profile = if (!versionsMatch) pack.getPackProfileAndCopyTo() else pack.resourcePackProfile
+            if (!rpm.enabledProfiles.contains(profile) || !versionsMatch) {
                 rpm.enable(profile.name)
                 MinecraftClient.getInstance().reloadResources()
-                setLastContentPackVersion(pack.version)
+                setLastContentPackVersion(pack.name, pack.version)
             }
 
             // Ставим айдишники из modellist.json
@@ -40,5 +41,5 @@ class ResourcePackApplier: QbModule("resourcepack-applier") {
     }
 
     fun getLastContentPackVersion() = prefs.get("pack-version", "NONE")
-    fun setLastContentPackVersion(ver: String) = prefs.put("pack-version", ver)
+    fun setLastContentPackVersion(name: String, ver: String) = prefs.put("pack-version", "$name:$ver")
 }
