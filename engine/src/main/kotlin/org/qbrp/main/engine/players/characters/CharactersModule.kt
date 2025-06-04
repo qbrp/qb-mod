@@ -2,10 +2,8 @@ package org.qbrp.main.engine.players.characters
 
 import org.koin.dsl.module
 import org.qbrp.main.core.Core
-import org.qbrp.main.core.game.ComponentsRegistry
 import org.qbrp.main.core.mc.player.PlayerObject
 import org.qbrp.main.core.mc.player.registration.PlayerRegistrationCallback
-import org.qbrp.main.core.mc.commands.CommandsModule
 import org.qbrp.main.core.mc.player.PlayersAPI
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.players.characters.appearance.AppearanceManager
