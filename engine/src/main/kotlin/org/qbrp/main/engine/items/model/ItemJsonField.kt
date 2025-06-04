@@ -5,4 +5,4 @@ import org.qbrp.main.core.game.serialization.Identifiable
 import org.qbrp.main.core.game.model.State
 
 @Serializable
-class ItemJsonField(override val id: Long, val state: State): Identifiable
+class ItemJsonField(override val id: String, val state: State): Identifiable
