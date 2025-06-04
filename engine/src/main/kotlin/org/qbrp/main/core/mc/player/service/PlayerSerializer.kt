@@ -27,11 +27,11 @@ class PlayerSerializer(val accounts: AccountDatabaseService,
             ?: throw NullPointerException("Игрок с ником ${jsonField.name} не найден на сервере")
         jsonField.name = nickname
         val account = runBlocking { accounts.get(jsonField.accountUuid) }
-        return PlayerObject(entity, account!!, lifecycle, jsonField.state,)
+        return PlayerObject(entity, account!!, jsonField.state,)
     }
 
     suspend fun newInstance(player: ServerPlayerEntity, accountUuid: String, lifecycle: Lifecycle<McObject>): PlayerObject {
-        val playerObject = PlayerObject(player, accounts.get(accountUuid)!!, lifecycle)
+        val playerObject = PlayerObject(player, accounts.get(accountUuid)!!)
         playerPrefab.put(playerObject)
         return playerObject
     }

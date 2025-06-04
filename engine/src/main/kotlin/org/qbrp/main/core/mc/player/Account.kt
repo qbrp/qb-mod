@@ -15,7 +15,7 @@ class Account(@JsonSetter(nulls = Nulls.AS_EMPTY) val minecraftNicknames: Mutabl
               var appliedCharacterName: String? = characters.getOrNull(0)?.name,
               val uuid: String = UUID.randomUUID().toString(),
 ): Identifiable {
-    override val id: Any
+    override val id: String
         get() = uuid
 
     val appliedCharacter: CharacterData?

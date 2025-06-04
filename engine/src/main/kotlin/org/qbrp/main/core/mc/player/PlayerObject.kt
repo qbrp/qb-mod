@@ -23,9 +23,8 @@ import org.qbrp.main.core.utils.format.Format.asMiniMessage
 class PlayerObject(
     val entity: ServerPlayerEntity,
     var account: Account,
-    lifecycle: Lifecycle<McObject> ,
     override val state: State = State(),
-): McObject(lifecycle), Tick<ServerWorld> {
+): McObject(), Tick<ServerWorld> {
     override val pos: Vec3d
         get() = entity.pos
     val name: String

@@ -1,17 +1,17 @@
 package org.qbrp.main.core.game.model.objects
 
 import org.qbrp.main.core.game.IDGenerator
-import org.qbrp.main.core.game.lifecycle.Lifecycle
 import org.qbrp.main.core.game.model.State
 import org.qbrp.main.core.game.model.Stateful
+import org.qbrp.main.core.mc.player.PlayerObject
+import org.qbrp.main.engine.synchronization.`interface`.state.ObjectSynchronizable
 
 abstract class BaseObject(
-    override val lifecycle: Lifecycle<BaseObject>,
-    override val id: Long = IDGenerator.nextId(),
+    override val id: String = IDGenerator.nextId().toString(),
     override val state: State = State(),
     eternal: Boolean = false,
-    ephemeral: Boolean = false,
-) : BaseEntity<BaseObject>(id, lifecycle), Stateful {
+    ephemeral: Boolean = false
+) : BaseEntity<BaseObject>(id), Stateful {
     open var eternal: Boolean = eternal
         protected set
     open var ephemeral: Boolean = ephemeral

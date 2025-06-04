@@ -1,5 +1,6 @@
 package org.qbrp.main.core.assets.prefabs
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.qbrp.main.core.assets.common.Asset
@@ -8,7 +9,7 @@ import org.qbrp.main.core.game.serialization.ComponentJsonField
 import org.qbrp.main.engine.items.PrefabEntryKey
 
 @Serializable
-open class Prefab(override val id: String, val components: List<ComponentJsonField>, val tags: List<Tag>): Asset() {
+open class Prefab(@SerialName("id") val identifier: String, val components: List<ComponentJsonField>, val tags: List<Tag>): Asset() {
     fun mergeTagWith(obj: Stateful, key: PrefabEntryKey) {
         tags.find { it.id == key.tag }?.mergeAndPut(obj)
     }
