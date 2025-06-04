@@ -14,7 +14,7 @@ class ClientReceiver<T : ReceiverContext>(
     messageTypeClass: KClass<*>,
     callback: (Message, T, Receiver<T>) -> Boolean
 ): Receiver<T>(messageId, messageTypeClass, callback) {
-    private val logger = LoggerUtil.get("network", "receiving")
+    private val logger = LoggerUtil.get("network", "receivers")
 
     fun register() {
         logger.log("Зарегистрирован ресивер: <<${Identifier("qbrp", messageId)}>>")

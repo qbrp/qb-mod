@@ -1,9 +1,9 @@
 package org.qbrp.main.engine.synchronization.`interface`
 
-import org.qbrp.main.core.mc.player.PlayerObject
+import org.qbrp.main.core.mc.player.LocalPlayerObject
 
 interface Synchronizable {
-    fun shouldSync(player: PlayerObject): Boolean
-    fun trySync(player: PlayerObject, synchronizer: Synchronizer) { if (shouldSync(player)) { synchronize(player, synchronizer) } }
-    fun synchronize(playerObject: PlayerObject, synchronizer: Synchronizer)
+    fun shouldSync(player: LocalPlayerObject): Boolean
+    fun trySync(player: LocalPlayerObject, synchronizer: Synchronizer) { if (shouldSync(player)) { synchronize(player, synchronizer) } }
+    fun synchronize(playerObject: LocalPlayerObject, synchronizer: Synchronizer)
 }
