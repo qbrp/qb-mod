@@ -4,12 +4,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.qbrp.main.core.game.model.objects.BaseObject
-import org.qbrp.main.core.game.model.storage.Storage
+import org.qbrp.main.core.game.storage.Storage
 import org.qbrp.main.core.game.serialization.Serializer
 import org.qbrp.main.core.storage.TableAccess
 
 open class LifecycleManager<T : BaseObject>(
-    open val storage: Storage<Long, T>,
+    open val storage: Storage<T>,
     open val table: TableAccess,
     open val fabric: Serializer<T>
 ): Lifecycle<T> {
