@@ -1,7 +1,11 @@
 package org.qbrp.main.core.game.model.components
 
+import org.qbrp.main.core.utils.networking.messages.components.Cluster
+import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
+import org.qbrp.main.core.utils.networking.messages.types.ReceiveContent
+
 abstract class Behaviour : Component(), Loadable, Activateable {
-    protected var enabled: Boolean = false
+    override var enabled: Boolean = false
 
     open fun onLoad() = Unit
     open fun onUnload() = Unit
@@ -14,20 +18,8 @@ abstract class Behaviour : Component(), Loadable, Activateable {
         onUnload()
     }
 
-    open fun onEnable() = Unit
-    open fun onDisable() = Unit
+    override fun onEnable() = Unit
+    override fun onDisable() = Unit
 
-    override fun enable() {
-        if (!enabled) {
-            enabled = true
-            onEnable()
-        }
-    }
-
-    override fun disable() {
-        if (enabled) {
-            onDisable()
-            enabled = false
-        }
-    }
+    open fun onMessage(id: String, content: ClusterViewer) {}
 }

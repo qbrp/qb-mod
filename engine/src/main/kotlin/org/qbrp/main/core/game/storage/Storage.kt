@@ -8,10 +8,9 @@ import org.qbrp.main.core.game.model.components.Behaviour
 import org.qbrp.main.core.game.model.components.Component
 import org.qbrp.main.core.game.serialization.Identifiable
 
-interface Storage<T : Identifiable>: KoinComponent {
-    fun add(obj: T)
+interface Storage<T : Identifiable>: KoinComponent, ObjectProvider<T> {
+    fun add(obj: T): T
     fun remove(key: String): Boolean
-    fun getByKey(key: String): T?
     fun getAll(): Collection<T>
     fun enableComponent(component: Component, ) {
         getAll()

@@ -15,23 +15,25 @@ open class GlobalStorage<T: Identifiable>: Storage<T>{
             return it > 1
         }
     }
-    override fun add(obj: T) {
+    override fun add(obj: T): T {
         objects.add(obj)
         scope.launch {
             if (checkIdCollision(obj.id))
                 throw RuntimeException("Обнаружено пересечение ID ${obj.id} двух объектов")
         }
+        return obj
     }
 
     override fun remove(id: String): Boolean {
         return objects.removeIf { it.id == id }
     }
 
-    override fun getByKey(id: String): T? {
+    override fun getById(id: String): T? {
         return objects.find { it.id == id }
     }
 
     override fun getAll(): Collection<T> {
         return objects
     }
+
 }

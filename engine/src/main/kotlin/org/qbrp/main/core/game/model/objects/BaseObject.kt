@@ -3,8 +3,7 @@ package org.qbrp.main.core.game.model.objects
 import org.qbrp.main.core.game.IDGenerator
 import org.qbrp.main.core.game.model.State
 import org.qbrp.main.core.game.model.Stateful
-import org.qbrp.main.core.mc.player.PlayerObject
-import org.qbrp.main.engine.synchronization.`interface`.state.ObjectSynchronizable
+import org.qbrp.main.engine.synchronization.`interface`.components.LocalPlayerMessageSender
 
 abstract class BaseObject(
     override val id: String = IDGenerator.nextId().toString(),

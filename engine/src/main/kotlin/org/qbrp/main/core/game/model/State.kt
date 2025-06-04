@@ -3,7 +3,6 @@ package org.qbrp.main.core.game.model
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.koin.core.context.GlobalContext
-import org.qbrp.main.core.Core
 import org.qbrp.main.core.game.ComponentsRegistry
 import org.qbrp.main.core.game.model.components.Activateable
 import org.qbrp.main.core.game.model.components.Behaviour
@@ -15,11 +14,14 @@ import org.qbrp.main.core.game.serialization.ComponentJsonField
 import org.qbrp.main.core.game.serialization.StateSerializer
 import org.qbrp.main.core.game.model.objects.BaseObject
 import org.qbrp.main.core.utils.log.LoggerUtil
-import org.qbrp.main.core.game.GameEngine
+import org.qbrp.main.core.utils.networking.messages.components.Cluster
+import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
+import org.qbrp.main.core.utils.networking.messages.types.ReceiveContent
+import org.qbrp.main.engine.synchronization.`interface`.components.InternalMessageBroadcaster
 
 @Serializable(with = StateSerializer::class)
 open class State constructor(val jsonComponents: Collection<ComponentJsonField> = mutableListOf()
-) {
+): InternalMessageBroadcaster {
     companion object {
         private val REGISTRY = GlobalContext.get().get<ComponentsRegistry>()
         private val LOGGER = LoggerUtil.get("game", "components")
@@ -27,7 +29,7 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
     var behaviours = mutableListOf<Behaviour>()
     open lateinit var obj: BaseObject
     open var tickables = mutableListOf<Tick<*>>()
-    @Transient val components: MutableMap<String, Component> = mutableMapOf()
+    @Transient val componentsMap: MutableMap<String, Component> = mutableMapOf()
 
     fun <T> tick(ctx: T) {
         @Suppress("UNCHECKED_CAST")
@@ -38,7 +40,7 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
     fun copy(): State {
         synchronized(this) {
             val newState = State()
-            components.forEach { (k, v) ->
+            componentsMap.forEach { (k, v) ->
                 newState.addComponent(v, k)
             }
             newState.putObject(obj)
@@ -46,10 +48,17 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
         }
     }
 
+    override fun broadcastMessage(id: String, content: ClusterViewer) {
+        behaviours.forEach {
+            it.onMessage(id, content)
+        }
+    }
+
     fun putObjectAndEnableBehaviours(obj: BaseObject) {
         putObject(obj)
-        behaviours.forEach {
-            if (this is Activateable) it.enable()
+        val snapshot = behaviours.toList() // Копия, чтобы избежать ConcurrentModificationException
+        snapshot.forEach {
+            it.enable()
         }
     }
 
@@ -82,8 +91,8 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
     }
 
     private fun updateCaches() {
-        behaviours.clear(); behaviours += components.values.filterIsInstance<Behaviour>()
-        tickables .clear(); tickables  += components.values.filterIsInstance<Tick<*>>()
+        behaviours.clear(); behaviours += componentsMap.values.filterIsInstance<Behaviour>()
+        tickables .clear(); tickables  += componentsMap.values.filterIsInstance<Tick<*>>()
     }
 
     fun addComponentIfNotExist(
@@ -99,9 +108,16 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
         }
     }
 
+    inline fun <reified T: Component> getComponentsIsInstance(): List<T> {
+        return componentsMap.values.filterIsInstance<T>()
+    }
+
+    fun getComponents(): List<Component> {
+        return componentsMap.values.toList()
+    }
 
     fun addComponent(component: Component, name: String = REGISTRY.getComponentName(component), enable: Boolean = false) {
-        components[name] = component
+        componentsMap[name] = component
             .apply {
                 putState(this@State)
                 if (this is Loadable) this.load()
@@ -111,22 +127,22 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
     }
 
     fun removeComponent(component: Component, name: String = REGISTRY.getComponentName(component)) {
-        components[name]?.apply {
+        componentsMap[name]?.apply {
             if (this is Activateable) this.disable()
             if (this is Loadable) this.unload()
         }
-        components.remove(name)
+        componentsMap.remove(name)
         updateCaches()
     }
 
     fun removeAllComponents() {
-        components.keys.toList().forEach { name ->
-            components[name]?.let { removeComponent(it, name) }
+        componentsMap.keys.toList().forEach { name ->
+            componentsMap[name]?.let { removeComponent(it, name) }
         }
     }
 
     inline fun <reified T : Component> getComponentOrAdd(factory: () -> T): T {
-        components.values.filterIsInstance<T>().firstOrNull()?.let {
+        componentsMap.values.filterIsInstance<T>().firstOrNull()?.let {
             return it
         }
         val newComp = factory()
@@ -141,7 +157,7 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
     }
 
     inline fun <reified T : Component> replaceComponent(noinline factory: () -> T): T {
-        val old = components.values.filterIsInstance<T>().firstOrNull()
+        val old = componentsMap.values.filterIsInstance<T>().firstOrNull()
         if (old != null) removeComponent(old)
         val newComp = factory()
         addComponent(newComp)
@@ -150,7 +166,7 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
 
 
     inline fun <reified T> getComponent(): T? {
-        return components.values.find { it is T } as? T
+        return componentsMap.values.find { it is T } as? T
     }
 
     inline fun <reified T> getComponentOrThrow(): T {
@@ -158,10 +174,10 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
     }
 
     fun getComponentByNameOrThrow(name: String): Component {
-        return components[name] ?: throw ComponentNotFoundException("Компонент $name не найден")
+        return componentsMap[name] ?: throw ComponentNotFoundException("Компонент $name не найден")
     }
 
     fun getComponentByName(name: String): Component? {
-        return components[name]
+        return componentsMap[name]
     }
 }

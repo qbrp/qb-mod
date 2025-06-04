@@ -4,16 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.qbrp.main.core.game.model.State
+import org.qbrp.main.core.game.model.Stateful
+import org.qbrp.main.core.game.model.StatefulContainer
 import org.qbrp.main.core.game.prefabs.PrefabField
 import java.util.UUID
 
 @Serializable
-abstract class Component(): PrefabField {
-    @Transient protected var state: State? = null
+abstract class Component(): PrefabField, StatefulContainer {
+    @Transient override var state: State? = null
     @Transient open val save = true
-    fun requireState(): State {
-        return state ?: throw NullPointerException("Компонент $this не помещен в какое-либо состояние, и оно не может быть передано")
-    }
     fun putState(state: State){
         this.state = state
     }

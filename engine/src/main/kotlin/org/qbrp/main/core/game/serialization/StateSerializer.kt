@@ -28,11 +28,11 @@ object StateSerializer : KSerializer<State> {
         val componentsToSave = mutableListOf<ComponentJsonField>()
 
         state.jsonComponents.forEach {
-            if (state.components[it.getComponentName()] == null) {
+            if (state.componentsMap[it.getComponentName()] == null) {
                 componentsToSave.add(it)
             }
         }
-        state.components.forEach { (key, component) ->
+        state.componentsMap.forEach { (key, component) ->
             if (component.save && component::class.hasAnnotation<Serializable>()) {
                 val jsonElement = jsonEncoder.json.encodeToJsonElement(component)
                 componentsToSave.add(ComponentJsonField(key, jsonElement))
