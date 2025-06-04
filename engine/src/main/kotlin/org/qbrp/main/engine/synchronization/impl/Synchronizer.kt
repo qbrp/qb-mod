@@ -1,13 +1,13 @@
 package org.qbrp.main.engine.synchronization.impl
 
-import org.qbrp.main.core.mc.player.LocalPlayerObject
+import org.qbrp.main.core.mc.player.PlayerObject
 import org.qbrp.main.core.mc.player.PlayersUtil
 import org.qbrp.main.engine.synchronization.`interface`.SyncObjectProvider
 import kotlin.concurrent.fixedRateTimer
 
 class Synchronizer {
     private val providers: MutableList<SyncObjectProvider> = mutableListOf()
-    private val playersList: List<LocalPlayerObject> get() = PlayersUtil.playersList.toList()
+    private val playersList: List<PlayerObject> get() = PlayersUtil.playersList.toList()
     companion object {
         const val SYNC_RATE: Long = 2000L //milis
     }
