@@ -7,7 +7,7 @@ import org.qbrp.main.core.modules.QbModule
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.ModInitializedEvent
 import org.qbrp.main.engine.synchronization.impl.Synchronizer
-import org.qbrp.main.engine.synchronization.`interface`.SyncObjectProvider
+import org.qbrp.main.engine.synchronization.state.SyncObjectProvider
 
 @Autoload(LoadPriority.HIGHEST)
 class SynchronizationModule: QbModule("synchronization"), SynchronizationAPI {

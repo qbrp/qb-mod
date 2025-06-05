@@ -1,4 +1,4 @@
-package org.qbrp.main.engine.synchronization.`interface`
+package org.qbrp.main.engine.synchronization
 
 import org.qbrp.main.core.mc.player.PlayerObject
 import org.qbrp.main.core.utils.networking.messages.components.Cluster

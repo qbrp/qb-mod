@@ -2,7 +2,8 @@ package org.qbrp.main.engine.synchronization.impl
 
 import org.qbrp.main.core.mc.player.PlayerObject
 import org.qbrp.main.core.mc.player.PlayersUtil
-import org.qbrp.main.engine.synchronization.`interface`.SyncObjectProvider
+import org.qbrp.main.engine.synchronization.Synchronizable
+import org.qbrp.main.engine.synchronization.state.SyncObjectProvider
 import kotlin.concurrent.fixedRateTimer
 
 class Synchronizer {
@@ -19,7 +20,7 @@ class Synchronizer {
             for (obj in objects) {
                 val provided = obj.first
                 val sender = obj.second
-                provided.forEach { it.trySync(player, sender) }
+                provided.forEach { Synchronizable.trySync(player, sender) }
                 println("[${System.currentTimeMillis()}] Debug: Send to ${player.name}")
             }
         }

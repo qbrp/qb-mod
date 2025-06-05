@@ -7,7 +7,7 @@ import org.qbrp.main.core.utils.networking.messages.Messages
 import org.qbrp.main.core.utils.networking.messages.components.Cluster
 import org.qbrp.main.core.utils.networking.messages.components.ClusterBuilder
 import org.qbrp.main.core.utils.networking.messaging.NetworkUtil
-import org.qbrp.main.engine.synchronization.`interface`.components.ObjectMessageSender
+import org.qbrp.main.engine.synchronization.components.ObjectMessageSender
 
 class LocalMessageSender(val name: String): ObjectMessageSender {
     override fun sendMessage(content: Cluster, id: String, obj: BaseObject, player: PlayerObject) {

@@ -1,4 +1,4 @@
-package org.qbrp.main.engine.synchronization.`interface`.components
+package org.qbrp.main.engine.synchronization.components
 
 import org.qbrp.main.core.game.model.objects.BaseObject
 import org.qbrp.main.core.mc.player.PlayerObject

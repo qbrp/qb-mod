@@ -4,7 +4,7 @@ import org.qbrp.main.core.game.model.objects.BaseObject
 import org.qbrp.main.core.game.storage.Storage
 import org.qbrp.main.core.utils.networking.messages.components.Cluster
 import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
-import org.qbrp.main.engine.synchronization.`interface`.state.SynchronizeUpdate
+import org.qbrp.main.engine.synchronization.state.SynchronizeUpdate
 
 class SyncResolver<T: BaseObject>(
     private val storage: Storage<T>,

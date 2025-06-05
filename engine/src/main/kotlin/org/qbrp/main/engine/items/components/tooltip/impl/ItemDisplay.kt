@@ -7,7 +7,7 @@ import org.qbrp.main.engine.anticheat.StringListContent
 import org.qbrp.main.engine.items.components.ItemBehaviour
 import org.qbrp.main.engine.items.components.tooltip.NameData
 import org.qbrp.main.engine.items.components.tooltip.StaticTooltipComponent
-import org.qbrp.main.engine.synchronization.`interface`.SynchronizeConvertible
+import org.qbrp.main.engine.synchronization.SynchronizeConvertible
 
 /**
  * Отправляет клиенту данные о названии предмета и статических описаниях, собирая их в getName() и generateDescriptions().

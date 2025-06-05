@@ -1,4 +1,4 @@
-package org.qbrp.main.engine.synchronization.`interface`.state
+package org.qbrp.main.engine.synchronization.state
 
 import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
 

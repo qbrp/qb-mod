@@ -34,8 +34,8 @@ import org.qbrp.main.engine.synchronization.impl.SynchronizerChannelSender
 import org.qbrp.main.engine.items.model.ServerItemObject
 import org.qbrp.main.engine.synchronization.SynchronizationAPI
 import org.qbrp.main.engine.synchronization.impl.LocalMessageSender
-import org.qbrp.main.engine.synchronization.`interface`.Synchronizer
-import org.qbrp.main.engine.synchronization.`interface`.components.ObjectMessageSender
+import org.qbrp.main.engine.synchronization.Synchronizer
+import org.qbrp.main.engine.synchronization.components.ObjectMessageSender
 
 @Autoload
 class ItemsModule: GameModule("items") {
