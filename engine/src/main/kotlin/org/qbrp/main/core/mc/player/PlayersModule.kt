@@ -34,12 +34,15 @@ import org.qbrp.main.core.modules.GameModule
 import org.qbrp.main.engine.players.characters.appearance.Appearance
 import org.qbrp.main.engine.players.nicknames.NicknameCommand
 import org.qbrp.main.core.game.loop.Tick
+import org.qbrp.main.core.game.saving.Saver
+import org.qbrp.main.core.game.saving.ServerStopSaver
+import org.qbrp.main.core.game.saving.TimerSaver
 import org.qbrp.main.core.mc.commands.CommandsAPI
+import org.qbrp.main.core.mc.player.service.PlayerDisconnectEvent
 
 @Autoload(LoadPriority.LOWEST, EnvType.SERVER)
 class PlayersModule: GameModule("players"), CommandRegistryEntry, KoinComponent, PlayersAPI {
     override val storage: PlayerStorage get() = getLocal()
-
     companion object {
         val PLAYER_PREFAB = RuntimePrefab("player", "load")
     }
@@ -57,14 +60,22 @@ class PlayersModule: GameModule("players"), CommandRegistryEntry, KoinComponent,
         scoped { PlayerStorage() }
         scoped<TableAccess> { get<StorageAPI>().getTable("players") }
         scoped { PlayerSerializer(get(), get(named("player-tag")))}
+        scoped<Saver<PlayerObject>> { Saver<PlayerObject> { getLocal<TableAccess>().saveObject(it.id, getLocal<PlayerSerializer>().toJson(it)) } }
         scoped { PlayerLifecycleManager(get(), get(), get(), get(), get()) }
     })
 
     override fun onEnable() {
         get<CommandsAPI>().add(this)
+        val saver = getLocal<Saver<PlayerObject>>()
+        val storage = getLocal<PlayerStorage>()
+        TimerSaver<PlayerObject>("Players", 4000L * 60L)
+            .run(storage, saver)
+        ServerStopSaver<PlayerObject>()
+            .run(storage, saver)
 
         val lifecycleManager = getLocal<PlayerLifecycleManager>()
         ServerPlayConnectionEvents.DISCONNECT.register { handler, server ->
+            PlayerDisconnectEvent.EVENT.invoker().onDisconnect(getPlayerSession(handler.player), this)
             lifecycleManager.handleDisconnected(handler.player)
         }
         ServerReceiver<ServerReceiverContext>(AUTH, StringContent::class, { message, context, receiver ->
