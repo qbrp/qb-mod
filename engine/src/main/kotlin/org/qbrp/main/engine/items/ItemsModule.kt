@@ -22,6 +22,7 @@ import org.qbrp.main.core.modules.GameModule
 import org.qbrp.main.core.storage.StorageAPI
 import org.qbrp.main.core.storage.TableAccess
 import org.qbrp.main.engine.Engine
+import org.qbrp.main.engine.items.components.model.ItemModel
 import org.qbrp.main.engine.items.components.tooltip.impl.Brief
 import org.qbrp.main.engine.items.components.tooltip.impl.Description
 import org.qbrp.main.engine.items.components.tooltip.impl.ItemDisplay
@@ -48,6 +49,7 @@ class ItemsModule: GameModule("items") {
         val SETTINGS = Settings().maxCount(1)
         val ITEMS_CHANNEL = "items"
         val ITEMS_MESSAGING_CHANNEL = "items_messaging"
+        val TICK_RATE = 10
     }
 
     fun giveItemPrefab(key: PrefabEntryKey, player: PlayerObject): Boolean {
@@ -87,6 +89,7 @@ class ItemsModule: GameModule("items") {
             it.register(Brief::class.java)
             it.register(Description::class.java)
             it.register(Name::class.java)
+            it.register(ItemModel::class.java)
         }
 
         gameAPI.addWorldTickTask(getLocal<ItemTicker>())

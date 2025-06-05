@@ -21,7 +21,11 @@ class ItemTicker(private val repository: ItemRepository) : Tick<ServerWorld> {
         private val LOGGER = LoggerUtil.get("item", "tick")
     }
 
+    private var tickCounter = 0
     override fun tick(serverWorld: ServerWorld) {
+        tickCounter++
+        if (tickCounter % ItemsModule.TICK_RATE != 0) return
+
         val items = collectTickableItems(serverWorld)
         items.forEach { it.tryTick(repository) }
     }
