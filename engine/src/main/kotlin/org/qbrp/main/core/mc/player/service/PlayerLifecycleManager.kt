@@ -4,44 +4,30 @@ import com.mongodb.client.model.Updates
 import kotlinx.coroutines.launch
 import net.minecraft.server.network.ServerPlayerEntity
 import org.koin.core.component.KoinComponent
-import org.qbrp.main.core.game.lifecycle.Lifecycle
 import org.qbrp.main.core.game.lifecycle.LifecycleManager
-import org.qbrp.main.core.mc.McObject
+import org.qbrp.main.core.game.saving.Saver
 import org.qbrp.main.core.mc.player.PlayerObject
 import org.qbrp.main.core.mc.player.PlayersAPI
 import org.qbrp.main.core.mc.player.registration.LoginResult
-import org.qbrp.main.core.mc.player.registration.PlayerRegistrationCallback
+import org.qbrp.main.core.mc.player.registration.PlayerAuthEvent
 import org.qbrp.main.core.utils.networking.messages.Message
 import org.qbrp.main.core.utils.networking.messages.Messages
 import org.qbrp.main.core.utils.networking.messages.types.Signal
 import org.qbrp.main.core.storage.TableAccess
 import org.qbrp.main.core.utils.format.Format.asMiniMessage
-import kotlin.concurrent.fixedRateTimer
 
+// TODO: Обновить
 class PlayerLifecycleManager(
     override val storage: PlayerStorage,
-    override val table: TableAccess,
-    override val fabric: PlayerSerializer,
+    val table: TableAccess,
+    val fabric: PlayerSerializer,
     private val accounts: AccountDatabaseService,
     private val api: PlayersAPI
-) : LifecycleManager<PlayerObject>(storage, table, fabric), KoinComponent {
-
-    init {
-        startSaveTimer()
-    }
-
+) : LifecycleManager<PlayerObject, String>(storage, Saver { table.saveObject(it.id, fabric.toJson(it)) }), KoinComponent {
     override fun onCreated(obj: PlayerObject) {
         super.onCreated(obj)
-        PlayerRegistrationCallback.EVENT.invoker().onRegister(obj, api)
+        PlayerAuthEvent.EVENT.invoker().onRegister(obj, api)
         obj.sendNetworkMessage(Message(Messages.AUTH, Signal()))
-    }
-
-    fun startSaveTimer() {
-        fixedRateTimer("qbrp/SavePlayerObjTimer", true, 0L, 1000L * 60L) {
-            storage.getAll().forEach {
-                save(it)
-            }
-        }
     }
 
     override fun save(obj: PlayerObject) {
@@ -59,12 +45,11 @@ class PlayerLifecycleManager(
                 val result = accounts.login(player.name.string, auth)
                 when (result) {
                     LoginResult.SUCCESS -> {
-                        val m = this@PlayerLifecycleManager as Lifecycle<McObject>
                         val document = table.getByField("accountUuid", auth)
                         val json = document.await()?.toJson()
                         val playerObject =
-                            if (json != null) fabric.fromJson(json, player.name.string, m)
-                            else fabric.newInstance(player, auth, m)
+                            if (json != null) fabric.fromJson(json, player.name.string)
+                            else  fabric.newInstance(player, auth)
                         player.server.execute() {
                             onCreated(playerObject)
                         }

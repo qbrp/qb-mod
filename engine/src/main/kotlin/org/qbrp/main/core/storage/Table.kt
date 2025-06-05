@@ -30,11 +30,11 @@ open class Table(val tableName: String,
         val LOGGER = LoggerUtil.get("database")
     }
 
-    override fun saveObject(obj: Identifiable, json: String, fieldName: String) {
+    override fun saveObject(id: String, json: String, fieldName: String) {
         coroutineScope.launch {
             try {
                 val document = Document.parse(json)
-                val filter = Filters.eq(fieldName, obj.id)
+                val filter = Filters.eq(fieldName, id)
                 database
                     .getCollection<Document>(tableName)
                     .replaceOne(

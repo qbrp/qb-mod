@@ -6,14 +6,14 @@ import net.minecraft.util.ActionResult
 import org.qbrp.main.core.mc.player.PlayerObject
 import org.qbrp.main.core.mc.player.PlayersAPI
 
-fun interface PlayerRegistrationCallback {
+fun interface PlayerAuthEvent {
     fun onRegister(session: PlayerObject, manager: PlayersAPI)
 
     companion object {
-        val EVENT: Event<PlayerRegistrationCallback> = EventFactory.createArrayBacked(
-            PlayerRegistrationCallback::class.java,
-            { listeners: Array<out PlayerRegistrationCallback> ->
-                PlayerRegistrationCallback { message, manager ->
+        val EVENT: Event<PlayerAuthEvent> = EventFactory.createArrayBacked(
+            PlayerAuthEvent::class.java,
+            { listeners: Array<out PlayerAuthEvent> ->
+                PlayerAuthEvent { message, manager ->
                     for (listener in listeners) {
                         listener.onRegister(message, manager)
                     }
