@@ -8,16 +8,22 @@ import net.minecraft.item.ItemStack
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import org.qbrp.main.core.game.loop.Tick
+import org.qbrp.main.core.utils.InventoryUtil
+import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.engine.items.ItemsModule
 import java.util.concurrent.ConcurrentHashMap
 
-class ItemTicker(private val storage: ItemStorage<ServerItemObject>) : Tick<ServerWorld> {
+class ItemTicker(private val repository: ItemRepository) : Tick<ServerWorld> {
     init {
         ContainerTracker.initialize()
+    }
+    companion object {
+        private val LOGGER = LoggerUtil.get("item", "tick")
     }
 
     override fun tick(serverWorld: ServerWorld) {
         val items = collectTickableItems(serverWorld)
-        items.forEach { it.tryTick(storage) }
+        items.forEach { it.tryTick(repository) }
     }
 
     private fun collectTickableItems(world: ServerWorld): List<ItemWithContext> {
@@ -26,30 +32,34 @@ class ItemTicker(private val storage: ItemStorage<ServerItemObject>) : Tick<Serv
         world.iterateEntities().forEach { entity ->
             when (entity) {
                 is ItemEntity -> result += ItemWithContext(entity.stack, entity)
-                is Inventory -> result += entity.extractItemStacks()
+                is Inventory -> result += entity.extractItems()
             }
         }
 
         ContainerTracker.getAllContainerPositions()
             .mapNotNull { world.getBlockEntity(it) as? Inventory }
-            .forEach { inv -> result += inv.extractItemStacks() }
+            .forEach { inv -> result += inv.extractItems() }
 
         world.players.forEach { player ->
-            result += player.inventory.extractItemStacks(player)
+            result += player.inventory.extractItems(player)
         }
 
         return result.filter { it.isAbstractItem() }
     }
 
-    private fun Inventory.extractItemStacks(entity: Entity? = null): List<ItemWithContext> =
-        (0 until this.size()).map { ItemWithContext(this.getStack(it), entity) }
+    private fun Inventory.extractItems(entity: Entity? = null): List<ItemWithContext> {
+        return InventoryUtil.extractItemsStacks(this).map { ItemWithContext(it, entity) }
+    }
 
     private data class ItemWithContext(val stack: ItemStack, val entity: Entity?) {
         fun isAbstractItem(): Boolean =
             !stack.isEmpty && stack.registryEntry.key.get().value.path == "abstract_item"
 
-        fun tryTick(storage: ItemStorage<ServerItemObject>) {
-            storage.getObject(stack)?.tick(stack, entity)
+        fun tryTick(storage: ItemRepository) {
+            storage.getItemObjectOrLoad(stack,
+                { it.tick(stack, entity) },
+                { LOGGER.warn("Предмет $stack не найден в БД и хранилище.") }
+            )
         }
     }
 
