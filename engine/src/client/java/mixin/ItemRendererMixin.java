@@ -14,6 +14,7 @@ import org.qbrp.client.ClientCore;
 import org.qbrp.client.ModelRepo;
 import org.qbrp.client.core.resources.ModelRepository;
 import org.qbrp.main.core.modules.QbModule;
+import org.qbrp.main.engine.items.components.model.ItemModel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -44,7 +45,7 @@ public abstract class ItemRendererMixin {
         assert nbt != null;
         if (!nbt.contains("QbrpModel", 8)) return;
 
-        String tag = nbt.getString("QbrpModel");
+        String tag = nbt.getString(ItemModel.NBT_KEY);
         ModelRepository modelRepo = (ModelRepository) ((QbModule) Objects.requireNonNull(ClientCore.INSTANCE.getModule("model-loader"))).getAPI();
         assert modelRepo != null;
 
