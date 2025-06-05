@@ -19,7 +19,10 @@ interface ItemTick : Tick<ItemTickContext> {
         val entity = context.entity
 
         when {
-            player != null -> playerInventoryTick(player, itemStack)
+            player != null -> {
+                inventoryTick(itemStack)
+                playerInventoryTick(player, itemStack)
+            }
             entity is ItemEntity -> itemEntityTick(entity, entity.stack)
             else -> inventoryTick(itemStack)
         }
@@ -44,5 +47,5 @@ interface ItemTick : Tick<ItemTickContext> {
     fun playerInventoryTick(playerObject: PlayerObject, itemStack: ItemStack) = Unit
     fun inventoryTick(itemStack: ItemStack) = Unit
     fun itemEntityTick(itemEntity: ItemEntity, itemStack: ItemStack) = Unit
-    fun visibleTick(playerObject: PlayerObject, itemStack: ItemStack)
+    fun visibleTick(playerObject: PlayerObject, itemStack: ItemStack) = Unit
 }
