@@ -1,8 +1,8 @@
 package org.qbrp.main.engine.items.model
 
-
 import net.minecraft.item.ItemStack
 import org.koin.core.component.get
+import org.qbrp.main.core.game.model.State
 import org.qbrp.main.core.mc.player.PlayerObject
 import org.qbrp.main.core.utils.networking.messages.components.Cluster
 import org.qbrp.main.core.utils.networking.messages.components.ClusterBuilder
@@ -13,6 +13,8 @@ import org.qbrp.main.engine.synchronization.`interface`.components.ObjectMessage
 import org.qbrp.main.engine.synchronization.`interface`.state.ObjectSynchronizable
 
 class ServerItemObject(
+    override val id: String,
+    override val state: State,
     private val module: ItemsModule,
     type: String = "abstract_item",
     override val messageSender: ObjectMessageSender = module.get(),

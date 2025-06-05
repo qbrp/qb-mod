@@ -4,6 +4,7 @@ package org.qbrp.main.engine.items
 import net.minecraft.entity.Entity
 import net.minecraft.item.ItemStack
 import org.koin.core.component.KoinComponent
+import org.qbrp.main.core.game.model.State
 import org.qbrp.main.core.game.model.objects.BaseObject
 import org.qbrp.main.core.utils.log.Logger
 import org.qbrp.main.core.utils.log.LoggerUtil
@@ -14,7 +15,8 @@ import org.qbrp.main.engine.synchronization.`interface`.components.ObjectMessage
 
 open class ItemObject(
     val type: String = "abstract_item",
-) : BaseObject(), ItemTickContext, KoinComponent {
+    override val placeholders: MutableMap<String, String> = mutableMapOf(),
+) : BaseObject(), ItemTickContext, KoinComponent, PlaceholdersContainer {
 
     override val item = this
     override var itemStack: ItemStack? = null
