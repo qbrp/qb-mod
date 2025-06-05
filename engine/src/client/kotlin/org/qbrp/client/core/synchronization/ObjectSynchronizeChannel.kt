@@ -12,7 +12,7 @@ class ObjectSynchronizeChannel<T : BaseObject>(
     constructor(
         name: String,
         storage: Storage<T>,
-        factory: ObjectFactory<T>
+        factory: ClusterFactory<T>
     ) : this(name, SyncResolver(storage, factory))
 
 

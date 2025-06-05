@@ -1,16 +1,14 @@
 package org.qbrp.client.core.synchronization
 
 import org.qbrp.main.core.game.model.objects.BaseObject
-import org.qbrp.main.core.game.serialization.Identifiable
 import org.qbrp.main.core.game.storage.Storage
 import org.qbrp.main.core.utils.networking.messages.components.Cluster
-import org.qbrp.main.core.utils.networking.messages.components.Component
 import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
 import org.qbrp.main.engine.synchronization.`interface`.state.SynchronizeUpdate
 
 class SyncResolver<T: BaseObject>(
     private val storage: Storage<T>,
-    private val factory: ObjectFactory<T>
+    private val factory: ClusterFactory<T>
 ) : ObjectResolver<T> {
 
     private val fabrics: MutableList<ComponentFabric> = mutableListOf()
