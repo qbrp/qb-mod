@@ -7,7 +7,7 @@ import net.minecraft.world.GameMode
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.qbrp.main.core.Core
-import org.qbrp.main.core.utils.world.getPlayersInRadius
+import org.qbrp.main.core.utils.getPlayersInRadius
 
 object PlayersUtil: KoinComponent {
     fun getPlayer(name: String) = Core.server.playerManager.getPlayer(name)

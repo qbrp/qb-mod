@@ -5,7 +5,7 @@ import org.qbrp.main.engine.chat.ChatAddon
 import org.qbrp.main.engine.chat.core.events.MessageSendEvent
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.utils.world.playSoundForPlayer
+import org.qbrp.main.core.utils.playSoundForPlayer
 
 @Autoload(LoadPriority.ADDON)
 class Sounds: ChatAddon("sounds") {

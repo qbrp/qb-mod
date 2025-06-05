@@ -3,7 +3,7 @@ package org.qbrp.main.engine.players.characters
 import org.koin.dsl.module
 import org.qbrp.main.core.Core
 import org.qbrp.main.core.mc.player.PlayerObject
-import org.qbrp.main.core.mc.player.registration.PlayerRegistrationCallback
+import org.qbrp.main.core.mc.player.registration.PlayerAuthEvent
 import org.qbrp.main.core.mc.player.PlayersAPI
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.players.characters.appearance.AppearanceManager
@@ -26,7 +26,7 @@ class CharactersModule: GameModule("characters") {
     }
 
     override fun onLoad() {
-        PlayerRegistrationCallback.EVENT.register { session, manager ->
+        PlayerAuthEvent.EVENT.register { session, manager ->
             if (!session.account.characters.isEmpty()) {
                 setCharacter(session, session.account.appliedCharacter!!)
             }

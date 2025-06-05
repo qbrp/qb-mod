@@ -11,7 +11,7 @@ import org.qbrp.main.core.utils.networking.messages.components.Cluster
 import org.qbrp.main.core.utils.networking.messages.components.Component
 import org.qbrp.main.core.utils.networking.messages.types.IntContent
 import org.qbrp.main.core.utils.networking.messages.types.StringContent
-import org.qbrp.main.core.utils.world.getPlayersInRadius
+import org.qbrp.main.core.utils.getPlayersInRadius
 import kotlin.collections.set
 
 @JsonIgnoreProperties(ignoreUnknown = true)

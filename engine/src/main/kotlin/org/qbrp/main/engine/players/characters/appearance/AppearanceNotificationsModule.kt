@@ -19,7 +19,7 @@ import org.qbrp.main.engine.players.characters.CharactersModule
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.GameModule
 import org.qbrp.main.core.utils.Deps
-import org.qbrp.main.core.utils.world.getPlayersSessionsInRadius
+import org.qbrp.main.core.utils.getPlayersSessionsInRadius
 import kotlin.hashCode
 
 @Autoload

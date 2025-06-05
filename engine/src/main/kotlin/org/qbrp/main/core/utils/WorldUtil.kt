@@ -1,4 +1,4 @@
-package org.qbrp.main.core.utils.world
+package org.qbrp.main.core.utils
 
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket
