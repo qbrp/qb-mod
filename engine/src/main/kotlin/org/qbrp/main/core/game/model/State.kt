@@ -38,16 +38,14 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
 
     //java.util.ConcurrentModificationException: null
     fun copy(): State {
-        synchronized(this) {
-            val newState = State()
-            componentsMap.forEach { (k, v) ->
-                newState.addComponent(v, k)
-            }
-            newState.putObject(obj)
-            return newState
+        val newState = State()
+        val snapshot = componentsMap.entries.toList() // создаем безопасную копию
+        snapshot.forEach { (k, v) ->
+            newState.addComponent(v, k)
         }
+        newState.putObject(obj)
+        return newState
     }
-
     override fun broadcastMessage(id: String, content: ClusterViewer) {
         behaviours.forEach {
             it.onMessage(id, content)
