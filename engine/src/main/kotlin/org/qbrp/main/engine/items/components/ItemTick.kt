@@ -10,6 +10,10 @@ import org.qbrp.main.core.mc.player.PlayersUtil
 
 interface ItemTick : Tick<ItemTickContext> {
     override fun tick(context: ItemTickContext) {
+        val placeholders = context.item.placeholders
+        context.item.state.getComponentsIsInstance<ItemBehaviour>().forEach {
+            placeholders.putAll(it.updatePlaceholders(placeholders))
+        }
         val itemStack = context.itemStack ?: return
         val player = context.player
         val entity = context.entity
