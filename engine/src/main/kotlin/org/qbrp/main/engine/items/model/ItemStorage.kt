@@ -5,7 +5,7 @@ import org.qbrp.main.core.game.storage.GlobalStorage
 import org.qbrp.main.engine.items.ItemObject
 
 class ItemStorage<T: ItemObject>(): GlobalStorage<T>() {
-    fun getObject(stack: ItemStack): T? {
+    fun getItemObject(stack: ItemStack): T? {
         stack.nbt?.getString("id")?.let { id ->
             return getById(id)
         } ?: return null

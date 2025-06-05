@@ -8,8 +8,10 @@ import org.qbrp.main.core.Core
 import org.qbrp.main.core.assets.prefabs.Prefab
 import org.qbrp.main.core.assets.prefabs.PrefabsAPI
 import org.qbrp.main.core.game.ComponentRegistryInitializationEvent
+import org.qbrp.main.core.game.saving.ServerStopSaver
+import org.qbrp.main.core.game.saving.TimerSaver
 import org.qbrp.main.core.mc.player.PlayerObject
-import org.qbrp.main.core.mc.player.registration.PlayerRegistrationCallback
+import org.qbrp.main.core.mc.player.registration.PlayerAuthEvent
 import org.qbrp.main.core.mc.registry.items.ItemRegistry
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.engine.items.model.ItemFabric
@@ -20,9 +22,12 @@ import org.qbrp.main.core.modules.GameModule
 import org.qbrp.main.core.storage.StorageAPI
 import org.qbrp.main.core.storage.TableAccess
 import org.qbrp.main.engine.Engine
-import org.qbrp.main.engine.items.components.tooltip.Brief
-import org.qbrp.main.engine.items.components.tooltip.Description
-import org.qbrp.main.engine.items.components.tooltip.TooltipManager
+import org.qbrp.main.engine.items.components.tooltip.impl.Brief
+import org.qbrp.main.engine.items.components.tooltip.impl.Description
+import org.qbrp.main.engine.items.components.tooltip.impl.ItemDisplay
+import org.qbrp.main.engine.items.components.tooltip.impl.Name
+import org.qbrp.main.engine.items.model.LeavePlayerInventorySaver
+import org.qbrp.main.engine.items.model.ItemRepository
 import org.qbrp.main.engine.synchronization.impl.FuncProvider
 import org.qbrp.main.engine.synchronization.impl.SynchronizerChannelSender
 import org.qbrp.main.engine.items.model.ServerItemObject
@@ -49,7 +54,7 @@ class ItemsModule: GameModule("items") {
         val prefab = get<PrefabsAPI>().loadByKey<Prefab>(key)
         if (prefab != null) {
             val tag = prefab.getTag(key)
-            getLocal<ItemFabric>().newInstanceFromPrefab(tag, player, getLocal())
+            getLocal<ItemFabric>().newInstanceFromPrefab(tag, player, this)
             return true
         }
         return false
@@ -64,15 +69,24 @@ class ItemsModule: GameModule("items") {
 
     override fun onLoad() {
         get<PrefabsAPI>().registerPrefabCategory("item")
-        val storage = getLocal<ItemStorage<ServerItemObject>>()
+        val storage = get<ItemStorage<ServerItemObject>>()
+        val repo = get<ItemRepository>()
 
-        PlayerRegistrationCallback.EVENT.register { player, manager ->
+        TimerSaver<ServerItemObject>("Items", 4000L * 40L)
+            .run(storage, repo)
+        ServerStopSaver<ServerItemObject>()
+            .run(storage, repo)
+        LeavePlayerInventorySaver()
+            .run(storage, repo)
+
+        PlayerAuthEvent.EVENT.register { player, manager ->
             giveItemPrefab(PrefabEntryKey("item", "test", "default"), player)
         }
         ComponentRegistryInitializationEvent.EVENT.register {
-            it.register(TooltipManager::class.java)
+            it.register(ItemDisplay::class.java)
             it.register(Brief::class.java)
             it.register(Description::class.java)
+            it.register(Name::class.java)
         }
 
         gameAPI.addWorldTickTask(getLocal<ItemTicker>())
@@ -86,8 +100,9 @@ class ItemsModule: GameModule("items") {
         single<Synchronizer> { SynchronizerChannelSender(ITEMS_CHANNEL) }
         single { ItemStorage<ServerItemObject>() }
         single<TableAccess> { get<StorageAPI>().getTable("items")}
-        single { ItemFabric(gameAPI, this@ItemsModule, get()) }
-        single { ItemLifecycle(get(), get(), get(), this@ItemsModule, get()) }
+        single { ItemRepository(this@ItemsModule, get(), get(), get()) }
+        single { ItemFabric(gameAPI) }
+        single { ItemLifecycle(get(), get()) }
         single { ItemTicker(get()) }
         single<ObjectMessageSender> { LocalMessageSender(ITEMS_MESSAGING_CHANNEL) }
     }
