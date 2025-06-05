@@ -17,4 +17,6 @@ open class ContentPack(val file: File,
     val manifestFile = file.resolve("manifest.json")
     val version
         get() = manifest.version
+    val versionWithName
+        get() = manifest.version + ":" + file.nameWithoutExtension
 }
