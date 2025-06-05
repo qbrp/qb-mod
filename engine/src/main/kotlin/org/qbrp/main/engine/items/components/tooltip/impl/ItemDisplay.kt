@@ -9,6 +9,10 @@ import org.qbrp.main.engine.items.components.tooltip.NameData
 import org.qbrp.main.engine.items.components.tooltip.StaticTooltipComponent
 import org.qbrp.main.engine.synchronization.`interface`.SynchronizeConvertible
 
+/**
+ * Отправляет клиенту данные о названии предмета и статических описаниях, собирая их в getName() и generateDescriptions().
+ * Динамические описания собираются вручную на клиенте
+ * **/
 class ItemDisplay(): ItemBehaviour(), SynchronizeConvertible {
     private fun getName(playerObject: PlayerObject): String {
         return requireState().getComponent<NameData>()?.getName(playerObject) ?: "Безымянный предмет"

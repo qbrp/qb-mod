@@ -6,6 +6,7 @@ import org.qbrp.main.engine.items.ItemObject
 import org.qbrp.main.engine.items.components.tooltip.StaticTooltipComponent
 
 @Serializable
+/** Краткое описание предмета, отображается для всех игроков одинаково. **/
 class Brief(val text: String): StaticTooltipComponent() {
     override fun provide(
         player: PlayerObject,
