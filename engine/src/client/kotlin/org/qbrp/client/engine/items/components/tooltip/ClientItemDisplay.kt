@@ -11,15 +11,16 @@ import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterV
 import org.qbrp.main.engine.items.components.ItemBehaviour
 import org.qbrp.main.engine.synchronization.`interface`.state.SynchronizeUpdate
 
-class ClientTooltipManager(var lines: List<String>): ItemBehaviour(), SynchronizeUpdate, TooltipProvider {
+class ClientItemDisplay(var description: List<String>, var name: String): ItemBehaviour(), SynchronizeUpdate, TooltipProvider, TextNameProvider {
     val additional: MutableList<String> = mutableListOf()
     override fun update(cluster: ClusterViewer) {
-        lines = cluster.getComponentData<List<String>>("lines")!!
+        description = cluster.getComponentData<List<String>>("display.lines")!!
+        name = cluster.getComponentData("display.name")!!
     }
 
     override fun provideTooltip(stack: ItemStack): TooltipData? {
         val children = mutableListOf<TooltipComponent>()
-        val allLines = lines + additional
+        val allLines = description + additional
         if (allLines.isNotEmpty()) {
             val textList: List<Text> = allLines.map { ("$it<newline>").asMiniMessage() }
             children += StaticTooltipRender(textList)
@@ -31,5 +32,9 @@ class ClientTooltipManager(var lines: List<String>): ItemBehaviour(), Synchroniz
 
         if (children.isEmpty()) return null
         return TooltipContainer(children.toList())
+    }
+
+    override fun provideName(itemStack: ItemStack): Text {
+        return name.asMiniMessage()
     }
 }
