@@ -191,7 +191,7 @@ class Volume(): ChatAddon("volume"), CommandRegistryEntry {
             ActionResult.PASS
         }
 
-        // Изменение Volume
+        // Изменение InventorySynchronizer
         MessageSendEvent.register { sender, message, receiver, networking ->
             val tags = message.getTags()
             if (tags.getComponentData<Boolean>("handleVolume") != true) {

@@ -35,12 +35,12 @@ class ServerReceiver<T : ReceiverContext>(
 
     fun response(content: BilateralContent, context: ServerReceiverContext, name: String) {
         val markedMessage = Message(name, content.apply { messageId = context.id })
-        NetworkUtil.sendMessage(context.player, markedMessage)
+        NetworkUtil.sendMessage(markedMessage, context.player)
     }
 
     fun response(content: BilateralContent, context: ServerReceiverContext) {
         val markedMessage = Message(messageId, content.apply { messageId = context.id })
-        NetworkUtil.sendMessage(context.player, markedMessage)
+        NetworkUtil.sendMessage(markedMessage, context.player)
     }
 
     private fun handle(message: Message, context: ServerReceiverContext) {

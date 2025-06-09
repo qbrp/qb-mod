@@ -13,11 +13,12 @@ class ServerInformationComposer: ClusterBuilder() {
     }
 
     fun send(player: ServerPlayerEntity) {
-        NetworkUtil.sendMessage(player,
-        Message(
-            SERVER_INFORMATION,
-            build()
-            )
+        NetworkUtil.sendMessage(
+            Message(
+                SERVER_INFORMATION,
+                build()
+                ),
+            player
         )
     }
 }

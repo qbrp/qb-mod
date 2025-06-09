@@ -35,7 +35,7 @@ class ResourcePackApplier: QbModule("resourcepack-applier") {
             // Ставим айдишники из modellist.json
             get<ModelRepository>().ids.apply {
                 clear()
-                putAll(pack.modelsList.ids)
+                addAll(pack.modelsList.toModelEntry())
             }
         }
     }

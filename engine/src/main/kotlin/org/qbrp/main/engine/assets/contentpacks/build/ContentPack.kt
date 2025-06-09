@@ -2,7 +2,6 @@ package org.qbrp.main.engine.assets.contentpacks.build
 
 import org.qbrp.main.core.assets.common.Asset
 import org.qbrp.main.engine.assets.contentpacks.PackManifest
-import org.qbrp.main.engine.assets.resourcepack.ModelsList
 import java.io.File
 
 open class ContentPack(val file: File,
@@ -18,5 +17,5 @@ open class ContentPack(val file: File,
     val version
         get() = manifest.version
     val versionWithName
-        get() = manifest.version + ":" + file.nameWithoutExtension
+        get() =  file.nameWithoutExtension + ":" + manifest.version
 }

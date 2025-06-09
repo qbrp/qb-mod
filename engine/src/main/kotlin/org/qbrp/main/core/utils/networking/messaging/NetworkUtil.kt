@@ -5,35 +5,33 @@ import net.minecraft.server.world.ServerWorld
 import org.qbrp.main.core.Core
 import org.qbrp.main.core.utils.networking.messages.Message
 import org.qbrp.main.core.utils.networking.messages.types.SendContent
-import org.qbrp.main.core.utils.networking.messages.types.Signal
 import org.qbrp.main.core.utils.log.LoggerUtil
 
-object NetworkUtil {
+object NetworkUtil: NetworkMessageSender {
     val logger = LoggerUtil.get("serverNetwork", "sending")
 
-    fun sendMessage(target: ServerPlayerEntity, message: Message) {
+    override fun sendMessage(
+        message: Message,
+        target: ServerPlayerEntity?
+    ) {
         val content = message.content as SendContent
         val data = content.write()
         ServerPlayNetworking.send(target, message.minecraftIdentifier, data)
         logger.log("${target?.name?.string} <-- <<${message.identifier}>> (${message.content})")
     }
 
-    fun sendSignal(target: ServerPlayerEntity, name: String) {
-        sendMessage(target, Message(name, Signal()))
-    }
-
     fun broadcastForPlayerRadius(player: ServerPlayerEntity, message: Message, radius: Double) {
         getPlayersInRadius(player, radius).forEach {
-            sendMessage(it, message)
+            sendMessage(message, it)
         }
     }
 
     fun broadcastGlobal(world: ServerWorld, message: Message) {
-        world.players.forEach { sendMessage(it, message) }
+        world.players.forEach { sendMessage(message, it) }
     }
 
     fun broadcast(message: Message) {
-        Core.server.playerManager.playerList.forEach { sendMessage(it, message) }
+        Core.server.playerManager.playerList.forEach { sendMessage(message, it) }
     }
 
     fun broadcastArea(
@@ -48,7 +46,7 @@ object NetworkUtil {
             val dx = it.x - centerX
             val dz = it.z - centerZ
             dx * dx + dz * dz <= radiusSquared
-        }.forEach { sendMessage(it, message) }
+        }.forEach { sendMessage(message, it) }
     }
 
     private fun getPlayersInRadius(player: ServerPlayerEntity, radius: Double): List<ServerPlayerEntity> {

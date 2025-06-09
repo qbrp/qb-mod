@@ -7,7 +7,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundCategory
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec3d
-import org.qbrp.main.core.mc.player.PlayerObject
+import org.qbrp.main.core.mc.player.ServerPlayerObject
 import org.qbrp.main.core.mc.player.PlayersUtil
 
 fun List<PlayerEntity>.getPlayersInRadius(
@@ -40,12 +40,12 @@ fun List<ServerPlayerEntity>.getPlayersInRadius(
     }
 }
 
-fun List<PlayerObject>.getPlayersSessionsInRadius(
+fun List<ServerPlayerObject>.getPlayersSessionsInRadius(
     player: ServerPlayerEntity,
     radius: Double,
     handleNegativeInt: Boolean = false,
     includeSource: Boolean = false
-): List<PlayerObject> {
+): List<ServerPlayerObject> {
     val radiusSquared = radius * radius
     if (handleNegativeInt && radius.toInt() == -1) {
         return PlayersUtil.playersList.toList()

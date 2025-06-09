@@ -8,7 +8,7 @@ import org.koin.core.component.get
 import org.qbrp.main.core.game.ComponentRegistryInitializationEvent
 import org.qbrp.main.core.game.loop.Tick
 import org.qbrp.main.core.game.prefabs.PrefabField
-import org.qbrp.main.core.mc.player.PlayerObject
+import org.qbrp.main.core.mc.player.ServerPlayerObject
 import org.qbrp.main.core.mc.player.PlayersAPI
 import org.qbrp.main.core.mc.player.PlayersUtil
 import org.qbrp.main.core.mc.player.service.PlayerBehaviour
@@ -55,7 +55,7 @@ class AppearanceNotificationsModule: GameModule("appearance-notifications") {
         // Храним список состояний с ID персонажа внутри
         @JsonIgnore private var tickCount = 0
 
-        fun read(player: PlayerObject) {
+        fun read(player: ServerPlayerObject) {
             val character = player.getComponent<Character>() ?: return
             readStates.find { it.characterId == character.data.id }?.let {
                 readStates.remove(it)

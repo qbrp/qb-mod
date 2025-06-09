@@ -21,7 +21,7 @@ class ClientInfoModule: QbModule("client-server-info"), ServerInfoReader {
     override fun getKoinModule() = onlyApi<ServerInfoReader>(this)
 
     override fun onEnable() {
-        ClientReceiver<ClientReceiverContext>(SERVER_INFORMATION, Cluster::class) { message, context, receiver ->
+        ClientReceiver(SERVER_INFORMATION, Cluster::class) { message, context, receiver ->
             ServerInformationGetEvent.EVENT.invoker().event(message.getContent())
             _viewer = message.getContent()
             true

@@ -7,7 +7,7 @@ import org.qbrp.main.core.assets.common.SimpleKey
 import org.qbrp.main.core.assets.common.references.JsonFileReference
 import org.qbrp.main.engine.assets.contentpacks.build.ContentPack
 import org.qbrp.main.engine.assets.contentpacks.PackManifest
-import org.qbrp.main.engine.assets.resourcepack.ModelsList
+import org.qbrp.main.engine.assets.contentpacks.build.ModelsList
 import java.io.File
 
 class ClientContentPack(path: File): ContentPack(

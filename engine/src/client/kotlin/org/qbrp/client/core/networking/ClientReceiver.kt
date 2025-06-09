@@ -9,11 +9,11 @@ import org.qbrp.main.core.utils.networking.messaging.ReceiverContext
 import org.qbrp.main.core.utils.log.LoggerUtil
 import kotlin.reflect.KClass
 
-class ClientReceiver<T : ReceiverContext>(
+class ClientReceiver(
     messageId: String,
     messageTypeClass: KClass<*>,
-    callback: (Message, T, Receiver<T>) -> Boolean
-): Receiver<T>(messageId, messageTypeClass, callback) {
+    callback: (Message, ClientReceiverContext, Receiver<ClientReceiverContext>) -> Boolean
+): Receiver<ClientReceiverContext>(messageId, messageTypeClass, callback) {
     private val logger = LoggerUtil.get("network", "receivers")
 
     fun register() {
@@ -24,7 +24,7 @@ class ClientReceiver<T : ReceiverContext>(
                 val messageType = createMessageType(buf)
                 val message = Message(messageId, messageType)
                 handle(message, context)
-                callback(message, context as T, this)
+                callback(message, context, this)
             } catch (e: Exception) {
                 e.printStackTrace()
                 logger.error("Ошибка обработки пакета $messageId: ${e.message}")

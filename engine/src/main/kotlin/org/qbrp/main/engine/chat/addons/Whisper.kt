@@ -5,7 +5,6 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import org.koin.dsl.module
-import org.qbrp.main.core.mc.commands.CommandsModule
 import org.qbrp.main.core.mc.commands.CommandRegistryEntry
 import org.qbrp.main.core.mc.commands.CommandRegistryEntry.Companion.requirePlayer
 import org.qbrp.main.core.mc.player.PlayersUtil
@@ -56,7 +55,7 @@ class Whisper: ChatAddon("whisper"), CommandRegistryEntry {
                             ctx.source.sendMessage("<red>Вы не смотрите на игрока.".asMiniMessage())
                             return@executes 0
                         }
-                        val message = ChatMessage(author.name, StringArgumentType.getString(ctx, "text"))
+                        val message = ChatMessage(author.entityName, StringArgumentType.getString(ctx, "text"))
                         ChatGroups.handle(message, Engine.getAPI<ChatGroupsAPI>()?.getGroup("whisper") ?: getLocal<ChatGroup>())
 
                         chatAPI.createSender().apply {

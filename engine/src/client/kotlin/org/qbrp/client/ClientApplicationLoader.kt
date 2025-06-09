@@ -4,6 +4,7 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.qbrp.client.core.registry.ClientGameRegistries
 import org.qbrp.client.engine.ClientEngine
+import org.qbrp.client.render.Render
 import org.qbrp.deprecated.resources.data.config.ConfigInitializationCallback
 import org.qbrp.main.core.Core
 import org.qbrp.main.core.mc.registry.GameRegistries
@@ -15,7 +16,7 @@ import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.ModInitializedEvent
 
 class ClientApplicationLoader : ClientModInitializer {
-    val modulesCount: Int get() = Core.modulesCount + ClientCore.modulesCount + Engine.modulesCount
+    val modulesCount: Int get() = Core.modulesCount + ClientCore.modulesCount + Engine.modulesCount + ClientEngine.modulesCount + Render.modulesCount
 
     override fun onInitializeClient() {
         val informationMessage = InformationMessage(
@@ -32,6 +33,7 @@ class ClientApplicationLoader : ClientModInitializer {
             ClientCore.initialize()
             Engine.initialize()
             ClientEngine.initialize()
+            Render.initialize()
             ModInitializedEvent.EVENT.invoker().event()
             informationMessage.print(modulesCount)
         }

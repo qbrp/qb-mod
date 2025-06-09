@@ -1,7 +1,6 @@
 package org.qbrp.main.engine.assets.contentpacks.build
 
 import org.qbrp.main.engine.assets.contentpacks.PackManifest
-import org.qbrp.main.engine.assets.resourcepack.ModelsList
 import org.qbrp.main.engine.assets.resourcepack.Node
 import org.qbrp.main.engine.assets.resourcepack.ResourcePackBuilder
 import org.qbrp.main.engine.assets.resourcepack.ResourcePackAPI
@@ -18,14 +17,48 @@ class ContentPackBuilder(val file: File,
     private val modelsListFile = file.resolve("modellist.json")
     private var modelsList: ModelsList? = null
 
-    fun bakeResourcePack(nodes: List<Node>): ContentPackBuilder {
+    private fun getFolderAfter(file: File, folderName: String): String? {
+        val path = file.absoluteFile.toPath()
+        for (i in 0 until path.nameCount - 1) {
+            if (path.getName(i).toString() == folderName) {
+                return path.getName(i + 1).toString()
+            }
+        }
+        return null // если не найдено
+    }
+
+    private fun getFoldersAfter(file: File, folderName: String): File? {
+        val path = file.absoluteFile.toPath()
+        for (i in 0 until path.nameCount - 1) {
+            if (path.getName(i).toString() == folderName) {
+                // Собираем путь начиная со следующего элемента
+                val subPath = path.subpath(i + 1, path.nameCount)
+                return File(path.root?.resolve(subPath)?.toString() ?: subPath.toString())
+            }
+        }
+        return null
+    }
+
+    fun bakeResourcePack(nodes: List<Node>, overrides: List<File>): ContentPackBuilder {
         resourcePack = ResourcePackBuilder(resourcePackFile)
         resourcePackAPI.createModelPackFiles(resourcePack!!, nodes)
+        resourcePackAPI.putOverrides(overrides, resourcePack!!)
         return this
     }
 
-    fun bakeModelsList(nodes: List<Node>): ContentPackBuilder {
-        modelsList = resourcePackAPI.createModelsList(nodes)
+    fun bakeModelsList(nodes: List<Node>, overrides: List<File>): ContentPackBuilder {
+        val ids: MutableMap<String, String> = mutableMapOf()
+        nodes.forEach { ids[it.modelId] = it.getModelListId() }
+        overrides
+            .filter { it.extension == "json" }
+            .forEach {
+            val folder = getFolderAfter(it, "overrides")
+            val name = it.nameWithoutExtension
+            ids[name] = name
+        }
+
+        modelsList = ModelsList(ids)
+
         modelsList!!.create(modelsListFile)
         return this
     }

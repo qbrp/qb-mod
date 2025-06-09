@@ -35,4 +35,6 @@ open class GlobalStorage<T: Identifiable>: Storage<T>{
     override fun getAll(): Collection<T> {
         return objects
     }
+
+    override fun clear() = objects.clear()
 }

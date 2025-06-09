@@ -28,7 +28,7 @@ class Ignore: ClientChatAddon("ignore") {
 
     override fun onLoad() {
         val chatAPI = ClientCore.getAPI<ClientChatAPI>()!!
-        ClientReceiver<ClientReceiverContext>(Messages.invokeCommand("ignore"),
+        ClientReceiver(Messages.invokeCommand("ignore"),
             StringContent::class) { message, context, receiver ->
             val group = (message.content as StringContent).string!!
             if (!ignoreList.remove(group)) {
@@ -40,7 +40,7 @@ class Ignore: ClientChatAddon("ignore") {
             updateFilters()
             true
         }.register()
-        ClientReceiver<ClientReceiverContext>(Messages.invokeCommand("spy"),
+        ClientReceiver(Messages.invokeCommand("spy"),
             Signal::class) { message, context, receiver ->
             ignoreSpy = !ignoreSpy
             if (!ignoreSpy) {

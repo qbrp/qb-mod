@@ -8,7 +8,7 @@ import org.qbrp.main.core.utils.networking.messages.types.BooleanContent
 
 class ClientModule(name: String): QbModule(name) {
     fun registerStateReceiver() {
-        ClientReceiver<ClientReceiverContext>(Messages.moduleUpdate(getName()), BooleanContent::class) { message, context, receiver ->
+        ClientReceiver(Messages.moduleUpdate(getName()), BooleanContent::class) { message, context, receiver ->
             serverState = message.getContent()
             true
         }.register()

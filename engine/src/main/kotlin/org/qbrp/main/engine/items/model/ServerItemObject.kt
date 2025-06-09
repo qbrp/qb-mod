@@ -1,34 +1,38 @@
 package org.qbrp.main.engine.items.model
 
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.util.math.Vec3d
+import net.minecraft.world.World
 import org.koin.core.component.get
 import org.qbrp.main.core.game.model.State
-import org.qbrp.main.core.mc.player.PlayerObject
-import org.qbrp.main.core.utils.networking.messages.components.Cluster
-import org.qbrp.main.core.utils.networking.messages.components.ClusterBuilder
+import org.qbrp.main.core.mc.player.ServerPlayerObject
+import org.qbrp.main.engine.items.components.containers.Dimensions
+import org.qbrp.main.engine.items.components.containers.VolumeContainable
 import org.qbrp.main.engine.items.ItemObject
 import org.qbrp.main.engine.items.ItemsModule
-import org.qbrp.main.engine.synchronization.components.LocalPlayerMessageSender
-import org.qbrp.main.engine.synchronization.components.ObjectMessageSender
-import org.qbrp.main.engine.synchronization.position.SquaredRadiusSynchronizable
-import org.qbrp.main.engine.synchronization.state.ObjectSynchronizable
+import org.qbrp.main.engine.items.components.ItemBehaviour
+import org.qbrp.main.engine.items.components.physics.Physics
+import org.qbrp.main.core.synchronization.components.S2CMessaging
+import org.qbrp.main.core.synchronization.components.MessagingChannelSender
 
 class ServerItemObject(
     override val id: String,
     override val state: State,
-    private val module: ItemsModule,
+    val module: ItemsModule,
     type: String = "abstract_item",
-    override val messageSender: ObjectMessageSender = module.get(),
-) : ItemObject(type), SquaredRadiusSynchronizable, LocalPlayerMessageSender {
+    override val messageSender: MessagingChannelSender = module.get(),
+) : ItemObject(type), ItemSync, S2CMessaging, VolumeContainable {
 
-    override val pos: Vec3d = entity?.pos ?: holder?.pos ?: Vec3d.ZERO
+    override val weightGrams get() = getComponent<Physics>()!!.weightGrams
+    override val dimensions: Dimensions get() = getComponent<Physics>()!!.dimensions
+    override val volume: Double get() = getComponent<Physics>()!!.volume
+
     override val syncDistance: Int = 10
+    override val pos: Vec3d get() = entity?.pos ?: holder?.pos ?: Vec3d.ZERO
 
-    fun copyItemStack(): ItemStack = module.copyItemStack(this)
-    fun give(playerObject: PlayerObject) = playerObject.entity.giveItemStack(copyItemStack())
-
-    override fun getCluster(): Cluster {
-        return ClusterBuilder().build()
+    fun give(playerObject: ServerPlayerObject) = playerObject.entity.giveItemStack(copyItemStack())
+    fun handleUse(stack: ItemStack, world: World, player: PlayerEntity) {
+        state.getComponentsIsInstance<ItemBehaviour>().forEach { it.onUse(stack, world, player) }
     }
 }

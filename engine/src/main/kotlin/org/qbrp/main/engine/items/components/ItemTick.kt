@@ -5,7 +5,7 @@ import net.minecraft.entity.ItemEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.server.network.ServerPlayerEntity
 import org.qbrp.main.core.game.loop.Tick
-import org.qbrp.main.core.mc.player.PlayerObject
+import org.qbrp.main.core.mc.player.ServerPlayerObject
 import org.qbrp.main.core.mc.player.PlayersUtil
 
 interface ItemTick : Tick<ItemTickContext> {
@@ -36,7 +36,7 @@ interface ItemTick : Tick<ItemTickContext> {
         }
     }
 
-    private fun detectViewer(stack: ItemStack, entity: Entity?): PlayerObject? {
+    private fun detectViewer(stack: ItemStack, entity: Entity?): ServerPlayerObject? {
         val player = entity as? ServerPlayerEntity ?: return null
         val screenHandler = player.currentScreenHandler ?: return null
 
@@ -44,8 +44,8 @@ interface ItemTick : Tick<ItemTickContext> {
         return if (isVisible) PlayersUtil.getPlayerSessionOrNull(player) else null
     }
 
-    fun playerInventoryTick(playerObject: PlayerObject, itemStack: ItemStack) = Unit
+    fun playerInventoryTick(playerObject: ServerPlayerObject, itemStack: ItemStack) = Unit
     fun inventoryTick(itemStack: ItemStack) = Unit
     fun itemEntityTick(itemEntity: ItemEntity, itemStack: ItemStack) = Unit
-    fun visibleTick(playerObject: PlayerObject, itemStack: ItemStack) = Unit
+    fun visibleTick(playerObject: ServerPlayerObject, itemStack: ItemStack) = Unit
 }

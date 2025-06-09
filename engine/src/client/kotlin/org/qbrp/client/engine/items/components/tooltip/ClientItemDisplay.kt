@@ -10,7 +10,7 @@ import org.qbrp.client.engine.items.components.tooltip.mc.TooltipContainer
 import org.qbrp.main.core.utils.format.Format.asMiniMessage
 import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
 import org.qbrp.main.engine.items.components.ItemBehaviour
-import org.qbrp.main.engine.synchronization.state.SynchronizeUpdate
+import org.qbrp.main.core.synchronization.state.SynchronizeUpdate
 
 /**
  * Предоставляет рендеру TooltipComponent, объединяющий в себе все DynamicTooltip-компоненты, а также название предмета.

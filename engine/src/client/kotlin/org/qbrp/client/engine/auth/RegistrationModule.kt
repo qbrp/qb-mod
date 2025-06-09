@@ -2,7 +2,6 @@ package org.qbrp.client.engine.auth
 
 import config.ClientConfig
 import net.fabricmc.api.EnvType
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import org.qbrp.client.core.networking.ClientNetworkUtil
 import org.qbrp.client.core.networking.ClientReceiverContext
 import org.qbrp.main.core.modules.Autoload
@@ -18,11 +17,12 @@ class RegistrationModule(): QbModule("registration") {
         get() = ClientConfig.accountCode
 
     override fun onLoad() {
-        ClientPlayConnectionEvents.JOIN.register { _, _, _ ->
-            autoLogin()
-        }
-        ClientReceiver<ClientReceiverContext>(Messages.AUTH, StringContent::class) { message, context, receiver ->
+        ClientReceiver(Messages.AUTH_SUCCESS, StringContent::class) { message, context, receiver ->
             ClientAuthEvent.EVENT.invoker().onAuth(context.handler)
+            true
+        }.register()
+        ClientReceiver(Messages.AUTH_REQUEST, StringContent::class) { message, context, receiver ->
+            autoLogin()
             true
         }.register()
     }
@@ -31,7 +31,7 @@ class RegistrationModule(): QbModule("registration") {
 
     fun login(password: String) {
         ClientNetworkUtil.sendMessage(
-            Message(Messages.AUTH, StringContent(password))
+            Message(Messages.AUTH_REQUEST, StringContent(password))
         )
     }
 }

@@ -5,20 +5,38 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
+import net.minecraft.resource.ResourcePack
 import org.qbrp.main.core.assets.FileSystem.getOrCreate
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.LoadPriority
 import org.qbrp.main.core.modules.QbModule
 import org.qbrp.main.core.utils.log.LoggerUtil
+import java.io.File
+import kotlin.sequences.filter
 
 @Autoload(LoadPriority.MODULE + 1)
 class ResourcePackBakerModule: QbModule("resourcepack-baker"), ResourcePackAPI {
     companion object {
         val LOGGER = LoggerUtil.get("resources")
         val RESOURCEPACK_NODES = getOrCreate("qbrp/assets/nodes", true)
+        val RESOURCEPACK_OVERRIDES = getOrCreate("qbrp/assets/overrides", true)
     }
 
     override fun getKoinModule() = inner<ResourcePackAPI>(this) {}
+
+    override fun scanOverrides(): List<File> {
+        return RESOURCEPACK_OVERRIDES
+            .walkTopDown()
+            .filter { it.isFile }
+            .toList()
+    }
+
+    override fun putOverrides(overrides: List<File>, resourcePack: ResourcePackBuilder) {
+        overrides
+            .forEach { file ->
+                resourcePack.addFile(file, RESOURCEPACK_NODES)
+            }
+    }
 
     override fun scanNodes(): List<Node> {
         return RESOURCEPACK_NODES
@@ -54,13 +72,5 @@ class ResourcePackBakerModule: QbModule("resourcepack-baker"), ResourcePackAPI {
                 modelName = node.modelId,
                 relativePath = node.getPackContainerPath())
         }
-    }
-
-    override fun createModelsList(nodes: List<Node>): ModelsList {
-        val idsMap = mutableMapOf<String, String>()
-        nodes.forEach { node ->
-            idsMap[node.id] = node.getResourceLocation()
-        }
-        return ModelsList(idsMap)
     }
 }

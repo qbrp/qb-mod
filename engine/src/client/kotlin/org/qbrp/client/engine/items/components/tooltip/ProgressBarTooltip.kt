@@ -3,8 +3,9 @@ package org.qbrp.client.engine.items.components.tooltip
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
 import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
+import org.qbrp.main.core.synchronization.components.InternalMessageReceiver
 
-class ProgressBarTooltip : DynamicTooltip() {
+class ProgressBarTooltip : DynamicTooltip(), InternalMessageReceiver {
     private var animationEnabled: Boolean = false
     private var progress: Double = 0.0
     private var startTimeMs: Long = 0L

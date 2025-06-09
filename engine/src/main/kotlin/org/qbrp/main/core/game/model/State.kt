@@ -3,6 +3,7 @@ package org.qbrp.main.core.game.model
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.koin.core.context.GlobalContext
+import org.qbrp.main.core.Core
 import org.qbrp.main.core.game.ComponentsRegistry
 import org.qbrp.main.core.game.model.components.Activateable
 import org.qbrp.main.core.game.model.components.Behaviour
@@ -13,13 +14,14 @@ import org.qbrp.main.core.game.model.components.exception.ComponentNotFoundExcep
 import org.qbrp.main.core.game.serialization.ComponentJsonField
 import org.qbrp.main.core.game.serialization.StateSerializer
 import org.qbrp.main.core.game.model.objects.BaseObject
+import org.qbrp.main.core.mc.player.ServerPlayerObject
 import org.qbrp.main.core.utils.log.LoggerUtil
 import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
-import org.qbrp.main.engine.synchronization.components.InternalMessageBroadcaster
+import org.qbrp.main.core.synchronization.components.InternalMessageReceiver
 
 @Serializable(with = StateSerializer::class)
 open class State constructor(val jsonComponents: Collection<ComponentJsonField> = mutableListOf()
-): InternalMessageBroadcaster {
+): InternalMessageReceiver {
     companion object {
         private val REGISTRY = GlobalContext.get().get<ComponentsRegistry>()
         private val LOGGER = LoggerUtil.get("game", "components")
@@ -34,20 +36,27 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
         (tickables as MutableList<Tick<T>>).forEach { it.tick(ctx) }
     }
 
-    //java.util.ConcurrentModificationException: null
+    // java.util.ConcurrentModificationException: null
     fun copy(): State {
         val newState = State()
-        val snapshot = componentsMap.entries.toList() // создаем безопасную копию
-        snapshot.forEach { (k, v) ->
-            newState.addComponent(v, k)
+        Core.server.execute {
+            val snapshotMap: Map<String, Component> = synchronized(componentsMap) {
+                componentsMap.toMap()
+            }
+            for ((key, value) in snapshotMap) {
+                newState.addComponent(value, name = key)
+            }
+            newState.putObject(obj)
         }
-        newState.putObject(obj)
         return newState
     }
-    override fun broadcastMessage(id: String, content: ClusterViewer) {
-        behaviours.forEach {
-            it.onMessage(id, content)
-        }
+
+    override fun onMessage(id: String, content: ClusterViewer) {
+        componentsMap.values.forEach { if (it is InternalMessageReceiver) it.onMessage(id, content) }
+    }
+
+    override fun onMessage(id: String, playerObject: ServerPlayerObject, content: ClusterViewer) {
+        componentsMap.values.forEach { if (it is InternalMessageReceiver) it.onMessage(id, playerObject, content) }
     }
 
     fun putObjectAndEnableBehaviours(obj: BaseObject) {
@@ -71,7 +80,7 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
         list.forEach {
             val name = it.getComponentName()
             try {
-                addComponent(it.toComponent(), name)
+                addComponent(it.toComponent(), name = name)
             } catch (ex: Exception) {
                 if (ex is ComponentNotFoundException) {
                     LOGGER.warn("Компонент $name не был найден в реестре и был пропущен")
@@ -100,11 +109,11 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
         val exists = getComponentByName(name) != null
         if (!exists) {
             println("Добавлен компонент ${name}")
-            addComponent(component, name, enable)
+            addComponent(component, enable, name)
         }
     }
 
-    inline fun <reified T: Component> getComponentsIsInstance(): List<T> {
+    inline fun <reified T> getComponentsIsInstance(): List<T> {
         return componentsMap.values.filterIsInstance<T>()
     }
 
@@ -112,7 +121,7 @@ open class State constructor(val jsonComponents: Collection<ComponentJsonField> 
         return componentsMap.values.toList()
     }
 
-    fun addComponent(component: Component, name: String = REGISTRY.getComponentName(component), enable: Boolean = false) {
+    fun addComponent(component: Component, enable: Boolean = false, name: String = REGISTRY.getComponentName(component)) {
         componentsMap[name] = component
             .apply {
                 putState(this@State)

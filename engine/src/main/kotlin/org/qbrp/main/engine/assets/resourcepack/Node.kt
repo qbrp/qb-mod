@@ -62,7 +62,7 @@ data class Node(val type: String,
         }
     }
 
-    fun getResourceLocation() = "$modelId/$modelId"
+    fun getModelListId() = "$modelId/$modelId"
     fun getPackContainerPath() = "$resourceType/$modelId"
     fun getPackContainerPath(type: String) = "$type/$resourceType/$modelId"
 

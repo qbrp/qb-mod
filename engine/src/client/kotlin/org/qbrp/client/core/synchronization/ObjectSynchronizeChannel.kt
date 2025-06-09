@@ -3,6 +3,8 @@ package org.qbrp.client.core.synchronization
 import org.qbrp.main.core.game.model.objects.BaseObject
 import org.qbrp.main.core.game.storage.Storage
 import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
+import org.qbrp.main.core.synchronization.channels.ClusterFactory
+import org.qbrp.main.core.synchronization.channels.ObjectProviderChannel
 
 class ObjectSynchronizeChannel<T : BaseObject>(
     name: String,

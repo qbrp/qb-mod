@@ -9,7 +9,8 @@ object Messages {
 
     const val SERVER_INFORMATION = "server_information"
 
-    const val AUTH = "registration_response"
+    const val AUTH_REQUEST = "auth_request"
+    const val AUTH_SUCCESS = "auth_response"
 
     const val INVOKE_COMMAND = "invoke_command"
 

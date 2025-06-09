@@ -4,7 +4,9 @@ import org.qbrp.main.core.game.model.objects.BaseObject
 import org.qbrp.main.core.game.storage.Storage
 import org.qbrp.main.core.utils.networking.messages.components.Cluster
 import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
-import org.qbrp.main.engine.synchronization.state.SynchronizeUpdate
+import org.qbrp.main.core.synchronization.channels.ClusterFactory
+import org.qbrp.main.core.synchronization.channels.ObjectResolver
+import org.qbrp.main.core.synchronization.state.SynchronizeUpdate
 
 class SyncResolver<T: BaseObject>(
     private val storage: Storage<T>,
@@ -15,7 +17,7 @@ class SyncResolver<T: BaseObject>(
     private val associations: MutableMap<String, String> = mutableMapOf()
     var shouldOverride: (T, ClusterViewer) -> Boolean = { _, _ -> false }
 
-    fun addFabric(fabric: ComponentFabric) {
+    fun addFabric(fabric: org.qbrp.client.core.synchronization.ComponentFabric) {
         fabrics.add(fabric)
     }
 

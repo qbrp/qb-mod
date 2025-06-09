@@ -22,4 +22,14 @@ interface Storage<T : Identifiable>: KoinComponent, ObjectProvider<T> {
             .filterIsInstance<Stateful>()
             .forEach { (it.state.getComponentByName(get<ComponentsRegistry>().getComponentName(component)) as? Behaviour)?.disable() }
     }
+    fun putIfAbsent(obj: T): T? {
+        val existing = getAll().find { it.id == obj.id }
+        return if (existing == null) {
+            add(obj)
+            null
+        } else {
+            existing
+        }
+    }
+    fun clear()
 }

@@ -3,7 +3,7 @@ package org.qbrp.main.engine.players.characters.acquaintances
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.minecraft.util.ActionResult
-import org.qbrp.main.core.mc.player.PlayerObject
+import org.qbrp.main.core.mc.player.ServerPlayerObject
 import org.qbrp.main.core.mc.player.service.PlayerBehaviour
 import org.qbrp.deprecated.resources.data.config.ConfigInitializationCallback
 import org.qbrp.main.core.mc.player.PlayersUtil
@@ -50,7 +50,7 @@ class NamesPerception: PlayerBehaviour() {
         return character.data.bioCategory.displayName
     }
 
-    fun getName(player: PlayerObject): String {
+    fun getName(player: ServerPlayerObject): String {
         val ignore = player.getComponent<NamesPerception>()!!.ignore
         val displayName = player.getComponent<NicknamesModule.NicknameManager>()!!.getDisplayName()
         if (ignore) {
@@ -60,7 +60,7 @@ class NamesPerception: PlayerBehaviour() {
         }
     }
 
-    override fun onMessage(sender: MessageSender, message: ChatMessage): ActionResult {
+    override fun onChatMessage(sender: MessageSender, message: ChatMessage): ActionResult {
         val author = PlayersUtil.getPlayerSession(message.getAuthorEntity() ?: return ActionResult.PASS)
         val rename = getName(author)
 

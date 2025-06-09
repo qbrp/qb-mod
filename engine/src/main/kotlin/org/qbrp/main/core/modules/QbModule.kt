@@ -72,8 +72,8 @@ abstract class QbModule(private val name: String) : KoinComponent {
 
     fun sendStates(player: ServerPlayerEntity) {
         linkedModules.forEach { name ->
-            NetworkUtil.sendMessage(player, Message(Messages.moduleUpdate(name), BooleanContent(shouldLoad())))
-            NetworkUtil.sendMessage(player, Message(Messages.moduleClientUpdate(name), BooleanContent(shouldLoad())))
+            NetworkUtil.sendMessage(Message(Messages.moduleUpdate(name), BooleanContent(shouldLoad())), player)
+            NetworkUtil.sendMessage(Message(Messages.moduleClientUpdate(name), BooleanContent(shouldLoad())), player)
         }
     }
 

@@ -2,18 +2,29 @@ package org.qbrp.main.engine.assets.resourcepack
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.qbrp.main.core.assets.FileSystem
 import org.qbrp.main.core.assets.FileSystem.getOrCreate
 import org.qbrp.main.engine.assets.resourcepack.models.JsonModel
 import org.qbrp.main.engine.assets.resourcepack.models.Model
 import org.qbrp.main.engine.assets.resourcepack.models.ObjModel
 import java.io.File
+import kotlin.io.path.relativeTo
 
 class ResourcePackBuilder(val path: File) {
-    val qbrp = getOrCreate(path.resolve("assets/qbrp"), true)
+    val assets = getOrCreate(path.resolve("assets"), true)
+    val qbrp = getOrCreate(assets.resolve("qbrp"), true)
     val models = getOrCreate(qbrp.resolve("models"), true)
     val textures = getOrCreate(qbrp.resolve("textures"), true)
     private val packMcMetaData = PackMcMeta(PackMcMeta.Pack("qbrp Content Pack", 56))
     val packMcMeta = getOrCreate(path.resolve("pack.mcmeta")).writeText(Json.encodeToString(packMcMetaData))
+
+    fun addFile(file: File, overridesDir: File) {
+        val relativePath = overridesDir.toPath().relativize(file.toPath())
+        val cleanedPath = relativePath.subpath(2, relativePath.nameCount).toString()
+        val target = File(assets, cleanedPath)
+        getOrCreate(target, false)
+        file.copyTo(target, overwrite = true)
+    }
 
     fun addTexture(file: File, textureName: String = file.nameWithoutExtension, relativePath: String = "") {
         if (file.extension != "png" && file.extension != "jpg") {

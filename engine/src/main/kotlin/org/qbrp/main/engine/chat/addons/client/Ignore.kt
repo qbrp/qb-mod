@@ -8,7 +8,6 @@ import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
-import org.qbrp.main.core.mc.commands.CommandsModule
 import org.qbrp.main.core.mc.commands.CommandRegistryEntry
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.chat.ChatAPI
@@ -40,17 +39,21 @@ class Ignore: QbModule("chat-addon-ignore"), CommandRegistryEntry {
             .then(CommandManager.argument("group", StringArgumentType.string())
                 .suggests(GroupSuggestionProvider())
                 .executes { ctx ->
-                    NetworkUtil.sendMessage(ctx.source.player!!,
+                    NetworkUtil.sendMessage(
                         Message(Messages.invokeCommand("ignore"),
-                            StringContent(StringArgumentType.getString(ctx, "group"))))
+                            StringContent(StringArgumentType.getString(ctx, "group"))),
+                        ctx.source.player!!
+                    )
                     1
                 }
             )
         )
         dispatcher.register(CommandManager.literal("spy")
             .executes { ctx ->
-                NetworkUtil.sendMessage(ctx.source.player!!,
-                    Message(Messages.invokeCommand("spy"), Signal()))
+                NetworkUtil.sendMessage(
+                    Message(Messages.invokeCommand("spy"), Signal()),
+                    ctx.source.player!!
+                )
                 1
             }
         )

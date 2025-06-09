@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screen.ChatScreen
 import net.minecraft.client.gui.screen.GameMenuScreen
 import net.minecraft.client.gui.screen.Screen
 
+@Deprecated("")
 class HudInitializer : MuiModApi.OnScreenChangeListener {
     var hud: Screen? = null
 

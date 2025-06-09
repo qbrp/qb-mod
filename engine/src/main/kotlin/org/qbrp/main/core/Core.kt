@@ -2,9 +2,14 @@ package org.qbrp.main.core
 
 import config.ClientConfig
 import net.fabricmc.api.EnvType
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.screen.SimpleNamedScreenHandlerFactory
 import net.minecraft.server.MinecraftServer
+import net.minecraft.server.command.CommandManager
+import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.Text
 import org.koin.core.component.get
 import org.qbrp.main.core.assets.AssetsAPI
 import org.qbrp.main.deprecated.resources.ServerResources
@@ -15,6 +20,7 @@ import org.qbrp.main.engine.ModInitializedEvent
 import org.qbrp.main.core.info.ServerInfoAPI
 import org.qbrp.main.core.mc.registry.GameRegistries
 import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
+
 object Core: ApplicationLayer("org.qbrp.main.core") {
     val ASSETS: AssetsAPI by lazy { get() }
     val SERVER_NAME = ClusterEntry<String>("core.server-name")
@@ -29,6 +35,7 @@ object Core: ApplicationLayer("org.qbrp.main.core") {
         }
     }
 
+    private val testServerStorage = net.minecraft.inventory.SimpleInventory(3)
     override fun initialize() {
         get<GameRegistries>().enable()
         if (FabricLoader.getInstance().environmentType == EnvType.CLIENT) {

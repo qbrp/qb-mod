@@ -18,7 +18,7 @@ import org.qbrp.main.core.utils.networking.messages.types.Signal
 class ClientChatNetworking(val storage: MessageStorage): ChatNetworking() {
 
     fun registerReceivers() {
-        ClientReceiver<ClientReceiverContext>(SEND_MESSAGE, Cluster::class) { message, context, receiver ->
+        ClientReceiver(SEND_MESSAGE, Cluster::class) { message, context, receiver ->
             ClientCore.getAPI<ClientChatAPI>()?.handleMessageFromServer(message)
             true
         }.register()

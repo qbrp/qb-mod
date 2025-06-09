@@ -7,6 +7,7 @@ import org.qbrp.main.core.utils.networking.messages.types.ClusterListContent
 import org.qbrp.main.core.utils.networking.messages.types.Content
 import org.qbrp.main.core.utils.networking.messages.types.DoubleContent
 import org.qbrp.main.core.utils.networking.messages.types.IntContent
+import org.qbrp.main.core.utils.networking.messages.types.ItemStackContent
 import org.qbrp.main.core.utils.networking.messages.types.LongContent
 import org.qbrp.main.core.utils.networking.messages.types.StringContent
 import org.qbrp.main.core.utils.networking.messages.types.TextContent
@@ -30,6 +31,7 @@ class ComponentTypeFactory {
         registerComponentType("clusterList", ::ClusterListContent)
         registerComponentType("stringList", ::StringListContent)
         registerComponentType("chatMessageTagsCluster", ::ChatMessageTagsCluster)
+        registerComponentType("itemStackContent", ::ItemStackContent)
     }
 
     private fun registerComponentType(name: String, constructor: () -> Content) {

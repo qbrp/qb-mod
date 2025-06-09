@@ -6,6 +6,7 @@
   "client": [
     "ItemRendererMixin",
     "ModelLoaderMixin",
+    "MouseMixin",
     "chat.ChatHudMixin",
     "chat.ChatScreenMixin"
   ],

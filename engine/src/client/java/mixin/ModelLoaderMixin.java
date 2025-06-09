@@ -39,7 +39,10 @@ public abstract class ModelLoaderMixin {
     ) throws FileNotFoundException {
         Map<Identifier, JsonUnbakedModel> modelsList =
                 jsonUnbakedModels.entrySet().stream()
-                        .filter(entry -> "qbrp".equals(entry.getKey().getNamespace()))
+                        .filter(entry -> {
+                            String namespace = entry.getKey().getNamespace();
+                            return "qbrp".equals(namespace) || "tools".equals(namespace);
+                        })
                         .collect(Collectors.toMap(
                                 Map.Entry::getKey,
                                 Map.Entry::getValue

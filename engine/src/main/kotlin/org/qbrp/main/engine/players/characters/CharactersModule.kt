@@ -2,7 +2,7 @@ package org.qbrp.main.engine.players.characters
 
 import org.koin.dsl.module
 import org.qbrp.main.core.Core
-import org.qbrp.main.core.mc.player.PlayerObject
+import org.qbrp.main.core.mc.player.ServerPlayerObject
 import org.qbrp.main.core.mc.player.registration.PlayerAuthEvent
 import org.qbrp.main.core.mc.player.PlayersAPI
 import org.qbrp.main.engine.Engine
@@ -47,7 +47,7 @@ class CharactersModule: GameModule("characters") {
         single { AppearanceManager() }
     }
 
-    fun setCharacter(player: PlayerObject, characterData: CharacterData) {
+    fun setCharacter(player: ServerPlayerObject, characterData: CharacterData) {
         player.state.replaceComponent { Character(characterData) }
     }
 }

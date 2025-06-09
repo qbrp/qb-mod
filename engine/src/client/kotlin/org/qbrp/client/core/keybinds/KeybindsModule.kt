@@ -1,16 +1,13 @@
 package org.qbrp.client.core.keybinds
 
-import eu.midnightdust.lib.config.MidnightConfig
 import net.fabricmc.api.EnvType
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 import org.koin.core.module.Module
 import org.lwjgl.glfw.GLFW
-import org.qbrp.main.core.Core
 import org.qbrp.client.core.networking.ClientNetworkUtil
 import org.qbrp.main.core.keybinds.ServerKeyBind
 import org.qbrp.main.core.modules.Autoload
@@ -48,7 +45,7 @@ class KeybindsModule: QbModule("keybinds"), ClientKeybindsAPI {
                 }
             }
         }
-
+        registerKeyBindings()
     }
 
     fun registerKeyBindings() {
@@ -60,10 +57,10 @@ class KeybindsModule: QbModule("keybinds"), ClientKeybindsAPI {
         } //TODO: В controls
         registerKeyBinding(
             createKeybinding(
-                "Настройки",
-                GLFW.GLFW_KEY_EQUAL,
-            ), "settings") {
-            MinecraftClient.getInstance().setScreen(MidnightConfig.getScreen(MinecraftClient.getInstance().currentScreen, Core.MOD_ID))
+                "Открыть тестовый инвентарь",
+                GLFW.GLFW_KEY_MINUS,
+            ), "inventory") {
+            //MinecraftClient.getInstance().setScreen(InventoryWidget())
         }
     }
 

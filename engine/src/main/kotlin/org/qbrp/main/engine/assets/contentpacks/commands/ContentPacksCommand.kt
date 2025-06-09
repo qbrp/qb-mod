@@ -28,12 +28,18 @@ class ContentPacksCommand(val api: ContentPackManagerAPI): CommandRegistryEntry 
                 .then(CommandManager.literal("create")
                     .then(CommandManager.argument("version", StringArgumentType.string())
                         .executes { ctx ->
-                            val version = StringArgumentType.getString(ctx, "version")
-                            api.createVersionEntry(version).apply {
-                                createManifest()
-                                buildContentPack()
-                                zipUp()
-                                ctx.source.sendMessage("<green>Создан контентпак: ${file.path}".asMiniMessage())
+                            try {
+                                val version = StringArgumentType.getString(ctx, "version")
+                                api.createVersionEntry(version).apply {
+                                    buildContentPack()
+                                    createManifest()
+                                    zipUp()
+                                    api.setVersion(version)
+                                    ctx.source.sendMessage("<green>Создан контентпак: ${file.path}".asMiniMessage())
+                                }
+                            } catch (e: Exception) {
+                                ctx.source.sendMessage("<red>Ошибка сборки контентпака: ${e.message}".asMiniMessage())
+                                e.printStackTrace()
                             }
                             1
                         }))

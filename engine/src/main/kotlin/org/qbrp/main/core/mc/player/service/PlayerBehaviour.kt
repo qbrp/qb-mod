@@ -3,7 +3,7 @@ package org.qbrp.main.core.mc.player.service
 import net.minecraft.util.ActionResult
 import org.qbrp.main.core.game.model.components.Behaviour
 import org.qbrp.main.core.mc.player.Account
-import org.qbrp.main.core.mc.player.PlayerObject
+import org.qbrp.main.core.mc.player.ServerPlayerObject
 import org.qbrp.main.core.storage.Table
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.chat.ChatAPI
@@ -16,8 +16,8 @@ open class PlayerBehaviour: Behaviour() {
         const val TICK_RATE = 1
     }
 
-    protected val player: PlayerObject
-        get() = requireState().getObject<PlayerObject>()
+    protected val player: ServerPlayerObject
+        get() = requireState().getObject<ServerPlayerObject>()
 
     protected fun sendMessage(text: String) {
         val chatAPI = Engine.getAPI<ChatAPI>()
@@ -28,7 +28,6 @@ open class PlayerBehaviour: Behaviour() {
         }
     }
 
-    open fun onMessage(sender: MessageSender, message: ChatMessage): ActionResult = ActionResult.PASS
-
+    open fun onChatMessage(sender: MessageSender, message: ChatMessage): ActionResult = ActionResult.PASS
     open fun onAccountSave(account: Account, table: Table) = AccountUpdate(emptyList())
 }

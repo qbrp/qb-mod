@@ -4,7 +4,7 @@ import org.qbrp.main.core.game.model.components.Component
 import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
 import kotlin.reflect.KClass
 
-class ComponentConverter(val klass: KClass<*>, val toComponentFactory: (ClusterViewer) -> Component): ComponentFabric {
+open class ComponentConverter(val klass: KClass<*>, val toComponentFactory: (ClusterViewer) -> Component): ComponentFabric {
     override fun toComponent(cluster: ClusterViewer): Component {
         return toComponentFactory(cluster)
     }

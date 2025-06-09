@@ -22,9 +22,10 @@ class ContentPackBuildModule: QbModule("content-pack-build"), ContentPackBuildAP
     override fun build(file: File, version: String): ContentPack {
         file.deleteRecursively()
         val nodes = get<ResourcePackAPI>().scanNodes()
+        val overrides = get<ResourcePackAPI>().scanOverrides()
         return ContentPackBuilder(file, get())
-            .bakeResourcePack(nodes)
-            .bakeModelsList(nodes)
+            .bakeResourcePack(nodes, overrides)
+            .bakeModelsList(nodes, overrides)
             .bakeManifest(version)
             .build()
     }

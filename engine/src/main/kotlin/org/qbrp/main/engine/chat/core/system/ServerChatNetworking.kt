@@ -33,11 +33,12 @@ class ServerChatNetworking(val handler: MessageHandler): ChatNetworking() {
     }
 
     fun sendMessagePacket(player: ServerPlayerEntity, message: ChatMessage) {
-        NetworkUtil.sendMessage(player,
+        NetworkUtil.sendMessage(
             Message(
                 identifier = SEND_MESSAGE,
                 content = message.toCluster()
-            )
+            ),
+            player
         )
     }
 }

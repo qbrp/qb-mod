@@ -15,7 +15,7 @@ import org.qbrp.main.core.mc.player.Account
 import org.qbrp.main.core.mc.player.registration.LoginResult
 import org.qbrp.main.core.database.CoroutineDatabaseClient
 import org.qbrp.main.core.game.serialization.GameMapper
-import org.qbrp.main.core.mc.player.PlayerObject
+import org.qbrp.main.core.mc.player.ServerPlayerObject
 import org.qbrp.main.core.storage.Table
 
 class AccountDatabaseService(tableName: String,
@@ -25,7 +25,7 @@ class AccountDatabaseService(tableName: String,
     val scope = CoroutineScope(Dispatchers.IO)
     val mongo = database
 
-    suspend fun upsertAccount(playerObject: PlayerObject) {
+    suspend fun upsertAccount(playerObject: ServerPlayerObject) {
         try {
             playerObject.account = get(playerObject.account.uuid)!!
         } catch (e: Exception) {

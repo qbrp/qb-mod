@@ -6,7 +6,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import org.koin.core.component.KoinComponent
 import org.qbrp.main.core.game.lifecycle.LifecycleManager
 import org.qbrp.main.core.game.saving.Saver
-import org.qbrp.main.core.mc.player.PlayerObject
+import org.qbrp.main.core.mc.player.ServerPlayerObject
 import org.qbrp.main.core.mc.player.PlayersAPI
 import org.qbrp.main.core.mc.player.registration.LoginResult
 import org.qbrp.main.core.mc.player.registration.PlayerAuthEvent
@@ -18,19 +18,19 @@ import org.qbrp.main.core.utils.format.Format.asMiniMessage
 
 // TODO: Обновить
 class PlayerLifecycleManager(
-    override val storage: PlayerStorage,
+    override val storage: SPlayerStorage,
     val table: TableAccess,
     val fabric: PlayerSerializer,
     private val accounts: AccountDatabaseService,
     private val api: PlayersAPI
-) : LifecycleManager<PlayerObject, String>(storage, Saver { table.saveObject(it.id, fabric.toJson(it)) }), KoinComponent {
-    override fun onCreated(obj: PlayerObject) {
+) : LifecycleManager<ServerPlayerObject, String>(storage, Saver { table.saveObject(it.id, fabric.toJson(it)) }), KoinComponent {
+    override fun onCreated(obj: ServerPlayerObject) {
         super.onCreated(obj)
         PlayerAuthEvent.EVENT.invoker().onRegister(obj, api)
-        obj.sendNetworkMessage(Message(Messages.AUTH, Signal()))
+        obj.sendNetworkMessage(Message(Messages.AUTH_SUCCESS, Signal()))
     }
 
-    override fun save(obj: PlayerObject) {
+    override fun save(obj: ServerPlayerObject) {
         super.save(obj)
         val updates = (obj.state.behaviours as List<PlayerBehaviour>)
             .map {

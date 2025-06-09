@@ -36,9 +36,9 @@ class Character(var data: CharacterData): PlayerBehaviour() {
         val entity = player.entity
         val commands = player.entity.server.commandManager
         try {
-            commands.executeWithPrefix(entity.server.commandSource, "scale reset ${player.name}")
-            commands.executeWithPrefix(entity.server.commandSource, "scale set pehkui:base ${data.scaleFactor} ${player.name}")
-            commands.executeWithPrefix(entity.server.commandSource, "scale set pehkui:held_item ${1/(data.scaleFactor)} ${player.name}")
+            commands.executeWithPrefix(entity.server.commandSource, "scale reset ${player.entityName}")
+            commands.executeWithPrefix(entity.server.commandSource, "scale set pehkui:base ${data.scaleFactor} ${player.entityName}")
+            commands.executeWithPrefix(entity.server.commandSource, "scale set pehkui:held_item ${1/(data.scaleFactor)} ${player.entityName}")
 
             setDescriptionTooltip()
             getComponent<Appearance>()?.apply {

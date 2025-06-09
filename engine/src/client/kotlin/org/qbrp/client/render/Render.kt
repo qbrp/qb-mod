@@ -1,5 +1,6 @@
 package org.qbrp.client.render
-object Render {
 
-    fun initialize() {}
+import org.qbrp.main.ApplicationLayer
+
+object Render: ApplicationLayer("org.qbrp.client.render") {
 }

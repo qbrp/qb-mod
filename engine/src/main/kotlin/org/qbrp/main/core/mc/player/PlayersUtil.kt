@@ -11,16 +11,16 @@ import org.qbrp.main.core.utils.getPlayersInRadius
 
 object PlayersUtil: KoinComponent {
     fun getPlayer(name: String) = Core.server.playerManager.getPlayer(name)
-    fun getPlayerSession(name: String): PlayerObject? = get<PlayersAPI>().getPlayerSession(name)
-    fun getPlayerSession(player: ServerPlayerEntity): PlayerObject = get<PlayersAPI>().getPlayerSession(player)
-    fun getPlayerSessionOrNull(player: ServerPlayerEntity): PlayerObject? = get<PlayersAPI>().getPlayerSessionOrNull(player)
+    fun getPlayerSession(name: String): ServerPlayerObject? = get<PlayersAPI>().getPlayerSession(name)
+    fun getPlayerSession(player: ServerPlayerEntity): ServerPlayerObject = get<PlayersAPI>().getPlayerSession(player)
+    fun getPlayerSessionOrNull(player: ServerPlayerEntity): ServerPlayerObject? = get<PlayersAPI>().getPlayerSessionOrNull(player)
 
     fun getLookDirection(player: PlayerEntity): Vec3d {
         val rotation = player.rotationVector
         return Vec3d(rotation.x, rotation.y, rotation.z)
     }
 
-    fun getPlayerLookingAt(player: PlayerObject) = getPlayerLookingAt(player.entity)
+    fun getPlayerLookingAt(player: ServerPlayerObject) = getPlayerLookingAt(player.entity)
 
     fun getPlayerLookingAt(player: ServerPlayerEntity, gameMode: GameMode? = null): ServerPlayerEntity? {
         val world = player.world
