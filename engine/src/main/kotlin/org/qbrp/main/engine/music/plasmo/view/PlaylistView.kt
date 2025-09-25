@@ -4,7 +4,7 @@ import net.minecraft.text.ClickEvent
 import net.minecraft.text.Text
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
+import org.qbrp.main.core.utils.format.Format.formatMm
 import org.qbrp.main.engine.music.plasmo.ClickableButton
 import org.qbrp.main.engine.music.plasmo.MusicStorage
 import org.qbrp.main.engine.music.plasmo.model.audio.Playable
@@ -29,13 +29,13 @@ class PlaylistView(
             val trackEndTimestamp = playable.queue.getCurrentTrack()!!.endTimestamp.toInt()
             createProgressLine(currentPosition, trackEndTimestamp, 10, "━", "⬤")
         } else {
-            "".asMiniMessage()
+            "".formatMm()
         }
         val tracks = getTracks()
 
         return try { Text.literal("")
             .append(createClickablePlaylistName())
-            .append(" $cycleComponent  ".asMiniMessage())
+            .append(" $cycleComponent  ".formatMm())
             .append(selectorComponent)
             .append("  ")
             .append(priorityComponent)
@@ -189,11 +189,11 @@ class PlaylistView(
         val dot = if (session?.queue?.currentTrackIndex == index) "&a$index:" else "&7$index"
         val loops = if (loops == "1" || loops == "0" ) "" else "&6($loops)"
         return Text.literal("")
-            .append(dot.asMiniMessage())
+            .append(dot.formatMm())
             .append(" ")
             .append((createClickableTrackButton(index, trackName)).toText())
             .append(" ")
-            .append("($duration) $loops".asMiniMessage())
+            .append("($duration) $loops".formatMm())
             .append(" ")
             .append(createMoveTrackUpButton(index).toText())
             .append(" ")

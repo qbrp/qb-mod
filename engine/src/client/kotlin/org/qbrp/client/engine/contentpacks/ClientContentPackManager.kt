@@ -7,23 +7,20 @@ import org.koin.core.module.Module
 import org.qbrp.main.core.Core
 import org.qbrp.client.ClientCore
 import org.qbrp.client.core.networking.info.ServerInfoReader
-import org.qbrp.client.engine.ClientEngine
+import org.qbrp.client.core.notifications.ClientNotificationSender
 import org.qbrp.client.engine.auth.ClientAuthEvent
-import org.qbrp.client.engine.notifications.ClientNotificationsAPI
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.EngineModule
+import org.qbrp.main.core.notifications.entity.Notification
 import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
 import org.qbrp.main.engine.assets.web.WebServerModule
+import org.qbrp.main.engine.text.components.TextSequence
+import org.qbrp.main.engine.text.style.Style
+import org.qbrp.main.engine.text.style.TextColor
 
 @Autoload(env = EnvType.CLIENT)
-class ClientContentPackManager: QbModule("server-packs"), ClientContentPacksAPI {
-    init {
-        ClientEngine.isApiAvailable<ClientNotificationsAPI>()
-    }
-
-    companion object {
-        val CONTENTPACKS_ENABLED = ClusterEntry<Boolean>("engine.contentpacks.enabled")
-    }
+class ClientContentPackManager: EngineModule("server-packs"), ClientContentPacksAPI {
+    private val notificationSender = get<ClientNotificationSender>()
 
     override fun onLoad() {
         createConfig(DownloadConfig())
@@ -32,28 +29,30 @@ class ClientContentPackManager: QbModule("server-packs"), ClientContentPacksAPI 
             applyPack(config.host, config.port, config.serverName)
         }
         val info = get<ServerInfoReader>()
-        ClientAuthEvent.EVENT.register { handler ->
+        ClientAuthEvent.EVENT.register { session ->
             val contentPacksEnabled = info.VIEWER.getEntry(CONTENTPACKS_ENABLED)!!
             val port = info.VIEWER.getEntry(WebServerModule.DOWNLOAD_PORT)!!
             val serverName = info.VIEWER.getEntry(Core.SERVER_NAME)!!
             val ip = ClientCore.getServerIp()!!
-            if (contentPacksEnabled) applyPack(ip, port, serverName,)
+            if (contentPacksEnabled) applyPack(ip, port, serverName)
         }
     }
 
     override fun getKoinModule(): Module = inner<ClientContentPacksAPI>(this) {  }
 
     fun applyPack(host: String, port: Int, name: String) {
-        val notifications = get<ClientNotificationsAPI>()
         try {
             requireServerPack(host, port, name) {
                 ContentPackEvents.ON_APPLY.invoker().onApply(it)
-                    notifications.sendSystemMessage(
-                    "Ассеты", "Применен набор ассетов сервера <aqua>${name}"
-                )
+                val text = TextSequence.Builder()
+                    .literal("Применен набор ассетов сервера ")
+                    .literal(name, Style.ofColor(TextColor.AQUA))
+                    .build()
+                notificationSender.send(Notification.info("Ассеты", text))
             }
         } catch (e: Exception) {
-            notifications.sendSystemMessage("Ошибка загрузки", e.message.toString())
+            val notification = Notification.error("Ошибка", "Загрузка ассетов", e)
+            notificationSender.send(notification)
             e.printStackTrace()
         }
     }
@@ -71,4 +70,8 @@ class ClientContentPackManager: QbModule("server-packs"), ClientContentPacksAPI 
     }
 
     override fun getAPI(): ClientContentPacksAPI = this
+
+    companion object {
+        val CONTENTPACKS_ENABLED = ClusterEntry<Boolean>("engine.contentpacks.enabled")
+    }
 }

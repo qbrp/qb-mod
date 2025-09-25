@@ -1,0 +1,5 @@
+package org.qbrp.client.engine.interactions.networking
+
+import org.qbrp.main.engine.controls.networking.ClientInteractionListener
+
+interface InteractionManagerNetworkHandler: ClientInteractionListener

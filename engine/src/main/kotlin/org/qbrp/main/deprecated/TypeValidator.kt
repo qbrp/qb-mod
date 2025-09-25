@@ -16,7 +16,7 @@ object TypeValidator {
             "int" -> IntegerArgumentType.integer()
             "greedystring" -> StringArgumentType.greedyString()
             "boolean" -> BoolArgumentType.bool()
-            else -> throw IllegalArgumentException("Unsupported argument type: $type")
+            else -> throw IllegalArgumentException("Unsupported argument identity: $type")
         }
     }
 
@@ -29,7 +29,7 @@ object TypeValidator {
             "int" -> IntegerArgumentType.getInteger(context, name) as T
             "boolean" -> BoolArgumentType.getBool(context, name) as T
             "word" -> StringArgumentType.getString(context, name) as T
-            else -> throw IllegalArgumentException("Unsupported argument type: $type")
+            else -> throw IllegalArgumentException("Unsupported argument identity: $type")
         }
     }
 }

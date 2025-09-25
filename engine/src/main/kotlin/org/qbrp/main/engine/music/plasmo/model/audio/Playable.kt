@@ -8,7 +8,7 @@ import org.qbrp.main.engine.music.plasmo.model.audio.playback.PlaybackSubscribe
 import org.qbrp.main.engine.music.plasmo.view.View
 import org.qbrp.main.engine.music.plasmo.model.priority.Priority
 import org.qbrp.main.engine.music.plasmo.model.selectors.Selector
-import org.qbrp.main.engine.music.plasmo.playback.player.PlayerState
+import org.qbrp.main.engine.music.plasmo.playback.player.VoicePlayerState
 import org.qbrp.main.core.utils.log.LoggerUtil
 import su.plo.voice.api.server.PlasmoVoiceServer
 import su.plo.voice.lavaplayer.libs.com.fasterxml.jackson.annotation.JsonIgnore
@@ -30,8 +30,8 @@ abstract class Playable(
 
     abstract fun onUpdate()
 
-    override fun subscribe(playerState: PlayerState): Boolean = sessionManager.subscribe(playerState)
-    override fun unsubscribe(playerState: PlayerState): Boolean = sessionManager.unsubscribe(playerState)
+    override fun subscribe(playerState: VoicePlayerState): Boolean = sessionManager.subscribe(playerState)
+    override fun unsubscribe(playerState: VoicePlayerState): Boolean = sessionManager.unsubscribe(playerState)
 
     open fun save() {
         GlobalContext.get().get<MusicStorage>().save(this)

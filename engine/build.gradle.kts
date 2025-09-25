@@ -1,13 +1,14 @@
+import org.gradle.internal.impldep.org.bouncycastle.math.raw.Mod
+import org.gradle.kotlin.dsl.modImplementation
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "2.0.0"
+    kotlin("jvm") version "2.2.0"
     id("fabric-loom") version "1.9.1"
     id("maven-publish")
     id("com.gradleup.shadow") version "8.3.5"
     kotlin("plugin.serialization") version "2.1.0"
-    kotlin("plugin.scripting") version "1.9.10"
 }
 
 version = project.property("mod_version") as String
@@ -24,12 +25,16 @@ java {
     // if it is present.
     // If you remove this line, sources will not be generated.
     withSourcesJar()
+}
 
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-parameters")
+    }
 }
 
 loom {
     splitEnvironmentSourceSets()
-
     mods {
         register("engine") {
             sourceSet("main")
@@ -47,10 +52,6 @@ repositories {
     maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
         name = "sonatype-oss-snapshots1"
         mavenContent { snapshotsOnly() }
-    }
-    maven {
-        name = "IzzelAliz Maven"
-        url = uri("https://maven.izzel.io/releases/")
     }
     maven {
         url = uri("https://jitpack.io")
@@ -73,12 +74,27 @@ repositories {
 val includeDependency by extra(
     System.getenv("INCLUDE_DEPENDENCY")?.toBoolean() ?: false
 )
+
+data class ModrinthVersionId(val mod: String, val version: String) {
+    val dependency: String get() = "maven.modrinth:$mod:$version"
+}
+
+val plasmoVoice = ModrinthVersionId("1bZhdhsH", "RTD06Dql")
+val fabricPermissionsApi = ModrinthVersionId("lzVo0Dll", "62DUD085")
+val caxton = ModrinthVersionId("k8iIgzXE", "Agu5nBiQ")
+
 dependencies {
     implementation(kotlin("reflect"))
+    testImplementation("io.mockk:mockk:1.14.5")
+    testImplementation("net.fabricmc:fabric-loader-junit:${project.property("loader_version")}")
+    testImplementation("io.kotest:kotest-assertions-core:5.9.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
 
     // Reflections
     include(implementation("org.reflections:reflections:0.10.2")!!)
     include(implementation("org.javassist:javassist:3.28.0-GA")!!)
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.6.0")
 
     minecraft("com.mojang:minecraft:${project.property("minecraft_version")}")
     mappings("net.fabricmc:yarn:${project.property("yarn_mappings")}:v2")
@@ -89,34 +105,29 @@ dependencies {
         modImplementation(include("net.kyori:adventure-platform-fabric:${project.property("adventure_version")}")!!)
     }
     include(implementation("net.kyori:adventure-text-serializer-gson:4.14.0")!!)
+    //JBullet
+    include(implementation("cz.advel.jbullet:jbullet:20101010-1")!!)
 
+    //Jolt JNI
+    implementation("com.github.stephengold:jolt-jni-Windows64:2.0.1")
+    runtimeOnly("com.github.stephengold:jolt-jni-Windows64:2.0.1:DebugSp")
+    implementation("io.github.electrostat-lab:snaploader:1.1.1-stable")
+    runtimeOnly("com.github.oshi:oshi-core:6.8.1")
 
     // Корутины
     include(implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")!!)
     include(implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")!!)
 
-    // Скрипты
-    implementation(kotlin("stdlib"))
-    include(implementation("org.jetbrains.kotlin:kotlin-scripting-common")!!)
-    include(implementation("org.jetbrains.kotlin:kotlin-scripting-jvm")!!)
-    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm-host")
-    include(implementation("org.jetbrains.kotlin:kotlin-scripting-dependencies")!!)
-    include(implementation("org.jetbrains.kotlin:kotlin-scripting-dependencies-maven")!!)
-
     //Obj Model Loader
     modApi("dev.felnull:special-model-loader:1.2.0")
     include("dev.felnull:special-model-loader:1.2.0")
-
-    // ModernUI зависимости
-    implementation("icyllis.modernui:ModernUI-Core:${project.property("modernui_core_version")}")
-    implementation("icyllis.modernui:ModernUI-Markdown:${project.property("modernui_markdown_version")}")
-    modImplementation("icyllis.modernui:ModernUI-Fabric:1.20.1-${project.property("modernui_version")}")
 
     // PlasmoVoice API и дополнительные библиотеки
     implementation("su.plo.voice.api:server:${project.property("voice_api_version")}")
     compileOnly("su.plo.voice.api:client:${project.property("voice_api_version")}")
     implementation("su.plo:pv-addon-lavaplayer-lib:${project.property("pv_addon_lavaplayer_lib_version")}")
     implementation("org.commonmark:commonmark:${project.property("commonmark_version")}")
+    modLocalRuntime(plasmoVoice.dependency)
 
     // HTTP-сервер ресурсов
     include(implementation("com.squareup.okhttp3:okhttp:${project.property("okhttp_version")}")!!)
@@ -149,16 +160,20 @@ dependencies {
     include(implementation("de.undercouch:bson4jackson:2.15.1")!!)
     include(implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.0")!!)
     include(implementation("com.fasterxml.jackson.datatype:jackson-datatype-guava:2.17.+")!!)
+    include(implementation("org.yaml:snakeyaml:2.3")!!)
 
     // Kyori Adventure
     include(implementation("net.kyori:adventure-text-minimessage:4.14.0")!!)
 
     // LuckPerms
     compileOnly("net.luckperms:api:5.4")
+    modImplementation(fabricPermissionsApi.dependency)
+
+    //Caxton
+    //modLocalRuntime(caxton.dependency)
 
     //Конфигурация
     modImplementation(("maven.modrinth:midnightlib:${project.property("midnightlib_version")}")  )
-
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_version")}")
 }
 
@@ -206,6 +221,10 @@ tasks.jar {
     from("LICENSE") {
         rename { "${it}_${project.base.archivesName}" }
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 // configure the maven publication

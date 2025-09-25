@@ -8,13 +8,13 @@ import org.qbrp.main.engine.chat.core.system.ChatGroupsStorage
 import org.qbrp.client.engine.chat.ClientChatAddon
 import org.qbrp.client.engine.chat.system.events.MessageSendEvent
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
+import org.qbrp.main.core.modules.Priorities
 import org.qbrp.main.core.modules.ModuleAPI
 import org.qbrp.main.core.info.ServerInformationGetEvent
 import org.qbrp.main.core.utils.networking.messages.components.Cluster
 import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
 
-@Autoload(LoadPriority.ADDON, EnvType.CLIENT)
+@Autoload(Priorities.ADDON, EnvType.CLIENT)
 class Groups: ClientChatAddon("groups"), ClientChatGroupsAPI {
     override fun getKoinModule() = module {
         single { ChatGroupsStorage() }
@@ -32,7 +32,7 @@ class Groups: ClientChatAddon("groups"), ClientChatGroupsAPI {
 
     override fun createChatGroupFromCluster(cluster: ClusterViewer): ChatGroup {
         return ChatGroup(
-            cluster.getComponentData<String>("name")!!,
+            cluster.getComponentData<String>("label")!!,
             cluster.getComponentData<String>("simpleName")!!,
             cluster.getComponentData<String>("prefix")!!,
             cluster.getComponentData<String>("color")!!

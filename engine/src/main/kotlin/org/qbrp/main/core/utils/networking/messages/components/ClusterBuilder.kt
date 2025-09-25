@@ -2,6 +2,7 @@ package org.qbrp.main.core.utils.networking.messages.components
 
 import org.qbrp.main.core.utils.networking.messages.types.BooleanContent
 import org.qbrp.main.core.utils.networking.messages.types.Content
+import org.qbrp.main.core.utils.networking.messages.types.DoubleContent
 import org.qbrp.main.core.utils.networking.messages.types.IntContent
 import org.qbrp.main.core.utils.networking.messages.types.SendContent
 import org.qbrp.main.core.utils.networking.messages.types.StringContent
@@ -11,7 +12,7 @@ open class ClusterBuilder {
     protected var override: Boolean = true
 
     fun header(name: String, data: SendContent): ClusterBuilder {
-        component(Component(name,  data, mapOf("type" to "header")))
+        component(Component(name,  data, mapOf("identity" to "header")))
         return this
     }
 
@@ -19,6 +20,14 @@ open class ClusterBuilder {
 
     fun component(name: String, stringData: String): ClusterBuilder {
         return component(name, StringContent(stringData))
+    }
+
+    fun component(entry: ClusterEntry<*>, double: Double): ClusterBuilder {
+        return component(entry.name, DoubleContent(double))
+    }
+
+    fun component(name: String, double: Double): ClusterBuilder {
+        return component(name, DoubleContent(double))
     }
 
     fun component(name: String, booleanData: Boolean): ClusterBuilder {

@@ -9,7 +9,7 @@ open class Component(val name: String = "", var content: SendContent = Signal(),
     override var messageId: String = UUID.randomUUID().toString()
 
     override fun toString(): String {
-        return "Component(name='$name', content=$content, meta=$meta)"
+        return "Component(label='$name', content=$content, meta=$meta)"
     }
 
     companion object {

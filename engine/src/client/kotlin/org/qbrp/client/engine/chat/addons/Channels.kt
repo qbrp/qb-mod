@@ -9,9 +9,9 @@ import org.qbrp.client.engine.chat.system.Provider
 import org.qbrp.client.engine.chat.system.UIMessageProvider
 import org.qbrp.client.engine.chat.system.events.MessageAddedEvent
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
+import org.qbrp.main.core.modules.Priorities
 
-@Autoload(LoadPriority.ADDON, EnvType.CLIENT)
+@Autoload(Priorities.ADDON, EnvType.CLIENT)
 class Channels : ClientChatAddon("channels") {
     private lateinit var providersCache: MutableMap<String, Provider>
     private lateinit var messageStorage: MessageStorage
@@ -46,7 +46,7 @@ class Channels : ClientChatAddon("channels") {
         MessageAddedEvent.EVENT.register { message, storage ->
             val openUiProvider = message.getTags().getComponentData<Boolean>("ui") ?: return@register ActionResult.PASS
             if (openUiProvider) {
-                val name = message.getTags().getComponentData<String>("ui.name") ?: return@register ActionResult.PASS
+                val name = message.getTags().getComponentData<String>("ui.label") ?: return@register ActionResult.PASS
                 providersCache[name] = UIMessageProvider(name)
                 messageStorage.provider = providersCache[name]!!
             } else {

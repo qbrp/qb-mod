@@ -7,34 +7,30 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.bson.Document
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
-import org.koin.core.component.inject
 import org.koin.core.context.GlobalContext
-import org.qbrp.main.core.Core
 import org.qbrp.main.core.database.CoroutineDatabaseClient
-import org.qbrp.main.core.game.serialization.GameMapper
-import org.qbrp.main.core.game.serialization.Identifiable
+import org.qbrp.main.core.components.serialization.Identifiable
 import org.qbrp.main.core.utils.log.LoggerUtil
 
 open class Table(val tableName: String,
                  databaseName: String,
                  database: CoroutineDatabaseClient,
                  protected val archiver: Archiver = GlobalContext.get().get()
-): TableAccess, ArchiveAccess, KoinComponent {
+): TableAccess, ArchiveAccess {
     protected val database = database.getDatabase(databaseName)
     protected val coroutineScope = CoroutineScope(Dispatchers.IO)
     companion object {
         val LOGGER = LoggerUtil.get("database")
+        const val ID_FIELD_NAME = "id"
     }
 
-    override fun saveObject(id: String, json: String, fieldName: String) {
+    override fun saveObject(id: String, json: String) {
         coroutineScope.launch {
             try {
                 val document = Document.parse(json)
-                val filter = Filters.eq(fieldName, id)
+                val filter = Filters.eq(ID_FIELD_NAME, id)
                 database
                     .getCollection<Document>(tableName)
                     .replaceOne(
@@ -67,7 +63,7 @@ open class Table(val tableName: String,
 
     override fun getById(id: Any): Deferred<Document?> {
         return coroutineScope.async {
-            val filter = Filters.eq("id", id)
+            val filter = Filters.eq(ID_FIELD_NAME, id)
             database.getCollection<Document>(tableName).find(filter).first()
         }
     }
@@ -84,7 +80,7 @@ open class Table(val tableName: String,
     override fun archive(obj: Identifiable) {
         coroutineScope.launch {
             try {
-                val filter = Filters.eq("id", obj.id)
+                val filter = Filters.eq(ID_FIELD_NAME, obj.id)
                 val collection = database.getCollection<Document>(tableName)
                 val existingDoc = collection.find(filter).first()
                 if (existingDoc != null) {
@@ -92,10 +88,10 @@ open class Table(val tableName: String,
                     archiver.archive(json)
                     collection.deleteMany(filter)
                 } else {
-                    LOGGER.warn("При архивации объекта с id='${obj.id}' документ не найден в '$tableName'")
+                    LOGGER.warn("При архивации объекта с $ID_FIELD_NAME='${obj.id}' документ не найден в '$tableName'")
                 }
             } catch (e: Exception) {
-                LOGGER.error("Ошибка при архивации объекта (id='${obj.id}') из '$tableName': ${e.message}")
+                LOGGER.error("Ошибка при архивации объекта ($ID_FIELD_NAME='${obj.id}') из '$tableName': ${e.message}")
                 e.printStackTrace()
             }
         }

@@ -13,7 +13,7 @@ import org.qbrp.deprecated.annotations.SubCommand
 import org.qbrp.deprecated.map.ArgumentNodeImpl
 import org.qbrp.deprecated.map.CommandNode
 import org.qbrp.deprecated.map.CommandNodeImpl
-import org.qbrp.deprecated.map.Executor
+import org.qbrp.main.deprecated.map.Executor
 
 class CommandBuilder {
 
@@ -99,7 +99,7 @@ class CommandBuilder {
 
         if (commandNode.arguments.isNotEmpty()) {
             commandNode.arguments.forEach { arg ->
-                println("$indent  Arg: ${arg.name} of type ${arg.type} (${arg.sub})")
+                println("$indent  Arg: ${arg.name} of identity ${arg.type} (${arg.sub})")
             }
         }
 

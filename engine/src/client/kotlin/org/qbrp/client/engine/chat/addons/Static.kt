@@ -2,13 +2,12 @@ package org.qbrp.client.engine.chat.addons
 
 import net.fabricmc.api.EnvType
 import net.minecraft.client.MinecraftClient
-import org.qbrp.main.engine.chat.ChatAddon
 import org.qbrp.client.engine.chat.ClientChatAddon
 import org.qbrp.client.engine.chat.system.events.TextUpdateCallback
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
+import org.qbrp.main.core.modules.Priorities
 
-@Autoload(LoadPriority.ADDON, EnvType.CLIENT)
+@Autoload(Priorities.ADDON, EnvType.CLIENT)
 class Static: ClientChatAddon("static") {
     override fun onLoad() {
         TextUpdateCallback.EVENT.register { text, message ->

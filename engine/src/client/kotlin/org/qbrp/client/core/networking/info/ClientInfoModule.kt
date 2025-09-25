@@ -1,18 +1,17 @@
 package org.qbrp.client.core.networking.info
 
 import net.fabricmc.api.EnvType
-import org.qbrp.client.core.networking.ClientReceiverContext
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.modules.EngineModule
 import org.qbrp.main.core.utils.networking.ClientReceiver
 import org.qbrp.main.core.info.ServerInformationGetEvent
 import org.qbrp.main.core.utils.networking.messages.Messages.SERVER_INFORMATION
 import org.qbrp.main.core.utils.networking.messages.components.Cluster
 import org.qbrp.main.core.utils.networking.messages.components.readonly.ClusterViewer
 
-@Autoload(LoadPriority.LOWEST, env = EnvType.CLIENT)
-class ClientInfoModule: QbModule("client-server-info"), ServerInfoReader {
+@Autoload(Priorities.LOWEST, env = EnvType.CLIENT)
+class ClientInfoModule: EngineModule("client-server-info"), ServerInfoReader {
     override val VIEWER: ClusterViewer
         get() = _viewer
 

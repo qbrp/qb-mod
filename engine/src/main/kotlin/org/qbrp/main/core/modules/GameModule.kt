@@ -1,13 +1,12 @@
 package org.qbrp.main.core.modules
 
 import org.qbrp.main.core.Core
-import org.qbrp.main.core.game.ComponentsRegistry
 import org.qbrp.main.engine.Engine
-import org.qbrp.main.core.game.GameAPI
+import org.qbrp.main.core.game.GameTicker
 
-open class GameModule(name: String): QbModule(name) {
+open class GameModule(name: String): EngineModule(name) {
     init {
-        dependsOn { Core.isApiAvailable<GameAPI>() }
+        dependsOn { Core.isApiAvailable<GameTicker>() }
     }
-    protected val gameAPI = Engine.getAPI<GameAPI>()!!
+    protected val gameAPI = Engine.getAPI<GameTicker>()!!
 }

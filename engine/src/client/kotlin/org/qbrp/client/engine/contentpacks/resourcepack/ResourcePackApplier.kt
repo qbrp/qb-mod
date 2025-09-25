@@ -8,12 +8,12 @@ import org.qbrp.client.core.resources.ModelRepository
 import org.qbrp.client.engine.contentpacks.ContentPackEvents
 import org.qbrp.client.engine.contentpacks.ClientContentPacksAPI
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.modules.EngineModule
 import java.util.prefs.Preferences
 
-@Autoload(LoadPriority.LOWEST, EnvType.CLIENT)
-class ResourcePackApplier: QbModule("resourcepack-applier") {
+@Autoload(Priorities.LOWEST, EnvType.CLIENT)
+class ResourcePackApplier: EngineModule("resourcepack-applier") {
     init {
         dependsOn { ClientCore.isApiAvailable<ClientContentPacksAPI>() }
         dependsOn { ClientCore.isApiAvailable<ModelRepository>() }

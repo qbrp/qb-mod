@@ -2,6 +2,8 @@ package org.qbrp.main.engine.music.plasmo.model.selectors
 
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.MinecraftServer
+import org.koin.core.context.GlobalContext
+import org.mozilla.javascript.tools.shell.Global
 import org.qbrp.main.core.Core
 
 class PlayersSelector(
@@ -12,7 +14,7 @@ class PlayersSelector(
     constructor(playerName: String) : this(listOf(playerName))
 
     override fun match(player: ServerPlayerEntity): Boolean {
-        val server = Core.server
+        val server = GlobalContext.get().get<MinecraftServer>()
         val players = params[0]
             .trim()
             .split(",")

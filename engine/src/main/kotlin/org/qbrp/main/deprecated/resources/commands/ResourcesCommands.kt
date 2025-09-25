@@ -1,4 +1,4 @@
-package org.qbrp.deprecated.resources.commands
+package org.qbrp.main.deprecated.resources.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
@@ -6,7 +6,7 @@ import com.mojang.brigadier.context.CommandContext
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import org.qbrp.main.core.mc.commands.CommandRegistryEntry
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
+import org.qbrp.main.core.utils.format.Format.formatMm
 import org.qbrp.main.deprecated.resources.ServerResources
 
 class ResourcesCommands : CommandRegistryEntry {
@@ -25,11 +25,11 @@ class ResourcesCommands : CommandRegistryEntry {
         val source = ctx.source
         val player = source.player as? ServerPlayerEntity
         if (player == null) {
-            source.sendMessage("Только игрок может выполнить эту команду".asMiniMessage())
+            source.sendMessage("Только игрок может выполнить эту команду".formatMm())
             return 0
         }
         ServerResources.reloadConfig()
-        source.sendMessage("Только игрок может выполнить эту команду".asMiniMessage())
+        source.sendMessage("Только игрок может выполнить эту команду".formatMm())
         return 1
     }
 }

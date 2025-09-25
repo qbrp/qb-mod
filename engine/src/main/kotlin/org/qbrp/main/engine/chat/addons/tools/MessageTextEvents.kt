@@ -11,7 +11,7 @@ class MessageTextEvents {
             message.apply {
                 setTags(
                     getTagsBuilder()
-                        .placeholder("text", textContent)
+                        .placeholder("chatText", textContent)
                 )
             }
             message.handleUpdate()

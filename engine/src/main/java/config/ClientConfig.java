@@ -20,4 +20,7 @@ public class ClientConfig extends MidnightConfig {
     @Entry(category = "chat", name = "Обновление сообщений при получении")
     public static boolean handleMessagesOnReceive = true;
 
+    @Entry(category = "render", name = "Ванильный HUD")
+    public static boolean renderVanillaHud = false;
+
 }

@@ -18,13 +18,14 @@ import org.qbrp.client.engine.chat.system.Typer
 import org.qbrp.client.engine.chat.system.logs.ChatLogger
 import org.qbrp.main.core.Core
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.EngineModule
 import org.qbrp.main.core.info.ServerInformationGetEvent
+import org.qbrp.main.core.keybinds.KeybindId
 import org.qbrp.main.core.utils.networking.messages.Message
 import org.qbrp.main.engine.chat.ChatModule
 
 @Autoload(env = EnvType.CLIENT)
-class ChatModuleClient(): QbModule("chat-client"), ClientChatAPI {
+class ChatModuleClient(): EngineModule("chat-client"), ClientChatAPI {
     lateinit var messageStorage: MessageStorage
     lateinit var networking: ClientChatNetworking
 
@@ -62,17 +63,16 @@ class ChatModuleClient(): QbModule("chat-client"), ClientChatAPI {
         get<ClientKeybindsAPI>().registerKeybinding(
             "Очистить чат от системных сообщений",
             GLFW.GLFW_KEY_L,
-            "clear_system_msgs",
-            { ClientCore.getAPI<ClientChatAPI>()?.clearSystemMessages()}
-        )
-        get<ClientKeybindsAPI>().registerKeybinding(
-            "Настройки",
-            GLFW.GLFW_KEY_EQUAL,
-            "settings",
-            { MinecraftClient.getInstance().setScreen(
-                MidnightConfig.getScreen(MinecraftClient.getInstance().currentScreen, Core.MOD_ID))
+            KeybindId("clear_system_msgs"),
+            method = {
+                getAPI().clearSystemMessages()
             }
         )
+        get<ClientKeybindsAPI>().registerKeybinding("Настройки", GLFW.GLFW_KEY_EQUAL, KeybindId("settings"), method = {
+            MinecraftClient.getInstance().apply {
+                setScreen(MidnightConfig.getScreen(currentScreen, Core.MOD_ID))
+            }
+        })
     }
 
     override fun isPlayerWriting(player: PlayerEntity): Boolean = TODO()

@@ -39,7 +39,7 @@ class SynchronousDatabaseClient(private val url: String): DatabaseClient<MongoDa
 
     override fun getDatabase(dbName: String): MongoDatabase {
         if (!connected) connect()
-        return client?.getDatabase(dbName) ?: throw MongoException("Could not open database $dbName")
+        return client?.getDatabase(dbName) ?: throw MongoException("Could not openGroup database $dbName")
     }
 
     fun disconnect() {

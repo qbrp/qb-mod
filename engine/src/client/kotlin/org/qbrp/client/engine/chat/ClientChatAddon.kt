@@ -1,9 +1,9 @@
 package org.qbrp.client.engine.chat
 
 import org.qbrp.client.engine.ClientEngine
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.EngineModule
 
-abstract class ClientChatAddon(name: String) : QbModule("chat-addon-${name}") {
+abstract class ClientChatAddon(name: String) : EngineModule("chat-addon-${name}") {
     init {
         dependsOn { ClientEngine.isApiAvailable<ClientChatAPI>() }
     }

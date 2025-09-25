@@ -1,37 +1,56 @@
 package org.qbrp.client.engine.auth
 
 import config.ClientConfig
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.fabricmc.api.EnvType
-import org.qbrp.client.core.networking.ClientNetworkUtil
-import org.qbrp.client.core.networking.ClientReceiverContext
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
+import org.koin.core.component.get
+import org.koin.dsl.module
+
+import org.qbrp.client.core.networking.v2.ClientContext
+import org.qbrp.client.core.networking.v2.ClientPacketSender
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.QbModule
-import org.qbrp.main.core.utils.networking.ClientReceiver
-import org.qbrp.main.core.utils.networking.messages.Message
-import org.qbrp.main.core.utils.networking.messages.Messages
-import org.qbrp.main.core.utils.networking.messages.types.StringContent
+import org.qbrp.main.core.modules.EngineModule
+import org.qbrp.main.core.networking.PacketListenerActivator
+import org.qbrp.main.engine.players.auth.AuthModule
+import org.qbrp.main.engine.players.auth.AuthPacket
+import org.qbrp.main.engine.players.auth.AuthSuccessPacket
+import org.qbrp.main.engine.players.auth.RegistrationListener
+import org.qbrp.main.engine.players.auth.SessionData
 
 @Autoload(env = EnvType.CLIENT)
-class RegistrationModule(): QbModule("registration") {
-    val password: String
+class RegistrationModule(): EngineModule("registration"), AuthAPI, RegistrationListener {
+    override val password: String
         get() = ClientConfig.accountCode
+    private var sessionData: SessionData? = null
 
+    override fun getKoinModule() = module {
+        factory<SessionData> { sessionData ?: throw RuntimeException("Игрок не подключен к серверу или не авторизован") }
+        single<AuthAPI> { this@RegistrationModule }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onLoad() {
-        ClientReceiver(Messages.AUTH_SUCCESS, StringContent::class) { message, context, receiver ->
-            ClientAuthEvent.EVENT.invoker().onAuth(context.handler)
-            true
-        }.register()
-        ClientReceiver(Messages.AUTH_REQUEST, StringContent::class) { message, context, receiver ->
-            autoLogin()
-            true
-        }.register()
+        get<PacketListenerActivator<ClientContext>>().run("auth", this, { buf, ctx -> AuthSuccessPacket(buf) })
+        ClientPlayConnectionEvents.JOIN.register { handler, sender, client ->
+            GlobalScope.launch {
+                delay(1000)
+                autoLogin()
+            }
+        }
     }
 
     fun autoLogin() = login(password)
 
     fun login(password: String) {
-        ClientNetworkUtil.sendMessage(
-            Message(Messages.AUTH_REQUEST, StringContent(password))
-        )
+        get<ClientPacketSender>().send(AuthPacket(password), AuthModule.AUTH_CHANNEL)
+    }
+
+    override fun onAuthSuccess(data: SessionData) {
+        sessionData = data
+        ClientAuthEvent.EVENT.invoker().onAuth(data)
     }
 }

@@ -11,13 +11,13 @@ import su.plo.voice.api.server.audio.source.ServerDirectSource
 import kotlin.concurrent.timer
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
-import org.qbrp.main.engine.music.plasmo.playback.player.PlayerState
+import org.qbrp.main.engine.music.plasmo.playback.player.VoicePlayerState
 
 data class PlayerSession(
     var playable: Playable,
     val source: ServerDirectSource,
     var queue: Queue,
-    val state: PlayerState,
+    val state: VoicePlayerState,
     var radio: Radio? = null,
 ): KoinComponent {
     private var unsubscribeTimer: java.util.Timer? = null

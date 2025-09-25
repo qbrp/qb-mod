@@ -7,8 +7,6 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundCategory
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec3d
-import org.qbrp.main.core.mc.player.ServerPlayerObject
-import org.qbrp.main.core.mc.player.PlayersUtil
 
 fun List<PlayerEntity>.getPlayersInRadius(
     player: PlayerEntity,
@@ -37,21 +35,6 @@ fun List<ServerPlayerEntity>.getPlayersInRadius(
     }
     return filter {
         (includeSource || it !== player) && it.squaredDistanceTo(player) <= radiusSquared
-    }
-}
-
-fun List<ServerPlayerObject>.getPlayersSessionsInRadius(
-    player: ServerPlayerEntity,
-    radius: Double,
-    handleNegativeInt: Boolean = false,
-    includeSource: Boolean = false
-): List<ServerPlayerObject> {
-    val radiusSquared = radius * radius
-    if (handleNegativeInt && radius.toInt() == -1) {
-        return PlayersUtil.playersList.toList()
-    }
-    return filter {
-        (includeSource || it.entity !== player) && it.entity.squaredDistanceTo(player) <= radiusSquared
     }
 }
 

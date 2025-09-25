@@ -11,7 +11,7 @@ abstract class ChatNetworking {
         val cluster = message.getContent<ClusterViewer>()
         return ChatMessage(
             authorName = cluster.getComponentData("authorName")!!,
-            text = cluster.getComponentData("text")!!,
+            text = cluster.getComponentData("chatText")!!,
             uuid = cluster.getComponentData("uuid")!!,
             timestamp = cluster.getComponentData<Long>("timestamp")!!,
         ).apply {

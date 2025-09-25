@@ -3,15 +3,17 @@ package org.qbrp.main.core.assets.prefabs
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.qbrp.main.core.assets.common.Asset
-import org.qbrp.main.core.game.model.Stateful
-import org.qbrp.main.core.game.serialization.ComponentJsonField
+import org.qbrp.main.core.components.construct.ComponentBuilderOperator
+import org.qbrp.main.core.components.serialization.ComponentJsonField
 import org.qbrp.main.engine.items.PrefabEntryKey
 
 @Serializable
 open class Prefab(@SerialName("id") val identifier: String, val components: List<ComponentJsonField>, val tags: List<Tag>): Asset() {
-    fun mergeTagWith(obj: Stateful, key: PrefabEntryKey) {
-        tags.find { it.id == key.tag }?.mergeAndPut(obj)
+    fun mergeTagWith(op: ComponentBuilderOperator<*>, key: PrefabEntryKey) {
+        tags.find { it.id == key.tag }?.mergeAndPut(op)
     }
 
     fun getTag(key: PrefabEntryKey): Tag {
@@ -23,12 +25,12 @@ open class Prefab(@SerialName("id") val identifier: String, val components: List
         val id: String,
         val components: List<ComponentJsonField>,
         @Transient var parentPrefab: Prefab? = null
-    ) {
+    ): KoinComponent {
         fun mergedWith() = parentPrefab!!.components + components
 
-        fun mergeAndPut(obj: Stateful) {
+        fun mergeAndPut(op: ComponentBuilderOperator<*>) {
             mergedWith().forEach {
-                obj.state.addComponentIfNotExist(it.toComponent())
+                op.addComponentIfNotExist(it.type, { it.toComponent(op, get()) })
             }
         }
     }

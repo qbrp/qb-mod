@@ -1,13 +1,10 @@
 package org.qbrp.main.engine.chat.addons
 
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import org.koin.core.component.get
 import org.koin.core.component.inject
-import org.qbrp.main.core.mc.player.PlayersModule
-import org.qbrp.main.core.mc.player.PlayersUtil
-import org.qbrp.main.engine.Engine
+import org.qbrp.main.engine.players.model.service.PlayersUtil
 import org.qbrp.main.engine.chat.ChatAddon
 import org.qbrp.main.engine.chat.addons.groups.ChatGroupsAPI
 import org.qbrp.main.engine.chat.addons.tools.MessageTextTools
@@ -15,11 +12,13 @@ import org.qbrp.main.engine.chat.core.events.MessageReceivedEvent
 import org.qbrp.main.engine.chat.core.events.MessageSenderPipeline
 import org.qbrp.main.engine.chat.core.system.TextTagsTransformer
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.engine.players.model.service.ServerPlayerStorage
 
-@Autoload(LoadPriority.ADDON, both = true)
+@Autoload(Priorities.ADDON, both = true)
 class Mentions(): ChatAddon("mentions") {
     private val server: MinecraftServer by inject()
+    private val playerList: ServerPlayerStorage by inject()
 
     override fun onLoad() {
         MessageReceivedEvent.EVENT.register { message ->
@@ -40,14 +39,18 @@ class Mentions(): ChatAddon("mentions") {
         }
 
         MessageSenderPipeline.EVENT.register { message, sender ->
-            message.getTags().getComponentsData<String>("mention")?.forEach {
-                if (it == "everyone") {
-                    sender.addTargets(server.playerManager.playerList)
-                } else if (it == "here") {
-                    val playersCanSee = get<ChatGroupsAPI>().fetchGroup(message)?.getPlayersCanSee(message.getAuthorEntity()!!) ?: emptyList()
-                    @Suppress("UNCHECKED_CAST") sender.addTargets(playersCanSee as List<ServerPlayerEntity>)
-                } else {
-                    sender.addTarget(PlayersUtil.getPlayer(it!!) ?: return@forEach)
+            message.getTags().getComponentsData<String>("mention")?.filterNotNull()?.forEach {
+                when (it) {
+                    "everyone" -> {
+                        sender.addTargets(playerList.getAll())
+                    }
+                    "here" -> {
+                        val playersCanSee = get<ChatGroupsAPI>().fetchGroup(message)?.getPlayersCanSee(message.author!!) ?: emptyList()
+                        @Suppress("UNCHECKED_CAST") sender.addTargets(playersCanSee)
+                    }
+                    else -> {
+                        playerList.getByPlayerName(it)?.let { sender.addTarget(it) }
+                    }
                 }
             }
             MessageTextTools.setTextContent(message, TextTagsTransformer.replaceTagsWithFormat(

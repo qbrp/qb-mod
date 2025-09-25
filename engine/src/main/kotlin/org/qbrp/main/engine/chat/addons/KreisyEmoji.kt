@@ -7,11 +7,11 @@ import org.qbrp.deprecated.resources.data.config.KreisyEmojiConfig
 import org.qbrp.main.engine.chat.addons.tools.MessageTextTools
 import org.qbrp.main.engine.chat.core.events.MessageReceivedEvent
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.modules.EngineModule
 
-@Autoload(LoadPriority.ADDON)
-class KreisyEmoji(): QbModule("kreisy-emoji") {
+@Autoload(Priorities.ADDON)
+class KreisyEmoji(): EngineModule("kreisy-emoji") {
     override fun onLoad() {
         val emojiMap: MutableMap<String, String> = mutableMapOf()
         getLocal<KreisyEmojiConfig>().emojis.forEach { name, emoji ->

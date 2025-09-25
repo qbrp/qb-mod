@@ -1,13 +1,12 @@
-package org.qbrp.deprecated.map
+package org.qbrp.main.deprecated.map
 
-import PermissionsUtil.hasPermission
 import com.mojang.brigadier.context.CommandContext
 import net.minecraft.server.command.ServerCommandSource
 import org.qbrp.deprecated.Deps
 import org.qbrp.deprecated.TypeValidator
 import org.qbrp.deprecated.annotations.Arg
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
-import org.qbrp.main.core.utils.format.Format.formatMinecraft
+import org.qbrp.main.core.mc.player.hasPermission
+import org.qbrp.main.core.utils.format.Format.formatMm
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
@@ -38,10 +37,10 @@ data class Executor(val method: Method,
             if (checkPermission(context)) {
                 method.invoke(instance, context, deps)
             } else {
-                context.source.sendError("Недостаточно прав".asMiniMessage())
+                context.source.sendError("Недостаточно прав".formatMm())
             }
         } catch (e: InvocationTargetException) {
-            context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+            context.source.sendError("Ошибка: ${e.message}".formatMm())
             if (printError) { e.printStackTrace() }
         }
     }

@@ -8,7 +8,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import org.qbrp.main.engine.music.plasmo.model.audio.Playable
 import org.qbrp.main.engine.music.plasmo.model.audio.Queue
 import org.qbrp.main.engine.music.plasmo.model.audio.Track
-import org.qbrp.main.engine.music.plasmo.playback.player.PlayerState
+import org.qbrp.main.engine.music.plasmo.playback.player.VoicePlayerState
 import org.qbrp.main.core.utils.log.LoggerUtil
 import su.plo.voice.api.server.PlasmoVoiceServer
 import su.plo.voice.api.server.player.VoicePlayer
@@ -25,12 +25,12 @@ class PlaybackSessionManagerImpl(val playable: Playable, voiceServer: PlasmoVoic
 
     private val playerSessions = ConcurrentHashMap<VoiceServerPlayer, PlayerSession>()
 
-    private val playerSessionInitializations = CopyOnWriteArrayList<PlayerState>()
+    private val playerSessionInitializations = CopyOnWriteArrayList<VoicePlayerState>()
 
     fun getSession(player: VoiceServerPlayer): PlayerSession? = playerSessions[player]
     override fun getSession(player: ServerPlayerEntity): PlayerSession? = playerSessions.values.find { it.source.player.instance.gameProfile.name == player.name.string }
 
-    override fun subscribe(playerState: PlayerState): Boolean {
+    override fun subscribe(playerState: VoicePlayerState): Boolean {
         val player = playerState.voicePlayer
         if (playable.isManuallyDisabled) return false
         if (playerSessionInitializations.find { playerState == it } != null ) { return true }
@@ -50,7 +50,7 @@ class PlaybackSessionManagerImpl(val playable: Playable, voiceServer: PlasmoVoic
         return true
     }
 
-    override fun unsubscribe(player: PlayerState): Boolean {
+    override fun unsubscribe(player: VoicePlayerState): Boolean {
         val session = getSession(player.voicePlayer) ?: return true
         val isReadyToUnsubscribe = session.handleUnsubscribe()
         if (isReadyToUnsubscribe) {

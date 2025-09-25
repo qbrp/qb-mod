@@ -4,23 +4,25 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import org.qbrp.main.core.game.serialization.Identifiable
+import org.qbrp.main.core.components.serialization.Identifiable
 
 open class GlobalStorage<T: Identifiable>: Storage<T>{
     protected val objects: MutableList<T> = ArrayList()
     protected val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private fun checkIdCollision(id: String): Boolean {
-        objects.count { it.id == id }.let {
+        objects.toList().count { it.id == id }.let {
             return it > 1
         }
     }
     override fun add(obj: T): T {
         objects.add(obj)
-        scope.launch {
-            if (checkIdCollision(obj.id))
-                throw RuntimeException("Обнаружено пересечение ID ${obj.id} двух объектов")
-        }
+        if (checkIdCollision(obj.id))
+            throw RuntimeException("Обнаружено пересечение ID ${obj.id} двух объектов (${this@GlobalStorage::class.qualifiedName})")
+//        scope.launch {
+//            if (checkIdCollision(obj.id))
+//                throw RuntimeException("Обнаружено пересечение ID ${obj.id} двух объектов (${this@GlobalStorage::class.qualifiedName})")
+//        }
         return obj
     }
 

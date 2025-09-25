@@ -1,7 +1,6 @@
 package org.qbrp.main.engine.music.plasmo.model.audio.playback
 
 import net.minecraft.server.network.ServerPlayerEntity
-import org.qbrp.main.engine.music.plasmo.playback.player.PlayerState
 import su.plo.voice.api.server.player.VoicePlayer
 import su.plo.voice.api.server.player.VoiceServerPlayer
 

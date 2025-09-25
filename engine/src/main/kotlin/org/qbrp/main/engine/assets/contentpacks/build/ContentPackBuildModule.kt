@@ -1,17 +1,16 @@
 package org.qbrp.main.engine.assets.contentpacks.build
 
 import org.koin.core.component.get
-import org.koin.core.module.Module
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.modules.EngineModule
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.assets.contentpacks.patches.PatchesAPI
 import org.qbrp.main.engine.assets.resourcepack.ResourcePackAPI
 import java.io.File
 
-@Autoload(LoadPriority.MODULE)
-class ContentPackBuildModule: QbModule("content-pack-build"), ContentPackBuildAPI {
+@Autoload(Priorities.MODULE)
+class ContentPackBuildModule: EngineModule("content-pack-build"), ContentPackBuildAPI {
     init {
         dependsOn { Engine.isApiAvailable<PatchesAPI>() }
         dependsOn { Engine.isApiAvailable<ResourcePackAPI>() }

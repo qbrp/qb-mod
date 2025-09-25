@@ -67,10 +67,10 @@ class ChatScreenMixin extends Screen {
 //        this.chatInputSuggestor.refresh();
 //        this.setInitialFocus(this.chatField);
 //        if (this.chatField instanceof TransfromTextFieldWidget) {
-//            ((TransfromTextFieldWidget) this.chatField).setRenderedTextTransformer(text ->
+//            ((TransfromTextFieldWidget) this.chatField).setRenderedTextTransformer(chatText ->
 //                    Objects.requireNonNull(ClientCore.Companion.getChatModuleAPI())
 //                            .getTextTransformer()
-//                            .getColorTransformedMessage(text)
+//                            .getColorTransformedMessage(chatText)
 //            );
 //            ((TransfromTextFieldWidget) this.chatField).setupCustomRenderer();
 //        }
@@ -98,7 +98,7 @@ class ChatScreenMixin extends Screen {
 //    )
 //    private void redirectFill(DrawContext context, int x1, int y1, int x2, int y2, int color) {
 //        int bgColor = this.client.options.getTextBackgroundColor(Integer.MIN_VALUE);
-//        Typer.TypingMessageContext typingContext = Objects.requireNonNull(ClientCore.Companion.getChatModuleAPI()).getTypingContextFromText(chatField.getText());
+//        Typer.TypingMessageContext typingContext = Objects.requireNonNull(ClientCore.Companion.getChatModuleAPI()).getTypingContextFromText(chatField.getChatText());
 //        String tagsNames = typingContext.calculateMetaInfoNames();
 //
 //        if (getTypingMessage() != null && !tagsNames.isEmpty()) {

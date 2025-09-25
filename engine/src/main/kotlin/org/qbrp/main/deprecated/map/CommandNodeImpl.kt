@@ -7,6 +7,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import net.minecraft.server.command.ServerCommandSource
 import org.qbrp.deprecated.TypeValidator
+import org.qbrp.main.deprecated.map.Executor
 
 data class CommandNodeImpl(
     override var name: String,

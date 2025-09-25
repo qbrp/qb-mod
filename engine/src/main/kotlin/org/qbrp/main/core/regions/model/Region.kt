@@ -1,10 +1,7 @@
 package org.qbrp.main.core.regions.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import kotlinx.serialization.Serializable
-import org.qbrp.main.core.game.model.objects.BaseEntity
-import org.qbrp.main.core.game.serialization.Identifiable
+import org.qbrp.main.core.components.serialization.Identifiable
 
 @Serializable
 class Region(val name: String, val cuboids: List<Cuboid> = mutableListOf()): Identifiable {

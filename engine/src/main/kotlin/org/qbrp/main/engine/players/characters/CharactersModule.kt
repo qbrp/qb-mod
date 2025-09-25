@@ -1,53 +1,75 @@
 package org.qbrp.main.engine.players.characters
 
-import org.koin.dsl.module
-import org.qbrp.main.core.Core
-import org.qbrp.main.core.mc.player.ServerPlayerObject
-import org.qbrp.main.core.mc.player.registration.PlayerAuthEvent
-import org.qbrp.main.core.mc.player.PlayersAPI
-import org.qbrp.main.engine.Engine
-import org.qbrp.main.engine.players.characters.appearance.AppearanceManager
+import org.qbrp.main.engine.players.model.ServerPlayerObject
 import org.qbrp.main.engine.characters.ApplyCharacterCommand
-import org.qbrp.main.engine.characters.ApplyLookCommand
-import org.qbrp.main.engine.characters.model.CharacterData
-import org.qbrp.main.engine.chat.ChatAPI
+import org.qbrp.main.mechanics.characters.model.CharacterData
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.GameModule
 import org.koin.core.component.get
-import org.qbrp.main.core.game.ComponentRegistryInitializationEvent
+import org.qbrp.main.core.components.ComponentRegistryInitializationEvent
+import org.qbrp.main.core.components.extensions.loadJson
+import org.qbrp.main.core.components.extensions.require
+import org.qbrp.main.core.components.state.ComponentState
+import org.qbrp.main.core.events.on
+import org.qbrp.main.core.events.withEventContext
 import org.qbrp.main.core.mc.commands.CommandsAPI
-import org.qbrp.main.engine.players.characters.appearance.Appearance
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.networking.sender.ServerPacketSender
+import org.qbrp.main.engine.players.characters.components.CharactersBank
+import org.qbrp.main.engine.players.characters.entity.CharacterFactory
+import org.qbrp.main.engine.players.characters.entity.CharacterProfile
+import org.qbrp.main.engine.players.model.events.PlayerInstantiateEvent
+import org.qbrp.main.engine.players.characters.events.CharacterApplyEvent
+import org.qbrp.main.engine.players.characters.networking.CharacterApplyPacket
 
-@Autoload
+@Autoload(Priorities.PLAYERS - 3)
 class CharactersModule: GameModule("characters") {
-    init {
-        dependsOn { Engine.isApiAvailable<ChatAPI>() }
-        dependsOn { Core.isApiAvailable<PlayersAPI>() }
-    }
-
-    override fun onLoad() {
-        PlayerAuthEvent.EVENT.register { session, manager ->
-            if (!session.account.characters.isEmpty()) {
-                setCharacter(session, session.account.appliedCharacter!!)
+    override fun onLoad(): Unit = withEventContext {
+        val packetSender = get<ServerPacketSender>()
+        get<CommandsAPI>().add(listOf(getLocal<ApplyCharacterCommand>()))
+        ComponentRegistryInitializationEvent.EVENT.register {
+            it.register {
+                componentClass(CharactersBank::class)
+                serializeConstructor<CharactersBank.Data, ServerPlayerObject, CharactersBank> { b, dto ->
+                    val profiles = dto.characters.map { profileDto ->
+                        val state = ComponentState<CharacterProfile>()
+                        val profile = CharacterProfile(b, profileDto.id, profileDto.data, state)
+                        state.loadJson(profileDto.state, profile)
+                        state.parent = profile
+                        profile
+                    }.toMutableList()
+                    CharactersBank(b.componentContext, profiles)
+                }
             }
         }
-        get<CommandsAPI>().add(listOf(getLocal<ApplyCharacterCommand>(), getLocal<ApplyLookCommand>()))
-        getLocal<AppearanceManager>().apply {
-            registerKeybindHandler()
+
+        on<PlayerInstantiateEvent> {
+            player.buildWithCtx {
+                factory { ctx -> CharactersBank(ctx) }
+                handle {
+                    val characters = player.account.characters
+                    val character = player.account.appliedCharacter
+                    if (characters.isNotEmpty()) it.setCharacterOrBuild(character!!, get())
+                }
+            }
         }
-        ComponentRegistryInitializationEvent.EVENT.register {
-            it.register(Character::class.java)
-            it.register(Appearance::class.java)
+
+        on<CharacterApplyEvent> {
+            packetSender.sendImmediately(CharacterApplyPacket(character), CHARACTER_APPLY_CHANNEL, player as ServerPlayerObject)
         }
     }
 
-    override fun getKoinModule() = module {
-        single { ApplyCharacterCommand(this@CharactersModule) }
-        single { ApplyLookCommand() }
-        single { AppearanceManager() }
+    override fun getKoinModule() = innerWithApi( {
+        single { CharacterFactory() }
+    }, {
+        scoped { ApplyCharacterCommand(this@CharactersModule) }
+    })
+
+    fun setCharacter(player: ServerPlayerObject, characterData: CharacterData) = withEventContext {
+        player.require<CharactersBank>().setCharacterOrBuild(characterData, get())
     }
 
-    fun setCharacter(player: ServerPlayerObject, characterData: CharacterData) {
-        player.state.replaceComponent { Character(characterData) }
+    companion object {
+        const val CHARACTER_APPLY_CHANNEL = "character_apply"
     }
 }

@@ -3,15 +3,13 @@ package org.qbrp.main.engine.time
 import org.koin.core.component.get
 import org.qbrp.main.core.mc.commands.CommandsAPI
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
-import org.koin.core.component.get
-import org.qbrp.main.core.mc.commands.CommandsModule
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.chat.addons.BroadcasterAPI
 import org.qbrp.main.engine.chat.addons.groups.ChatGroupsAPI
 import org.qbrp.main.engine.time.config.PeriodsConfig
 import org.qbrp.main.engine.time.config.TimeConfig
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.EngineModule
 
 /*
 !!!ШТОБ НЕ ПУТАТЬСЯ!!!
@@ -21,7 +19,7 @@ RpTime - игровое время в 24-часовом формате
  */
 
 @Autoload(priority = 0)
-class TimeModule(): QbModule("time"), TimeAPI {
+class TimeModule(): EngineModule("time"), TimeAPI {
     private lateinit var periodManager: PeriodManager
     private lateinit var worldTimeManager: WorldTimeManager
 

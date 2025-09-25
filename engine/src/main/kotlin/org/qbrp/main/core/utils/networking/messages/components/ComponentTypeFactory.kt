@@ -1,5 +1,6 @@
 package org.qbrp.main.core.utils.networking.messages.components
 
+import lombok.Locked.Write
 import net.minecraft.text.Text
 import org.qbrp.main.engine.chat.core.messages.ChatMessageTagsCluster
 import org.qbrp.main.core.utils.networking.messages.types.BooleanContent
@@ -9,8 +10,12 @@ import org.qbrp.main.core.utils.networking.messages.types.DoubleContent
 import org.qbrp.main.core.utils.networking.messages.types.IntContent
 import org.qbrp.main.core.utils.networking.messages.types.ItemStackContent
 import org.qbrp.main.core.utils.networking.messages.types.LongContent
+import org.qbrp.main.core.utils.networking.messages.types.QuaternionContent
+import org.qbrp.main.core.utils.networking.messages.types.ReadBuf
 import org.qbrp.main.core.utils.networking.messages.types.StringContent
 import org.qbrp.main.core.utils.networking.messages.types.TextContent
+import org.qbrp.main.core.utils.networking.messages.types.Vector3fContent
+import org.qbrp.main.core.utils.networking.messages.types.WriteBuf
 import org.qbrp.main.engine.anticheat.StringListContent
 import kotlin.reflect.KClass
 
@@ -21,7 +26,7 @@ class ComponentTypeFactory {
 
     init {
         registerComponentType("string", ::StringContent)
-        registerComponentType("text", ::TextContent)
+        registerComponentType("chatText", ::TextContent)
         registerComponentType("boolean", ::BooleanContent)
         registerComponentType("int", ::IntContent)
         registerComponentType("integer", ::IntContent)
@@ -30,8 +35,11 @@ class ComponentTypeFactory {
         registerComponentType("cluster", ::Cluster)
         registerComponentType("clusterList", ::ClusterListContent)
         registerComponentType("stringList", ::StringListContent)
+        registerComponentType("quaternion", ::QuaternionContent)
+        registerComponentType("vector3f", ::Vector3fContent)
         registerComponentType("chatMessageTagsCluster", ::ChatMessageTagsCluster)
         registerComponentType("itemStackContent", ::ItemStackContent)
+        registerComponentType("writeBuf", ::WriteBuf)
     }
 
     private fun registerComponentType(name: String, constructor: () -> Content) {

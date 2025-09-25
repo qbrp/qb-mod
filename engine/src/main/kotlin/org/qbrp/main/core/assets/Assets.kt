@@ -13,16 +13,16 @@ import org.qbrp.main.core.assets.common.Key
 import org.qbrp.main.core.assets.common.references.AsyncFileReference
 import org.qbrp.main.core.assets.common.references.FileReference
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.modules.EngineModule
 import java.io.FileNotFoundException
 
-@Autoload(LoadPriority.HIGHEST, both = true)
-class Assets: QbModule("assets"), AssetsAPI {
+@Autoload(Priorities.HIGHEST, both = true)
+class Assets: EngineModule("assets"), AssetsAPI {
     private lateinit var storage: AssetsStorage
     private val defaultScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    override fun onLoad() {
+    override fun onEnable() {
         storage = getLocal()
     }
 

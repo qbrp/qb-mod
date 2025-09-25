@@ -1,40 +1,56 @@
 package org.qbrp.client.engine.players
 
-import net.minecraft.client.MinecraftClient
-import org.koin.core.component.get
-import org.qbrp.client.core.synchronization.ClientLocalMessageSender
-import org.qbrp.client.core.synchronization.ObjectSynchronizeChannel
-import org.qbrp.main.core.mc.player.PlayersModule
-import org.qbrp.main.core.modules.QbModule
-import org.qbrp.main.core.utils.networking.ClientReceiver
-import org.qbrp.main.core.utils.networking.messages.Messages
-import org.qbrp.main.core.utils.networking.messages.types.StringContent
-import org.qbrp.main.engine.items.ItemsModule
+import net.fabricmc.api.EnvType
+import org.koin.core.component.inject
+import org.koin.core.qualifier.named
+import org.qbrp.client.core.mc.connection.event.DisconnectEvent
+import org.qbrp.client.core.networking.preparation.CollectPreparationContributorsEvent
+import org.qbrp.client.core.networking.preparation.PreparationContributor
+import org.qbrp.client.core.networking.utils.enableClear
+import org.qbrp.client.engine.players.networking.ClientPlayerFactory
+import org.qbrp.client.engine.players.networking.ClientPlayerNetworkHandler
+import org.qbrp.client.engine.players.networking.LocalPlayerPreparationContributor
+import org.qbrp.client.engine.players.networking.PlayerResolver
+import org.qbrp.client.engine.players.profile.PlayerProfileManager
+import org.qbrp.client.engine.players.profile.PlayerProfileManagerImpl
+import org.qbrp.client.engine.players.profile.PlayerProfileMapper
+import org.qbrp.main.core.events.on
+import org.qbrp.main.core.events.withEventContext
+import org.qbrp.main.core.modules.Autoload
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.modules.EngineModule
+import org.qbrp.main.engine.ModLoadedEvent
 
-//@Autoload(env = EnvType.CLIENT)
-class ClientPlayersModule: QbModule("client-players") {
-    override fun getKoinModule() = inner {
-        scoped { CPlayerStorage() }
-        scoped { ClientLocalMessageSender(ItemsModule.ITEMS_MESSAGING_CHANNEL) }
-    }
-
-    val storage: CPlayerStorage get() = getLocal()
-
-    override fun onEnable() {
-        ObjectSynchronizeChannel<ClientPlayerObject>(PlayersModule.PLAYERS_CHANNEL, storage) { cluster, id ->
-            val playerName = cluster.getComponentData<String>("playerName")!!
-            ClientPlayerObject(
-                MinecraftClient.getInstance().world?.getPlayers()?.find { it.name.string == playerName },
-                playerName,
-                getLocal()
-            ).apply { state.putObjectAndEnableBehaviours(this) }
-        }.apply {
+@Autoload(priority = Priorities.MODULE - 1, env = EnvType.CLIENT)
+class ClientPlayersModule: EngineModule("client-players") {
+    override fun getKoinModule() = innerWithApi({
+        single { ClientPlayerStorage().apply { enableClear() } }
+        single<PlayerProfileManager> { PlayerProfileManagerImpl() }
+        single<ClientPlayerManager> { getLocal<ClientPlayerManagerImpl>() }
+    }, {
+        scoped { PlayerProfileMapper() }
+        scoped { ClientPlayerManagerImpl() }
+        scoped { ClientPlayerFactory(get()) }
+        scoped { PlayerResolver(get(), get(), get()) }
+        scoped {
+            ClientPlayerNetworkHandler(
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get()
+            )
         }
+    })
 
-        // Заменить на CommandInvoker-компонент
-        ClientReceiver(Messages.INVOKE_COMMAND, StringContent::class) { message, context, receiver ->
-            MinecraftClient.getInstance().player?.networkHandler?.sendChatCommand(message.getContent())
-            true
-        }.register()
+    override fun onEnable() = withEventContext {
+        val playerManager: ClientPlayerManagerImpl = getLocal()
+        val preparationContributor = LocalPlayerPreparationContributor(playerManager)
+        on<ModLoadedEvent> { getLocal<ClientPlayerNetworkHandler>().run() }
+        on<CollectPreparationContributorsEvent, PreparationContributor> { preparationContributor }
+        on<DisconnectEvent> { playerManager.remove() }
     }
 }

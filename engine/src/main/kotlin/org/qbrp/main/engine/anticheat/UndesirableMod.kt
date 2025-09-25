@@ -1,10 +1,16 @@
 package org.qbrp.main.engine.anticheat
 
-import net.minecraft.server.network.ServerPlayerEntity
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
+import org.qbrp.main.core.mc.context.MinecraftContext
+import org.qbrp.main.core.mc.player.model.PlayerSnapshot
+import org.qbrp.main.core.mc.player.sendMessage
+import org.qbrp.main.core.mc.text.miniMessage
 
 class UndesirableMod(override val id: String, val warn: String): Mod {
-    override fun ifFounded(player: ServerPlayerEntity) {
-        player.sendMessage(warn.asMiniMessage())
+    context(mc: MinecraftContext)
+    override fun ifFounded(
+        player: PlayerSnapshot,
+        notifier: OpNotificator
+    ) {
+        player.sendMessage(miniMessage(warn))
     }
 }

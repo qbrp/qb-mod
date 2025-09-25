@@ -14,7 +14,9 @@ object Messages {
 
     const val INVOKE_COMMAND = "invoke_command"
 
-    const val MOD_IDS = ""
+    const val MOD_IDS = "mod_ids"
+
+    const val PLAYER_PROFILE = "player_profile"
 
     fun syncChannel(name: String) = "sync_$name"
     fun invokeCommand(name: String): String = "invoke_command_$name"

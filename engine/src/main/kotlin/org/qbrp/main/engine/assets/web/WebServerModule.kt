@@ -6,16 +6,16 @@ import org.koin.core.component.get
 import org.qbrp.main.core.assets.FileSystem
 import org.qbrp.deprecated.resources.data.config.ServerConfigData
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
+import org.qbrp.main.core.modules.Priorities
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.assets.contentpacks.ContentPackManagerAPI
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.EngineModule
 import org.qbrp.main.core.info.ServerInfoAPI
 import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
 import java.net.InetSocketAddress
 
-@Autoload(LoadPriority.MODULE - 3)
-class WebServerModule: QbModule("web-server") {
+@Autoload(Priorities.MODULE - 3)
+class WebServerModule: EngineModule("web-server") {
     val port = get<ServerConfigData>().http.port
     val server: Server = Server(listen = InetSocketAddress(port))
 

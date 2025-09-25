@@ -1,6 +1,5 @@
 package org.qbrp.main.engine.chat.addons.rp
 
-import org.qbrp.main.core.mc.commands.CommandsModule
 import org.qbrp.deprecated.resources.data.config.ServerConfigData
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.chat.ChatAddon
@@ -8,13 +7,13 @@ import org.qbrp.main.engine.chat.addons.groups.ChatGroupsAPI
 import org.qbrp.main.engine.chat.core.messages.ChatMessageTagsBuilder
 import org.qbrp.main.engine.chat.core.system.ChatGroup
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
+import org.qbrp.main.core.modules.Priorities
 import org.qbrp.main.core.utils.networking.messages.components.ClusterBuilder
 import org.qbrp.main.core.utils.networking.messages.components.Component
 import org.koin.core.component.get
 import org.qbrp.main.core.mc.commands.CommandsAPI
 
-@Autoload(LoadPriority.ADDON)
+@Autoload(Priorities.ADDON)
 class RPCommands(): ChatAddon("rp-commands") {
     private val config = getLocal<ServerConfigData>().chat.commands
 

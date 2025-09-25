@@ -1,9 +1,9 @@
 package org.qbrp.main.engine.chat.core.system
 
-import PermissionsUtil.hasPermission
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.server.network.ServerPlayerEntity
+import org.qbrp.main.core.mc.player.permission.Permission
+import org.qbrp.main.core.mc.player.hasPermission
+import org.qbrp.main.core.networking.getPlayersInRadius
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.main.engine.chat.core.messages.MessageComponent
 import org.qbrp.main.core.utils.networking.messages.components.ClusterBuilder
@@ -11,7 +11,8 @@ import org.qbrp.main.core.utils.networking.messages.components.Cluster
 import org.qbrp.main.core.utils.networking.messages.components.Component
 import org.qbrp.main.core.utils.networking.messages.types.IntContent
 import org.qbrp.main.core.utils.networking.messages.types.StringContent
-import org.qbrp.main.core.utils.getPlayersInRadius
+import org.qbrp.main.engine.players.model.ServerPlayerObject
+import org.qbrp.main.engine.players.model.util.PlayerId
 import kotlin.collections.set
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -22,12 +23,12 @@ open class ChatGroup(
     val color: String = "#FFFFFFF",
     val radius: Int = 16,
     val components: List<MessageComponent>? = listOf(),
-    val format: String = "{playerName}: {text}",
+    val format: String = "{playerName}: {chatText}",
     val cooldown: Int = 0,
     val permission: Boolean = false,
 ) {
     @Transient
-    private var cooldownMap: MutableMap<String, Long>? = null
+    private var cooldownMap: MutableMap<PlayerId, Long>? = null
     @Transient
     var buildedComponents: List<Component>? = null
 
@@ -36,32 +37,31 @@ open class ChatGroup(
         buildedComponents = components?.map { it.build() } ?: emptyList()
     }
 
-    fun cooldownPlayer(player: ServerPlayerEntity) {
+    fun cooldownPlayer(player: ServerPlayerObject) {
         if (cooldownMap == null) { cooldownMap = HashMap() }
-        cooldownMap?.set(player.name.string, System.currentTimeMillis())
+        cooldownMap?.set(player.playerId, System.currentTimeMillis())
     }
 
     fun getDefaultComponents(): List<Component> {
         return buildedComponents ?: emptyList()
     }
 
-    fun getEstimatedCooldown(player: ServerPlayerEntity): Long = cooldownMap?.get(player.name.string) ?: 0L
+    fun getEstimatedCooldown(player: ServerPlayerObject): Long = cooldownMap?.get(player.playerId) ?: 0L
 
-    fun cooldownPassedFor(player: ServerPlayerEntity): Boolean {
+    fun cooldownPassedFor(player: ServerPlayerObject): Boolean {
         val currentTime = System.currentTimeMillis()
-        val lastCooldown = cooldownMap?.get(player.name.string) ?: 0L
+        val lastCooldown = cooldownMap?.get(player.playerId) ?: 0L
         return (currentTime - lastCooldown) >= cooldown * 100
     }
 
-    fun playerCanWrite(player: ServerPlayerEntity): Boolean = playerHasWritePermission(player)
+    fun playerCanWrite(player: ServerPlayerObject): Boolean = playerHasWritePermission(player)
 
-    fun playerHasWritePermission(player: ServerPlayerEntity): Boolean = if (permission) player.hasPermission("chat.group.$name.write") else true
-    fun playerHasReadPermission(player: ServerPlayerEntity): Boolean = if (permission)  player.hasPermission("chat.group.$name.read") else true
+    fun playerHasWritePermission(player: ServerPlayerObject): Boolean = if (permission) player.hasPermission(Permission("chat.group.$name.write")) else true
+    fun playerHasReadPermission(player: ServerPlayerObject): Boolean = if (permission)  player.hasPermission(Permission("chat.group.$name.read")) else true
 
-    open fun getPlayersCanSee(source: PlayerEntity): Collection<PlayerEntity> {
-        return source.world.players
-            .getPlayersInRadius(source, radius.toDouble(), true, true)
-            .filter { playerHasReadPermission(it as ServerPlayerEntity) }
+    open fun getPlayersCanSee(source: ServerPlayerObject): Collection<ServerPlayerObject> {
+        return listOf(source) + getPlayersInRadius(source, radius.toDouble())
+            .filter { playerHasReadPermission(it) }
     }
 
     open fun isInMessage(message: ChatMessage): Boolean {
@@ -78,7 +78,7 @@ open class ChatGroup(
 
     fun toCluster(): Cluster {
         return ClusterBuilder()
-            .component("name", StringContent(name))
+            .component("label", StringContent(name))
             .component("simpleName", StringContent(simpleName))
             .component("prefix", StringContent(prefix))
             .component("color", StringContent(color))

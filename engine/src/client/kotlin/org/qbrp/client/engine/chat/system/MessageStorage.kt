@@ -7,7 +7,7 @@ import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.client.engine.chat.system.logs.ChatData.MessageDTO
 import org.qbrp.client.engine.chat.system.events.MessageAddedEvent
 import org.qbrp.client.engine.chat.system.logs.ChatLogger
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
+import org.qbrp.main.core.utils.format.Format.formatMm
 import org.qbrp.main.core.utils.log.LoggerUtil
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -64,7 +64,7 @@ class MessageStorage(val chatLogger: ChatLogger) {
             }
         }
         if (message.handleVanilla() && message.authorName == client.player?.name?.string) {
-            client.player?.networkHandler?.sendChatMessage(MessageTextTools.getTextContent(message).asMiniMessage().copy().string)
+            client.player?.networkHandler?.sendChatMessage(MessageTextTools.getTextContent(message).formatMm().copy().string)
         }
     }
 

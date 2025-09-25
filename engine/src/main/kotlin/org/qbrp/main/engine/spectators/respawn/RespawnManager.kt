@@ -1,61 +1,52 @@
 package org.qbrp.main.engine.spectators.respawn
 
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.util.ActionResult
-import net.minecraft.world.GameMode
-import org.qbrp.main.core.mc.player.events.PlayerChangeGameModeEvent
-import org.qbrp.main.core.keybinds.ServerKeybindCallback
 import org.qbrp.deprecated.resources.data.config.ServerConfigData
 import org.qbrp.main.core.mc.actionbar.ActionBarAPI
+import org.qbrp.main.core.mc.context.MinecraftContext
+import org.qbrp.main.core.mc.player.dataformats.MinecraftPlayerId
+import org.qbrp.main.core.mc.player.gamemode.MinecraftGameMode
+import org.qbrp.main.core.mc.player.model.PlayerReference
+import org.qbrp.main.core.mc.player.model.PlayerSnapshot
+import org.qbrp.main.core.mc.player.isOp
+import org.qbrp.main.core.mc.player.setGameMode
+import org.qbrp.main.core.mc.text.emptyMcText
+import org.qbrp.main.core.mc.text.miniMessage
+import kotlin.collections.mutableMapOf
 
 class RespawnManager(val config: ServerConfigData.Spectators, val actionBar: ActionBarAPI) {
-    private val cachedGameModes = mutableMapOf<ServerPlayerEntity, GameMode>()
-    private val notSpawnPlayers: MutableMap<String, ServerPlayerEntity> = mutableMapOf()
+    private val cachedGameModes = mutableMapOf<PlayerReference, MinecraftGameMode>()
+    private val notSpawnPlayers = mutableMapOf<MinecraftPlayerId, PlayerReference>()
 
-    init {
-        val event = ServerKeybindCallback.getOrCreateEvent("spectators_spawn")
-        event.register { player ->
-            spawn(player)
-            ActionResult.SUCCESS
-        }
-        PlayerChangeGameModeEvent.EVENT.register() { player, gamemode ->
-            notSpawnPlayers[player.name.string]?.let {
-                if (gamemode != GameMode.SPECTATOR) {
-                    ignore(player)
-                }
-            }
-            ActionResult.PASS
-        }
+    context(ctx: MinecraftContext)
+    private fun getGameMode(player: PlayerReference): MinecraftGameMode {
+        return cachedGameModes[player] ?: if (player.isOp) MinecraftGameMode.CREATIVE else MinecraftGameMode.SURVIVAL
     }
 
-    private fun getGameMode(player: ServerPlayerEntity): GameMode {
-        return cachedGameModes[player] ?: if (player.hasPermissionLevel(4)) GameMode.CREATIVE else GameMode.SURVIVAL
+    fun cachePlayerGameMode(player: PlayerSnapshot) {
+        cachedGameModes[player] = player.serverState.gameMode
     }
 
-    fun cachePlayerGameMode(player: ServerPlayerEntity) {
-        cachedGameModes[player] = player.interactionManager.gameMode
-    }
-
-    fun ignore(player: ServerPlayerEntity) {
-        if (notSpawnPlayers.containsKey(player.name.string)) {
-            notSpawnPlayers.remove(player.name.string)
-            actionBar.setActionBarStatus(player, "")
+    context(ctx: MinecraftContext)
+    fun ignore(player: PlayerReference) {
+        notSpawnPlayers.remove(player.uuid)?.let {
+            actionBar.setActionBarStatus(it.uuid, emptyMcText())
         }
     }
 
-    fun giveSpectator(player: ServerPlayerEntity) {
-        if (!notSpawnPlayers.containsKey(player.name.string)) {
-            notSpawnPlayers[player.name.string] = player
-            player.changeGameMode(GameMode.SPECTATOR)
-            actionBar.setActionBarStatus(player, config.formatTooltip)
+    context(ctx: MinecraftContext)
+    fun giveSpectator(player: PlayerReference) {
+        if (!notSpawnPlayers.contains(player.uuid)) {
+            notSpawnPlayers[player.uuid] = player
+            player.setGameMode(MinecraftGameMode.SPECTATOR)
+            actionBar.setActionBarStatus(player.uuid, miniMessage(config.formatTooltip))
         }
     }
 
-    fun spawn(player: ServerPlayerEntity) {
-        if (notSpawnPlayers.containsKey(player.name.string)) {
-            notSpawnPlayers.remove(player.name.string)
-            player.changeGameMode(getGameMode(player))
-            actionBar.setActionBarStatus(player, "")
+    context(ctx: MinecraftContext)
+    fun spawn(player: PlayerReference) {
+        notSpawnPlayers.remove(player.uuid)?.let {
+            it.setGameMode(getGameMode(player))
+            actionBar.setActionBarStatus(player.uuid, emptyMcText())
         }
     }
 }

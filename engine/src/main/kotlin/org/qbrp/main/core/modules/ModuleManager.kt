@@ -5,19 +5,25 @@ import net.minecraft.server.network.ServerPlayerEntity
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
-import org.koin.core.context.loadKoinModules
+import org.qbrp.main.ApplicationLoader
 import org.qbrp.main.core.assets.FileSystem
+import org.qbrp.main.core.events.EventBus
+import org.qbrp.main.core.events.on
+import org.qbrp.main.core.events.withEventContext
 import org.qbrp.main.core.utils.log.InformationMessage
 import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.engine.ModLoadedEvent
 import org.reflections.Reflections
+import kotlin.reflect.KClass
 
 open class ModuleManager(open val ignoreEnvironment: Boolean = false): KoinComponent {
-    val modules: MutableList<QbModule> = ArrayList()
+    val modules: MutableList<EngineModule> = ArrayList()
     val modulesCount: Int get() = modules.size
     private val informationMessage by inject<InformationMessage>()
     protected open val logger = LoggerUtil.get("modules")
+    private val importedModules = mutableListOf<Class<out EngineModule>>()
 
-    protected open fun init(module: QbModule): QbModule {
+    protected open fun init(module: EngineModule): EngineModule {
         modules.add(module)
         module.enable()
         return modules.last()
@@ -31,12 +37,12 @@ open class ModuleManager(open val ignoreEnvironment: Boolean = false): KoinCompo
         return modules.find { it.getName() == name }?.shouldLoad() == true
     }
 
-    inline fun <reified T : QbModule> isModuleAvailable(): Boolean {
+    inline fun <reified T : EngineModule> isModuleAvailable(): Boolean {
         return modules.filterIsInstance<T>().count() > 0
     }
 
-    inline fun <reified T : QbModule> isModuleEnabled(): Boolean {
-        return isModuleEnabled(modules.filterIsInstance<T>().first().getName())
+    inline fun <reified T : EngineModule> isModuleEnabled(): Boolean {
+        return isModuleEnabled(modules.filterIsInstance<T>().firstOrNull()?.getName() ?: return false)
     }
 
     inline fun <reified T : Any> isApiAvailable(): Boolean {
@@ -47,13 +53,13 @@ open class ModuleManager(open val ignoreEnvironment: Boolean = false): KoinCompo
         return try { get<T>() } catch (e: Exception) { null }
     }
 
-    inline fun <reified T: QbModule> getModule(): T {
+    inline fun <reified T: EngineModule> getModule(): T {
         return try { modules.filterIsInstance<T>().first() }
         catch (e: Exception) { if (e is NoSuchElementException) throw NoSuchElementException("Can't find module") else throw e }
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : QbModule> getModule(name: String): T? {
+    fun <T : EngineModule> getModule(name: String): T? {
         return modules.find { it.getName() == name } as? T
     }
 
@@ -63,10 +69,15 @@ open class ModuleManager(open val ignoreEnvironment: Boolean = false): KoinCompo
         return reflections.getTypesAnnotatedWith(Autoload::class.java)
     }
 
+    fun import(module: Class<out EngineModule>) {
+        importedModules += module
+    }
+
     open fun initialize() {
         // Этап 1: Сборка и сортировка классов модулей
-        val sortedModuleClasses = findModules()
-            .sortedByDescending { it.getAnnotation(Autoload::class.java)?.priority ?: LoadPriority.ADDON }
+        val startTime = System.currentTimeMillis()
+        val sortedModuleClasses = importedModules + findModules()
+            .sortedByDescending { it.getAnnotation(Autoload::class.java)?.priority ?: Priorities.ADDON }
 
         val env = FabricLoader.getInstance().environmentType
 
@@ -82,43 +93,51 @@ open class ModuleManager(open val ignoreEnvironment: Boolean = false): KoinCompo
             }
             .also { logger.log("Найдено ${it.count()} модулей") }
             .mapNotNull { clazz ->
-            try {
-                if (QbModule::class.java.isAssignableFrom(clazz)) {
-                    clazz to (clazz.getAnnotation(Autoload::class.java)?.priority ?: LoadPriority.ADDON)
-                } else {
-                    informationMessage.addErrorComponent("Класс ${clazz.simpleName} не реализует org.qbrp.main.core.modules.QbModule")
+                try {
+                    if (EngineModule::class.java.isAssignableFrom(clazz)) {
+                        clazz to (clazz.getAnnotation(Autoload::class.java)?.priority ?: Priorities.ADDON)
+                    } else {
+                        informationMessage.addErrorComponent("Класс ${clazz.simpleName} не реализует org.qbrp.main.core.modules.QbModule")
+                        null
+                    }
+                } catch (e: Exception) {
+                    informationMessage.addErrorComponent("Ошибка при проверке модуля ${clazz.simpleName}: ${e.message}")
+                    e.printStackTrace()
                     null
                 }
-            } catch (e: Exception) {
-                informationMessage.addErrorComponent("Ошибка при проверке модуля ${clazz.simpleName}: ${e.message}")
-                e.printStackTrace()
-                null
             }
-        }
 
         // Добавляем модули в список через init(it)
         availableModules
             .sortedByDescending { it::class.java.getAnnotation(Autoload::class.java)?.priority }
             .forEach { (clazz, priority) ->
-            try {
-                // Создаем экземпляр модуля
-                val instance = clazz.getDeclaredConstructor().newInstance() as QbModule
+                try {
+                    // Создаем экземпляр модуля
+                    val instance = clazz.getDeclaredConstructor().newInstance() as EngineModule
 
-                if (instance.shouldLoad()) {
-                    if(instance.createFile) FileSystem.createModuleFile(instance.getName())
-                    logger.success("Загружен ${instance.getName()}")
-                } else {
-                    informationMessage.addWarnComponent("Модуль ${instance.getName()} отключен.")
-                    return@forEach
+                    if (instance.shouldLoad()) {
+                        if(instance.createFile) FileSystem.createModuleFile(instance.getName())
+                        logger.success("Загружен ${instance.getName()}")
+                    } else {
+                        informationMessage.addWarnComponent("Модуль ${instance.getName()} отключен.")
+                        return@forEach
+                    }
+
+                    instance.priority = priority
+                    init(instance)
+                } catch (e: Exception) {
+                    informationMessage.addErrorComponent("Ошибка при создании экземпляра модуля ${clazz.simpleName}: ${e.message}")
+                    e.printStackTrace()
                 }
-
-                instance.priority = priority
-                init(instance)
-
-            } catch (e: Exception) {
-                informationMessage.addErrorComponent("Ошибка при создании экземпляра модуля ${clazz.simpleName}: ${e.message}")
-                e.printStackTrace()
+                if (ApplicationLoader.shouldCrash) throw EngineCrashException()
+            }
+        get<EventBus>().apply {
+            modules.forEach { m ->
+                on<ModLoadedEvent> { m.onModLoaded() }
             }
         }
+        val endTime = System.currentTimeMillis()
+        val time = endTime - startTime
+        logger.log("${this::class.simpleName} инициализирован за $time мл.")
     }
 }

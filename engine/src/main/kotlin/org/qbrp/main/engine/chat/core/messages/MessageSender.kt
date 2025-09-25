@@ -1,57 +1,63 @@
 package org.qbrp.main.engine.chat.core.messages
 
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
+import org.qbrp.main.core.mc.player.dataformats.Username
 import org.qbrp.main.engine.chat.core.events.MessageHandledEvent
 import org.qbrp.main.engine.chat.core.events.MessageSendEvent
 import org.qbrp.main.engine.chat.core.system.ServerChatNetworking
 import org.qbrp.main.core.utils.log.LoggerUtil
-import java.util.concurrent.CopyOnWriteArrayList
+import org.qbrp.main.engine.players.model.ServerPlayerObject
+import org.qbrp.main.engine.players.model.util.PlayerId
+import java.util.concurrent.ConcurrentHashMap
 
-open class MessageSender(private val networking: ServerChatNetworking, private val targets: CopyOnWriteArrayList<ServerPlayerEntity> = CopyOnWriteArrayList<ServerPlayerEntity>()) : Sender {
-    constructor(networking: ServerChatNetworking, list: List<ServerPlayerEntity>) : this (networking, CopyOnWriteArrayList(list))
+open class MessageSender(private val networking: ServerChatNetworking) : Sender {
+    constructor(
+        networking: ServerChatNetworking,
+        list: List<ServerPlayerObject>
+    ) : this(networking) {
+        targets.putAll(list.associateBy { it.playerId })
+    }
     companion object { val logger = LoggerUtil.get("chat", "sending")}
-    fun addTarget(player: ServerPlayerEntity) {
-        targets.removeIf { it.uuid == player.uuid }
-        targets.add(player)
+
+    private val targets: ConcurrentHashMap<PlayerId, ServerPlayerObject> = ConcurrentHashMap()
+
+    fun addTarget(target: ServerPlayerObject) {
+        targets[target.playerId] = target
     }
 
-    fun addTargets(players: Collection<ServerPlayerEntity>) {
-        players.forEach { player ->
-            targets.removeIf { it.uuid == player.uuid }
-            targets.add(player)
-        }
+    fun addTargets(players: Collection<ServerPlayerObject>) {
+        players.forEach { player -> addTarget(player) }
     }
 
-    fun getReceivers(): List<String> {
-        return targets.map { it.name.string }
+    fun getReceivers(): List<Username> {
+        return targets.map { it.value.username }
     }
 
-    fun isPlayerInTarget(player: ServerPlayerEntity): Boolean = targets.contains(player)
+    fun isPlayerInTarget(player: ServerPlayerObject): Boolean = targets.contains(player)
 
-    fun removeTarget(player: ServerPlayerEntity) {
-        targets.removeIf { it.uuid == player.uuid }
+    fun removeTarget(target: ServerPlayerObject) {
+        targets.remove(target.playerId)
     }
 
     override fun send(message: ChatMessage) {
         val receivers = targets.filter {
-            MessageSendEvent.EVENT.onMessageSend(this, message.copy(), it, networking) == ActionResult.SUCCESS
+            MessageSendEvent.EVENT.onMessageSend(this, message.copy(), it.value, networking) == ActionResult.SUCCESS
         }
         if (message.getTags().getComponentData<Boolean>("log") != true) {
             message.getText()
             message.getTagsBuilder().component("log", true)
         }
-        MessageHandledEvent.EVENT.invoker().onMessageSend(message, receivers)
+        MessageHandledEvent.EVENT.invoker().onMessageSend(message, receivers.values.toList())
     }
 
-    fun filterSenders(predicate: (ServerPlayerEntity) -> Boolean): MessageSender {
-        val filteredTargets = targets.filter(predicate).toMutableList()
-        return MessageSender(networking, filteredTargets as CopyOnWriteArrayList<ServerPlayerEntity>)
+    fun filterSenders(predicate: (ServerPlayerObject) -> Boolean): MessageSender {
+        val filteredTargets = targets.values.filter { predicate(it) }
+        return MessageSender(networking, filteredTargets)
     }
 
-    fun forEachSender(action: (ServerPlayerEntity) -> kotlin.Unit): MessageSender {
-        targets.forEach(action)
-        return MessageSender(networking, targets)
+    fun forEachSender(action: (ServerPlayerObject) -> Unit): MessageSender {
+        targets.forEach { action(it.value) }
+        return MessageSender(networking, targets.values.toList())
     }
 
 }

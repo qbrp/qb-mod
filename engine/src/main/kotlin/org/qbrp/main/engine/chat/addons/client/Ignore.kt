@@ -13,8 +13,8 @@ import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.chat.ChatAPI
 import org.qbrp.main.engine.chat.addons.groups.ChatGroupsAPI
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.modules.EngineModule
 import org.qbrp.main.core.utils.networking.messages.Message
 import org.qbrp.main.core.utils.networking.messages.Messages
 import org.qbrp.main.core.utils.networking.messages.types.Signal
@@ -24,8 +24,8 @@ import java.util.concurrent.CompletableFuture
 import org.koin.core.component.get
 import org.qbrp.main.core.mc.commands.CommandsAPI
 
-@Autoload(LoadPriority.ADDON)
-class Ignore: QbModule("chat-addon-ignore"), CommandRegistryEntry {
+@Autoload(Priorities.ADDON)
+class Ignore: EngineModule("chat-addon-ignore"), CommandRegistryEntry {
     init {
         dependsOn { Engine.isApiAvailable<ChatAPI>() }
     }

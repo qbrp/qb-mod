@@ -1,19 +1,17 @@
 package org.qbrp.main.engine.chat.core.events
 
-import net.fabricmc.fabric.api.event.Event
-import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import org.qbrp.main.engine.chat.addons.tools.MessageTextEvents
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.main.engine.chat.core.messages.MessageSender
 import org.qbrp.main.engine.chat.core.system.ServerChatNetworking
+import org.qbrp.main.engine.players.model.ServerPlayerObject
 
 fun interface MessageSendEvent {
     fun onMessageSend(
         sender: MessageSender,
         message: ChatMessage,
-        receiver: ServerPlayerEntity,
+        receiver: ServerPlayerObject,
         networking: ServerChatNetworking
     ): ActionResult
 

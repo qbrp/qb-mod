@@ -6,9 +6,9 @@ import org.qbrp.main.engine.chat.addons.tools.MessageTextTools
 import org.qbrp.client.engine.chat.ClientChatAddon
 import org.qbrp.client.engine.chat.system.events.MessageAddedEvent
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
+import org.qbrp.main.core.modules.Priorities
 
-@Autoload(LoadPriority.ADDON, EnvType.CLIENT, false)
+@Autoload(Priorities.ADDON, EnvType.CLIENT, false)
 class Todo : ClientChatAddon("todo") {
 
     override fun onLoad() {

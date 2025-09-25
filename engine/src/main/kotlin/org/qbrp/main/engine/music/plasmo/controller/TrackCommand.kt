@@ -15,13 +15,12 @@ import org.qbrp.deprecated.annotations.Execute
 import org.qbrp.deprecated.annotations.Provider
 import org.qbrp.deprecated.annotations.SubCommand
 import org.qbrp.main.core.mc.commands.CommandRegistryEntry
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
+import org.qbrp.main.core.utils.format.Format.formatMm
 import org.qbrp.main.engine.music.plasmo.MusicStorage
 import org.qbrp.main.engine.music.plasmo.view.LinkClickableButton
 import org.qbrp.main.engine.music.plasmo.view.MusicViewCommand
 import org.qbrp.main.engine.music.plasmo.model.audio.TracksSuggestionProvider
 import org.qbrp.main.engine.music.plasmo.playback.lavaplayer.AudioManager
-import org.qbrp.main.core.utils.format.Format.formatMinecraft
 
 @Command("tracks")
 class TrackCommand(val storage: MusicStorage): CommandRegistryEntry {
@@ -47,15 +46,15 @@ class TrackCommand(val storage: MusicStorage): CommandRegistryEntry {
             val source = context.source
             val tracks = (deps.get("storage") as MusicStorage).getAllTracks()
             if (tracks.isEmpty()) {
-                source.sendMessage("Нет доступных треков.".asMiniMessage())
+                source.sendMessage("Нет доступных треков.".formatMm())
             } else {
                 tracks.forEach { track ->
                     val cycles = if (track.loops != -1) "&2(${track.loops}) " else " "
                     source.sendMessage(Text.literal("")
-                        .append("&a${track.name} ".asMiniMessage())
-                        .append("&7${MusicViewCommand.formatTime(track.startTimestamp.toInt())} - ${MusicViewCommand.formatTime(track.endTimestamp.toInt())} ".asMiniMessage())
-                        .append(cycles.asMiniMessage())
-                        .append("&7: ".asMiniMessage())
+                        .append("&a${track.name} ".formatMm())
+                        .append("&7${MusicViewCommand.formatTime(track.startTimestamp.toInt())} - ${MusicViewCommand.formatTime(track.endTimestamp.toInt())} ".formatMm())
+                        .append(cycles.formatMm())
+                        .append("&7: ".formatMm())
                         .append(LinkClickableButton(track.link, 43520).toText()))
                     }
             }
@@ -96,7 +95,7 @@ class TrackCommand(val storage: MusicStorage): CommandRegistryEntry {
                 storage.getTrackOrThrow(trackName)
                     .apply {endTimestamp = time.toDouble() }
                     .also { get<MusicStorage>().save(it) }
-                context.source.sendMessage("Трек $trackName изменен!".asMiniMessage())
+                context.source.sendMessage("Трек $trackName изменен!".formatMm())
             }
 
         }
@@ -113,7 +112,7 @@ class TrackCommand(val storage: MusicStorage): CommandRegistryEntry {
                 storage.getTrackOrThrow(trackName)
                     .apply { startTimestamp = time.toDouble() }
                     .also { get<MusicStorage>().save(it) }
-                context.source.sendMessage("Трек $trackName изменен!".asMiniMessage())
+                context.source.sendMessage("Трек $trackName изменен!".formatMm())
             }
 
         }
@@ -128,7 +127,7 @@ class TrackCommand(val storage: MusicStorage): CommandRegistryEntry {
                 storage.getTrackOrThrow(trackName)
                     .apply { loops = repeats }
                     .also { get<MusicStorage>().save(it) }
-                context.source.sendMessage("Трек $trackName изменен!".asMiniMessage())
+                context.source.sendMessage("Трек $trackName изменен!".formatMm())
             }
 
         }

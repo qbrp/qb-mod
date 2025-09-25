@@ -6,8 +6,8 @@ import org.qbrp.main.core.assets.FileSystem.getOrCreate
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.assets.contentpacks.patches.PatchesAPI
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.modules.EngineModule
 import org.qbrp.main.core.utils.networking.InfoNames.CONTENTPACKS_ENABLED
 import org.qbrp.main.core.info.ServerInfoAPI
 import org.qbrp.main.core.mc.commands.CommandsAPI
@@ -16,8 +16,8 @@ import org.qbrp.main.engine.assets.contentpacks.commands.ContentPacksCommand
 import java.io.File
 import java.util.prefs.Preferences
 
-@Autoload(LoadPriority.MODULE - 2)
-class ContentPackManager : QbModule("resourcepack-versions"), ContentPackManagerAPI {
+@Autoload(Priorities.MODULE - 2)
+class ContentPackManager : EngineModule("resourcepack-versions"), ContentPackManagerAPI {
     companion object {
         val CONTENTPACKS_PATH = getOrCreate(FileSystem.HTTP_SERVER_ASSETS.resolve("contentpacks"), true)
         val CONTENTPACKS_PATCHES_PATH = getOrCreate(FileSystem.HTTP_SERVER_ASSETS.resolve("contentpacks-patches"), true)

@@ -3,6 +3,7 @@ package org.qbrp.main.core.utils.networking.messages.components.readonly
 import io.netty.util.internal.UnstableApi
 import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
 import org.qbrp.main.core.utils.networking.messages.components.Component
+import org.qbrp.main.core.utils.networking.messages.types.ReadBuf
 import org.qbrp.main.core.utils.networking.messages.types.ReceiveContent
 import org.qbrp.main.core.utils.networking.messages.types.StringContent
 
@@ -18,7 +19,7 @@ open class ClusterViewer(@UnstableApi val components: List<Component> = listOf()
 
     fun <T> getHeader(index: Int = 0): T? {
         return components
-            .filter { it.meta == mapOf("type" to "header") }
+            .filter { it.meta == mapOf("identity" to "header") }
             .elementAtOrNull(index)
             ?.let { (it.content as? ReceiveContent)?.getData() as? T }
     }
@@ -26,6 +27,11 @@ open class ClusterViewer(@UnstableApi val components: List<Component> = listOf()
     fun <T> getComponentData(name: String): T? {
         return components.find { it.name == name }
         ?.let { (it.content as? ReceiveContent)?.getData() as? T }
+    }
+
+    fun <T: Any> readBuf(name: String, reader: ReadBuf<T>): T? {
+        return components.find { it.name == name }
+            ?.let { (reader as? ReceiveContent)?.getData() as? T }
     }
 
     fun <T> getComponentsData(name: String): List<T?>? {

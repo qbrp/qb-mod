@@ -1,11 +1,10 @@
 package org.qbrp.client.engine.chat.system
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.gui.hud.ChatHudLine
 import org.qbrp.main.engine.chat.addons.MessageIcon
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.client.engine.chat.system.events.TextUpdateCallback
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
+import org.qbrp.main.core.utils.format.Format.formatMm
 
 data class HandledMessage(var message: ChatMessage) {
     private var _text: List<ChatHudLine.Visible> = Provider.buildChatHudLines(message)
@@ -22,7 +21,7 @@ data class HandledMessage(var message: ChatMessage) {
     }
 
     fun update(text: String, icon: MessageIcon? = MessageIcon.getMessageIcon(message), time: Int = _text.first().addedTime): List<ChatHudLine.Visible> {
-        return Provider.buildChatHudLines(text.asMiniMessage(), icon, time)
+        return Provider.buildChatHudLines(text.formatMm(), icon, time)
     }
 
     companion object {

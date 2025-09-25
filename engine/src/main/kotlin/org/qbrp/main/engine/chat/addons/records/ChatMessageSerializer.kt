@@ -12,7 +12,7 @@ class ChatMessageSerializer: StdSerializer<ChatMessage>(ChatMessage::class.java)
         p2: SerializerProvider
     ) {
         json.writeStartObject()
-        json.writeFieldName("text")
+        json.writeFieldName("chatText")
         json.writeString(msg.getText())
         json.writeFieldName("author")
         json.writeString(msg.authorName)
@@ -20,7 +20,7 @@ class ChatMessageSerializer: StdSerializer<ChatMessage>(ChatMessage::class.java)
         json.writeStartArray()
         msg.getTags().components.forEach {
             json.writeStartObject()
-            json.writeStringField("name", it.name)
+            json.writeStringField("label", it.name)
             json.writeStringField("value", it.content.toString())
             json.writeEndObject()
         }

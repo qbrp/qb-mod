@@ -1,12 +1,14 @@
 package org.qbrp.main.engine.anticheat
 
-import net.minecraft.server.network.ServerPlayerEntity
-import org.qbrp.main.engine.anticheat.Anticheat.Companion.sendToOps
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
+import org.qbrp.main.core.mc.context.MinecraftContext
+import org.qbrp.main.core.mc.player.model.PlayerSnapshot
+import org.qbrp.main.core.mc.player.disconnect
+import org.qbrp.main.engine.players.model.networking.DisconnectReason
 
 class RestrictedMod(override val id: String, val name: String, val warn: String): Mod {
-    override fun ifFounded(player: ServerPlayerEntity) {
-        player.networkHandler.disconnect("<red><bold>Вы были исключены с сервера из-за мода ${name}</bold><newline>${warn}</red>".asMiniMessage())
-        sendToOps("<red>[!]<reset><gold> ${player.name.string} зашел на сервер с $name и был позорно кикнут.</gold>")
+    context(mc: MinecraftContext)
+    override fun ifFounded(player: PlayerSnapshot, notifier: OpNotificator) {
+        player.disconnect(DisconnectReason("<bold>Вы были исключены с сервера из-за мода ${name}</bold><newline>${warn}"))
+        notifier.notifyOperators("<red>[!]<reset><gold> ${player.username} зашел на сервер с $name и был позорно кикнут.</gold>")
     }
 }

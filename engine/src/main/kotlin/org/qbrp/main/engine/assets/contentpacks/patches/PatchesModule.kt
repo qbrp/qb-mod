@@ -2,13 +2,13 @@ package org.qbrp.main.engine.assets.contentpacks.patches
 
 import org.qbrp.main.core.assets.FileSystem
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.modules.EngineModule
 import java.io.File
 import java.security.MessageDigest
 
-@Autoload(LoadPriority.HIGHEST)
-class PatchesModule: QbModule("patches"), PatchesAPI {
+@Autoload(Priorities.HIGHEST)
+class PatchesModule: EngineModule("patches"), PatchesAPI {
     override fun getKoinModule() = inner<PatchesAPI>(this) {}
 
     override fun generateManifest(path: File, version: String, relative: String): Manifest {

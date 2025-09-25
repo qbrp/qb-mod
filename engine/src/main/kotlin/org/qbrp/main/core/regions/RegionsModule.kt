@@ -12,18 +12,16 @@ import org.koin.core.component.get
 import org.qbrp.main.core.regions.model.Cuboid
 import org.qbrp.main.core.regions.model.Region
 import org.qbrp.main.core.Core
-import org.qbrp.main.core.mc.commands.CommandsModule
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.EngineModule
 import org.qbrp.main.core.regions.commands.RegionCommands
-import org.qbrp.main.core.storage.StorageAPI
+import org.qbrp.main.core.storage.TableRegistry
 import org.qbrp.main.core.storage.Table
 import org.qbrp.main.core.utils.log.LoggerUtil
-import org.koin.core.component.get
 import org.qbrp.main.core.mc.commands.CommandsAPI
 
 @Autoload(env = EnvType.SERVER)
-class RegionsModule(): QbModule("regions"), RegionsAPI {
+class RegionsModule(): EngineModule("regions"), RegionsAPI {
     override val regions = mutableListOf<Region>()
     companion object {
         const val TABLE_NAME = "regions"
@@ -34,7 +32,7 @@ class RegionsModule(): QbModule("regions"), RegionsAPI {
     private lateinit var storage: Table
 
     init {
-        dependsOn { Core.isApiAvailable<StorageAPI>() }
+        dependsOn { Core.isApiAvailable<TableRegistry>() }
     }
 
     override fun getKoinModule() = inner<RegionsAPI>(this) {
@@ -42,7 +40,7 @@ class RegionsModule(): QbModule("regions"), RegionsAPI {
     }
 
     override fun onEnable() {
-        storage = get<StorageAPI>().getTable(TABLE_NAME)
+        storage = get<TableRegistry>().getTable(TABLE_NAME)
         loadRegions()
         get<CommandsAPI>().add(RegionCommands(this, getLocal()))
         UseBlockCallback.EVENT.register(UseBlockCallback { player, world, hand, hitResult ->

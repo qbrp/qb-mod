@@ -45,7 +45,7 @@ class UIMessageProvider(val name: String) : Provider {
 
     override fun onMessageAdded(message: ChatMessage, storage: MessageStorage) {
         taskQueue.add(Runnable {
-            if (message.getTags().getComponentData<String>("ui.name") == name) {
+            if (message.getTags().getComponentData<String>("ui.label") == name) {
                 HandledMessage.from(message).let {
                     allMessages[it.message.uuid] = it
                     updateCachedSnapshot()

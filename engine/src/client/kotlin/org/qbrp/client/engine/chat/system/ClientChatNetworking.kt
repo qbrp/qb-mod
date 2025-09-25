@@ -5,8 +5,7 @@ import org.qbrp.main.engine.chat.core.system.ChatNetworking
 import org.qbrp.client.ClientCore
 import org.qbrp.client.engine.chat.ClientChatAPI
 import org.qbrp.client.engine.chat.system.events.MessageSendEvent
-import org.qbrp.client.core.networking.ClientNetworkUtil
-import org.qbrp.client.core.networking.ClientReceiverContext
+import org.qbrp.client.core.networking.v1.ClientNetworkUtil
 import org.qbrp.main.core.utils.networking.ClientReceiver
 import org.qbrp.main.core.utils.networking.messages.Message
 import org.qbrp.main.core.utils.networking.messages.Messages.END_TYPING

@@ -1,18 +1,15 @@
 package org.qbrp.main.core.assets.prefabs
 
-import org.koin.core.Koin
 import org.koin.core.component.get
-import org.koin.core.module.Module
-import org.qbrp.main.core.Core
 import org.qbrp.main.core.assets.AssetsAPI
 import org.qbrp.main.core.assets.FileSystem
 import org.qbrp.main.core.assets.common.references.JsonFileReference
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.modules.EngineModule
 
-@Autoload(LoadPriority.HIGHEST - 1)
-class Prefabs: QbModule("prefabs"), PrefabsAPI {
+@Autoload(Priorities.HIGHEST - 1)
+class Prefabs: EngineModule("prefabs"), PrefabsAPI {
     val importer = PrefabImporter()
 
     override fun onLoad() {
@@ -33,16 +30,31 @@ class Prefabs: QbModule("prefabs"), PrefabsAPI {
         FileSystem.PREFABS.resolve(name).mkdirs()
     }
 
+    override fun parseCategory(name: String): List<Prefab> {
+        val base = FileSystem.PREFABS
+        return base.resolve(name).walkTopDown()
+            .filter { it.extension == "json" }
+            .map { file ->
+                val relative = file.relativeTo(base).invariantSeparatorsPath.removeSuffix(".json")
+                importer.loadPrefab(JsonFileReference(PrefabKey(relative), Prefab::class))
+            }
+            .toList()
+    }
+
     fun initializePrefabs() {
-        val prefabsDir = FileSystem.PREFABS
-        val categories = prefabsDir.listFiles()
-        for (category in categories) {
-            category.walkTopDown().forEach {
-                if (it.name.endsWith(".json")) {
-                    val reference = JsonFileReference<Prefab>(PrefabKey(category.name, it.nameWithoutExtension), Prefab::class)
+        val base = FileSystem.PREFABS
+        base.listFiles()?.forEach { category ->
+            category.walkTopDown()
+                .filter { it.extension == "json" }
+                .forEach { file ->
+                    val relative = file.relativeTo(base).invariantSeparatorsPath.removeSuffix(".json")
+                    val reference = JsonFileReference(PrefabKey(relative), Prefab::class)
                     importer.loadPrefab(reference)
                 }
-            }
         }
+    }
+
+    private fun validatePath(path: String): String {
+        return path.removeSuffix(".json")
     }
 }

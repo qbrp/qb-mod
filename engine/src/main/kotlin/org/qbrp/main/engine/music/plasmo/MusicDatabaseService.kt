@@ -17,17 +17,17 @@ class MusicDatabaseService(val db: DatabaseService) {
         return data
     }
     fun saveTrack(track: Track) {
-        db.upsertObject<Track>("tracks", mapOf("name" to track.name), track)
+        db.upsertObject<Track>("tracks", mapOf("label" to track.name), track)
     }
     fun savePlaylist(playlist: Playable) {
-        db.upsertObject<PlayableDTO>("playlists", mapOf("name" to playlist.name), playlist.toDTO())
+        db.upsertObject<PlayableDTO>("playlists", mapOf("label" to playlist.name), playlist.toDTO())
     }
     fun archivePlayable(playable: Playable) {
-        db.delete("playlists", mapOf("name" to playable.name))
-        db.upsertObject<PlayableDTO>("archive", mapOf("name" to playable.name), playable.toDTO())
+        db.delete("playlists", mapOf("label" to playable.name))
+        db.upsertObject<PlayableDTO>("archive", mapOf("label" to playable.name), playable.toDTO())
     }
     fun archiveTrack(track: Track) {
-        db.delete("tracks", mapOf("name" to track.name))
-        db.upsertObject<Track>("archive", mapOf("name" to track.name), track)
+        db.delete("tracks", mapOf("label" to track.name))
+        db.upsertObject<Track>("archive", mapOf("label" to track.name), track)
     }
 }

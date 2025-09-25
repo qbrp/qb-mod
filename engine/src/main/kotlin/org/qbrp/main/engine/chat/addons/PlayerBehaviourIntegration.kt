@@ -1,8 +1,7 @@
 package org.qbrp.main.engine.chat.addons
 
 import net.minecraft.util.ActionResult
-import org.qbrp.main.core.mc.player.PlayersModule
-import org.qbrp.main.core.mc.player.PlayersUtil
+import org.qbrp.main.engine.players.model.service.PlayersUtil
 import org.qbrp.main.engine.chat.ChatAddon
 import org.qbrp.main.engine.chat.core.events.MessageSendEvent
 import org.qbrp.main.core.modules.Autoload

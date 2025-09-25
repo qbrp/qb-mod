@@ -3,17 +3,15 @@ package org.qbrp.main.engine.chat.addons
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.command.argument.EntityArgumentType
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.CommandManager.argument
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundEvents
-import org.qbrp.main.core.mc.commands.CommandsModule
 import org.qbrp.main.core.mc.commands.CommandRegistryEntry
 import org.qbrp.deprecated.resources.data.config.ConfigInitializationCallback
 import org.qbrp.deprecated.resources.data.config.ServerConfigData
-import org.qbrp.main.core.mc.player.PlayersUtil
+import org.qbrp.main.engine.players.model.service.PlayersUtil
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.chat.ChatAddon
 import org.qbrp.main.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
@@ -21,12 +19,13 @@ import org.qbrp.main.engine.chat.addons.groups.ChatGroupsAPI
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.main.engine.chat.core.system.ChatGroup
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.utils.format.Format.formatMm
 import org.koin.core.component.get
 import org.qbrp.main.core.mc.commands.CommandsAPI
+import org.qbrp.main.engine.players.model.ServerPlayerObject
 
-@Autoload(LoadPriority.ADDON)
+@Autoload(Priorities.ADDON)
 class PrivateMessages: ChatAddon("pms"), CommandRegistryEntry {
     init {
         dependsOn { Engine.isApiAvailable<ChatGroupsAPI>() }
@@ -47,12 +46,12 @@ class PrivateMessages: ChatAddon("pms"), CommandRegistryEntry {
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         dispatcher.register(CommandManager.literal("pm")
             .then(argument("player", EntityArgumentType.entities())
-                .then(argument("text", StringArgumentType.greedyString())
+                .then(argument("chatText", StringArgumentType.greedyString())
                 .executes() { ctx ->
                     val name = ctx.source.player?.name?.string ?: SYSTEM_MESSAGE_AUTHOR
                     val target = EntityArgumentType.getEntity(ctx, "player") as? ServerPlayerEntity
-                        ?: run { ctx.source.sendError("<red>Выбранный получатель не является игроком.".asMiniMessage()); return@executes 1 }
-                    val text = StringArgumentType.getString(ctx, "text")
+                        ?: run { ctx.source.sendError("<red>Выбранный получатель не является игроком.".formatMm()); return@executes 1 }
+                    val text = StringArgumentType.getString(ctx, "chatText")
                     val message = ChatMessage(name, text).apply {
                         getTagsBuilder()
                             .placeholder("recipientName", target.name.string)
@@ -70,7 +69,7 @@ class PrivateMessages: ChatAddon("pms"), CommandRegistryEntry {
     }
 
     class PmChatGroup(format: String): ChatGroup("pm", radius = -1, format = format) {
-        override fun getPlayersCanSee(source: PlayerEntity): List<PlayerEntity> {
+        override fun getPlayersCanSee(source: ServerPlayerObject): List<ServerPlayerObject> {
             return emptyList()
         }
     }

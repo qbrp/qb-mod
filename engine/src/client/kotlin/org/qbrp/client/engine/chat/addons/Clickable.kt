@@ -6,9 +6,9 @@ import org.qbrp.main.engine.chat.core.system.TextTagsTransformer
 import org.qbrp.client.ClientCore
 import org.qbrp.client.engine.chat.ClientChatAddon
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
+import org.qbrp.main.core.modules.Priorities
 
-@Autoload(LoadPriority.ADDON, EnvType.CLIENT)
+@Autoload(Priorities.ADDON, EnvType.CLIENT)
 class Clickable: ClientChatAddon("clickable") {
     override fun onLoad() {
         ChatFormatEvent.EVENT.register { message, text ->

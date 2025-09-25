@@ -2,10 +2,11 @@ package org.qbrp.main.engine.music.plasmo.view
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
+import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
-import org.qbrp.main.core.Core
+import org.koin.core.context.GlobalContext
 import org.qbrp.deprecated.CommandBuilder
 import org.qbrp.deprecated.DependencyFabric
 import org.qbrp.deprecated.Deps
@@ -16,7 +17,7 @@ import org.qbrp.deprecated.annotations.Provider
 import org.qbrp.main.core.mc.commands.CommandRegistryEntry
 import org.qbrp.main.core.mc.commands.templates.CallbackCommand
 import org.qbrp.main.core.mc.commands.templates.ListProvider
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
+import org.qbrp.main.core.utils.format.Format.formatMm
 import org.qbrp.main.engine.music.plasmo.playback.PlayerSelectionHandler
 
 class MusicViewCommand(val selection: PlayerSelectionHandler): CommandRegistryEntry {
@@ -53,7 +54,7 @@ class MusicViewCommand(val selection: PlayerSelectionHandler): CommandRegistryEn
                     try {
                         player.sendMessage(playlist.getView().getText())
                     } catch (e: Exception) {
-                        context.source.sendError(e.message?.asMiniMessage())
+                        context.source.sendError(e.message?.formatMm())
                     }
                 }
             }
@@ -90,5 +91,5 @@ class MusicViewCommand(val selection: PlayerSelectionHandler): CommandRegistryEn
         }
     }
 
-    class PlayerProvider() : ListProvider<String>( { Core.server.playerManager.playerList.map { it.name.string } } )
+    class PlayerProvider() : ListProvider<String>( { GlobalContext.get().get<MinecraftServer>().playerManager.playerList.map { it.name.string } } )
 }

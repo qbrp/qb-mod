@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import org.qbrp.main.core.mc.commands.CommandRegistryEntry
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
+import org.qbrp.main.core.utils.format.Format.formatMm
 import org.qbrp.main.engine.assets.contentpacks.ContentPackManagerAPI
 
 class ContentPacksCommand(val api: ContentPackManagerAPI): CommandRegistryEntry {
@@ -14,13 +14,13 @@ class ContentPacksCommand(val api: ContentPackManagerAPI): CommandRegistryEntry 
             CommandManager.literal("cp")
                 .then(
                 CommandManager.literal("version")
-                    .executes { ctx -> ctx.source.sendMessage("<green>Версия: ${api.getVersion()}".asMiniMessage()); 1 }
+                    .executes { ctx -> ctx.source.sendMessage("<green>Версия: ${api.getVersion()}".formatMm()); 1 }
                         .then(CommandManager.argument("version", StringArgumentType.greedyString())
                             .executes { ctx ->
                                 val oldVersion = api.getVersion()
                                 api.setVersion(StringArgumentType.getString(ctx, "version"));
                                 val newVersion = api.getVersion()
-                                ctx.source.sendMessage("<green>Версия изменена: $oldVersion -> $newVersion".asMiniMessage())
+                                ctx.source.sendMessage("<green>Версия изменена: $oldVersion -> $newVersion".formatMm())
                                 1
                             }
                         )
@@ -35,10 +35,10 @@ class ContentPacksCommand(val api: ContentPackManagerAPI): CommandRegistryEntry 
                                     createManifest()
                                     zipUp()
                                     api.setVersion(version)
-                                    ctx.source.sendMessage("<green>Создан контентпак: ${file.path}".asMiniMessage())
+                                    ctx.source.sendMessage("<green>Создан контентпак: ${file.path}".formatMm())
                                 }
                             } catch (e: Exception) {
-                                ctx.source.sendMessage("<red>Ошибка сборки контентпака: ${e.message}".asMiniMessage())
+                                ctx.source.sendMessage("<red>Ошибка сборки контентпака: ${e.message}".formatMm())
                                 e.printStackTrace()
                             }
                             1
@@ -50,7 +50,7 @@ class ContentPacksCommand(val api: ContentPackManagerAPI): CommandRegistryEntry 
                                 val versionArg = StringArgumentType.getString(ctx, "version")
                                 val version = if (versionArg == "latest") api.getVersion() else versionArg
                                 api.generatePatchesToVersion(version)
-                                ctx.source.sendMessage("<green>Сгенерированы патчи для версии $version".asMiniMessage())
+                                ctx.source.sendMessage("<green>Сгенерированы патчи для версии $version".formatMm())
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             }

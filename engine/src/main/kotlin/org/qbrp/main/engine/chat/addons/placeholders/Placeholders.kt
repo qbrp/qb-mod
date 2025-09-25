@@ -1,19 +1,18 @@
 package org.qbrp.main.engine.chat.addons.placeholders
 
 import net.minecraft.util.ActionResult
-import org.qbrp.main.core.mc.player.PlayersModule
-import org.qbrp.main.core.mc.player.PlayersUtil
+import org.qbrp.main.engine.players.model.service.PlayersUtil
 import org.qbrp.main.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
 import org.qbrp.main.engine.chat.core.events.MessageReceivedEvent
 import org.qbrp.main.engine.chat.core.events.MessageSendEvent
 import org.qbrp.main.engine.chat.core.events.MessageUpdateEvent
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.modules.EngineModule
 
-@Autoload(LoadPriority.ADDON, both = true)
-class Placeholders: QbModule("placeholders"), PlaceholdersAPI {
+@Autoload(Priorities.ADDON + 1, both = true)
+class Placeholders: EngineModule("placeholders"), PlaceholdersAPI {
     override fun handle(message: ChatMessage, filter: (String) -> Boolean) {
         val placeholders = message.getTags().getValueComponents("value")
         var updatedText = message.getText()

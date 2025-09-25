@@ -1,13 +1,16 @@
 package org.qbrp.deprecated.resources.data.config
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import net.minecraft.server.MinecraftServer
+import org.koin.core.context.GlobalContext
 import org.qbrp.main.core.Core
 import org.qbrp.deprecated.resources.data.YamlData
 import org.qbrp.main.engine.chat.core.system.ChatGroup
 import java.io.File
 
 data class ServerConfigData(
-    val serverName: String = Core.server.serverIp,
+    val serverName: String = GlobalContext.get().get<MinecraftServer>().serverIp,
+    val itemPickupEnabled: Boolean = false,
     val resources: Resources = Resources(),
     val http: HTTP = HTTP(),
     val databases: Databases = Databases(),
@@ -32,12 +35,12 @@ data class ServerConfigData(
         val hidePlayerNameChat: Boolean = true,
         val characterColoringFactor: Double = 0.25,
     ) {
-        data class Commands(val formatMe: String = "{playerDisplayName} &e* &f{text}",
-                            val formatDo: String = "{playerDisplayName} &d( &f{text} &d)",
-                            val formatLdo: String = "{playerDisplayName} &d( &f{text} &d)",
-                            val formatGdo: String = "{playerDisplayName} &d( &f{text} &d)",
-                            val formatRoll: String = "{playerDisplayName} &b* &f{text} &b- &a{roll}%",
-                            val formatPm: String = "<#554436>(( <#F4A460><bold>ᴘᴍ</bold> <#c97e3d>{playerName} <#F4A460>▸ <#c97e3d><recipientName><#F4A460>: {text} <#554436>))")
+        data class Commands(val formatMe: String = "{playerDisplayName} &e* &f{chatText}",
+                            val formatDo: String = "{playerDisplayName} &d( &f{chatText} &d)",
+                            val formatLdo: String = "{playerDisplayName} &d( &f{chatText} &d)",
+                            val formatGdo: String = "{playerDisplayName} &d( &f{chatText} &d)",
+                            val formatRoll: String = "{playerDisplayName} &b* &f{chatText} &b- &a{roll}%",
+                            val formatPm: String = "<#554436>(( <#F4A460><bold>ᴘᴍ</bold> <#c97e3d>{playerName} <#F4A460>▸ <#c97e3d><recipientName><#F4A460>: {chatText} <#554436>))")
 
         data class Volume(val volumePrefixes: Map<String, Int> = mapOf(),
                           val blockVolumes: Map<String, Double> = mapOf(),

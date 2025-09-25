@@ -20,7 +20,7 @@ import org.qbrp.main.engine.music.plasmo.model.selectors.Selector
 import org.qbrp.main.engine.music.plasmo.model.selectors.SelectorBuilder
 import org.qbrp.main.engine.music.plasmo.model.selectors.SelectorsProvider
 import org.qbrp.main.core.utils.CoroutinesUtil
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
+import org.qbrp.main.core.utils.format.Format.formatMm
 
 @Command(name = "playlists")
 class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : CommandRegistryEntry {
@@ -63,10 +63,10 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
                         selectorInstance as Selector,
                         priorityInstance as Priority
                     )
-                    context.source.sendMessage("Плейлист $name успешно добавлен!".asMiniMessage())
+                    context.source.sendMessage("Плейлист $name успешно добавлен!".formatMm())
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                    context.source.sendError("Ошибка: ${e.message}".formatMm())
                 }
             }
         }
@@ -90,10 +90,10 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
                         selectorInstance as Selector,
                         priorityInstance as Priority
                     )
-                    context.source.sendMessage("Плейлист-копия $name успешно добавлен!".asMiniMessage())
+                    context.source.sendMessage("Плейлист-копия $name успешно добавлен!".formatMm())
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                    context.source.sendError("Ошибка: ${e.message}".formatMm())
                 }
             }
         }
@@ -107,10 +107,10 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
         fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
             try {
                 (deps.get("storage") as MusicStorage).deletePlayable(name)
-                context.source.sendMessage("Плейлист $name архивирован.".asMiniMessage())
+                context.source.sendMessage("Плейлист $name архивирован.".formatMm())
             } catch (e: Exception) {
                 e.printStackTrace()
-                context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                context.source.sendError("Ошибка: ${e.message}".formatMm())
             }
         }
     }
@@ -122,10 +122,10 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
             try {
                 val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
                 playlist?.sessionManager?.doForSessions { p, session -> session.radio?.resume() }
-                context.source.sendMessage("Плейлист $playlistName запущен.".asMiniMessage())
+                context.source.sendMessage("Плейлист $playlistName запущен.".formatMm())
             } catch (e: Exception) {
                 e.printStackTrace()
-                context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                context.source.sendError("Ошибка: ${e.message}".formatMm())
             }
         }
     }
@@ -137,9 +137,9 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
             try {
                 val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
                 playlist?.sessionManager?.doForSessions { p, session -> session.radio?.stop() }
-                context.source.sendMessage("Плейлист $playlistName остановлен.".asMiniMessage())
+                context.source.sendMessage("Плейлист $playlistName остановлен.".formatMm())
             } catch (e: Exception) {
-                context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                context.source.sendError("Ошибка: ${e.message}".formatMm())
             }
         }
     }
@@ -162,12 +162,12 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
                             val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
                             playlist?.queue?.addTrack(trackName)
                             playlist?.onUpdate()
-                            context.source.sendMessage("Трек $trackName добавлен в плейлист.".asMiniMessage())
+                            context.source.sendMessage("Трек $trackName добавлен в плейлист.".formatMm())
                         } else {
-                            context.source.sendMessage("Трек $trackName не существует.".asMiniMessage())
+                            context.source.sendMessage("Трек $trackName не существует.".formatMm())
                         }
                     } catch (e: Exception) {
-                        context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                        context.source.sendError("Ошибка: ${e.message}".formatMm())
                     }
                 }
             }
@@ -183,9 +183,9 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
                         playlist?.queue?.removeTrack(trackNumber)
                         playlist?.onUpdate()
-                        context.source.sendMessage("Трек номер $trackNumber удалён из плейлиста.".asMiniMessage())
+                        context.source.sendMessage("Трек номер $trackNumber удалён из плейлиста.".formatMm())
                     } catch (e: Exception) {
-                        context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                        context.source.sendError("Ошибка: ${e.message}".formatMm())
                     }
                 }
             }
@@ -201,9 +201,9 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
                     try {
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
                         playlist?.sessionManager?.doForSessions { p, session -> session.queue.moveTo(fromIndex, toIndex) }
-                        context.source.sendMessage("Трек был перемещен.".asMiniMessage())
+                        context.source.sendMessage("Трек был перемещен.".formatMm())
                     } catch (e: Exception) {
-                        context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                        context.source.sendError("Ошибка: ${e.message}".formatMm())
                     }
                 }
             }
@@ -218,9 +218,9 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
                     try {
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
                         playlist?.sessionManager?.doForSessions { p, session -> session.queue.moveTo(session.queue.currentTrackIndex, session.queue.currentTrackIndex + operation) }
-                        context.source.sendMessage("Трек был перемещен.".asMiniMessage())
+                        context.source.sendMessage("Трек был перемещен.".formatMm())
                     } catch (e: Exception) {
-                        context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                        context.source.sendError("Ошибка: ${e.message}".formatMm())
                     }
                 }
             }
@@ -241,9 +241,9 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
                         CoroutinesUtil.runAsyncCommand(context,
                             operation = { playlist?.sessionManager?.doForSessionsAsync { p, session -> session.queue.setPosition(pos); session.createRadio() } },
-                            callback = { context.source.sendMessage("Трек был перемещен.".asMiniMessage()) } )
+                            callback = { context.source.sendMessage("Трек был перемещен.".formatMm()) } )
                     } catch (e: Exception) {
-                        context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                        context.source.sendError("Ошибка: ${e.message}".formatMm())
                     }
                 }
             }
@@ -257,10 +257,10 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
                 fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
                     try {
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
-                        if (enabled) { playlist?.enable(); playlist?.isManuallyDisabled = false; context.source.sendMessage("Плейлист включен.".asMiniMessage()) }
-                        if (!enabled) { playlist?.disable(); playlist?.isManuallyDisabled = true; context.source.sendMessage("Плейлист выключен.".asMiniMessage()) }
+                        if (enabled) { playlist?.enable(); playlist?.isManuallyDisabled = false; context.source.sendMessage("Плейлист включен.".formatMm()) }
+                        if (!enabled) { playlist?.disable(); playlist?.isManuallyDisabled = true; context.source.sendMessage("Плейлист выключен.".formatMm()) }
                     } catch (e: Exception) {
-                        context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                        context.source.sendError("Ошибка: ${e.message}".formatMm())
                     }
                 }
             }
@@ -281,9 +281,9 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
                         playlist?.queue?.repeats = cycle
                         playlist?.onUpdate()
-                        context.source.sendMessage("Циклы плейлиста обновлены.".asMiniMessage())
+                        context.source.sendMessage("Циклы плейлиста обновлены.".formatMm())
                     } catch (e: Exception) {
-                        context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                        context.source.sendError("Ошибка: ${e.message}".formatMm())
                     }
                 }
             }
@@ -299,9 +299,9 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
                         val selector = SelectorBuilder().createSelector(selectorName, selectorArgs) as Selector
                         playlist?.selector = selector
                         playlist?.onUpdate()
-                        context.source.sendMessage("Селектор обновлён.".asMiniMessage())
+                        context.source.sendMessage("Селектор обновлён.".formatMm())
                     } catch (e: Exception) {
-                        context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                        context.source.sendError("Ошибка: ${e.message}".formatMm())
                     }
                 }
             }
@@ -315,14 +315,14 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
                         val priority = (deps.get("priorities") as Priorities).getPriority(priority) as Priority
                         playlist?.priority = priority
                         playlist?.onUpdate()
-                        context.source.sendMessage("Приоритет обновлён.".asMiniMessage())
+                        context.source.sendMessage("Приоритет обновлён.".formatMm())
                     } catch (e: Exception) {
-                        context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                        context.source.sendError("Ошибка: ${e.message}".formatMm())
                     }
                 }
             }
 
-            @SubCommand("name")
+            @SubCommand("label")
             class SetName(@Arg("string", true) val playlistName: String,
                           @Arg("string") val newName: String) {
                 @Execute
@@ -331,9 +331,9 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
                         (deps.get("storage") as MusicStorage).changePlayableName(playlistName, newName)
                         playlist?.onUpdate()
-                        context.source.sendMessage("Название обновлено.".asMiniMessage())
+                        context.source.sendMessage("Название обновлено.".formatMm())
                     } catch (e: Exception) {
-                        context.source.sendError("Ошибка: ${e.message}".asMiniMessage())
+                        context.source.sendError("Ошибка: ${e.message}".formatMm())
                     }
                 }
             }

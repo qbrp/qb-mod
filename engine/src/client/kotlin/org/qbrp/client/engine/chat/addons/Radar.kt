@@ -13,12 +13,12 @@ import org.qbrp.client.engine.chat.ClientChatAddon
 import org.qbrp.client.engine.chat.system.events.MessageAddedEvent
 import org.qbrp.client.engine.chat.system.events.TextUpdateCallback
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
+import org.qbrp.main.core.modules.Priorities
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
 
-@Autoload(LoadPriority.ADDON, EnvType.CLIENT)
+@Autoload(Priorities.ADDON, EnvType.CLIENT)
 class Radar(): ClientChatAddon("radar") {
     override fun onLoad() {
         TextUpdateCallback.EVENT.register { text, line ->

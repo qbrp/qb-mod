@@ -1,122 +1,129 @@
 package org.qbrp.main.engine.items
 
-import net.minecraft.item.Item.Settings
 import org.koin.core.component.get
+import org.koin.core.component.inject
 import org.koin.dsl.module
+import org.qbrp.deprecated.resources.data.config.ServerConfigData
 import org.qbrp.main.core.Core
-import org.qbrp.main.core.assets.prefabs.Prefab
 import org.qbrp.main.core.assets.prefabs.PrefabsAPI
-import org.qbrp.main.core.game.ComponentRegistryInitializationEvent
+import org.qbrp.main.core.components.ComponentManager
+import org.qbrp.main.core.components.ComponentRegistryInitializationEvent
+import org.qbrp.main.core.components.events.EventSupportersStorage
+import org.qbrp.main.core.components.extensions.componentRegistrar
+import org.qbrp.main.core.components.extensions.getOrAdd
+import org.qbrp.main.core.components.objects.StateObject
+import org.qbrp.main.core.events.EventPriority
+import org.qbrp.main.core.events.on
+import org.qbrp.main.core.events.onComponentEvent
+import org.qbrp.main.core.events.withEventContext
 import org.qbrp.main.core.game.saving.ServerStopSaver
 import org.qbrp.main.core.game.saving.TimerSaver
-import org.qbrp.main.core.mc.player.ServerPlayerObject
-import org.qbrp.main.core.mc.player.registration.PlayerAuthEvent
+import org.qbrp.main.core.game.storage.Storage
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.engine.items.model.ItemFabric
-import org.qbrp.main.engine.items.model.ItemLifecycle
-import org.qbrp.main.engine.items.model.ItemStorage
-import org.qbrp.main.engine.items.model.ItemTicker
+import org.qbrp.main.engine.items.service.ItemFactory
+import org.qbrp.main.engine.items.service.ItemStorage
+import org.qbrp.main.engine.items.service.ItemStateTicker
 import org.qbrp.main.core.modules.GameModule
-import org.qbrp.main.core.storage.StorageAPI
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.networking.sender.ServerPacketSender
+import org.qbrp.main.core.networking.serialization.impl.GlobalComponentPacketDtoMapper
+import org.qbrp.main.core.networking.serialization.mapping.SerializerKeyRegistry
+import org.qbrp.main.core.storage.TableRegistry
 import org.qbrp.main.core.storage.TableAccess
 import org.qbrp.main.engine.Engine
-import org.qbrp.main.engine.inventory.AbstractContainer
-import org.qbrp.main.engine.items.components.model.ItemModel
-import org.qbrp.main.engine.items.components.physics.Material
-import org.qbrp.main.engine.items.components.physics.Physics
-import org.qbrp.main.engine.items.components.tooltip.impl.Brief
-import org.qbrp.main.engine.items.components.tooltip.impl.Description
-import org.qbrp.main.engine.items.components.tooltip.impl.ItemDisplay
-import org.qbrp.main.engine.items.components.tooltip.impl.Name
+import org.qbrp.main.engine.ModLoadedEvent
+import org.qbrp.main.engine.containers.v2.api.ContainerService
 import org.qbrp.main.engine.items.model.LeavePlayerInventorySaver
-import org.qbrp.main.engine.items.model.ItemRepository
-import org.qbrp.main.core.synchronization.impl.FuncProvider
-import org.qbrp.main.core.synchronization.impl.SynchronizerChannelSender
+import org.qbrp.main.engine.items.service.ItemRepository
+import org.qbrp.main.engine.items.components.meta.ItemLocationMediator
+import org.qbrp.main.engine.items.components.meta.Meta
+import org.qbrp.main.engine.items.networking.ItemSynchronizer
+import org.qbrp.main.engine.items.event.ItemLoadEvent
+import org.qbrp.main.engine.items.model.ItemState
 import org.qbrp.main.engine.items.model.ServerItemObject
-import org.qbrp.main.core.synchronization.SynchronizationAPI
-import org.qbrp.main.core.synchronization.impl.LocalMessageSender
-import org.qbrp.main.core.synchronization.Synchronizer
-import org.qbrp.main.core.synchronization.channels.ObjectMessagingChannel
-import org.qbrp.main.core.synchronization.components.MessagingChannelSender
-import org.qbrp.main.engine.inventory.InventorySynchronizer
+import org.qbrp.main.engine.items.service.ItemDeleteService
+import org.qbrp.main.engine.items.service.ItemDeleteServiceImpl
+import org.qbrp.main.engine.players.model.events.PlayerInitAfterJsonLoadEvent
+import org.qbrp.main.engine.players.inventory.creative.PositionProxy
+import org.qbrp.main.engine.players.model.events.PlayerInstantiateEvent
+import org.qbrp.main.engine.players.model.service.ServerPlayerStorage
 
-@Autoload
+@Autoload(Priorities.ITEMS)
 class ItemsModule: GameModule("items") {
     init {
         dependsOn { Core.isApiAvailable<PrefabsAPI>() }
-        dependsOn { Engine.isApiAvailable<StorageAPI>() }
-        dependsOn { Engine.isApiAvailable<SynchronizationAPI>() }
+        dependsOn { Engine.isApiAvailable<TableRegistry>() }
     }
+    val itemPickupDisabled get() = get<ServerConfigData>().itemPickupEnabled
 
     companion object {
-        val SETTINGS = Settings().maxCount(1)
-        val ITEMS_CHANNEL = "items"
-        val ITEMS_MESSAGING_CHANNEL = "items_messaging"
-        val TICK_RATE = 10
-    }
-
-    fun giveItemPrefab(key: PrefabEntryKey, player: ServerPlayerObject): Boolean {
-        val prefab = get<PrefabsAPI>().loadByKey<Prefab>(key)
-        if (prefab != null) {
-            val tag = prefab.getTag(key)
-            getLocal<ItemFabric>().newInstanceFromPrefab(tag, this)
-                .apply { give(player) }
-            return true
-        }
-        return false
-    }
-
-    fun createItem(key: PrefabEntryKey): ServerItemObject {
-        val prefab = get<PrefabsAPI>().loadByKey<Prefab>(key)!!.getTag(key)
-        return getLocal<ItemFabric>().newInstanceFromPrefab(prefab, this)
+        const val PREFAB_CATEGORY = "item"
+        const val TICK_RATE = 10
     }
 
     override fun onLoad() {
-        get<PrefabsAPI>().registerPrefabCategory("item")
+        get<PrefabsAPI>().registerPrefabCategory(PREFAB_CATEGORY)
         val storage = get<ItemStorage<ServerItemObject>>()
         val repo = get<ItemRepository>()
+        val containerService by inject<ContainerService>()
 
         TimerSaver<ServerItemObject>("Items", 4000L * 40L)
             .run(storage, repo)
         ServerStopSaver<ServerItemObject>()
             .run(storage, repo)
-        LeavePlayerInventorySaver()
+        LeavePlayerInventorySaver(this)
             .run(storage, repo)
 
-        ObjectMessagingChannel<ServerItemObject>(ITEMS_MESSAGING_CHANNEL, get<ItemStorage<ServerItemObject>>())
-            .run()
-
-        PlayerAuthEvent.EVENT.register { player, manager ->
-            giveItemPrefab(PrefabEntryKey("item", "test", "default"), player)
-        }
         ComponentRegistryInitializationEvent.EVENT.register {
-            it.register(ItemDisplay::class.java)
-            it.register(Brief::class.java)
-            it.register(Description::class.java)
-            it.register(Name::class.java)
-            it.register(ItemModel::class.java)
-            it.register(Physics::class.java)
-            it.register(Material::class.java)
-            it.register(AbstractContainer::class.java)
-            it.register(InventorySynchronizer::class.java)
+            it.register { data<Meta>() }
+            it.register { componentClass(ItemSynchronizer::class) }
+            it.register { componentClass(ItemLocationMediator::class) }
+            it.register { componentClass(PositionProxy::class) }
         }
 
-        gameAPI.addWorldTickTask(getLocal<ItemTicker>())
+        withEventContext {
+            onComponentEvent<PlayerInstantiateEvent, ItemSynchronizer>(priority = EventPriority.LATEST) { event, component ->
+                component.onPlayerInitialize(event.player)
+            }
 
-        get<SynchronizationAPI>().addProvider(
-            FuncProvider(getLocal<Synchronizer>()) { storage.getAll() }
-        )
+            on<ModLoadedEvent> {
+                containerService.addProvider(storage)
+            }
+
+            onItemLoadEvent(get(), get(), get())
+        }
+
+        gameAPI.addWorldTickTask(getLocal<ItemStateTicker>())
+
+        get<EventSupportersStorage>().addStorage(storage as Storage<StateObject<out ComponentManager>>)
+    }
+
+    fun onItemLoadEvent(
+        packetSender: ServerPacketSender,
+        mapper: GlobalComponentPacketDtoMapper,
+        keyRegistry: SerializerKeyRegistry,
+    ) {
+        val playerStorage: ServerPlayerStorage by inject()
+        val containerService: ContainerService by inject()
+        ItemLoadEvent.EVENT.register { item ->
+            item.getOrAdd {
+                ItemSynchronizer(item.state.componentContext,
+                    packetSender,
+                    mapper,
+                    keyRegistry,
+                    playerStorage
+                )
+            }
+            item.getOrAdd { ItemLocationMediator(item.state.componentContext, containerService) }
+        }
     }
 
     override fun getKoinModule() = module {
-        single<Synchronizer> { SynchronizerChannelSender(ITEMS_CHANNEL) }
         single { ItemStorage<ServerItemObject>() }
-        single<TableAccess> { get<StorageAPI>().getTable("items")}
+        single<TableAccess> { get<TableRegistry>().getTable("items")}
         single { ItemRepository(this@ItemsModule, get(), get(), get()) }
-        single { ItemFabric(gameAPI) }
-        single { ItemLifecycle(get(), get()) }
-        single { ItemTicker(get()) }
-        single<MessagingChannelSender> { LocalMessageSender(ITEMS_MESSAGING_CHANNEL) }
-        single { this } //ТОЛЬКО ДЛЯ ТЕСТОВ
+        single { ItemFactory(get()) }
+        single { ItemStateTicker(get()) }
+        single<ItemDeleteService> { ItemDeleteServiceImpl(get(), get(), get(), get()) }
     }
 }

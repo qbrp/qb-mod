@@ -1,9 +1,7 @@
 package org.qbrp.main.engine.chat.addons.records
 
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import org.koin.core.module.Module
-import org.koin.dsl.module
 import org.qbrp.main.deprecated.resources.ServerResources
 import org.qbrp.deprecated.resources.units.TextUnit
 import org.qbrp.main.engine.chat.ChatAddon
@@ -17,7 +15,7 @@ import java.time.format.DateTimeFormatter
 @Autoload(3)
 class Records: ChatAddon("records"), RecordsAPI {
     init {
-        MessageHandledEvent.EVENT.register { message, receivers: List<ServerPlayerEntity> ->
+        MessageHandledEvent.EVENT.register { message, receivers ->
             addMessage(message)
             ActionResult.PASS
         }

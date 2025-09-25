@@ -7,7 +7,7 @@ import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.minecraft.server.command.ServerCommandSource
 import org.qbrp.main.engine.Engine
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.EngineModule
 import java.util.concurrent.CompletableFuture
 
 class ModuleScriptsSuggestionProvider : SuggestionProvider<ServerCommandSource> {
@@ -15,7 +15,7 @@ class ModuleScriptsSuggestionProvider : SuggestionProvider<ServerCommandSource> 
         context: CommandContext<ServerCommandSource>?,
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
-        val module = Engine.getModule<QbModule>(StringArgumentType.getString(context, "name"))!!
+        val module = Engine.getModule<EngineModule>(StringArgumentType.getString(context, "label"))!!
 
         if (module.isDynamicLoadingAllowed) {
             builder.suggest("reload")

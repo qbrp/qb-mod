@@ -11,7 +11,7 @@ class ChatException(val errorSource: ChatMessage, val reason: String): KoinCompo
 
     fun send(
         sender: MessageSender = chatAPI!!.createSender()
-        .apply { addTarget(errorSource.getAuthorEntity() ?: return@apply) }
+        .apply { addTarget(errorSource.author ?: return@apply) }
     ): ActionResult {
         sender.send(
             ChatMessage(

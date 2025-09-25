@@ -1,9 +1,11 @@
 package org.qbrp.main.core.mc.actionbar
 
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.Text
+import org.qbrp.main.core.mc.context.MinecraftContext
+import org.qbrp.main.core.mc.player.dataformats.MinecraftPlayerId
+import org.qbrp.main.core.mc.text.MinecraftText
+import org.qbrp.main.core.mc.text.MiniMessageText
 
 interface ActionBarAPI {
-    fun sendActionBarMsg(player: ServerPlayerEntity, message: Text)
-    fun setActionBarStatus(player: ServerPlayerEntity, statusMessage: String)
+    context(ctx: MinecraftContext) fun sendActionBarMsg(player: MinecraftPlayerId, message: MinecraftText)
+    context(ctx: MinecraftContext) fun setActionBarStatus(player: MinecraftPlayerId, statusMessage: MinecraftText)
 }

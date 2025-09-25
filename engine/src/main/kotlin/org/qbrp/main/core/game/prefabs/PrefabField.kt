@@ -1,11 +1,14 @@
 package org.qbrp.main.core.game.prefabs
 
-import org.qbrp.main.core.game.model.components.Component
+import org.koin.core.context.GlobalContext
+import org.qbrp.main.core.components.AnyComponent
+import org.qbrp.main.core.components.ComponentRegistry
 
 fun interface PrefabField {
-    fun component(): Component
+    val componentName: String get() = GlobalContext.get().get<ComponentRegistry>().getComponentName(component())
+    fun component(): AnyComponent
 
     companion object {
-        operator fun invoke(factory: () -> Component): PrefabField = PrefabField { factory() }
+        operator fun invoke(factory: () -> AnyComponent): PrefabField = PrefabField { factory() }
     }
 }

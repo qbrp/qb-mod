@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.minecraft.network.listener.ServerPlayPacketListener
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
-import org.qbrp.main.core.mc.player.PlayersUtil
+import org.qbrp.main.engine.players.model.service.PlayersUtil
 
 data class ServerReceiverContext(
     val id: String,

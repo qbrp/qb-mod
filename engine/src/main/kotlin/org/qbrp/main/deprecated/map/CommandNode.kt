@@ -2,6 +2,7 @@ package org.qbrp.deprecated.map
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import net.minecraft.server.command.ServerCommandSource
+import org.qbrp.main.deprecated.map.Executor
 
 interface CommandNode {
     var name: String

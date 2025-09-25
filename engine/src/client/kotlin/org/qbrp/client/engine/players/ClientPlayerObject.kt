@@ -1,11 +1,13 @@
 package org.qbrp.client.engine.players
 
-import net.minecraft.entity.player.PlayerEntity
-import org.qbrp.main.core.mc.player.PlayerObject
-import org.qbrp.main.core.synchronization.components.C2SMessaging
-import org.qbrp.main.core.synchronization.components.MessagingChannelSender
+import org.qbrp.client.engine.players.profile.PlayerProfile
+import org.qbrp.main.core.mc.player.dataformats.MinecraftPlayerId
+import org.qbrp.main.core.mc.player.dataformats.Username
+import org.qbrp.main.engine.players.model.PlayerObject
+import org.qbrp.main.engine.players.model.PlayerStateImpl
+import org.qbrp.main.engine.players.model.util.PlayerId
 
-class ClientPlayerObject(override val entity: PlayerEntity?, override val entityName: String,
-                         override val messageSender: MessagingChannelSender
-): PlayerObject(), C2SMessaging {
-}
+class ClientPlayerObject(id: PlayerId,
+                         username: Username,
+                         val profile: PlayerProfile,
+): PlayerObject(username, profile.minecraftPlayerId, id, PlayerStateImpl())

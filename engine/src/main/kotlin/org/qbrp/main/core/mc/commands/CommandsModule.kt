@@ -3,13 +3,12 @@ package org.qbrp.main.core.mc.commands
 import com.mojang.brigadier.CommandDispatcher
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.minecraft.server.command.ServerCommandSource
-import org.koin.core.module.Module
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.modules.EngineModule
 
-@Autoload(LoadPriority.HIGHEST)
-class CommandsModule: QbModule("commands"), CommandsAPI {
+@Autoload(Priorities.HIGHEST)
+class CommandsModule: EngineModule("commands"), CommandsAPI {
     private var commands = mutableListOf<CommandRegistryEntry>()
 
     override fun onEnable() {

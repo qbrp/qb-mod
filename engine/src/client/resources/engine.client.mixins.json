@@ -4,15 +4,22 @@
   "package": "mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "ItemRendererMixin",
-    "ModelLoaderMixin",
+    "ClientPlayNetworkHandlerMixin",
+    "DownloadingTerrainScreenMixin",
+    "KeyBindingMixin",
     "MouseMixin",
     "chat.ChatHudMixin",
-    "chat.ChatScreenMixin"
+    "chat.ChatScreenMixin",
+    "render.HeldItemFeatureRendererMixin",
+    "render.ItemInHandRendererMixin",
+    "render.ItemRendererMixin",
+    "render.ModelLoaderMixin",
+    "ui.InGameHudMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
+    "KeyboardMixin"
   ]
 }

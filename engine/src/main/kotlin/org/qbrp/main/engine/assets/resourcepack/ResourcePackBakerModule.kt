@@ -5,17 +5,17 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
-import net.minecraft.resource.ResourcePack
+import org.qbrp.main.core.assets.FileSystem
 import org.qbrp.main.core.assets.FileSystem.getOrCreate
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.modules.EngineModule
 import org.qbrp.main.core.utils.log.LoggerUtil
 import java.io.File
 import kotlin.sequences.filter
 
-@Autoload(LoadPriority.MODULE + 1)
-class ResourcePackBakerModule: QbModule("resourcepack-baker"), ResourcePackAPI {
+@Autoload(Priorities.MODULE + 1)
+class ResourcePackBakerModule: EngineModule("resourcepack-baker"), ResourcePackAPI {
     companion object {
         val LOGGER = LoggerUtil.get("resources")
         val RESOURCEPACK_NODES = getOrCreate("qbrp/assets/nodes", true)
@@ -60,6 +60,7 @@ class ResourcePackBakerModule: QbModule("resourcepack-baker"), ResourcePackAPI {
     }
 
     override fun createModelPackFiles(resourcePack: ResourcePackBuilder, nodes: List<Node>) {
+        FileSystem
         nodes.forEach { node ->
             val jsonModel = node.createModel()
             resourcePack.addModel(jsonModel, modelName = node.modelId, relativePath = node.getPackContainerPath())

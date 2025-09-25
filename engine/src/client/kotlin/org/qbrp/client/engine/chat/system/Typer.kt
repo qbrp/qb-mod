@@ -8,8 +8,7 @@ import org.qbrp.client.engine.chat.system.events.ChatInputParseEvent
 import org.qbrp.main.core.utils.networking.messages.components.Component
 import org.qbrp.main.core.utils.networking.messages.types.*
 import org.qbrp.main.core.utils.format.Format
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
-import org.qbrp.main.core.utils.format.Format.formatMinecraft
+import org.qbrp.main.core.utils.format.Format.formatMm
 
 class Typer() {
 
@@ -61,7 +60,7 @@ class Typer() {
         }
 
         fun calculateMetaInfoWidth(renderer: TextRenderer): Int {
-            return renderer.getWidth(calculateMetaInfoNames().asMiniMessage().string)
+            return renderer.getWidth(calculateMetaInfoNames().formatMm().string)
         }
 
         fun findGroupFromTags(): ChatGroup? {

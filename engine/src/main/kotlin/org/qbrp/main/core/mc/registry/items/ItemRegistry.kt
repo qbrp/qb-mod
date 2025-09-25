@@ -1,8 +1,5 @@
 package org.qbrp.main.core.mc.registry.items
 
-import org.qbrp.main.core.mc.registry.groups.InventoryGroupsRegistry
-import org.qbrp.deprecated.resources.structure.integrated.Parents
-import org.qbrp.main.engine.items.QbItem
 import org.qbrp.main.core.utils.log.LoggerUtil
 
 class ItemRegistry() {

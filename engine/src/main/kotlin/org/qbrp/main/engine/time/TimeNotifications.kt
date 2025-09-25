@@ -12,7 +12,7 @@ class TimeNotifications(var config: TimeConfig): KoinComponent {
             ChatMessage.text(config.formatDo)
                 .apply {
                     getTagsBuilder()
-                        .placeholder("name", "&bВремя")
+                        .placeholder("label", "&bВремя")
                         .placeholder("time.roundRpTime", TimeUtils.minutesToTime(TimeUtils.roundMinutesToNearestHalfHour(time)))
                         .placeholder("time.rpTime", TimeUtils.minutesToTime(time))
                         .placeholder("time.period", name)

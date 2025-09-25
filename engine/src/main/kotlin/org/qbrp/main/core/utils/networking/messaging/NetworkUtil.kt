@@ -1,12 +1,15 @@
 package org.qbrp.main.core.utils.networking.messaging
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
+import org.koin.core.context.GlobalContext
 import org.qbrp.main.core.Core
 import org.qbrp.main.core.utils.networking.messages.Message
 import org.qbrp.main.core.utils.networking.messages.types.SendContent
 import org.qbrp.main.core.utils.log.LoggerUtil
 
+@Deprecated("Использовать систему пакетов")
 object NetworkUtil: NetworkMessageSender {
     val logger = LoggerUtil.get("serverNetwork", "sending")
 
@@ -31,7 +34,7 @@ object NetworkUtil: NetworkMessageSender {
     }
 
     fun broadcast(message: Message) {
-        Core.server.playerManager.playerList.forEach { sendMessage(message, it) }
+        GlobalContext.get().get<MinecraftServer>().playerManager.playerList.forEach { sendMessage(message, it) }
     }
 
     fun broadcastArea(

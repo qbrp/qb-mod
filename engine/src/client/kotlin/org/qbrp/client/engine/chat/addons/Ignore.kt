@@ -8,15 +8,14 @@ import org.qbrp.client.ClientCore
 import org.qbrp.client.engine.chat.ClientChatAPI
 import org.qbrp.client.engine.chat.ClientChatAddon
 import org.qbrp.client.engine.chat.system.LinearMessageProvider
-import org.qbrp.client.core.networking.ClientReceiverContext
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
+import org.qbrp.main.core.modules.Priorities
 import org.qbrp.main.core.utils.networking.ClientReceiver
 import org.qbrp.main.core.utils.networking.messages.Messages
 import org.qbrp.main.core.utils.networking.messages.types.Signal
 import org.qbrp.main.core.utils.networking.messages.types.StringContent
 
-@Autoload(LoadPriority.ADDON, EnvType.CLIENT)
+@Autoload(Priorities.ADDON, EnvType.CLIENT)
 class Ignore: ClientChatAddon("ignore") {
     private val ignoreList: MutableList<String> = mutableListOf()
     private var ignoreSpy = false

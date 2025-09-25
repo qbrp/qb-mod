@@ -1,26 +1,7 @@
 package org.qbrp.main.core.mc.player.events
 
-import net.fabricmc.fabric.api.event.Event
-import net.fabricmc.fabric.api.event.EventFactory
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.util.ActionResult
-import net.minecraft.world.GameMode
+import org.qbrp.main.core.events.Event
+import org.qbrp.main.core.mc.player.gamemode.MinecraftGameMode
+import org.qbrp.main.engine.players.model.PlayerObject
 
-fun interface PlayerChangeGameModeEvent {
-    fun changeGameMode(player: ServerPlayerEntity, gameMode: GameMode): ActionResult
-
-    companion object {
-        val EVENT: Event<PlayerChangeGameModeEvent> = EventFactory.createArrayBacked(
-            PlayerChangeGameModeEvent::class.java
-        ) { listeners: Array<out PlayerChangeGameModeEvent> ->
-            PlayerChangeGameModeEvent { player, gameMode ->
-                for (listener in listeners) {
-                    if (listener.changeGameMode(player, gameMode) != ActionResult.PASS) {
-                        return@PlayerChangeGameModeEvent ActionResult.FAIL
-                    }
-                }
-                ActionResult.PASS
-            }
-        }
-    }
-}
+class PlayerChangeGameModeEvent(val gameMode: MinecraftGameMode, val player: PlayerObject): Event

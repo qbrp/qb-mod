@@ -52,9 +52,10 @@ class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
         MessageSenderPipeline.EVENT.register { message, sender ->
             val groupTag = message.getTags().getComponentData<String>("group")
             val group = storage.getGroup(groupTag ?: "default")
-            if (message.getAuthorEntity() != null) {
-                sender.addTargets(group!!.getPlayersCanSee(message.getAuthorEntity() as ServerPlayerEntity) as List<ServerPlayerEntity>)
-                sender.addTarget(message.getAuthorEntity() as ServerPlayerEntity)
+            val author = message.author
+            if (author != null) {
+                sender.addTargets(group!!.getPlayersCanSee(message.author!!))
+                sender.addTarget(author)
             }
             ActionResult.PASS
         }
@@ -63,7 +64,7 @@ class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
     companion object {
         fun handle(message: ChatMessage, group: ChatGroup, defaultGroup: ChatGroup = Engine.getAPI<ChatGroupsAPI>()
             ?.getGroup("default")!!): ActionResult {
-            val author = message.getAuthorEntity()
+            val author = message.author
             var sendGroup = group
 
             author?.let {
@@ -94,7 +95,9 @@ class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
         val groupTag = message.getTags().getComponentData<String>("group")
         val group = storage.getGroup(groupTag ?: "default")
         if (group == null) {
-            ChatException(message, "Группа $groupTag не найдена. Доступные группы: ${storage.getAllGroups().map { it.name }.joinToString(", ")}").send()
+            ChatException(message, "Группа $groupTag не найдена. Доступные группы: ${
+                storage.getAllGroups().joinToString(", ") { it.name }
+            }").send()
             return null
         } else {
             return group

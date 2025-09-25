@@ -1,26 +1,26 @@
 package org.qbrp.main.core.mc.damage
 
-import PermissionsUtil.hasPermission
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.BoolArgumentType
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import org.koin.core.component.get
 import org.qbrp.main.core.mc.commands.CommandsAPI
-import org.qbrp.main.core.mc.commands.CommandsModule
 import org.qbrp.main.core.mc.commands.CommandRegistryEntry
+import org.qbrp.main.core.mc.player.hasPermission
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.EngineModule
 
 @Autoload
-class DamageControllerModule: QbModule("damage-controller"), DamageControllerAPI, CommandRegistryEntry {
-    var enabled: Boolean = true
-
+class DamageControllerModule: EngineModule("damage-controller"), CommandRegistryEntry {
+    private var enabled: Boolean = true
     override fun onLoad() {
         get<CommandsAPI>().add(this)
     }
 
-    override fun getAPI(): DamageControllerAPI = this
+    override fun onEnable() {
+        DamageControllerMixinAccess.enabled = true
+    }
 
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         dispatcher.register(CommandManager.literal("ignoredamage")
@@ -32,6 +32,4 @@ class DamageControllerModule: QbModule("damage-controller"), DamageControllerAPI
                 })
         )
     }
-
-    override fun isEnabled(): Boolean = enabled
 }

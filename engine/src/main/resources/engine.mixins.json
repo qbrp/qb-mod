@@ -4,18 +4,19 @@
   "package": "mixin",
   "compatibilityLevel": "JAVA_17",
   "server": [
-    "DamageController",
-    "MeCommandMixin",
-    "PlayerEntityMixin",
-    "PlayerManagerMixin",
-    "ServerPlayerEntityMixin",
-    "ServerPlayNetworkHandlerMixin"
+    "commands.MeCommandMixin",
+    "player.DamageController",
+    "player.PlayerEntityMixin",
+    "player.PlayerManagerMixin",
+    "player.ServerPlayerEntityMixin",
+    "player.ServerPlayNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
-    "ServerPlayerInteractionManagerMixin",
-    "WhisperCommandMixin"
+    "ItemEntityMixin",
+    "commands.WhisperCommandMixin",
+    "player.ServerPlayerInteractionManagerMixin"
   ]
 }

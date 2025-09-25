@@ -4,11 +4,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.qbrp.main.core.database.Databases
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.modules.LoadPriority
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.Priorities
+import org.qbrp.main.core.modules.EngineModule
 
-@Autoload(LoadPriority.HIGHEST)
-class GameStorageModule: QbModule("game-storage"), StorageAPI {
+@Autoload(Priorities.HIGHEST)
+class GameStorageModule: EngineModule("game-storage"), TableRegistry {
     companion object {
         private const val DATABASE_NAME = "gameStorage"
     }
@@ -21,7 +21,7 @@ class GameStorageModule: QbModule("game-storage"), StorageAPI {
             val archiveFile = getModuleFile().resolve("archive")
             Archiver(archiveFile)
         }
-        single<StorageAPI> { this@GameStorageModule }
+        single<TableRegistry> { this@GameStorageModule }
     }
 
     override fun getTable(name: String): Table {

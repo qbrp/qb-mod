@@ -5,8 +5,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
-import org.qbrp.main.core.utils.format.Format.formatMinecraft
+import org.qbrp.main.core.utils.format.Format.formatMm
 import java.util.WeakHashMap
 
 class RegionSelection {
@@ -30,10 +29,10 @@ class RegionSelection {
         val selection = playerSelections[player] ?: Selection()
         if (player.isSneaking) {
             playerSelections[player] = selection.copy(firstPos = blockPos)
-            player.sendMessage("<green>Установлена первая позиция: ${blockPos.x}, ${blockPos.y}, ${blockPos.z}".asMiniMessage(), false)
+            player.sendMessage("<green>Установлена первая позиция: ${blockPos.x}, ${blockPos.y}, ${blockPos.z}".formatMm(), false)
         } else {
             playerSelections[player] = selection.copy(secondPos = blockPos)
-            player.sendMessage("<green>Установлена вторая позиция: ${blockPos.x}, ${blockPos.y}, ${blockPos.z}".asMiniMessage(), false)
+            player.sendMessage("<green>Установлена вторая позиция: ${blockPos.x}, ${blockPos.y}, ${blockPos.z}".formatMm(), false)
         }
     }
 }

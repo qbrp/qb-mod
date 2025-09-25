@@ -1,7 +1,7 @@
 package org.qbrp.main.core.assets
 
 import org.qbrp.main.core.modules.ModuleFileSystemAPI
-import org.qbrp.main.core.modules.QbModule
+import org.qbrp.main.core.modules.EngineModule
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Path
@@ -77,7 +77,7 @@ object FileSystem: ModuleFileSystemAPI {
         return MODULES.resolve(name)
     }
 
-    override fun getModuleFile(module: QbModule): File {
+    override fun getModuleFile(module: EngineModule): File {
         return getModuleFile(module.getName())
     }
 }

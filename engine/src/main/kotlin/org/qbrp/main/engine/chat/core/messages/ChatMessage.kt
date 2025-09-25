@@ -1,23 +1,19 @@
 package org.qbrp.main.engine.chat.core.messages
 
-import icyllis.modernui.text.SpannableString
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import net.minecraft.server.PlayerManager
+import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
+import org.koin.core.context.GlobalContext
 import org.qbrp.main.core.Core
 import org.qbrp.main.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
 import org.qbrp.main.engine.chat.core.events.ChatFormatEvent
 import org.qbrp.main.engine.chat.core.events.MessageUpdateEvent
 import org.qbrp.main.core.utils.networking.messages.components.ClusterBuilder
 import org.qbrp.main.core.utils.networking.messages.components.Cluster
-import org.qbrp.main.core.utils.networking.messages.types.IntContent
 import org.qbrp.main.core.utils.networking.messages.types.LongContent
 import org.qbrp.main.core.utils.networking.messages.types.StringContent
-import org.qbrp.main.core.utils.format.Format.asMiniMessage
-import org.qbrp.main.core.utils.format.Format.miniMessage
-import org.qbrp.main.core.utils.format.Format.formatAsSpans
+import org.qbrp.main.core.utils.format.Format.formatMm
+import org.qbrp.main.engine.players.model.service.ServerPlayerStorage
 import java.util.UUID
 
 open class ChatMessage(val authorName: String,
@@ -25,13 +21,16 @@ open class ChatMessage(val authorName: String,
                        val uuid: String = UUID.randomUUID().toString(),
                        val timestamp: Long = System.currentTimeMillis()): ChatMessageData {
     protected var metaTags: ChatMessageTagsBuilder = ChatMessageTagsBuilder()
+    private val playerStorage by lazy { GlobalContext.get().get<ServerPlayerStorage>() }
 
     override fun toString(): String {
-        return "ChatMessage(authorName='$authorName', text='$text')"
+        return "ChatMessage(authorName='$authorName', chatText='$text')"
     }
 
+    val author get() = playerStorage.getByPlayerName(authorName)
+
     fun getRawText() = text
-    fun getAuthorEntity(playerManager: PlayerManager = Core.server.playerManager): ServerPlayerEntity? = playerManager.getPlayer(authorName)
+    fun getAuthorEntity(server: MinecraftServer = GlobalContext.get().get()): ServerPlayerEntity? = server.playerManager.getPlayer(authorName)
 
     fun getTags() = metaTags.build().getData()
     fun getTagsBuilder() = metaTags
@@ -39,7 +38,7 @@ open class ChatMessage(val authorName: String,
     fun getText() = text
     override fun getVanillaText(): Text {
         val msg = this.copy()
-        return ChatFormatEvent.EVENT.invoker().handleMessage(msg, getText()).asMiniMessage()
+        return ChatFormatEvent.EVENT.invoker().handleMessage(msg, getText()).formatMm()
     }
 
     fun setText(text: String, invokeUpdateEvent: Boolean = true) {
@@ -76,7 +75,7 @@ open class ChatMessage(val authorName: String,
             .component("authorName", StringContent(authorName))
             .component("uuid", StringContent(uuid))
             .component("tags", metaTags.build())
-            .component("text", StringContent(text))
+            .component("chatText", StringContent(text))
             .component("timestamp", LongContent(timestamp))
 
         return builder.build()
@@ -90,8 +89,6 @@ open class ChatMessage(val authorName: String,
     fun sendException(text: String) {
         ChatException(this, text).send()
     }
-
-    override fun getTextSpans(): SpannableString = text.formatAsSpans()
 
     companion object {
         fun create(text: Text, author: String = SYSTEM_MESSAGE_AUTHOR): ChatMessage {
