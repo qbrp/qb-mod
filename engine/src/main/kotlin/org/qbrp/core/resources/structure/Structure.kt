@@ -1,6 +1,5 @@
 package org.qbrp.core.resources.structure
 
-import klite.NotFoundException
 import org.qbrp.system.utils.keys.Key
 import org.qbrp.core.resources.units.ContentUnit
 import java.io.File
@@ -19,8 +18,8 @@ open class Structure(path: File, clear: Boolean = false): Branch(path.toPath(), 
         contentRegistry[key] = contentUnit.apply { initFile() }
     }
 
-    fun registry(key: Key): Branch { return branchesRegistry[key] ?: throw NotFoundException("Not found key $key") }
+    fun registry(key: Key): Branch { return branchesRegistry[key] ?: throw NullPointerException("Not found key $key") }
     fun registryOrNull(key: Key): Branch? { return branchesRegistry[key] }
 
-    fun content(key: Key): ContentUnit { return contentRegistry[key] ?: throw NotFoundException("Not found key $key") }
+    fun content(key: Key): ContentUnit { return contentRegistry[key] ?: throw NullPointerException("Not found key $key") }
 }

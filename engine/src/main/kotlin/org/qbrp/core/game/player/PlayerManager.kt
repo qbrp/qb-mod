@@ -26,7 +26,6 @@ import org.qbrp.core.game.registry.ServerModCommand
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.data.config.ConfigUpdateCallback
 import org.qbrp.system.database.DatabaseService
-import org.qbrp.system.secrets.Databases
 
 @Command("playermanager")
 object PlayerManager: ServerModCommand {
@@ -35,7 +34,7 @@ object PlayerManager: ServerModCommand {
     val players: MutableMap<String, ServerPlayerSession> = mutableMapOf()
     val playersList
         get() = players.values.toList()
-    val databaseService = DatabaseService(Databases.MAIN, "players").also { it.connect() }
+    val databaseService = DatabaseService(ServerResources.getConfig().databases.nodeUri, "players").also { it.connect() }
 
     init {
         ConfigUpdateCallback.EVENT.register {

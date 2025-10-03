@@ -1,7 +1,6 @@
 package org.qbrp.core
 
 import com.google.gson.GsonBuilder
-import klite.NotFoundException
 import net.fabricmc.api.DedicatedServerModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
@@ -26,14 +25,12 @@ import org.qbrp.engine.music.plasmo.playback.lavaplayer.AudioManager
 import org.qbrp.system.VersionChecker
 import org.qbrp.system.networking.ServerInformation
 import org.qbrp.system.networking.ServerInformationComposer
-import org.qbrp.system.networking.http.WebServer
 import org.qbrp.system.utils.log.InformationMessage
 import org.qbrp.view.View
 import java.util.Optional
 
 class ServerCore : DedicatedServerModInitializer {
     companion object {
-        lateinit var webServer: WebServer
         lateinit var server: MinecraftServer
         fun isServer() = ::server.isInitialized
         val informationMessage = InformationMessage()
@@ -43,7 +40,6 @@ class ServerCore : DedicatedServerModInitializer {
     override fun onInitializeServer() {
         ServerResources.buildResources()
         ServerResources.buildContent()
-        webServer = WebServer().also { it.start() }
         Handlers.registerServerEvents()
         AudioManager.registerSources()
         Regions.load()
@@ -57,9 +53,6 @@ class ServerCore : DedicatedServerModInitializer {
             ServerInformation.build()
             ConfigUpdateCallback.EVENT.invoker().onConfigUpdated(ServerResources.getConfig())
             informationMessage.print()
-        }
-        ServerLifecycleEvents.SERVER_STOPPED.register { server ->
-            webServer.stop()
         }
         ServerReceivers.register()
     }

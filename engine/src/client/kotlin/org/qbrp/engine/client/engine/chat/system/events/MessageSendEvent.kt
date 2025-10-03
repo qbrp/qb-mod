@@ -1,6 +1,5 @@
 package org.qbrp.engine.client.engine.chat.system.events
 
-import klite.info
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.util.ActionResult

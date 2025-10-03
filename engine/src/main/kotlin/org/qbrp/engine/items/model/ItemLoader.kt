@@ -1,6 +1,5 @@
 package org.qbrp.engine.items.model
 
-import klite.NotFoundException
 import net.minecraft.item.ItemStack
 import org.koin.core.component.KoinComponent
 import org.litote.kmongo.eq
@@ -10,25 +9,28 @@ import org.litote.kmongo.insertOne
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.system.database.DatabaseService
 
-class ItemLoader: DatabaseService(ServerResources.getConfig().databases.nodeUri, ServerResources.getConfig().databases.items), KoinComponent {
+class ItemLoader: DatabaseService(
+    ServerResources.getConfig().databases.nodeUri,
+    ServerResources.getConfig().databases.items
+), KoinComponent {
     init {
         //connect()
     }
 
     fun getItemState(id: Int): ItemData {
-        val collection = db?.getCollection<ItemData>("data") ?: throw NotFoundException()
-        val item = collection.findOne(ItemData::id eq id) ?: throw NotFoundException()
+        val collection = db?.getCollection<ItemData>("data") ?: throw NullPointerException()
+        val item = collection.findOne(ItemData::id eq id) ?: throw NullPointerException()
         return item
     }
 
     fun getOrCreateItem(id: Int, itemstack: ItemStack): ItemData {
         return try {
             getItemState(id)
-        } catch (e: NotFoundException) {
+        } catch (e: NullPointerException) {
             (itemstack.item as QbItem).data
                 .also {
                     db?.getCollection("data")?.insertOne(it.toJson())
-            }
+                }
         }
     }
 

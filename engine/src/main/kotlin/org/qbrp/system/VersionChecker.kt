@@ -1,6 +1,5 @@
 package org.qbrp.system
 
-import klite.NotFoundException
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.network.ServerPlayerEntity
 import org.qbrp.core.Core
@@ -36,7 +35,7 @@ object VersionChecker {
     fun getVersion(): String {
         val version = FabricLoader.getInstance().getModContainer(Core.MOD_ID)
             .map { it.metadata.version.friendlyString }
-        return version.getOrNull() ?: throw NotFoundException("Не найдена версия в fabric.mod.json")
+        return version.getOrNull() ?: throw NullPointerException("Не найдена версия в fabric.mod.json")
     }
 
     fun check(version: String): CompatibleState {

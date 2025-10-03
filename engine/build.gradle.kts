@@ -98,8 +98,6 @@ dependencies {
     // HTTP-сервер ресурсов
     include(implementation("com.squareup.okhttp3:okhttp:${project.property("okhttp_version")}")!!)
     include(implementation("com.squareup.okio:okio-jvm:${project.property("okio_version")}")!!)
-    include(implementation("com.github.codeborne.klite:klite-server:${project.property("klite_version")}")!!)
-    include(implementation("com.github.codeborne.klite:klite-core:${project.property("klite_version")}")!!)
     include(implementation("su.plo.slib:api-server:${project.property("slib_api_server_version")}")!!)
 
     include(implementation(project.dependencies.platform("io.insert-koin:koin-bom:${project.property("koin_version")}"))!!)
