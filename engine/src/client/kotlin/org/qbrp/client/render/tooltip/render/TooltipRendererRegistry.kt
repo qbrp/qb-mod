@@ -2,7 +2,7 @@ package org.qbrp.client.render.tooltip.render
 
 import org.qbrp.client.render.dataformats.Vec2
 import org.qbrp.client.render.screen.context.Draw2dContext
-import org.qbrp.main.mechanics.tooltip.component.TooltipComponent
+import org.qbrp.main.engine.tooltip.component.TooltipComponent
 import org.qbrp.client.render.ui.components.layout.Size
 import org.qbrp.client.render.ui.components.tooltip.Tooltip
 import kotlin.reflect.KClass

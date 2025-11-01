@@ -2,55 +2,44 @@ package org.qbrp.client.engine.players
 
 import net.fabricmc.api.EnvType
 import org.koin.core.component.inject
-import org.koin.core.qualifier.named
-import org.qbrp.client.core.mc.connection.event.DisconnectEvent
-import org.qbrp.client.core.networking.preparation.CollectPreparationContributorsEvent
-import org.qbrp.client.core.networking.preparation.PreparationContributor
-import org.qbrp.client.core.networking.utils.enableClear
-import org.qbrp.client.engine.players.networking.ClientPlayerFactory
-import org.qbrp.client.engine.players.networking.ClientPlayerNetworkHandler
-import org.qbrp.client.engine.players.networking.LocalPlayerPreparationContributor
-import org.qbrp.client.engine.players.networking.PlayerResolver
+import org.koin.dsl.module
+import org.qbrp.client.core.mc.connection.DisconnectEvent
+import org.qbrp.client.core.networking.utils.clearOnDisconnect
 import org.qbrp.client.engine.players.profile.PlayerProfileManager
 import org.qbrp.client.engine.players.profile.PlayerProfileManagerImpl
-import org.qbrp.client.engine.players.profile.PlayerProfileMapper
+import org.qbrp.main.core.components.extensions.componentRegistrar
 import org.qbrp.main.core.events.on
-import org.qbrp.main.core.events.withEventContext
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.Priorities
 import org.qbrp.main.core.modules.EngineModule
-import org.qbrp.main.engine.ModLoadedEvent
+import org.qbrp.main.engine.players.characters.entity.CharacterData
+import org.qbrp.main.engine.players.model.service.PlayerList
 
 @Autoload(priority = Priorities.MODULE - 1, env = EnvType.CLIENT)
-class ClientPlayersModule: EngineModule("client-players") {
-    override fun getKoinModule() = innerWithApi({
-        single { ClientPlayerStorage().apply { enableClear() } }
-        single<PlayerProfileManager> { PlayerProfileManagerImpl() }
-        single<ClientPlayerManager> { getLocal<ClientPlayerManagerImpl>() }
-    }, {
-        scoped { PlayerProfileMapper() }
-        scoped { ClientPlayerManagerImpl() }
-        scoped { ClientPlayerFactory(get()) }
-        scoped { PlayerResolver(get(), get(), get()) }
-        scoped {
-            ClientPlayerNetworkHandler(
-                get(),
-                get(),
-                get(),
-                get(),
-                get(),
-                get(),
-                get(),
-                get()
-            )
-        }
-    })
+class ClientPlayersModule() : EngineModule("client-players"), ClientCharactersBank {
+    override var character: CharacterData? = null
 
-    override fun onEnable() = withEventContext {
-        val playerManager: ClientPlayerManagerImpl = getLocal()
-        val preparationContributor = LocalPlayerPreparationContributor(playerManager)
-        on<ModLoadedEvent> { getLocal<ClientPlayerNetworkHandler>().run() }
-        on<CollectPreparationContributorsEvent, PreparationContributor> { preparationContributor }
-        on<DisconnectEvent> { playerManager.remove() }
+    override fun getKoinModule() = module {
+        single { ClientPlayerStorage().apply { clearOnDisconnect() } }
+        single<PlayerList> { get<ClientPlayerStorage>() }
+        single<ClientPlayerList> { get<ClientPlayerStorage>() }
+        single<PlayerProfileManager> { PlayerProfileManagerImpl() }
+        single<ClientCharactersBank> { this@ClientPlayersModule }
+        single<ClientPlayerManager> { ClientPlayerManagerImpl(get()) }
+        single { ClientWorld(get()) }
+        single { ClientPlayerFactory(get(), get()) }
+    }
+
+    override fun onEnable() {
+        val clientPlayerManager: ClientPlayerManager by inject()
+        on<DisconnectEvent> { clientPlayerManager.destroy() }
+
+        componentRegistrar {
+            use<LocalPlayerPosition>()
+        }
+    }
+
+    override fun applyCharacter(character: CharacterData) {
+        this.character = character
     }
 }

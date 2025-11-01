@@ -9,17 +9,16 @@ import org.qbrp.client.render.screen.context.DrawContextAdapterFactory
 import org.qbrp.client.render.screen.context.DrawContextAdapterFactoryImpl
 import org.qbrp.client.render.screen.event.ScreenRenderPipeline
 import org.qbrp.main.core.events.emit
-import org.qbrp.main.core.mc.server.context.withCoreContext
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.EngineModule
 
 @Autoload(env = EnvType.CLIENT)
-class ScreenRenderModule: EngineModule("screen-render") {
+class ScreenRenderModule : EngineModule("screen-render") {
     override fun getKoinModule(): Module = module {
         single<DrawContextAdapterFactory> { DrawContextAdapterFactoryImpl(get()) }
     }
 
-    override fun onEnable() = withCoreContext {
+    override fun onEnable() {
         val factory by inject<DrawContextAdapterFactory>()
         HudRenderCallback.EVENT.register { context, delta ->
             val ctx = factory.adapt(context, delta)

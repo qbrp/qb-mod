@@ -1,15 +1,13 @@
 package org.qbrp.client.render.ui.components.tooltip
 
 import org.qbrp.client.core.mouse.MouseState
-import org.qbrp.main.mechanics.tooltip.TooltipColorProfile
-import org.qbrp.main.mechanics.tooltip.TooltipViewData
+import org.qbrp.main.engine.tooltip.TooltipColorProfile
+import org.qbrp.main.engine.tooltip.TooltipViewData
 import org.qbrp.client.render.tooltip.render.MainTooltipRenderer
 import org.qbrp.client.render.tooltip.render.TooltipBackgroundRenderer
 import org.qbrp.client.render.ui.UiContext
 import org.qbrp.client.render.ui.components.layout.Anchors
 import org.qbrp.client.render.ui.components.transform.RectTransform
-import org.qbrp.client.render.ui.dsl.finish
-import org.qbrp.client.render.ui.dsl.buildView
 import org.qbrp.client.render.ui.dsl.viewOf
 import org.qbrp.client.render.ui.view.View
 import org.qbrp.client.render.ui.view.ViewManager

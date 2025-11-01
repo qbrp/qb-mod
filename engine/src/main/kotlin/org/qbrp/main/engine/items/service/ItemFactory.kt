@@ -3,7 +3,6 @@ package org.qbrp.main.engine.items.service
 import kotlinx.serialization.encodeToString
 import org.koin.core.component.KoinComponent
 import org.qbrp.main.core.assets.prefabs.Prefab
-import org.qbrp.main.core.components.construct.ComponentBuilderOperator.Companion.default
 import org.qbrp.main.core.components.extensions.add
 import org.qbrp.main.core.components.extensions.get
 import org.qbrp.main.core.components.extensions.loadJson
@@ -18,7 +17,7 @@ import org.qbrp.main.engine.items.model.ItemJsonField
 import org.qbrp.main.engine.items.model.ItemStateImpl
 import org.qbrp.main.engine.world.model.World
 
-class ItemFactory(private val storage: ItemStorage<ServerItemObject>): ContextualSerializer<ServerItemObject, ItemInstantiateContext>, KoinComponent {
+class ItemFactory(private val storage: ItemStorage<ServerItemObject>) : ContextualSerializer<ServerItemObject, ItemInstantiateContext>, KoinComponent {
     fun newPrefabInstance(tag: Prefab.Tag): ServerItemObject {
         val item = ServerItemObject(ItemInstantiateContext.DEFAULT)
         item.state.parent = item

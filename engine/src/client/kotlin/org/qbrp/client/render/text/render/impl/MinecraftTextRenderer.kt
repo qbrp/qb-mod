@@ -3,12 +3,9 @@ package org.qbrp.client.render.text.render.impl
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.text.OrderedText
-import net.minecraft.text.Text
 import org.qbrp.client.render.dataformats.Vec2
 import org.qbrp.client.render.text.render.model.TextComponentRenderer
-import org.qbrp.main.core.mc.text.MinecraftTextMapper
-import org.qbrp.main.core.mc.text.RenderableText
+import org.qbrp.main.core.fabricmc.text.MinecraftTextMapper
 import org.qbrp.main.engine.text.components.TextComponent
 
 open class MinecraftTextRenderer<C: TextComponent>(private val mcTextRenderer: TextRenderer): TextComponentRenderer<C> {

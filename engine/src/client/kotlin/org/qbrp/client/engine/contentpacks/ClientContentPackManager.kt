@@ -5,21 +5,17 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import org.koin.core.component.get
 import org.koin.core.module.Module
 import org.qbrp.main.core.Core
-import org.qbrp.client.ClientCore
-import org.qbrp.client.core.networking.info.ServerInfoReader
 import org.qbrp.client.core.notifications.ClientNotificationSender
-import org.qbrp.client.engine.auth.ClientAuthEvent
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.EngineModule
-import org.qbrp.main.core.notifications.entity.Notification
-import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
-import org.qbrp.main.engine.assets.web.WebServerModule
+import org.qbrp.main.core.util.networking.messages.components.ClusterEntry
 import org.qbrp.main.engine.text.components.TextSequence
 import org.qbrp.main.engine.text.style.Style
 import org.qbrp.main.engine.text.style.TextColor
+import org.qbrp.main.network.player.Notification
 
 @Autoload(env = EnvType.CLIENT)
-class ClientContentPackManager: EngineModule("server-packs"), ClientContentPacksAPI {
+class ClientContentPackManager : EngineModule("server-packs"), ClientContentPacksAPI {
     private val notificationSender = get<ClientNotificationSender>()
 
     override fun onLoad() {
@@ -28,19 +24,11 @@ class ClientContentPackManager: EngineModule("server-packs"), ClientContentPacks
             val config = requireConfig<DownloadConfig>()
             applyPack(config.host, config.port, config.serverName)
         }
-        val info = get<ServerInfoReader>()
-        ClientAuthEvent.EVENT.register { session ->
-            val contentPacksEnabled = info.VIEWER.getEntry(CONTENTPACKS_ENABLED)!!
-            val port = info.VIEWER.getEntry(WebServerModule.DOWNLOAD_PORT)!!
-            val serverName = info.VIEWER.getEntry(Core.SERVER_NAME)!!
-            val ip = ClientCore.getServerIp()!!
-            if (contentPacksEnabled) applyPack(ip, port, serverName)
-        }
     }
 
     override fun getKoinModule(): Module = inner<ClientContentPacksAPI>(this) {  }
 
-    fun applyPack(host: String, port: Int, name: String) {
+    override fun applyPack(host: String, port: Int, name: String) {
         try {
             requireServerPack(host, port, name) {
                 ContentPackEvents.ON_APPLY.invoker().onApply(it)

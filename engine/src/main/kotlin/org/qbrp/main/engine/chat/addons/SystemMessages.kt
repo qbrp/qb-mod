@@ -10,7 +10,7 @@ import org.qbrp.main.engine.chat.core.messages.ChatMessageTagsBuilder
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.Priorities
 import org.qbrp.main.core.modules.ModuleAPI
-import org.qbrp.main.core.utils.networking.messages.types.StringContent
+import org.qbrp.main.core.util.networking.messages.types.StringContent
 
 @Autoload(priority = Priorities.ADDON)
 class SystemMessages(): ChatAddon("system-messages"), ModuleAPI {

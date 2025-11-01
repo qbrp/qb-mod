@@ -20,7 +20,7 @@ class LinearMessageProvider(
 
     private var ticksCompleted = 0
     init {
-        thread(isDaemon = true, name = "ChatUpdateThread") {
+        thread(isDaemon = true, name = "[Engine] Chat Update Thread") {
             while (true) {
                 while (taskQueue.isNotEmpty()) {
                     taskQueue.poll()?.run()

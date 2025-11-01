@@ -3,27 +3,29 @@ package org.qbrp.client.render.props
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexConsumer
-import net.minecraft.client.util.math.MatrixStack
-import org.joml.Math.lerp
 import org.joml.Matrix4f
 import org.joml.Vector3f
-import org.qbrp.client.engine.items.ClientItemObject
-import org.qbrp.client.engine.props.PropData
+import org.qbrp.client.engine.items.PropInterpolation
 import org.qbrp.client.render.debug.DebugRenderContext
-import org.qbrp.main.engine.physics.dynamics.dataformats.engine
-import org.qbrp.main.engine.physics.dynamics.dataformats.joml
-import org.qbrp.main.engine.physics.dynamics.shapes.BoxShape
+import org.qbrp.main.core.util.math.asVec3
+import org.qbrp.main.core.util.math.engine
+import org.qbrp.main.core.util.math.toMinecraft
+import org.qbrp.main.engine.physics.system.jolt.joml
+import org.qbrp.main.engine.physics.system.entity.Shape
+import org.qbrp.main.engine.physics.system.entity.sizeVector
+import org.qbrp.main.engine.physics.system.entity.toWorld
 
 /**
  * Рендерер пропа для отладки, показывает хитбокс вместо предмета
  */
 class DebugPropRenderer() {
-    fun render(debugCtx: DebugRenderContext, prop: PropData, shape: BoxShape, ctx: WorldRenderContext) {
-        prop.updateFactor(ctx.tickDelta() / 20.0)
-        val pos = prop.transform.pos
-        val rot = prop.transform.quat
+    fun render(debugCtx: DebugRenderContext, prop: PropInterpolation, shape: Shape.Box, ctx: WorldRenderContext) {
+        val tickDelta = ctx.tickDelta().toDouble()
+        val transform = prop.getTransform(tickDelta)
+        val pos = transform.pos.asVec3()
+        val rot = transform.rot.toWorld()
 
-        debugCtx.renderDot(pos.minecraft(), 0.1f)
+        debugCtx.renderDot(pos.asVec3().toMinecraft(), 0.1f)
 
         val cameraPos = ctx.camera().pos.engine()
         val worldPos = pos.sub(cameraPos)
@@ -38,7 +40,7 @@ class DebugPropRenderer() {
         val entry = stack.peek()
         val matrix = entry.positionMatrix
         val vertexConsumer: VertexConsumer = ctx.consumers()!!.getBuffer(RenderLayer.getLines())
-        renderBoxLines(matrix, vertexConsumer, shape.sizeVector().joml(), 0f, 1f, 0f, 1f)
+        renderBoxLines(matrix, vertexConsumer, shape.sizeVector.joml(), 0f, 1f, 0f, 1f)
 
         stack.pop()
     }

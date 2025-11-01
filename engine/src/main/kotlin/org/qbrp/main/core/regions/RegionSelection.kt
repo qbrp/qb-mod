@@ -5,7 +5,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
-import org.qbrp.main.core.utils.format.Format.formatMm
+import org.qbrp.main.core.util.format.Format.formatMm
 import java.util.WeakHashMap
 
 class RegionSelection {

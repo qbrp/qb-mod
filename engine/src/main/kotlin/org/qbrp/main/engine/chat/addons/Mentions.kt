@@ -16,7 +16,7 @@ import org.qbrp.main.core.modules.Priorities
 import org.qbrp.main.engine.players.model.service.ServerPlayerStorage
 
 @Autoload(Priorities.ADDON, both = true)
-class Mentions(): ChatAddon("mentions") {
+class Mentions : ChatAddon("mentions") {
     private val server: MinecraftServer by inject()
     private val playerList: ServerPlayerStorage by inject()
 
@@ -45,7 +45,7 @@ class Mentions(): ChatAddon("mentions") {
                         sender.addTargets(playerList.getAll())
                     }
                     "here" -> {
-                        val playersCanSee = get<ChatGroupsAPI>().fetchGroup(message)?.getPlayersCanSee(message.author!!) ?: emptyList()
+                        val playersCanSee = get<ChatGroupsAPI>().fetchGroup(message)?.getPlayersCanSee(message.getAuthorEntity()!!) ?: emptyList()
                         @Suppress("UNCHECKED_CAST") sender.addTargets(playersCanSee)
                     }
                     else -> {

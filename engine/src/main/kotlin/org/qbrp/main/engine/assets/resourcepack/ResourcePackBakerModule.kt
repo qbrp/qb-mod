@@ -10,7 +10,7 @@ import org.qbrp.main.core.assets.FileSystem.getOrCreate
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.Priorities
 import org.qbrp.main.core.modules.EngineModule
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import java.io.File
 import kotlin.sequences.filter
 

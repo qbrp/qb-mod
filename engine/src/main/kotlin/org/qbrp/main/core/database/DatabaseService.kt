@@ -9,7 +9,7 @@ import org.bson.Document
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.UpdateOptions
 import org.bson.conversions.Bson
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 
 @Deprecated("Использовать gameStorage")
 open class DatabaseService(protected val client: SynchronousDatabaseClient,

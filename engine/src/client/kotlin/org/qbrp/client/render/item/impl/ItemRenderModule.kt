@@ -12,7 +12,7 @@ import org.qbrp.main.core.modules.EngineModule
 @Autoload(env = EnvType.CLIENT)
 class ItemRenderModule: EngineModule("item-render") {
     override fun getKoinModule(): Module = innerWithApi({
-        single { ItemStackAdapterWrapper(get()) }
+        single { ItemStackAdapterWrapper() }
         single<ItemRenderer> { ItemRendererImpl(get(), MinecraftClient.getInstance().itemRenderer) }
     }, {
     })

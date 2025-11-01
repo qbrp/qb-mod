@@ -6,10 +6,10 @@ import net.minecraft.util.Identifier
 import org.koin.core.component.inject
 import org.koin.core.module.Module
 import org.qbrp.client.core.mc.skin.SkinTextureManager
-import org.qbrp.client.engine.players.profile.PlayerProfile
 import org.qbrp.client.render.screen.context.Draw2dContext
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.EngineModule
+import org.qbrp.main.engine.players.model.PlayerProfile
 
 @Autoload(env = EnvType.CLIENT)
 class PlayerHeadsModule: EngineModule("player-heads"), PlayerHeadsRenderer {

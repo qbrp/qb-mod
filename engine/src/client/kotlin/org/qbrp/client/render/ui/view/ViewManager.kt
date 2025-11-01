@@ -8,17 +8,14 @@ import org.qbrp.client.core.notifications.ClientNotificationSender
 import org.qbrp.client.render.dataformats.Vec2
 import org.qbrp.client.render.screen.context.Draw2dContext
 import org.qbrp.client.render.window.Window
-import org.qbrp.main.core.components.extensions.tick
-import org.qbrp.main.core.events.EventBus
 import org.qbrp.main.core.events.on
-import org.qbrp.main.core.notifications.entity.Notification
+import org.qbrp.main.network.player.Notification
 import java.util.concurrent.CopyOnWriteArrayList
 
 class ViewManager(
     private val screen: Screen,
     private val notificationManager: ClientNotificationSender,
     private val mouse: MouseState,
-    private val eventBus: EventBus
 ) {
     val openViews: CopyOnWriteArrayList<View> get() = screen.children
     private val openViewsWithIds = mutableMapOf<String, View>()
@@ -33,9 +30,9 @@ class ViewManager(
         removeCallback: () -> Unit = {}
     ): ViewGroup {
         return ViewGroup(closeAllOnClickOutView).apply {
-            val listener = eventBus.on<MouseClickEvent> { onClick(pos.x, pos.y) }
+            val listener = on<MouseClickEvent> { onClick(pos.x, pos.y) }
             this.removeCallback = { removeCallback() }
-            this.destroyCallback = { eventBus.unsubscribe(listener); }
+            this.destroyCallback = { listener.unsubscribe() }
             views.forEach { add(it) }
         }
     }

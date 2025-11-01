@@ -6,7 +6,7 @@ import org.qbrp.client.render.dataformats.Vec2
 import org.qbrp.client.render.text.render.model.TextComponentRenderer
 import org.qbrp.client.render.text.render.model.TextComponentRendererRegistry
 import org.qbrp.client.render.text.render.model.TextRenderer
-import org.qbrp.main.core.mc.text.RenderableText
+import org.qbrp.main.core.fabricmc.text.RenderableText
 import org.qbrp.main.engine.text.components.TextComponent
 import kotlin.reflect.KClass
 

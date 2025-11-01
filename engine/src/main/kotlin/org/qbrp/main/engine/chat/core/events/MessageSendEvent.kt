@@ -1,5 +1,6 @@
 package org.qbrp.main.engine.chat.core.events
 
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import org.qbrp.main.engine.chat.addons.tools.MessageTextEvents
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
@@ -12,6 +13,7 @@ fun interface MessageSendEvent {
         sender: MessageSender,
         message: ChatMessage,
         receiver: ServerPlayerObject,
+        receiverEntity: ServerPlayerEntity,
         networking: ServerChatNetworking
     ): ActionResult
 
@@ -30,11 +32,11 @@ fun interface MessageSendEvent {
             entries += Entry(listener, priority)
         }
 
-        val EVENT: MessageSendEvent = MessageSendEvent { sender, message, receiver, networking ->
+        val EVENT: MessageSendEvent = MessageSendEvent { sender, message, receiver, receiverEntity, networking ->
             for ((listener, _) in entries.sortedBy { it.priority.ordinal }) {
-                val result = listener.onMessageSend(sender, message, receiver, networking)
-                if (result == ActionResult.FAIL)      return@MessageSendEvent ActionResult.FAIL
-                if (result != ActionResult.PASS)      return@MessageSendEvent result
+                val result = listener.onMessageSend(sender, message, receiver, receiverEntity, networking)
+                if (result == ActionResult.FAIL) return@MessageSendEvent ActionResult.FAIL
+                if (result != ActionResult.PASS) return@MessageSendEvent result
             }
             MessageTextEvents.pasteText(message)
             networking.sendMessagePacket(receiver, message)

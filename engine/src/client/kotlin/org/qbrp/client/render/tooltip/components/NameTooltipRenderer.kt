@@ -8,7 +8,7 @@ import org.qbrp.client.render.ui.components.layout.Size
 import org.qbrp.client.render.ui.components.tooltip.Tooltip
 import org.qbrp.client.render.ui.components.transform.RectTransform
 import org.qbrp.main.core.components.extensions.require
-import org.qbrp.main.mechanics.tooltip.component.NameTooltipComponent
+import org.qbrp.main.engine.tooltip.component.NameTooltipComponent
 
 class NameTooltipRenderer(val textRenderer: TextRenderer, val padding: Float, val lineHeight: Float): TooltipComponentRenderer<NameTooltipComponent> {
     override fun measure(data: NameTooltipComponent): Size {

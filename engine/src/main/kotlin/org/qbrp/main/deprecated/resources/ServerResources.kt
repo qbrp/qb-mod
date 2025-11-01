@@ -5,8 +5,8 @@ import com.google.gson.JsonParser
 import org.koin.core.component.KoinComponent
 import org.qbrp.deprecated.resources.data.config.KreisyEmojiConfig
 import org.qbrp.deprecated.resources.structure.Structure
-import org.qbrp.main.core.utils.log.Logger
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.Logger
+import org.qbrp.main.core.util.log.LoggerUtil
 import java.io.File
 import org.qbrp.deprecated.resources.ServerStructure
 

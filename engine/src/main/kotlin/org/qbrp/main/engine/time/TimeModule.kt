@@ -1,7 +1,7 @@
 package org.qbrp.main.engine.time
 
 import org.koin.core.component.get
-import org.qbrp.main.core.mc.commands.CommandsAPI
+import org.qbrp.main.core.fabricmc.commands.CommandsAPI
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.chat.addons.BroadcasterAPI
@@ -19,7 +19,7 @@ RpTime - игровое время в 24-часовом формате
  */
 
 @Autoload(priority = 0)
-class TimeModule(): EngineModule("time"), TimeAPI {
+class TimeModule : EngineModule("time"), TimeAPI {
     private lateinit var periodManager: PeriodManager
     private lateinit var worldTimeManager: WorldTimeManager
 
@@ -34,17 +34,17 @@ class TimeModule(): EngineModule("time"), TimeAPI {
         scoped { createConfig(PeriodsConfig()) }
         scoped { WorldTimeManager(get()) }
         scoped { TimeNotifications(get()) }
-        scoped { PeriodManager(
-            get(),
-            get(),
-            get(),
-            get<PeriodsConfig>().periods)
+        scoped {
+            PeriodManager(
+                get(),
+                get(),
+                get(),
+                get<PeriodsConfig>().periods
+            )
         }
     }
 
     override fun onLoad() {
-        get<CommandsAPI>().add(TimeCommands(get()))
-
         periodManager = getLocal<PeriodManager>()
         worldTimeManager = getLocal<WorldTimeManager>()
 
@@ -80,7 +80,7 @@ class TimeModule(): EngineModule("time"), TimeAPI {
 
     override fun setCycleEnabled(enabled: Boolean) { this.enabled = enabled }
 
-    override fun broadcastTime(time: Int, name: String) = getLocal<TimeNotifications>().broadcastTimeDo(time, name)
+    override fun broadcastTime(time: Int, period: String) = getLocal<TimeNotifications>().broadcastTimeDo(time, period)
 
     var enabled = true
 }

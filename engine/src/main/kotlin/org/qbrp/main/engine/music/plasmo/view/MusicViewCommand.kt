@@ -14,10 +14,10 @@ import org.qbrp.deprecated.annotations.Arg
 import org.qbrp.deprecated.annotations.Command
 import org.qbrp.deprecated.annotations.Execute
 import org.qbrp.deprecated.annotations.Provider
-import org.qbrp.main.core.mc.commands.CommandRegistryEntry
-import org.qbrp.main.core.mc.commands.templates.CallbackCommand
-import org.qbrp.main.core.mc.commands.templates.ListProvider
-import org.qbrp.main.core.utils.format.Format.formatMm
+import org.qbrp.main.core.fabricmc.commands.CommandRegistryEntry
+import org.qbrp.main.core.fabricmc.commands.templates.CallbackCommand
+import org.qbrp.main.core.fabricmc.commands.templates.ListProvider
+import org.qbrp.main.core.util.format.Format.formatMm
 import org.qbrp.main.engine.music.plasmo.playback.PlayerSelectionHandler
 
 class MusicViewCommand(val selection: PlayerSelectionHandler): CommandRegistryEntry {

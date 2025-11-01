@@ -1,6 +1,6 @@
 package org.qbrp.main.core.components.serialization
 
-import org.qbrp.main.core.dataformats.StringId
+import org.qbrp.main.core.util.StringId
 
 interface Identifiable {
     val id: String

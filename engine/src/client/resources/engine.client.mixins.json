@@ -4,6 +4,7 @@
   "package": "mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "ClientPlayerEntityMixin",
     "ClientPlayNetworkHandlerMixin",
     "DownloadingTerrainScreenMixin",
     "KeyBindingMixin",
@@ -20,6 +21,9 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "KeyboardMixin"
+    "EntityMixin",
+    "KeyboardMixin",
+    "LivingEntityMixin",
+    "PlayerEntityMixin"
   ]
 }

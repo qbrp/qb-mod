@@ -1,11 +1,9 @@
 package org.qbrp.main.engine.chat.core.messages
 
-import org.qbrp.main.core.utils.networking.messages.components.Component
-import org.qbrp.main.core.utils.networking.messages.components.ComponentTypeFactory
-import org.qbrp.main.core.utils.networking.messages.types.BilateralContent
-import org.qbrp.main.core.utils.networking.messages.types.SendContent
-import org.qbrp.main.core.utils.networking.messages.types.StringContent
-import kotlin.reflect.full.primaryConstructor
+import org.qbrp.main.core.util.networking.messages.components.Component
+import org.qbrp.main.core.util.networking.messages.components.ComponentTypeFactory
+import org.qbrp.main.core.util.networking.messages.types.SendContent
+
 
 data class MessageComponent(val name: String, val value: Any) {
     fun build(): Component {

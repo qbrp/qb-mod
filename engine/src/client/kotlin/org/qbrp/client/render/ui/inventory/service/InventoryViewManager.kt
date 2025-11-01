@@ -9,10 +9,14 @@ import org.qbrp.client.render.ui.inventory.entity.InventoryWidgetGroup
 import org.qbrp.client.render.ui.view.ViewManager
 import org.qbrp.client.render.ui.view.isHovered
 import org.qbrp.main.engine.containers.util.ContainerId
-import org.qbrp.main.engine.inventory.entity.ScreenCorner
+import org.qbrp.main.network.inventory.ScreenCorner
 import java.util.concurrent.CopyOnWriteArrayList
 
-class InventoryViewManager(private val viewManager: ViewManager, private val factory: InventoryViewFactory, private val uiContext: UiContext): InventorySelection {
+class InventoryViewManager(
+    private val viewManager: ViewManager,
+    private val factory: InventoryViewFactory,
+    private val uiContext: UiContext
+) : InventorySelection {
     val openInventories = CopyOnWriteArrayList<InventoryWidget>()
     override val selectedInventory: ContainerId? get() = with(uiContext) { computeSelectedInventory()?.container?.id }
 

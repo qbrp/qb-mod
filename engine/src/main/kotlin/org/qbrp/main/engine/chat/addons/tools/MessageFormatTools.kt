@@ -1,7 +1,7 @@
 package org.qbrp.main.engine.chat.addons.tools
 
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
-import org.qbrp.main.core.utils.format.Format.stripFormatting
+import org.qbrp.main.core.util.format.Format.stripFormatting
 
 object MessageFormatTools {
     // Mapping of Minecraft color codes and named tags to HEX values

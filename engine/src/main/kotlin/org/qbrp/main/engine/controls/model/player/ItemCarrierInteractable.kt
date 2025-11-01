@@ -6,10 +6,13 @@ import org.qbrp.main.engine.controls.entity.display.InteractableViewData
 import org.qbrp.main.engine.controls.entity.interactable.AnyInteractableType
 import org.qbrp.main.engine.controls.entity.interactable.Interactable
 import org.qbrp.main.engine.controls.model.container.LocateableInteractable
-import org.qbrp.main.engine.players.inventory.hand.CarryVariance
-import org.qbrp.main.engine.players.inventory.hand.ItemCarrier
+import org.qbrp.main.engine.players.inventory.CarryVariance
+import org.qbrp.main.engine.players.inventory.ItemCarrier
+import org.qbrp.main.engine.players.model.pos
+import org.qbrp.main.engine.players.model.world
 import org.qbrp.main.engine.world.location.Location
-import org.qbrp.main.engine.world.location.Position
+import org.qbrp.main.engine.world.location.WorldPos
+import org.qbrp.main.engine.world.location.asWorld
 import org.qbrp.main.engine.world.model.World
 
 interface ItemCarrierInteractable: ItemCarrier, LocateableInteractable {
@@ -33,6 +36,6 @@ class ItemCarrierInteractableImpl(
     override val interactableDisplay: InteractableViewData,
     override val varianceInteractables: List<CarryVarianceInteractable>,
 ): ItemCarrierInteractable, ItemCarrier by logic {
-    override val world: World get() = owner.context.world
-    override val pos: Position get() = owner.context.pos
+    override val world: World get() = owner.world
+    override val pos: WorldPos get() = owner.pos
 }

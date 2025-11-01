@@ -4,26 +4,24 @@ import net.fabricmc.api.EnvType
 import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.module.Module
-import org.qbrp.client.core.keybinds.onAnyKeybind
-import org.qbrp.client.core.keybinds.onKeybind
-import org.qbrp.client.core.mc.connection.event.ConnectEvent
+import org.qbrp.client.controls.ClientInteractionModeManager
+import org.qbrp.client.controls.InteractionContextMenuApplyEvent
+import org.qbrp.client.controls.InteractionModeApplyEvent
+import org.qbrp.client.controls.NO_CLIP_KEYBIND
+import org.qbrp.client.controls.NoClipApplyEvent
+import org.qbrp.client.controls.onKeybind
+import org.qbrp.client.core.mc.connection.ConnectEvent
 import org.qbrp.client.render.ui.view.Screen
 import org.qbrp.client.render.ui.interaction.crosshair.IntentCrosshair
-import org.qbrp.client.core.onTick
-import org.qbrp.client.engine.interactions.ClientInteractionsModule
-import org.qbrp.client.engine.interactions.event.InteractionContextMenuApplyEvent
-import org.qbrp.client.engine.interactions.event.InteractionModeApplyEvent
-import org.qbrp.client.engine.interactions.event.NoClipApplyEvent
-import org.qbrp.client.engine.interactions.service.ClientInteractionModeManager
+import org.qbrp.client.core.onClientTick
 import org.qbrp.client.render.screen.event.ScreenRenderPipeline
-import org.qbrp.main.mechanics.tooltip.TooltipColorProfile
+import org.qbrp.main.engine.tooltip.TooltipColorProfile
 import org.qbrp.client.render.ui.interaction.list.InteractionListFactory
 import org.qbrp.client.render.ui.interaction.list.InteractionListManager
 import org.qbrp.client.render.ui.interaction.list.InteractionListManagerImpl
 import org.qbrp.client.render.ui.interaction.mode.InteractionModeViewManager
 import org.qbrp.client.render.ui.withUiContext
 import org.qbrp.main.core.events.on
-import org.qbrp.main.core.events.withEventContext
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.EngineModule
 import org.qbrp.main.engine.controls.entity.InteractionMode
@@ -46,26 +44,24 @@ class InteractionsViewModule : EngineModule("interactions-render") {
         val interactionListManager: InteractionListManagerImpl = getLocal()
         val modeManager: InteractionModeViewManager = getLocal()
         val clientInteractionModeManager = get<ClientInteractionModeManager>()
-        withEventContext {
-            on<InteractionContextMenuApplyEvent> { interactionListManager.openInteractionList(contextMenuViewData) }
-            on<ConnectEvent> { instantiateCross() }
-            on<ScreenRenderPipeline> { renderCross() }
-            on<NoClipApplyEvent> {
-                if (clientInteractionModeManager.noClipAccess) {
-                    modeManager.flashNoClip()
-                }
-            }
-            on<InteractionModeApplyEvent> {
-                if (clientInteractionModeManager.hasAccess(interactionMode) || clientInteractionModeManager.currentMode != InteractionMode.CROW) {
-                    modeManager.flashInteractionMode()
-                }
-            }
-            onKeybind(ClientInteractionsModule.NO_CLIP_KEYBIND) {
+        on<InteractionContextMenuApplyEvent> { interactionListManager.openInteractionList(contextMenuViewData) }
+        on<ConnectEvent> { instantiateCross() }
+        on<ScreenRenderPipeline> { renderCross() }
+        on<NoClipApplyEvent> {
+            if (clientInteractionModeManager.noClipAccess) {
                 modeManager.flashNoClip()
             }
-            onTick {
-                modeManager.tick()
+        }
+        on<InteractionModeApplyEvent> {
+            if (clientInteractionModeManager.hasAccess(interactionMode) || clientInteractionModeManager.currentMode != InteractionMode.CROW) {
+                modeManager.flashInteractionMode()
             }
+        }
+        onKeybind(NO_CLIP_KEYBIND) {
+            modeManager.flashNoClip()
+        }
+        onClientTick {
+            modeManager.tick()
         }
     }
 

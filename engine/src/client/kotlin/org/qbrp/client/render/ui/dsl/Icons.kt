@@ -6,7 +6,7 @@ import org.qbrp.client.render.ui.UiContext
 import org.qbrp.client.render.ui.components.item.Item
 import org.qbrp.client.render.ui.components.texture.PlayerHeadTexture
 import org.qbrp.main.engine.items.ModelId
-import org.qbrp.main.engine.players.model.util.PlayerId
+import org.qbrp.main.core.util.PlayerId
 
 sealed class IconPrefab {
     data class Asset(val id: EngineId) : IconPrefab()

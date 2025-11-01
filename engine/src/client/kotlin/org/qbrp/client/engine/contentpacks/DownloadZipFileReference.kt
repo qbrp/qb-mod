@@ -7,7 +7,7 @@ import okhttp3.Request
 import org.qbrp.main.core.assets.FileSystem
 import org.qbrp.main.core.assets.common.Asset
 import org.qbrp.main.core.assets.common.references.AsyncFileReference
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import java.io.File
 import java.util.concurrent.TimeUnit
 import java.util.zip.ZipFile

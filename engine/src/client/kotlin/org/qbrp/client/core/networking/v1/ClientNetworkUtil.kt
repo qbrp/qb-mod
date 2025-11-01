@@ -3,12 +3,11 @@ package org.qbrp.client.core.networking.v1
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
-import org.qbrp.main.core.utils.networking.ClientReceiver
-import org.qbrp.main.core.utils.networking.messages.Message
-import org.qbrp.main.core.utils.networking.messages.types.SendContent
-import org.qbrp.main.core.utils.networking.messages.types.Signal
-import org.qbrp.main.core.utils.log.LoggerUtil
-import org.qbrp.main.core.utils.networking.messaging.NetworkMessageSender
+import org.qbrp.main.core.util.networking.messages.Message
+import org.qbrp.main.core.util.networking.messages.types.SendContent
+import org.qbrp.main.core.util.networking.messages.types.Signal
+import org.qbrp.main.core.util.log.LoggerUtil
+import org.qbrp.main.core.util.networking.messaging.NetworkMessageSender
 import java.util.concurrent.CompletableFuture
 import kotlin.reflect.KClass
 

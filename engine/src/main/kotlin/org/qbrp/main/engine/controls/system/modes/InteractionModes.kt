@@ -1,52 +1,53 @@
 package org.qbrp.main.engine.controls.system.modes
 
-import org.qbrp.main.core.mc.context.MinecraftContext
-import org.qbrp.main.core.mc.player.gamemode.MinecraftGameMode
-import org.qbrp.main.core.mc.player.hasPermission
-import org.qbrp.main.core.mc.player.permission.Permission
-import org.qbrp.main.core.mc.player.setGameMode
+import net.minecraft.world.GameMode
+import org.qbrp.main.core.components.DataComponent
+import org.qbrp.main.core.components.extensions.getOrAdd
+import org.qbrp.main.core.fabricmc.player.Permission
 import org.qbrp.main.engine.controls.entity.InteractionMode
+import org.qbrp.main.engine.players.model.PlayerObject
 import org.qbrp.main.engine.players.model.ServerPlayerObject
+import kotlin.properties.Delegates.observable
 
-context(ctx: MinecraftContext)
-fun setDefaultMode(player: ServerPlayerObject) {
-    player.setGameMode(MinecraftGameMode.SURVIVAL)
+fun <T> dirtyObservable(initialValue: T, onDirty: () -> Unit) =
+    observable(initialValue) { _, old, new ->
+        if (old != new) onDirty()
+    }
+
+class InteractionModeComponent(
+    initialMode: InteractionMode,
+    initialNoClip: Boolean,
+    var dirty: Boolean = false,
+) : DataComponent {
+    var mode: InteractionMode by dirtyObservable(initialMode) { dirty = true }
+    var noClip: Boolean by dirtyObservable(initialNoClip) { dirty = true }
 }
 
-context(ctx: MinecraftContext)
-fun setCrowMode(player: ServerPlayerObject) {
-    enableNoClip(player)
+fun PlayerObject.setInteractionMode(mode: InteractionMode) {
+    getInteractionModeComponent().mode = mode
 }
 
-context(ctx: MinecraftContext)
-fun setBuilderMode(player: ServerPlayerObject) {
-    if (!player.hasPermission(BUILDER_MODE_PERMISSION)) throw IllegalStateException("Недостаточно прав")
-    player.setGameMode(MinecraftGameMode.CREATIVE)
+fun PlayerObject.setNoClip(enabled: Boolean) {
+    getInteractionModeComponent().noClip = enabled
 }
 
-context(ctx: MinecraftContext)
-fun setGmMode(player: ServerPlayerObject) {
-    if (!player.hasPermission(GM_MODE_PERMISSION)) throw IllegalStateException("Недостаточно прав")
+fun PlayerObject.getInteractionModeComponent(): InteractionModeComponent {
+    return getOrAdd {
+        InteractionModeComponent(
+            initialMode = InteractionMode.DEFAULT,
+            initialNoClip = false,
+        )
+    }
 }
 
-context(ctx: MinecraftContext)
-fun enableNoClip(player: ServerPlayerObject) {
-    if (!player.hasPermission(NO_CLIP_PERMISSION)) throw IllegalStateException("Недостаточно прав")
-    player.setGameMode(MinecraftGameMode.SPECTATOR)
-}
-
-context(ctx: MinecraftContext)
-fun disableNoClip(player: ServerPlayerObject, interactionMode: InteractionMode) {
-    if (!player.hasPermission(NO_CLIP_PERMISSION)) throw IllegalStateException("Недостаточно прав")
-    player.setGameMode(interactionMode.gameMode)
-}
+val PlayerObject.interactionMode get() = this.getInteractionModeComponent().mode
 
 internal val InteractionMode.gameMode
     get() = when (this) {
-        InteractionMode.DEFAULT -> MinecraftGameMode.SURVIVAL
-        InteractionMode.BUILDER -> MinecraftGameMode.CREATIVE
-        InteractionMode.CROW -> MinecraftGameMode.ADVENTURE
-        InteractionMode.GM -> MinecraftGameMode.CREATIVE
+        InteractionMode.DEFAULT -> GameMode.SURVIVAL
+        InteractionMode.BUILDER -> GameMode.CREATIVE
+        InteractionMode.CROW -> GameMode.ADVENTURE
+        InteractionMode.GM -> GameMode.CREATIVE
     }
 
 val NO_CLIP_PERMISSION = Permission("no-clip")

@@ -3,7 +3,7 @@ package org.qbrp.client.engine.chat.system.logs
 import kotlinx.serialization.Serializable
 import net.minecraft.text.Text
 import org.qbrp.main.core.assets.common.Asset
-import org.qbrp.main.core.utils.format.Format.formatMm
+import org.qbrp.main.core.util.format.Format.formatMm
 import org.qbrp.main.engine.chat.core.messages.ChatMessageData
 
 @Serializable

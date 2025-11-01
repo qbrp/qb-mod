@@ -1,34 +1,58 @@
 package org.qbrp.main.engine.controls.system.modes
 
-import org.qbrp.main.core.CoreContext
+import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.world.GameMode
+import org.qbrp.main.core.fabricmc.player.hasPermission
 import org.qbrp.main.engine.controls.entity.InteractionMode
-import org.qbrp.main.engine.players.model.util.PlayerId
+import org.qbrp.main.engine.physics.player.MinecraftEntities
+import org.qbrp.main.engine.physics.player.ServerMinecraftEntities
+import org.qbrp.main.engine.players.model.ServerPlayerObject
+import org.qbrp.main.engine.players.model.service.PlayerList
+import org.qbrp.main.engine.players.model.service.ServerPlayerList
 
 class InteractionModeSystem {
-    context(core: CoreContext)
-    fun update(interactionsStates: MutableMap<PlayerId, InteractionState>, changes: List<InteractionModeUpdate>) {
-        for (edit in changes) {
-            val player = edit.player
-            val state = interactionsStates[player.playerId] ?: InteractionState(InteractionMode.DEFAULT, false)
-            var updateMode = state.mode
-            var updateNoClip = state.noClip
-            if (edit.noClip == null && edit.mode == null) continue
-            edit.mode?.let { mode ->
-                when(mode) {
-                    InteractionMode.DEFAULT -> setDefaultMode(player)
-                    InteractionMode.BUILDER -> setBuilderMode(player)
-                    InteractionMode.CROW -> setCrowMode(player)
-                    InteractionMode.GM -> setGmMode(player)
+    fun update(playerList: ServerPlayerList, entities: ServerMinecraftEntities) {
+        for (player in playerList) {
+            val interactionMode = player.getInteractionModeComponent()
+            val isDirty = interactionMode.dirty
+            if (!isDirty) continue
+            val entity = entities.getEntity(player.playerId) ?: continue
+            interactionMode.let {
+                val mode = it.mode
+                when (mode) {
+                    InteractionMode.DEFAULT -> {
+                        entity.interactionManager.changeGameMode(GameMode.SURVIVAL)
+                    }
+
+                    InteractionMode.BUILDER -> {
+                        if (!player.hasPermission(BUILDER_MODE_PERMISSION)) throw IllegalStateException("Недостаточно прав")
+                        entity.interactionManager.changeGameMode(GameMode.CREATIVE)
+                    }
+
+                    InteractionMode.CROW -> {
+                        entity.interactionManager.changeGameMode(GameMode.SURVIVAL)
+                        player.enableNoClip(entity)
+                    }
+
+                    InteractionMode.GM -> {
+                        if (player.hasPermission(GM_MODE_PERMISSION)) throw IllegalStateException("Недостаточно прав")
+                    }
                 }
-                updateMode = mode
-            }
-            if (updateMode != InteractionMode.CROW) {
-                edit.noClip?.let {
-                    updateNoClip = it
-                    if (it) enableNoClip(player) else disableNoClip(player, updateMode)
+                when (it.noClip) {
+                    true -> player.enableNoClip(entity)
+                    false -> player.disableNoClip(entity, mode)
                 }
             }
-            interactionsStates[player.playerId] = InteractionState(updateMode, updateNoClip)
         }
+    }
+
+    fun ServerPlayerObject.enableNoClip(entity: ServerPlayerEntity) {
+        if (!hasPermission(NO_CLIP_PERMISSION)) throw IllegalStateException("Недостаточно прав")
+        entity.interactionManager.changeGameMode(GameMode.SPECTATOR)
+    }
+
+    fun ServerPlayerObject.disableNoClip(entity: ServerPlayerEntity, interactionMode: InteractionMode) {
+        if (!hasPermission(NO_CLIP_PERMISSION)) throw IllegalStateException("Недостаточно прав")
+        entity.interactionManager.changeGameMode(interactionMode.gameMode)
     }
 }

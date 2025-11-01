@@ -1,6 +1,6 @@
 package org.qbrp.main.engine.music
 
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import su.plo.voice.api.addon.AddonInitializer
 import su.plo.voice.api.addon.InjectPlasmoVoice
 import su.plo.voice.api.server.PlasmoVoiceServer

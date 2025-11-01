@@ -5,8 +5,8 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import org.qbrp.main.engine.controls.entity.interactions.Intent
-import org.qbrp.main.engine.controls.dto.InteractableIconDTO
-import org.qbrp.main.engine.controls.dto.InteractableViewDTO
+import org.qbrp.main.network.interaction.InteractableIconDTO
+import org.qbrp.main.network.interaction.InteractableViewDTO
 import org.qbrp.main.engine.controls.dto.InteractionViewDTO
 import org.qbrp.main.engine.text.map.LiteralTextDTO
 import org.qbrp.main.engine.text.map.StyleDto

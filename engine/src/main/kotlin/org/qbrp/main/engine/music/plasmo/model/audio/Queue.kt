@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.koin.core.context.GlobalContext
 import org.qbrp.main.engine.music.plasmo.MusicStorage
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 open class Queue(

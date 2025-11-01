@@ -10,7 +10,7 @@ import io.mockk.verify
 import net.minecraft.client.font.TextRenderer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.qbrp.main.mechanics.tooltip.TooltipColorProfile
+import org.qbrp.main.engine.tooltip.TooltipColorProfile
 import org.qbrp.client.render.ui.UiComponentRegistrar
 import org.qbrp.client.render.ui.UiContext
 import org.qbrp.client.render.ui.interaction.list.InteractionListFactory

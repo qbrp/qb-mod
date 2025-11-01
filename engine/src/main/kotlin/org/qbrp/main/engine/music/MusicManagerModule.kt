@@ -4,7 +4,7 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
 import org.koin.core.component.KoinComponent
 import org.koin.dsl.module
-import org.qbrp.main.core.mc.commands.CommandRegistryEntry
+import org.qbrp.main.core.fabricmc.commands.CommandRegistryEntry
 import org.qbrp.deprecated.resources.data.config.ServerConfigData
 import org.qbrp.main.engine.music.plasmo.*
 import org.qbrp.main.engine.music.plasmo.controller.PlaylistCommand
@@ -28,11 +28,11 @@ import org.qbrp.main.core.database.DatabaseService
 import org.qbrp.main.core.database.SynchronousDatabaseClient
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.EngineModule
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import su.plo.voice.api.server.PlasmoVoiceServer
 import su.plo.voice.api.server.audio.source.ServerDirectSource
 import org.koin.core.component.get
-import org.qbrp.main.core.mc.commands.CommandsAPI
+import org.qbrp.main.core.fabricmc.commands.CommandsAPI
 
 @Autoload
 class MusicManagerModule : EngineModule("music"), KoinComponent, MusicManagerAPI {

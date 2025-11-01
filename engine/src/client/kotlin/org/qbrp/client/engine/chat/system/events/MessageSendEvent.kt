@@ -5,9 +5,9 @@ import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.util.ActionResult
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.client.core.networking.v1.ClientNetworkUtil
-import org.qbrp.main.core.utils.networking.messages.Message
-import org.qbrp.main.core.utils.networking.messages.Messages.SEND_MESSAGE
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.networking.messages.Message
+import org.qbrp.main.core.util.networking.messages.Messages.SEND_MESSAGE
+import org.qbrp.main.core.util.log.LoggerUtil
 
 fun interface MessageSendEvent {
     fun invokeEvent(message: ChatMessage): ActionResult

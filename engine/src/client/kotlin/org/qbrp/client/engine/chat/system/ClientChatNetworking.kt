@@ -6,13 +6,13 @@ import org.qbrp.client.ClientCore
 import org.qbrp.client.engine.chat.ClientChatAPI
 import org.qbrp.client.engine.chat.system.events.MessageSendEvent
 import org.qbrp.client.core.networking.v1.ClientNetworkUtil
-import org.qbrp.main.core.utils.networking.ClientReceiver
-import org.qbrp.main.core.utils.networking.messages.Message
-import org.qbrp.main.core.utils.networking.messages.Messages.END_TYPING
-import org.qbrp.main.core.utils.networking.messages.Messages.SEND_MESSAGE
-import org.qbrp.main.core.utils.networking.messages.Messages.START_TYPING
-import org.qbrp.main.core.utils.networking.messages.components.Cluster
-import org.qbrp.main.core.utils.networking.messages.types.Signal
+import org.qbrp.client.core.networking.v1.ClientReceiver
+import org.qbrp.main.core.util.networking.messages.Message
+import org.qbrp.main.core.util.networking.messages.Messages.END_TYPING
+import org.qbrp.main.core.util.networking.messages.Messages.SEND_MESSAGE
+import org.qbrp.main.core.util.networking.messages.Messages.START_TYPING
+import org.qbrp.main.core.util.networking.messages.components.Cluster
+import org.qbrp.main.core.util.networking.messages.types.Signal
 
 class ClientChatNetworking(val storage: MessageStorage): ChatNetworking() {
 

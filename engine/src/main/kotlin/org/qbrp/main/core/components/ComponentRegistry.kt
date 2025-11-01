@@ -58,9 +58,11 @@ interface ComponentRegistry {
             serializerRegistry.registerDeserializationStrategy(key, _deserializer!!)
         }
 
-        inline fun <reified D: DataComponent> data(includeSerializers: Boolean = true) {
+        inline fun <reified D: DataComponent> data(includeSerializers: Boolean = true, save: Boolean = true) {
             componentClass(D::class)
-            serializeConstructor<D, ComponentManager, D>(includeSerializers) { _, dto -> dto }
+            if (save) {
+                serializeConstructor<D, ComponentManager, D>(includeSerializers) { _, dto -> dto }
+            }
         }
 
         fun componentClass(clazz: KClass<out AnyComponent>) {
@@ -76,8 +78,10 @@ interface ComponentRegistry {
             this._constructor = factory as ComponentConstructor
         }
 
-        inline fun <reified D: DTO, O: ComponentManager, reified A: AnyComponent> serializeConstructor(includeSerializers: Boolean = true,
-                                                                                                       noinline factory: (O, D) -> A) {
+        inline fun <reified D: DTO, O: ComponentManager, reified A: AnyComponent> serializeConstructor(
+            includeSerializers: Boolean = true,
+            noinline factory: (O, D) -> A
+        ) {
             dtoConstructor<D, O>(factory)
             dto = D::class
             if (includeSerializers) {

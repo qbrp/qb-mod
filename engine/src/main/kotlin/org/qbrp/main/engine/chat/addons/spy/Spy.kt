@@ -5,8 +5,8 @@ import net.minecraft.util.ActionResult
 import org.koin.core.component.inject
 import org.koin.core.module.Module
 import org.koin.dsl.module
-import org.qbrp.main.core.mc.player.permission.Permission
-import org.qbrp.main.core.mc.player.hasPermission
+import org.qbrp.main.core.fabricmc.player.Permission
+import org.qbrp.main.core.fabricmc.player.hasPermission
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.chat.ChatAddon
 import org.qbrp.main.engine.chat.ChatModule

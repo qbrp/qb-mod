@@ -1,6 +1,6 @@
 package org.qbrp.main.engine.items.service
 
-import org.qbrp.main.core.game.storage.TableRepository
+import org.qbrp.main.core.storage.TableRepository
 import org.qbrp.main.core.storage.TableAccess
 import org.qbrp.main.engine.items.ItemsModule
 import org.qbrp.main.engine.items.model.ServerItemObject

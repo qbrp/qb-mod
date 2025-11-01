@@ -4,10 +4,10 @@ import org.qbrp.client.engine.inventory.model.ClientContainerState
 import org.qbrp.client.engine.inventory.model.InventoryDefinition
 import org.qbrp.client.engine.inventory.service.InventoryCloseListener
 import org.qbrp.client.render.Render
-import org.qbrp.main.mechanics.tooltip.component.PlainTextTooltipComponent
-import org.qbrp.main.mechanics.tooltip.component.ProgressBarTooltipComponent
-import org.qbrp.main.mechanics.tooltip.component.TooltipComponent
-import org.qbrp.main.mechanics.tooltip.TooltipViewData
+import org.qbrp.main.engine.tooltip.component.PlainTextTooltipComponent
+import org.qbrp.main.engine.tooltip.component.ProgressBarTooltipComponent
+import org.qbrp.main.engine.tooltip.component.TooltipComponent
+import org.qbrp.main.engine.tooltip.TooltipViewData
 import org.qbrp.client.render.ui.UiContext
 import org.qbrp.client.render.ui.components.behaviour.ShowTooltip
 import org.qbrp.client.render.ui.components.tooltip.TooltipManager
@@ -20,9 +20,9 @@ import org.qbrp.client.render.ui.inventory.entity.InventoryWidgetGroup
 import org.qbrp.client.render.ui.inventory.entity.anchorsPos
 import org.qbrp.client.render.ui.inventory.entity.pivot
 import org.qbrp.main.engine.containers.util.ContainerId
-import org.qbrp.main.engine.containers.v2.entity.OccupancyView
-import org.qbrp.main.engine.inventory.entity.ScreenCorner
+import org.qbrp.main.engine.containers.entity.OccupancyView
 import org.qbrp.main.engine.text.literal
+import org.qbrp.main.network.inventory.ScreenCorner
 import kotlin.collections.plus
 
 class InventoryViewFactory(

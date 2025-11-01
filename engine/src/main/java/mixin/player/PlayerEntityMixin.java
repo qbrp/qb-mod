@@ -7,6 +7,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
+import org.qbrp.main.engine.players.NicknameMixinAccess;
 import org.qbrp.main.engine.players.model.ServerPlayerObject;
 import org.qbrp.main.engine.players.model.service.PlayersUtil;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,7 +33,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         if (name != null && !name.isEmpty()) {
             ServerPlayerObject data = PlayersUtil.INSTANCE.getPlayerSession(name);
             if (data != null) {
-                customDisplayName = data.getDisplayNameText();
+                customDisplayName = NicknameMixinAccess.INSTANCE.getPlayerDisplayName(data);
             }
         }
     }

@@ -5,7 +5,7 @@ import io.mockk.mockk
 import org.qbrp.main.core.components.ComponentRegistry
 import org.qbrp.main.core.components.ComponentRegistryImpl
 import org.qbrp.main.core.components.events.EventSupportersStorage
-import org.qbrp.main.core.dataformats.StringId
+import org.qbrp.main.core.util.StringId
 import org.qbrp.main.core.events.DefaultEventContext
 import org.qbrp.main.core.events.EventBus
 import org.qbrp.main.core.events.EventContext

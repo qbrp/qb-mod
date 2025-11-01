@@ -6,7 +6,7 @@ import org.qbrp.client.render.ui.interaction.InteractionsViewModule.Companion.VI
 import org.qbrp.client.render.ui.view.View
 import org.qbrp.client.render.ui.view.ViewManager
 import org.qbrp.main.engine.controls.entity.display.InteractionContextMenuViewData
-import org.qbrp.main.mechanics.tooltip.TooltipColorProfile
+import org.qbrp.main.engine.tooltip.TooltipColorProfile
 
 class InteractionListManagerImpl(
     private val interactionListFactory: InteractionListFactory,

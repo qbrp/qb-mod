@@ -7,7 +7,7 @@ import engine.container.TestPlayer
 import io.mockk.every
 import io.mockk.mockk
 import org.qbrp.main.engine.controls.entity.interactions.InteractionContext
-import org.qbrp.main.engine.players.model.context.PlayerContext
+import org.qbrp.main.engine.players.model.PlayerContext
 import core.randomMinecraftPlayerId
 import core.randomStringId
 import engine.interactions.DummyLookup
@@ -38,7 +38,7 @@ import org.qbrp.main.engine.inventory.player.impl.ServerPlayerInventoryManager
 import org.qbrp.main.engine.items.model.ItemStateImpl
 import org.qbrp.main.engine.players.characters.components.CharacterComponentInstantiateContext
 import org.qbrp.main.engine.players.inventory.CharacterInventory
-import org.qbrp.main.engine.players.inventory.hand.ItemCarrier
+import org.qbrp.main.engine.players.inventory.ItemCarrier
 
 class PlayerInteractionsTest: TestEnv() {
     private lateinit var componentRegistry: ComponentRegistry

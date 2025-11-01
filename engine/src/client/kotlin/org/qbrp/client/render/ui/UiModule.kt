@@ -6,50 +6,34 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.module.Module
 import org.koin.dsl.module
-import org.qbrp.client.core.mc.connection.event.ConnectEvent
-import org.qbrp.client.core.mc.connection.event.DisconnectEvent
+import org.qbrp.client.core.mc.connection.DisconnectEvent
 import org.qbrp.client.core.mouse.MouseState
 import org.qbrp.client.core.mouse.events.MouseClickEvent
 import org.qbrp.client.core.mouse.events.MouseDraggedEvent
 import org.qbrp.client.core.mouse.events.MouseReleasedEvent
-import org.qbrp.client.render.dataformats.vec2
 import org.qbrp.client.render.screen.event.ScreenRenderPipeline
-import org.qbrp.client.render.text.render.model.TextComponentRenderer
-import org.qbrp.client.render.text.render.model.TextComponentRendererRegistry
-import org.qbrp.client.render.text.render.model.TextRenderer
 import org.qbrp.client.render.ui.components.behaviour.MouseClickedOutView
 import org.qbrp.client.render.ui.components.layout.Anchors
-import org.qbrp.client.render.ui.components.text.Text
-import org.qbrp.client.render.ui.components.texture.Background
-import org.qbrp.client.render.ui.components.transform.Pivot
 import org.qbrp.client.render.ui.components.transform.RectTransform
 import org.qbrp.client.render.ui.components.transform.RootLayout
-import org.qbrp.client.render.ui.dsl.buildView
-import org.qbrp.client.render.ui.dsl.finish
 import org.qbrp.client.render.ui.view.Screen
 import org.qbrp.client.render.ui.view.ScreenEventHandler
-import org.qbrp.client.render.ui.view.View
 import org.qbrp.client.render.ui.view.ViewManager
 import org.qbrp.client.render.ui.view.event.UiEventListener
 import org.qbrp.client.render.window.Window
 import org.qbrp.client.render.window.WindowResizeEvent
 import org.qbrp.main.core.components.ComponentRegistrar
 import org.qbrp.main.core.components.extensions.add
-import org.qbrp.main.core.events.EventContext
-import org.qbrp.main.core.events.EventId
 import org.qbrp.main.core.events.EventType
 import org.qbrp.main.core.events.on
-import org.qbrp.main.core.events.withEventContext
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.EngineModule
-import org.qbrp.main.engine.Colors
-import org.qbrp.main.engine.text.literal
 
 @Autoload(6, env = EnvType.CLIENT)
 class UiModule: EngineModule("ui") {
     override fun getKoinModule(): Module = module {
         single { Screen() }
-        single { ViewManager(get(), get(), get(), get()) }
+        single { ViewManager(get(), get(), get()) }
         single {
             UiContext(
                 get(),
@@ -70,14 +54,12 @@ class UiModule: EngineModule("ui") {
         UiComponentRegistrar(get<ComponentRegistrar>()).registerAll()
         instantiateScreenView(get())
 
-        withEventContext {
-            with(get<UiContext>()) {
-                registerEvents()
-            }
+        with(get<UiContext>()) {
+            registerEvents()
         }
     }
 
-    context(ctx: EventContext, ui: UiContext)
+    context(ui: UiContext)
     private fun registerEvents() {
         val viewManager = get<ViewManager>()
         val screen = get<Screen>()
@@ -90,9 +72,9 @@ class UiModule: EngineModule("ui") {
         on<MouseClickEvent, Boolean> { viewManager.mouseClicked(pos, button) }
         on<MouseDraggedEvent, Boolean> { viewManager.mouseDragged(pos); true }
         on<MouseReleasedEvent, Boolean> { viewManager.mouseReleased(pos, button) }
-        ctx.eventBus.subscribe(
-            UiEventListener<MouseClickedOutView, MouseClickEvent, Boolean>(
-                EventType(EventId.ofKclass(MouseClickEvent::class)),
+        on(
+            UiEventListener(
+                EventType<MouseClickEvent, Collection<Boolean>>(),
                 5,
                 ScreenEventHandler(
                     screen,

@@ -1,6 +1,6 @@
 package org.qbrp.main.engine.controls.model.inspect
 
-import org.qbrp.main.core.utils.format.Format.formatMm
+import org.qbrp.main.core.util.format.Format.formatMm
 import org.qbrp.main.engine.controls.dsl.finish
 import org.qbrp.main.engine.controls.dsl.interaction
 import org.qbrp.main.engine.controls.entity.InteractableTypes

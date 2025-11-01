@@ -1,17 +1,14 @@
 package org.qbrp.main.engine.controls.model.player
 
 import org.qbrp.main.core.components.extensions.require
-import org.qbrp.main.core.dataformats.StringId
-import org.qbrp.main.engine.Colors
+import org.qbrp.main.core.util.StringId
 import org.qbrp.main.engine.controls.entity.InteractableTypes
 import org.qbrp.main.engine.controls.entity.display.InteractionIcon
-import org.qbrp.main.engine.controls.entity.display.InteractableName
 import org.qbrp.main.engine.controls.entity.display.InteractableViewData
 import org.qbrp.main.engine.controls.entity.interactable.AnyInteractableType
 import org.qbrp.main.engine.players.model.ServerPlayerObject
-import org.qbrp.main.engine.text.components.MiniMessageTextComponent
 import org.qbrp.main.engine.text.miniMessage
-import org.qbrp.main.mechanics.characters.appearance.looks.LookManager
+import org.qbrp.main.engine.players.characters.components.LookManager
 
 class CharacterInteractableImpl(private val player: ServerPlayerObject, override val carrier: ItemCarrierInteractable,): CharacterInteractable {
     private val formattedName: String

@@ -12,8 +12,7 @@ import org.qbrp.client.render.ui.components.dataview.itemControlView
 import org.qbrp.main.engine.text.components.TextComponent
 import org.qbrp.main.engine.text.emptyText
 import org.qbrp.main.engine.text.literal
-import org.qbrp.main.mechanics.tooltip.TooltipViewData
-import javax.tools.Tool
+import org.qbrp.main.engine.tooltip.TooltipViewData
 
 @UiDsl
 context(ui: UiContext)

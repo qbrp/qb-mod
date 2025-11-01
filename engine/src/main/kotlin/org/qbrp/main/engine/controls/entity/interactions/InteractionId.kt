@@ -1,6 +1,6 @@
 package org.qbrp.main.engine.controls.entity.interactions
 
-import org.qbrp.main.core.game.IDGenerator
+import org.qbrp.main.core.util.IDGenerator
 
 @JvmInline
 value class InteractionId(val value: Long) {

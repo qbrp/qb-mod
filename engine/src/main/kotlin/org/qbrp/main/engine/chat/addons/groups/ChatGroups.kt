@@ -1,9 +1,7 @@
 package org.qbrp.main.engine.chat.addons.groups
 
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
-import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.qbrp.deprecated.resources.data.config.ConfigInitializationCallback
 import org.qbrp.deprecated.resources.data.config.ServerConfigData
@@ -17,9 +15,6 @@ import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.main.engine.chat.core.system.ChatGroup
 import org.qbrp.main.engine.chat.core.system.ChatGroupsStorage
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.info.ServerInfoAPI
-import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
-import org.qbrp.main.core.utils.networking.messages.types.ClusterListContent
 
 @Autoload(priority = 1)
 class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
@@ -54,7 +49,7 @@ class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
             val group = storage.getGroup(groupTag ?: "default")
             val author = message.author
             if (author != null) {
-                sender.addTargets(group!!.getPlayersCanSee(message.author!!))
+                sender.addTargets(group!!.getPlayersCanSee(message.getAuthorEntity()!!))
                 sender.addTarget(author)
             }
             ActionResult.PASS
@@ -88,7 +83,6 @@ class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
                 .components(sendGroup.getDefaultComponents())
             return ActionResult.PASS
         }
-        val CHAT_GROUPS_ENTRY = ClusterEntry<List<ChatGroups>>("engine.chatGroups")
     }
 
     override fun fetchGroup(message: ChatMessage): ChatGroup? {
@@ -114,14 +108,5 @@ class ChatGroups(): ChatAddon("chat-groups"), ChatGroupsAPI {
 
     private fun initGroups() {
         storage.loadGroups(config.chatGroups)
-        composeGroupsList()
     }
-
-    private fun composeGroupsList() {
-        val infoAPI = get<ServerInfoAPI>()
-        val clusterGroups = storage.getAllGroups().map { group -> group.toCluster() }
-        infoAPI.COMPOSER.component(CHAT_GROUPS_ENTRY, ClusterListContent().apply { list = clusterGroups } )
-        infoAPI.broadcast()
-    }
-
 }

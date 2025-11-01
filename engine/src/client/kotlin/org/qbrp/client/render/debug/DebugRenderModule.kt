@@ -10,9 +10,12 @@ import org.qbrp.main.core.modules.EngineModule
 @Autoload(env = EnvType.CLIENT)
 class DebugRenderModule: EngineModule("debug-render") {
     override fun getKoinModule(): Module = module {
-        factory { (worldRenderCtx: WorldRenderContext) -> DebugRenderContext(
-            worldRenderCtx.matrixStack(),
-            worldRenderCtx.consumers()!!,
-            worldRenderCtx.camera()) }
+        factory { (worldRenderCtx: WorldRenderContext) ->
+            DebugRenderContext(
+                worldRenderCtx.matrixStack(),
+                worldRenderCtx.consumers()!!,
+                worldRenderCtx.camera()
+            )
+        }
     }
 }

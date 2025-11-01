@@ -1,8 +1,6 @@
 package org.qbrp.main.core.regions
 
 import net.minecraft.util.math.Vec3d
-import org.qbrp.main.core.regions.model.Cuboid
-import org.qbrp.main.core.regions.model.Region
 
 interface RegionsAPI {
     val regions: Collection<Region>

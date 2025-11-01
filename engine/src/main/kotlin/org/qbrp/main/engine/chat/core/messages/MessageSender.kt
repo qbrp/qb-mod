@@ -1,20 +1,21 @@
 package org.qbrp.main.engine.chat.core.messages
 
+import net.minecraft.server.MinecraftServer
 import net.minecraft.util.ActionResult
-import org.qbrp.main.core.mc.player.dataformats.Username
+import org.qbrp.main.core.fabricmc.player.Username
 import org.qbrp.main.engine.chat.core.events.MessageHandledEvent
 import org.qbrp.main.engine.chat.core.events.MessageSendEvent
 import org.qbrp.main.engine.chat.core.system.ServerChatNetworking
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import org.qbrp.main.engine.players.model.ServerPlayerObject
-import org.qbrp.main.engine.players.model.util.PlayerId
+import org.qbrp.main.core.util.PlayerId
 import java.util.concurrent.ConcurrentHashMap
 
-open class MessageSender(private val networking: ServerChatNetworking) : Sender {
+open class MessageSender(private val networking: ServerChatNetworking, private val server: MinecraftServer) : Sender {
     constructor(
         networking: ServerChatNetworking,
         list: List<ServerPlayerObject>
-    ) : this(networking) {
+    ) : this(networking, networking.server) {
         targets.putAll(list.associateBy { it.playerId })
     }
     companion object { val logger = LoggerUtil.get("chat", "sending")}
@@ -41,7 +42,13 @@ open class MessageSender(private val networking: ServerChatNetworking) : Sender 
 
     override fun send(message: ChatMessage) {
         val receivers = targets.filter {
-            MessageSendEvent.EVENT.onMessageSend(this, message.copy(), it.value, networking) == ActionResult.SUCCESS
+            MessageSendEvent.EVENT.onMessageSend(
+                this,
+                message.copy(),
+                it.value,
+                server.playerManager.getPlayer(it.value.uuid.value)!!,
+                networking
+            ) == ActionResult.SUCCESS
         }
         if (message.getTags().getComponentData<Boolean>("log") != true) {
             message.getText()

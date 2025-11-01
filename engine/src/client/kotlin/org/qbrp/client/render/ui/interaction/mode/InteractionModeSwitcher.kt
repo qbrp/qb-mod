@@ -14,7 +14,7 @@ context(ui: UiContext)
 fun noClipSwitcher(stateSupplier: () -> Boolean) = viewOf {
     background(Colors.BACKGROUND, -2f)
     anchors(1f, 1f, Pivot(1f, 1f))
-    margin(0f, 0f, 0f, 4f)
+    margin(0f, 0f, 4f, 4f)
     overlayBehaviour()
     text {
         literal("NOCLIP : ")
@@ -34,7 +34,7 @@ fun interactionModeSwitcher(modeSupplier: () -> InteractionMode) = viewOf {
     overlayBehaviour()
     background(Colors.BACKGROUND, -2f)
     anchors(1f, 1f, Pivot(1f, 1f))
-    margin(0f, 0f, 0f, 4f)
+    margin(0f, 0f, 4f, 4f)
     text {
         val mode = modeSupplier()
         literal(mode.displayName, Style.ofColor(TextColor(mode.color)))

@@ -3,7 +3,7 @@ package org.qbrp.client.render.ui.components.tooltip
 import org.qbrp.client.render.Drawable
 import org.qbrp.client.render.dataformats.vec2
 import org.qbrp.client.render.screen.context.Draw2dContext
-import org.qbrp.main.mechanics.tooltip.TooltipColorProfile
+import org.qbrp.main.engine.tooltip.TooltipColorProfile
 import org.qbrp.client.render.tooltip.render.TooltipBackgroundRenderer
 import org.qbrp.client.render.ui.components.layout.Size
 import org.qbrp.client.render.ui.components.transform.RectTransform

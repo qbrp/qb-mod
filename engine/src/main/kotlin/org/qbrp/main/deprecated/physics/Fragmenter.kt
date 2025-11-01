@@ -3,15 +3,15 @@ package org.qbrp.main.deprecated.physics
 import kotlinx.serialization.Serializable
 import net.minecraft.util.math.Vec3d
 import org.qbrp.main.core.components.serialization.DTO
-import org.qbrp.main.mechanics.items.physics.debug.DebugInfo
-import org.qbrp.main.engine.physics.PhysicsTick
-import org.qbrp.main.engine.physics.components.Fragments
-import org.qbrp.main.engine.physics.model.agent.Agent
-import org.qbrp.main.engine.physics.model.materials.MaterialProperty
-import org.qbrp.main.engine.physics.model.materials.MaterialPropertyContext
-import org.qbrp.main.engine.physics.model.reactions.Reactable
-import org.qbrp.main.engine.physics.model.reactions.ReactionContext
-import org.qbrp.main.engine.physics.environment.Environment
+import org.qbrp.main.engine.items.physics.debug.DebugInfo
+import org.qbrp.main.engine.chemistry.PhysicsTick
+import org.qbrp.main.engine.chemistry.components.Fragments
+import org.qbrp.main.engine.chemistry.agent.Agent
+import org.qbrp.main.engine.chemistry.materials.MaterialProperty
+import org.qbrp.main.engine.chemistry.materials.MaterialPropertyContext
+import org.qbrp.main.engine.chemistry.reactions.Reactable
+import org.qbrp.main.engine.chemistry.reactions.ReactionContext
+import org.qbrp.main.engine.chemistry.environment.Environment
 import kotlin.math.abs
 import kotlin.random.Random
 

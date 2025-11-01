@@ -4,11 +4,11 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.minecraft.server.network.ServerPlayerEntity
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.EngineModule
-import org.qbrp.main.core.utils.networking.messages.Messages.HANDLE_VERSION
-import org.qbrp.main.core.utils.networking.messages.types.StringContent
-import org.qbrp.main.core.utils.networking.messaging.ServerReceiver
-import org.qbrp.main.core.utils.networking.messaging.ServerReceiverContext
-import org.qbrp.main.core.utils.format.Format.formatMm
+import org.qbrp.main.core.util.networking.messages.Messages.HANDLE_VERSION
+import org.qbrp.main.core.util.networking.messages.types.StringContent
+import org.qbrp.main.core.util.networking.messaging.ServerReceiver
+import org.qbrp.main.core.util.networking.messaging.ServerReceiverContext
+import org.qbrp.main.core.util.format.Format.formatMm
 import org.qbrp.main.core.versions.VersionsUtil.getVersion
 import java.util.Timer
 import java.util.TimerTask

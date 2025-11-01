@@ -8,7 +8,7 @@ import org.litote.kmongo.coroutine.CoroutineClient
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.reactivestreams.*
 import org.litote.kmongo.coroutine.coroutine
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 
 class CoroutineDatabaseClient(private val url: String): DatabaseClient<CoroutineDatabase> {
     private var connected: Boolean = false

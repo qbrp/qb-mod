@@ -1,9 +1,7 @@
 package org.qbrp.main.engine.chat.addons
 
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
-import org.qbrp.main.engine.chat.core.messages.ChatMessageTagsBuilder
-import org.qbrp.main.core.utils.networking.messages.components.ClusterBuilder
-import org.qbrp.main.core.utils.networking.messages.components.Component
+import org.qbrp.main.core.util.networking.messages.components.ClusterBuilder
 
 
 class MessageIcon(val type: String, val color: Int, val text: String) {

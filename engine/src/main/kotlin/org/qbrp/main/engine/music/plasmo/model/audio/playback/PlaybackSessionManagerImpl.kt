@@ -9,7 +9,7 @@ import org.qbrp.main.engine.music.plasmo.model.audio.Playable
 import org.qbrp.main.engine.music.plasmo.model.audio.Queue
 import org.qbrp.main.engine.music.plasmo.model.audio.Track
 import org.qbrp.main.engine.music.plasmo.playback.player.VoicePlayerState
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import su.plo.voice.api.server.PlasmoVoiceServer
 import su.plo.voice.api.server.player.VoicePlayer
 import su.plo.voice.api.server.player.VoiceServerPlayer

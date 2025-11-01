@@ -1,8 +1,7 @@
 package org.qbrp.main.engine.controls.entity.display
 
-import org.qbrp.main.engine.controls.entity.interactable.AnyInteractableType
 import org.qbrp.main.engine.text.components.TextComponent
-import org.qbrp.main.mechanics.tooltip.component.TooltipComponent
+import org.qbrp.main.engine.tooltip.component.TooltipComponent
 
 data class InteractionViewNode(
     val interaction: InteractionIdentity?,

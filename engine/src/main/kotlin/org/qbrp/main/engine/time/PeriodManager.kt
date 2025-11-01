@@ -2,7 +2,7 @@ package org.qbrp.main.engine.time
 
 import org.koin.core.component.KoinComponent
 import org.qbrp.main.engine.time.config.TimeConfig
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 
 class PeriodManager(
     private val worldTimeManager: WorldTimeManager,

@@ -1,7 +1,6 @@
 package org.qbrp.client.render.text.render.model
 
-import org.qbrp.main.core.mc.text.RenderableText
-import org.qbrp.main.engine.text.components.TextComponent
+import org.qbrp.main.core.fabricmc.text.RenderableText
 import kotlin.reflect.KClass
 
 interface TextComponentRendererRegistry {

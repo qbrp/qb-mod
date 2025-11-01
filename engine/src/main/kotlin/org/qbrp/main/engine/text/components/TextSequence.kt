@@ -1,6 +1,6 @@
 package org.qbrp.main.engine.text.components
 
-import org.qbrp.main.engine.players.model.context.PlayerContext
+import org.qbrp.main.engine.players.model.PlayerContext
 import org.qbrp.main.engine.text.style.Style
 import org.qbrp.main.engine.text.components.TextComponent
 

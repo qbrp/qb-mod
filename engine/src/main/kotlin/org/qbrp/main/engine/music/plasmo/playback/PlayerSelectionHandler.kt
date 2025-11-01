@@ -6,7 +6,7 @@ import org.qbrp.main.engine.music.plasmo.model.audio.Playable
 import org.qbrp.main.engine.music.plasmo.model.audio.playback.PlayerSession
 import org.qbrp.main.engine.music.plasmo.model.priority.Priorities
 import org.qbrp.main.engine.music.plasmo.playback.player.MusicPlayerManager
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import java.util.Timer
 import kotlin.concurrent.fixedRateTimer
 

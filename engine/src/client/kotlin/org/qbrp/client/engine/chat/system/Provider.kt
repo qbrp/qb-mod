@@ -8,7 +8,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.math.MathHelper
 import org.qbrp.main.engine.chat.addons.MessageIcon
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
-import org.qbrp.main.core.utils.format.Format.formatMinecraft
+import org.qbrp.main.core.util.format.Format.formatMinecraft
 
 interface Provider {
     fun provide(storage: MessageStorage): MutableList<ChatHudLine.Visible>

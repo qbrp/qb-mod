@@ -1,7 +1,7 @@
 package org.qbrp.main.engine.controls.model.container.condition
 
 import org.qbrp.main.engine.containers.util.ContainerId
-import org.qbrp.main.engine.containers.v2.api.ContainerService
+import org.qbrp.main.engine.containers.api.ContainerService
 import org.qbrp.main.engine.controls.entity.conditions.AvailableResult
 import org.qbrp.main.engine.controls.entity.conditions.Condition
 import org.qbrp.main.engine.controls.entity.interactable.Interactable

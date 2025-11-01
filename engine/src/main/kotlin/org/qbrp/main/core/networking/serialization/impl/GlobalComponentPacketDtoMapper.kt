@@ -11,10 +11,9 @@ import org.qbrp.main.core.networking.serialization.mapping.SerializerKeyRegistry
 import org.qbrp.main.core.networking.serialization.mapping.ctx.ComponentPacketDtoMapper
 import org.qbrp.main.core.networking.serialization.mapping.ctx.ContextualFromDtoStrategy
 import org.qbrp.main.core.networking.serialization.mapping.ctx.ContextualToDtoStrategy
-import org.qbrp.main.core.networking.synchronization.DtoSyncComponentListener
 import kotlin.reflect.KClass
 
-class GlobalComponentPacketDtoMapper: ComponentPacketDtoMapper<DTO, Any, ComponentManager>, ComponentPacketDtoMapperRegistry, SerializerKeyRegistry, DtoSyncComponentListener<DTO, AnyComponent> {
+class GlobalComponentPacketDtoMapper: ComponentPacketDtoMapper<DTO, Any, ComponentManager>, ComponentPacketDtoMapperRegistry, SerializerKeyRegistry {
     private val toDtoMap = mutableMapOf<KClass<*>, ContextualToDtoStrategy<*, *, ComponentDtoMappingContext<*>>>()
     private val fromDtoMap = mutableMapOf<KClass<out DTO>, ContextualFromDtoStrategy<*, *,  ComponentDtoMappingContext<*>>>()
 
@@ -57,13 +56,5 @@ class GlobalComponentPacketDtoMapper: ComponentPacketDtoMapper<DTO, Any, Compone
     override fun getSerializerKeyNull(obj: Any): SerializerRegistryId? {
         val mapper = toDtoMap[obj::class]
         return (mapper as? DtoSerializable)?.serializerRegistryId
-    }
-
-    override fun componentExists(
-        dto: DTO,
-        component: AnyComponent
-    ) {
-        val mapper = fromDtoMap[dto::class] ?: toDtoMap[component::class] ?: error("No mapper registered for ${component::class.simpleName}")
-        (mapper as? DtoSyncComponentListener<DTO, AnyComponent>)?.componentExists(dto, component)
     }
 }

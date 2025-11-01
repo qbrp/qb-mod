@@ -7,8 +7,8 @@ import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.client.engine.chat.system.logs.ChatData.MessageDTO
 import org.qbrp.client.engine.chat.system.events.MessageAddedEvent
 import org.qbrp.client.engine.chat.system.logs.ChatLogger
-import org.qbrp.main.core.utils.format.Format.formatMm
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.format.Format.formatMm
+import org.qbrp.main.core.util.log.LoggerUtil
 import java.util.concurrent.CopyOnWriteArrayList
 
 class MessageStorage(val chatLogger: ChatLogger) {

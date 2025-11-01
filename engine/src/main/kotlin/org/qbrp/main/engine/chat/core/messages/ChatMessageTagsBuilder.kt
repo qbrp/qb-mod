@@ -1,8 +1,8 @@
 package org.qbrp.main.engine.chat.core.messages
 
 import org.qbrp.main.engine.chat.addons.tools.MessageTextTools
-import org.qbrp.main.core.utils.networking.messages.components.ClusterBuilder
-import org.qbrp.main.core.utils.networking.messages.types.StringContent
+import org.qbrp.main.core.util.networking.messages.components.ClusterBuilder
+import org.qbrp.main.core.util.networking.messages.types.StringContent
 
 class ChatMessageTagsBuilder(): ClusterBuilder() {
 

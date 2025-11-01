@@ -1,40 +1,35 @@
 package org.qbrp.main.engine.players.inventory.serialization
 
-import org.qbrp.main.core.components.extensions.require
 import org.qbrp.main.core.components.serialization.map.ComponentMapContext
 import org.qbrp.main.core.networking.serialization.SerializerRegistryId
 import org.qbrp.main.core.networking.serialization.mapping.DtoSerializable
 import org.qbrp.main.core.networking.serialization.mapping.ctx.ContextualDtoMapper
-import org.qbrp.main.engine.containers.v2.api.ContainerService
-import org.qbrp.main.engine.containers.v2.components.Container
-import org.qbrp.main.engine.containers.v2.components.ContainerAnchor
-import org.qbrp.main.engine.containers.v2.serialization.ContainerAnchorMapper
-import org.qbrp.main.engine.containers.v2.serialization.ContainerDto
-import org.qbrp.main.engine.containers.v2.serialization.containerToDto
-import org.qbrp.main.engine.physics.dynamics.manipulate.Manipulator
-import org.qbrp.main.engine.players.characters.entity.CharacterProfile
+import org.qbrp.main.engine.containers.api.ContainerService
+import org.qbrp.main.engine.containers.components.Container
+import org.qbrp.main.engine.containers.serialization.ContainerAnchorMapper
+import org.qbrp.main.engine.containers.serialization.ContainerDto
+import org.qbrp.main.engine.containers.serialization.containerToDto
+import org.qbrp.main.engine.containers.serialization.loadContainer
+import org.qbrp.main.engine.physics.system.service.ManipulatorSystem
+import org.qbrp.main.engine.players.characters.CharacterRecord
 import org.qbrp.main.engine.players.inventory.CharacterInventory
-import org.qbrp.main.engine.players.inventory.components.CharacterContainer
-import org.qbrp.main.engine.players.inventory.hand.Hand
+import org.qbrp.main.engine.players.inventory.CharacterInventoryContainers
+import org.qbrp.main.engine.players.inventory.CharacterContainer
 
 class CharacterInventoryMapper(
     private val containerService: ContainerService,
-    private val manipulator: Manipulator
+    private val manipulator: ManipulatorSystem
 ) : ContextualDtoMapper<CharacterInventoryDto, CharacterInventory, ComponentMapContext>, DtoSerializable {
     override val serializerRegistryId: SerializerRegistryId = SerializerRegistryId.ofComponent("CharacterInventory")
-
-    fun ContainerAnchor.toDto(side: Hand.Side): HandDto {
-        return HandDto(side, containerService.getItems(id).map { it.id })
-    }
 
     override fun toDto(
         obj: CharacterInventory,
         ctx: ComponentMapContext
     ): CharacterInventoryDto {
         return CharacterInventoryDto(
-            obj.leftHand.toDto(Hand.Side.LEFT),
-            obj.rightHand.toDto(Hand.Side.RIGHT),
-            containerToDto(obj.equipment.container, containerService)
+            containerToDto(obj.leftHand.id, containerService),
+            containerToDto(obj.rightHand.id, containerService),
+            containerToDto(obj.equipment, containerService)
         )
     }
 
@@ -42,8 +37,13 @@ class CharacterInventoryMapper(
         dto: CharacterInventoryDto,
         ctx: ComponentMapContext
     ): CharacterInventory {
-        val profile = ctx.state as CharacterProfile
-        return CharacterInventory(profile.ctx, containerService, ctx.state.require())
+        val profile = ctx.state as CharacterRecord
+        val containers = CharacterInventoryContainers(
+            loadContainer(dto.equipment, containerService),
+            loadContainer(dto.lHand, containerService),
+            loadContainer(dto.rHand, containerService)
+        )
+        return CharacterInventory(profile.ctx, containers, containerService)
     }
 }
 
@@ -54,7 +54,7 @@ class CharacterContainerMapper(
         dto: ContainerDto,
         ctx: ComponentMapContext
     ): CharacterContainer {
-        val profile = ctx.state as CharacterProfile
+        val profile = ctx.state as CharacterRecord
         return CharacterContainer(profile.ctx, containerAnchorMapper.fromDto(dto, ctx).id)
     }
 

@@ -14,8 +14,8 @@ import org.qbrp.deprecated.annotations.Command
 import org.qbrp.deprecated.annotations.Execute
 import org.qbrp.deprecated.annotations.Provider
 import org.qbrp.deprecated.annotations.SubCommand
-import org.qbrp.main.core.mc.commands.CommandRegistryEntry
-import org.qbrp.main.core.utils.format.Format.formatMm
+import org.qbrp.main.core.fabricmc.commands.CommandRegistryEntry
+import org.qbrp.main.core.util.format.Format.formatMm
 import org.qbrp.main.engine.music.plasmo.MusicStorage
 import org.qbrp.main.engine.music.plasmo.view.LinkClickableButton
 import org.qbrp.main.engine.music.plasmo.view.MusicViewCommand

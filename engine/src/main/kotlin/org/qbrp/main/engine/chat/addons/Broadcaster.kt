@@ -12,7 +12,7 @@ import org.qbrp.main.engine.chat.addons.groups.ChatGroupsAPI
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.main.engine.chat.core.system.ChatGroup
 import org.qbrp.main.core.modules.Autoload
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import org.qbrp.main.engine.players.model.ServerPlayerObject
 import org.qbrp.main.engine.players.model.service.ServerPlayerStorage
 

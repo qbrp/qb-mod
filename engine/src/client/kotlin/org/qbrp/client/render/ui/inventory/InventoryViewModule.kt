@@ -4,13 +4,12 @@ import net.fabricmc.api.EnvType
 import org.koin.core.component.get
 import org.koin.core.module.Module
 import org.koin.dsl.module
-import org.qbrp.client.core.mc.connection.event.DisconnectEvent
-import org.qbrp.client.engine.interactions.ClientInteractionsModule
+import org.qbrp.client.controls.INVENTORY_SELECT
+import org.qbrp.client.controls.ITEM_SELECT
+import org.qbrp.client.core.mc.connection.DisconnectEvent
 import org.qbrp.client.engine.inventory.events.InventoryCloseEvent
 import org.qbrp.client.engine.inventory.events.InventoryOpenEvent
 import org.qbrp.client.render.ui.inventory.components.SlotGrid
-import org.qbrp.client.render.ui.interaction.event.InventorySelection
-import org.qbrp.client.render.ui.interaction.event.InventorySelectionCallback
 import org.qbrp.client.render.ui.interaction.event.ItemSelectionListener
 import org.qbrp.client.render.ui.inventory.components.ExecuteInteractionClickListener
 import org.qbrp.client.render.ui.inventory.components.ShowTooltipSlotHoverListener
@@ -20,7 +19,6 @@ import org.qbrp.client.render.ui.view.ScreenEventHandler
 import org.qbrp.client.render.ui.withUiContext
 import org.qbrp.main.core.events.EventBus
 import org.qbrp.main.core.events.on
-import org.qbrp.main.core.mc.server.context.withCoreContext
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.EngineModule
 
@@ -40,7 +38,7 @@ class InventoryViewModule: EngineModule("inventory-render") {
         }
     }
 
-    override fun onEnable() = withCoreContext {
+    override fun onEnable() {
         val inventories = get<InventoryViewManager>()
         withUiContext {
             on<InventoryOpenEvent> { inventories.onOpen(containers, screenCorner) }
@@ -50,12 +48,13 @@ class InventoryViewModule: EngineModule("inventory-render") {
 
         get<EventBus>().subscribe(
             ItemSelectionListener(
-                ClientInteractionsModule.ITEM_SELECT,
+                ITEM_SELECT,
                 ScreenEventHandler(
                     get(),
-                    SlotGrid::class) { component, event -> component }
+                    SlotGrid::class
+                ) { component, event -> component }
             )
         )
-        on<InventorySelectionCallback, InventorySelection>(ClientInteractionsModule.INVENTORY_SELECT) { inventories }
+        on(INVENTORY_SELECT) { inventories }
     }
 }

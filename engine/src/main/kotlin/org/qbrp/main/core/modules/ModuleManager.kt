@@ -9,12 +9,10 @@ import org.qbrp.main.ApplicationLoader
 import org.qbrp.main.core.assets.FileSystem
 import org.qbrp.main.core.events.EventBus
 import org.qbrp.main.core.events.on
-import org.qbrp.main.core.events.withEventContext
-import org.qbrp.main.core.utils.log.InformationMessage
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.InformationMessage
+import org.qbrp.main.core.util.log.LoggerUtil
 import org.qbrp.main.engine.ModLoadedEvent
 import org.reflections.Reflections
-import kotlin.reflect.KClass
 
 open class ModuleManager(open val ignoreEnvironment: Boolean = false): KoinComponent {
     val modules: MutableList<EngineModule> = ArrayList()

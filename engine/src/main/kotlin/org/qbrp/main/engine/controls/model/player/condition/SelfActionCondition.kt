@@ -10,7 +10,7 @@ import org.qbrp.main.engine.players.model.ServerPlayerObject
 
 class SelfActionCondition: Condition<PlayerInteractable, PlayerInteractable> {
     override fun isAvailable(sub: PlayerInteractable, obj: PlayerInteractable, ctx: InteractionContext): AvailableResult {
-        val self = sub.session.playerId == obj.session.playerId
+        val self = sub.playerId == obj.playerId
         return when(self) {
             true -> AvailableResult.Yes
             false -> AvailableResult.No("Действия можно применить только по отношению к самому себе")

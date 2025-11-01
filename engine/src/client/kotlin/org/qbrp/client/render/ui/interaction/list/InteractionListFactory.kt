@@ -2,7 +2,7 @@ package org.qbrp.client.render.ui.interaction.list
 
 import org.qbrp.client.core.EngineId
 import org.qbrp.client.core.mouse.MouseState
-import org.qbrp.client.engine.interactions.service.ClientInteractionManager
+import org.qbrp.client.controls.ClientInteractionManager
 import org.qbrp.client.render.ui.UiContext
 import org.qbrp.client.render.ui.components.behaviour.CloseListener
 import org.qbrp.client.render.ui.components.behaviour.CloseOn
@@ -30,10 +30,10 @@ import org.qbrp.main.engine.controls.entity.display.InteractionViewNode
 import org.qbrp.main.engine.text.literal
 import org.qbrp.main.engine.text.style.Style
 import org.qbrp.main.engine.text.style.TextColor
-import org.qbrp.main.mechanics.tooltip.TooltipColorProfile
-import org.qbrp.main.mechanics.tooltip.TooltipViewData
-import org.qbrp.main.mechanics.tooltip.component.PlainTextTooltipComponent
-import org.qbrp.main.mechanics.tooltip.component.TooltipComponent
+import org.qbrp.main.engine.tooltip.TooltipColorProfile
+import org.qbrp.main.engine.tooltip.TooltipViewData
+import org.qbrp.main.engine.tooltip.component.PlainTextTooltipComponent
+import org.qbrp.main.engine.tooltip.component.TooltipComponent
 
 class InteractionListFactory(
     private val interactionManager: ClientInteractionManager,

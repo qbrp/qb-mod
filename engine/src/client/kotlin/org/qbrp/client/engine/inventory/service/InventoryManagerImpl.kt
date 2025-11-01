@@ -1,22 +1,18 @@
 package org.qbrp.client.engine.inventory.service
 
-import org.qbrp.client.core.networking.v2.ClientPacketSender
 import org.qbrp.client.engine.inventory.events.InventoryCloseEvent
 import org.qbrp.client.engine.inventory.events.InventoryOpenEvent
 import org.qbrp.client.engine.inventory.model.ClientContainerState
 import org.qbrp.client.engine.inventory.model.InventoryDefinition
-import org.qbrp.client.engine.inventory.networking.requestSync
-import org.qbrp.main.engine.inventory.entity.InventoryParams
-import org.qbrp.main.core.events.EventContext
 import org.qbrp.main.core.events.emit
 import org.qbrp.main.engine.containers.util.ContainerId
-import org.qbrp.main.engine.inventory.entity.ScreenCorner
+import org.qbrp.main.network.inventory.ScreenCorner
 
-class InventoryManagerImpl(private val events: EventContext, private val packetSender: ClientPacketSender): InventoryManager {
+class InventoryManagerImpl : InventoryManager {
     override val openContainers: List<ClientContainerState> get() = containersMap.values.toList()
     private val containersMap: MutableMap<ContainerId, ClientContainerState> = HashMap()
 
-    override fun openGroup(definitions: List<InventoryDefinition>, corner: ScreenCorner) = with(events) {
+    override fun openGroup(definitions: List<InventoryDefinition>, corner: ScreenCorner) {
         val added = definitions.filter { open(it.container) }
         if (added.isNotEmpty()) InventoryOpenEvent(added, corner).emit()
     }
@@ -25,11 +21,10 @@ class InventoryManagerImpl(private val events: EventContext, private val packetS
         val id = containerState.id
         if (containersMap.containsKey(id)) return false
         containersMap[id] = containerState
-        containerState.requestSync(packetSender)
         return true
     }
 
-    override fun close(id: ContainerId): Unit = with(events) {
+    override fun close(id: ContainerId) {
         emitClose(id)?.let { container ->
             InventoryCloseEvent(container).emit()
         }

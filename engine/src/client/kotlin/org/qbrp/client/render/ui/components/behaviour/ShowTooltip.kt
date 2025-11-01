@@ -2,7 +2,7 @@ package org.qbrp.client.render.ui.components.behaviour
 
 import org.qbrp.client.render.screen.context.Draw2dContext
 import org.qbrp.client.render.ui.UiContext
-import org.qbrp.main.mechanics.tooltip.TooltipViewData
+import org.qbrp.main.engine.tooltip.TooltipViewData
 import org.qbrp.client.render.ui.components.tooltip.TooltipManager
 import org.qbrp.client.render.ui.view.View
 import org.qbrp.client.render.ui.view.ViewComponent

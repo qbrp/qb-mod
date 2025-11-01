@@ -1,7 +1,6 @@
 package org.qbrp.main.core.regions
 
 import net.minecraft.util.math.BlockPos
-import org.qbrp.main.core.regions.model.Cuboid
 
 data class Selection(val firstPos: BlockPos? = null, val secondPos: BlockPos? = null) {
     fun isComplete(): Boolean = firstPos != null && secondPos != null

@@ -1,12 +1,12 @@
 import kotlinx.coroutines.*
 import net.minecraft.util.ActionResult
-import org.qbrp.main.core.mc.player.permission.Permission
-import org.qbrp.main.core.mc.player.hasPermission
+import org.qbrp.main.core.fabricmc.player.Permission
+import org.qbrp.main.core.fabricmc.player.hasPermission
 import org.qbrp.main.engine.chat.ChatAddon
 import org.qbrp.main.engine.chat.core.events.MessageReceivedEvent
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.Priorities
-import org.qbrp.main.engine.players.model.util.PlayerId
+import org.qbrp.main.core.util.PlayerId
 import java.util.concurrent.ConcurrentHashMap
 
 @Autoload(Priorities.ADDON)

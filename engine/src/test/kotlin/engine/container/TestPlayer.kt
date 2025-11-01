@@ -4,11 +4,11 @@ import org.qbrp.main.core.game.IDGenerator
 import org.qbrp.main.core.mc.player.dataformats.MinecraftPlayerId
 import org.qbrp.main.core.mc.player.dataformats.Username
 import org.qbrp.main.engine.players.accounts.Account
-import org.qbrp.main.engine.players.auth.SessionData
+import org.qbrp.main.network.player.ConnectionSession
 import org.qbrp.main.engine.players.model.PlayerStateImpl
 import org.qbrp.main.engine.players.model.ServerPlayerObject
-import org.qbrp.main.engine.players.model.context.PlayerContext
-import org.qbrp.main.engine.players.model.util.PlayerId
+import org.qbrp.main.engine.players.model.PlayerContext
+import org.qbrp.main.core.util.PlayerId
 import java.util.UUID
 
 class TestPlayer(context: PlayerContext, minecraftPlayerId: MinecraftPlayerId, id: PlayerId = PlayerId(IDGenerator.nextIdStr())): ServerPlayerObject(
@@ -16,7 +16,7 @@ class TestPlayer(context: PlayerContext, minecraftPlayerId: MinecraftPlayerId, i
     minecraftPlayerId,
     USERNAME,
     Account("test", id.value),
-    SessionData(UUID.randomUUID(), id),
+    ConnectionSession(UUID.randomUUID(), id),
     state = PlayerStateImpl()
 ) {
     companion object {

@@ -10,9 +10,8 @@ import org.qbrp.main.core.modules.EngineModule
 @Autoload(Priorities.HIGHEST + 1, both = true)
 class EventsModule: EngineModule("events") {
     override fun getKoinModule(): Module = module {
-        single<EventBus> { EventManager() }
+        single<EventBus> { GlobalEventContext.eventBus }
         single<EventSupportersStorage> { EventSupportersStorage() }
-        single { DefaultEventContext(get(), get()) }
-        single<EventContext> { get<DefaultEventContext>() }
+        single<EventContext> { GlobalEventContext }
     }
 }

@@ -1,9 +1,7 @@
 package org.qbrp.main.engine.chat.addons.tools
 
-import net.minecraft.util.ActionResult
-import org.qbrp.main.engine.chat.core.events.MessageUpdateEvent
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
-import org.qbrp.main.core.utils.networking.messages.types.StringContent
+import org.qbrp.main.core.util.networking.messages.types.StringContent
 
 object MessageTextTools {
 

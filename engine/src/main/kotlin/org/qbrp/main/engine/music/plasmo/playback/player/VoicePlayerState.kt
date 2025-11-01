@@ -2,7 +2,7 @@ package org.qbrp.main.engine.music.plasmo.playback.player
 
 import net.minecraft.server.network.ServerPlayerEntity
 import org.qbrp.main.engine.music.plasmo.model.audio.Playable
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import su.plo.voice.api.server.PlasmoVoiceServer
 
 class VoicePlayerState(voiceServer: PlasmoVoiceServer, val player: ServerPlayerEntity) {

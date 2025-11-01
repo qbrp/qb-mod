@@ -9,25 +9,18 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.Vec3d
 import org.koin.core.component.get
-import org.qbrp.main.core.regions.model.Cuboid
-import org.qbrp.main.core.regions.model.Region
+import org.koin.dsl.module
 import org.qbrp.main.core.Core
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.EngineModule
-import org.qbrp.main.core.regions.commands.RegionCommands
 import org.qbrp.main.core.storage.TableRegistry
 import org.qbrp.main.core.storage.Table
-import org.qbrp.main.core.utils.log.LoggerUtil
-import org.qbrp.main.core.mc.commands.CommandsAPI
+import org.qbrp.main.core.util.log.LoggerUtil
+import org.qbrp.main.core.fabricmc.commands.CommandsAPI
 
 @Autoload(env = EnvType.SERVER)
-class RegionsModule(): EngineModule("regions"), RegionsAPI {
+class RegionsModule : EngineModule("regions"), RegionsAPI {
     override val regions = mutableListOf<Region>()
-    companion object {
-        const val TABLE_NAME = "regions"
-        private val JSON = Json { ignoreUnknownKeys = true }
-    }
-
     private val logger = LoggerUtil.get("regions")
     private lateinit var storage: Table
 
@@ -35,14 +28,14 @@ class RegionsModule(): EngineModule("regions"), RegionsAPI {
         dependsOn { Core.isApiAvailable<TableRegistry>() }
     }
 
-    override fun getKoinModule() = inner<RegionsAPI>(this) {
-        scoped { RegionSelection() }
+    override fun getKoinModule() = module {
+        single { RegionSelection() }
+        single<RegionsAPI> { this@RegionsModule }
     }
 
     override fun onEnable() {
         storage = get<TableRegistry>().getTable(TABLE_NAME)
         loadRegions()
-        get<CommandsAPI>().add(RegionCommands(this, getLocal()))
         UseBlockCallback.EVENT.register(UseBlockCallback { player, world, hand, hitResult ->
             getLocal<RegionSelection>().handleInteraction(player as ServerPlayerEntity, hand, hitResult)
             ActionResult.PASS
@@ -81,5 +74,10 @@ class RegionsModule(): EngineModule("regions"), RegionsAPI {
 
     override fun getRegion(name: String): Region? {
         return regions.find { it.name == name }
+    }
+
+    companion object {
+        const val TABLE_NAME = "regions"
+        private val JSON = Json { ignoreUnknownKeys = true }
     }
 }

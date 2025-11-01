@@ -6,7 +6,6 @@ import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.math.Vec3d
 import org.qbrp.client.render.props.simple
-import org.qbrp.main.engine.physics.dynamics.dataformats.engine
 
 class DebugRenderContext(val matrixStack: MatrixStack, val vertexConsumer: VertexConsumerProvider, val camera: Camera) {
     fun renderDot(pos: Vec3d, size: Float) {

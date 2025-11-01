@@ -19,12 +19,12 @@ import org.qbrp.main.core.assets.common.references.YamlFileReference
 import org.qbrp.deprecated.resources.data.config.ServerConfigData
 import org.qbrp.main.ApplicationLoader
 import org.qbrp.main.core.events.EventEnv
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import org.qbrp.main.engine.Engine
-import org.qbrp.main.core.utils.networking.messages.Message
-import org.qbrp.main.core.utils.networking.messages.Messages
-import org.qbrp.main.core.utils.networking.messages.types.BooleanContent
-import org.qbrp.main.core.utils.networking.messaging.NetworkUtil
+import org.qbrp.main.core.util.networking.messages.Message
+import org.qbrp.main.core.util.networking.messages.Messages
+import org.qbrp.main.core.util.networking.messages.types.BooleanContent
+import org.qbrp.main.core.util.networking.messaging.NetworkUtil
 
 abstract class EngineModule(private val name: String) : KoinComponent, EventEnv {
     var priority: Int = 5

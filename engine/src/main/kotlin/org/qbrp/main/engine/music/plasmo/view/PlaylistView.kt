@@ -4,7 +4,7 @@ import net.minecraft.text.ClickEvent
 import net.minecraft.text.Text
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.qbrp.main.core.utils.format.Format.formatMm
+import org.qbrp.main.core.util.format.Format.formatMm
 import org.qbrp.main.engine.music.plasmo.ClickableButton
 import org.qbrp.main.engine.music.plasmo.MusicStorage
 import org.qbrp.main.engine.music.plasmo.model.audio.Playable

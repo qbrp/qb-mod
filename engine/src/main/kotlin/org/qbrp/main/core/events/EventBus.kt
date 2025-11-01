@@ -6,5 +6,5 @@ import kotlin.reflect.KClass
 interface EventBus {
     fun subscribe(listener: AnyListener)
     fun unsubscribe(listener: AnyListener)
-    suspend fun <E: Any, R: Any> emit(type: EventType<E>, event: E, resultClass: KClass<R>): Collection<R>
+    fun <E : Event, R: Any> emit(type: EventType<E, R>, event: E): Collection<R>
 }

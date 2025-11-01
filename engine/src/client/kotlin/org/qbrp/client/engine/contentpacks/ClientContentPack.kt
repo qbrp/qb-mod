@@ -22,13 +22,13 @@ class ClientContentPack(path: File): ContentPack(
     }
 
     val resourcePackProfile = MinecraftClient.getInstance().resourcePackManager.getProfile(PACK_PROFILE)
-        ?: throw RuntimeException("Could not load pack")
+        ?: throw RuntimeException("Could not loadJoltJniLibrary pack")
     val name = path.name
 
     fun getPackProfileAndCopyTo(resourcePacksPath: File = FileSystem.MINECRAFT_RESOURCEPACKS): ResourcePackProfile {
         resourcePackFile.copyRecursively(resourcePacksPath.resolve(PACK_NAME), true)
         return MinecraftClient.getInstance().resourcePackManager.getProfile(PACK_PROFILE)
-            ?: throw RuntimeException("Could not load pack")
+            ?: throw RuntimeException("Could not loadJoltJniLibrary pack")
                 .also { it.printStackTrace() }
     }
 }

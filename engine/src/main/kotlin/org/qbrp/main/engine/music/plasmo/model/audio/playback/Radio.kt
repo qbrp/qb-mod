@@ -5,7 +5,7 @@ import org.qbrp.main.engine.music.plasmo.model.audio.effects.ConditionalFadeInFi
 import org.qbrp.main.engine.music.plasmo.model.audio.effects.FadeOutFilter
 import org.qbrp.main.engine.music.plasmo.playback.MusicFrameProvider
 import org.qbrp.main.engine.music.plasmo.playback.lavaplayer.AudioManager
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import su.plo.voice.api.server.PlasmoVoiceServer
 import su.plo.voice.api.server.audio.source.AudioSender
 import su.plo.voice.api.server.audio.source.ServerDirectSource

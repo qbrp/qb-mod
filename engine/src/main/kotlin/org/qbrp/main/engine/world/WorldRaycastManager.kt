@@ -1,7 +1,7 @@
 package org.qbrp.main.engine.world
 
-import org.qbrp.main.engine.world.location.Position
+import org.qbrp.main.engine.world.location.WorldPos
 
 interface WorldRaycastManager {
-     fun raycast(start: Position, end: Position, filter: RaycastFilter): RaycastResult
+     fun raycast(start: WorldPos, end: WorldPos, filter: RaycastFilter): RaycastResult
 }

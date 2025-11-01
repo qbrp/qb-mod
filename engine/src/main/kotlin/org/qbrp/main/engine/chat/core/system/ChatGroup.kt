@@ -1,18 +1,21 @@
 package org.qbrp.main.engine.chat.core.system
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import org.qbrp.main.core.mc.player.permission.Permission
-import org.qbrp.main.core.mc.player.hasPermission
-import org.qbrp.main.core.networking.getPlayersInRadius
+import net.minecraft.server.network.ServerPlayerEntity
+import org.qbrp.main.core.fabricmc.player.Permission
+import org.qbrp.main.core.fabricmc.player.hasPermission
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.main.engine.chat.core.messages.MessageComponent
-import org.qbrp.main.core.utils.networking.messages.components.ClusterBuilder
-import org.qbrp.main.core.utils.networking.messages.components.Cluster
-import org.qbrp.main.core.utils.networking.messages.components.Component
-import org.qbrp.main.core.utils.networking.messages.types.IntContent
-import org.qbrp.main.core.utils.networking.messages.types.StringContent
+import org.qbrp.main.core.util.networking.messages.components.ClusterBuilder
+import org.qbrp.main.core.util.networking.messages.components.Cluster
+import org.qbrp.main.core.util.networking.messages.components.Component
+import org.qbrp.main.core.util.networking.messages.types.IntContent
+import org.qbrp.main.core.util.networking.messages.types.StringContent
 import org.qbrp.main.engine.players.model.ServerPlayerObject
-import org.qbrp.main.engine.players.model.util.PlayerId
+import org.qbrp.main.engine.players.model.engine
+import org.qbrp.main.engine.players.model.engineOrNull
+import org.qbrp.main.engine.players.model.service.PlayersUtil.getPlayersInRadius
+import org.qbrp.main.core.util.PlayerId
 import kotlin.collections.set
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -31,7 +34,6 @@ open class ChatGroup(
     private var cooldownMap: MutableMap<PlayerId, Long>? = null
     @Transient
     var buildedComponents: List<Component>? = null
-
 
     fun buildComponents() {
         buildedComponents = components?.map { it.build() } ?: emptyList()
@@ -59,8 +61,9 @@ open class ChatGroup(
     fun playerHasWritePermission(player: ServerPlayerObject): Boolean = if (permission) player.hasPermission(Permission("chat.group.$name.write")) else true
     fun playerHasReadPermission(player: ServerPlayerObject): Boolean = if (permission)  player.hasPermission(Permission("chat.group.$name.read")) else true
 
-    open fun getPlayersCanSee(source: ServerPlayerObject): Collection<ServerPlayerObject> {
-        return listOf(source) + getPlayersInRadius(source, radius.toDouble())
+    open fun getPlayersCanSee(source: ServerPlayerEntity): Collection<ServerPlayerObject> {
+        return listOf(source.engine()) + getPlayersInRadius(source, radius.toDouble())
+            .mapNotNull { it.engineOrNull() }
             .filter { playerHasReadPermission(it) }
     }
 

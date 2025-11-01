@@ -1,6 +1,6 @@
 package org.qbrp.client.render.ui.interaction.mode
 
-import org.qbrp.client.engine.interactions.service.ClientInteractionModeManager
+import org.qbrp.client.controls.ClientInteractionModeManager
 import org.qbrp.client.render.ui.UiContext
 
 class InteractionModeViewManager(

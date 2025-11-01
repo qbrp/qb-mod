@@ -3,8 +3,7 @@ package mixin;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.text.Text;
-import org.qbrp.client.core.networking.preparation.SyncPreparationMixinAccess;
-import org.spongepowered.asm.mixin.Final;
+import org.qbrp.client.core.networking.preparation.PreparationMixinAccess;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -37,14 +36,13 @@ public abstract class DownloadingTerrainScreenMixin {
 
     @Inject(method = "setReady", at = @At("TAIL"))
     private void syncprep_onReady(CallbackInfo ci) {
-        SyncPreparationMixinAccess.INSTANCE.onReady();
         worldLoaded = true;
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void syncprep_tick(CallbackInfo ci) {
         if (!MinecraftClient.getInstance().isInSingleplayer()) {
-            this.closeOnNextTick = SyncPreparationMixinAccess.INSTANCE.isReady();
+            this.closeOnNextTick = PreparationMixinAccess.INSTANCE.isReady();
         }
     }
 }

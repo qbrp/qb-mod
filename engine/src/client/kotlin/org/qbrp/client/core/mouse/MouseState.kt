@@ -33,4 +33,12 @@ class MouseState(private val minecraftClient: MinecraftClient, private val windo
         mcMouse.updateMouse()
         mcMouse.unlockCursor()
     }
+
+    fun toggleLock() {
+        if (isLocked) {
+            unlock()
+        } else {
+            lock()
+        }
+    }
 }

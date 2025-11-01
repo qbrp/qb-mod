@@ -10,41 +10,38 @@ import org.qbrp.main.core.components.extensions.require
 import org.qbrp.main.core.components.serialization.DTO
 import org.qbrp.main.core.components.serialization.SaveListener
 import org.qbrp.main.core.components.state.ComponentHolder
-import org.qbrp.main.core.events.EventContext
 import org.qbrp.main.core.events.emit
 import org.qbrp.main.core.storage.Table
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import org.qbrp.main.engine.players.accounts.Account
 import org.qbrp.main.engine.players.accounts.AccountUpdate
-import org.qbrp.main.engine.players.characters.entity.CharacterFactory
-import org.qbrp.main.engine.players.characters.entity.CharacterFactory.Companion.createProfile
-import org.qbrp.main.engine.players.characters.entity.CharacterFactory.Companion.upsertProfile
-import org.qbrp.main.engine.players.characters.entity.CharacterProfile
-import org.qbrp.main.engine.players.characters.entity.CharacterProfileDTO
-import org.qbrp.main.engine.players.characters.events.CharacterApplyEvent
-import org.qbrp.main.engine.players.model.components.PlayerComponent
-import org.qbrp.main.engine.players.model.components.PlayerComponentInstantiateContext
-import org.qbrp.main.mechanics.characters.appearance.looks.LookManager
-import org.qbrp.main.mechanics.characters.model.CharacterData
+import org.qbrp.main.engine.players.characters.CharacterRecord
+import org.qbrp.main.engine.players.characters.CharacterRecordDto
+import org.qbrp.main.engine.players.characters.createCharacterProfile
+import org.qbrp.main.engine.players.characters.CharacterApplyEvent
+import org.qbrp.main.engine.players.characters.upsertCharacter
+import org.qbrp.main.engine.players.model.PlayerComponent
+import org.qbrp.main.engine.players.model.PlayerComponentInstantiateContext
+import org.qbrp.main.engine.players.characters.entity.CharacterData
+import org.qbrp.main.engine.players.characters.loadCharacterComponents
+import org.qbrp.main.engine.players.characters.toDtoAll
+import org.qbrp.main.engine.players.customName
+import org.qbrp.main.engine.players.removeCustomName
 
 class CharactersBank(
     ctx: PlayerComponentInstantiateContext,
-    private val characters: MutableList<CharacterProfile> = mutableListOf()
+    private val characters: MutableList<CharacterRecord> = mutableListOf()
 ) : PlayerComponent(ctx), SaveListener {
 
     @Serializable
-    data class Data(val characters: List<CharacterProfileDTO>): DTO
+    data class Data(val characters: List<CharacterRecordDto>): DTO
     override val dto: DTO
         get() {
             saveCharacter()
             return Data(characters.toDtoAll())
         }
 
-    companion object {
-        val LOGGER = LoggerUtil.get("players", "characters")
-    }
-
-    var character: CharacterProfile? = null
+    var character: CharacterRecord? = null
         private set
     val characterData: CharacterData? get() = character?.data
 
@@ -64,15 +61,18 @@ class CharactersBank(
         }
     }
 
+    override fun onLeave() {
+        unloadCharacter()
+    }
+
     val ctx: CharacterComponentInstantiateContext get() = newCtx(characterData!!)
     fun newCtx(characterData: CharacterData) = CharacterComponentInstantiateContext(serverPlayer, characterData)
 
-    context(event: EventContext)
-    fun setCharacterOrBuild(character: CharacterData, prefab: CharacterFactory) {
+    fun setCharacterOrBuild(character: CharacterData) {
+        if (character.id == this.character?.id) return
         try {
-            val profile = characters.find { it.id == character.id } ?: createProfile(prefab, character)
-            this.character = profile
-            loadCharacter(profile, prefab)
+            val profile = characters.find { it.id == character.id } ?: createCharacterProfile(newCtx(character))
+            loadCharacter(profile)
             callUpserts(character)
             saveCharacter()
             CharacterApplyEvent(player, character).emit()
@@ -83,14 +83,17 @@ class CharactersBank(
         }
     }
 
-    private fun loadCharacter(character: CharacterProfile, prefab: CharacterFactory) {
+    private fun loadCharacter(character: CharacterRecord) {
         unloadCharacter()
-        upsertProfile(character, prefab, ctx)
+        this.character = character
         character.state.copy(player)
+        loadCharacterComponents(ctx)
+        upsertCharacter(character, ctx)
         forEach { if (it is CharacterBind && it is Activateable) it.enable() }
     }
 
     fun unloadCharacter() {
+        val character = character
         if (character == null) return
         saveCharacter()
         forEach {
@@ -99,6 +102,8 @@ class CharactersBank(
                 removeComponent(it)
             }
         }
+        if (character.data.formattedName == player.customName) player.removeCustomName()
+        this.character = null
     }
 
     fun saveCharacter() {
@@ -112,15 +117,15 @@ class CharactersBank(
         }
     }
 
-    private fun moveComponentsToProfile(): CharacterProfile {
-        if (character == null) throw IllegalArgumentException("Character cannot be null")
+    private fun moveComponentsToProfile(): CharacterRecord {
+        if (character == null) throw IllegalArgumentException("PhysicalCharacter cannot be null")
         val copyState = state.copy(ComponentHolder()) { name, component ->
             component is CharacterBind
         }
-        return CharacterProfile(serverPlayer, character!!.id, character!!.data, copyState)
+        return CharacterRecord(serverPlayer, character!!.id, character!!.data, copyState)
     }
 
-    private fun updateCharacter(character: CharacterProfile) {
+    private fun updateCharacter(character: CharacterRecord) {
         characters.remove(character)
         characters.add(character)
     }
@@ -131,5 +136,9 @@ class CharactersBank(
             .forEach { (name, component) ->
                 if (component is CharacterBind) state.removeComponent(name.full)
             }
+    }
+
+    companion object {
+        val LOGGER = LoggerUtil.get("players", "characters")
     }
 }

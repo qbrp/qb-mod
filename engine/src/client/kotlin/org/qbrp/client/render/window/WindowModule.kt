@@ -7,7 +7,6 @@ import org.koin.dsl.module
 import org.qbrp.client.render.screen.event.ScreenRenderPipeline
 import org.qbrp.main.core.events.emit
 import org.qbrp.main.core.events.on
-import org.qbrp.main.core.events.withEventContext
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.Priorities
 import org.qbrp.main.core.modules.EngineModule
@@ -20,13 +19,13 @@ class WindowModule : EngineModule("window"), Window {
         single<Window> { this@WindowModule }
     }
 
-    override fun onEnable() = withEventContext {
+    override fun onEnable() {
         on<ScreenRenderPipeline>() {
             handleResize(MinecraftClient.getInstance())
         }
     }
 
-    private fun handleResize(client: MinecraftClient) = withEventContext {
+    private fun handleResize(client: MinecraftClient) {
         val currentW = widthDp
         val currentH = heightDp
 

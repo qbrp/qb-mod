@@ -1,6 +1,5 @@
 package org.qbrp.client.render.ui.components.layout.grid
 
-import org.litote.kmongo.util.idValue
 import org.qbrp.client.render.ui.components.layout.Constraints
 import org.qbrp.client.render.ui.components.layout.LayoutGroup
 import org.qbrp.client.render.ui.components.layout.Rect
@@ -13,7 +12,7 @@ import org.qbrp.client.render.ui.view.ViewContext
 import org.qbrp.main.core.components.extensions.add
 import org.qbrp.main.core.components.extensions.get
 import org.qbrp.main.core.components.extensions.require
-import org.qbrp.main.core.utils.sumOf
+import org.qbrp.main.core.util.math.sumOf
 
 class AutoGridLayout(
     ctx: ViewContext,

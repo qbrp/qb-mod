@@ -1,8 +1,7 @@
 package org.qbrp.main.core.assets.common
 
-import org.qbrp.main.core.game.lifecycle.Lifecycle
+import org.qbrp.main.core.util.lifecycle.Lifecycle
 import org.qbrp.deprecated.resources.Savable
-import org.qbrp.main.core.assets.common.Asset
 
 class AssetLifecycleManager(val storage: AssetsStorage): Lifecycle<Asset> {
     override fun onCreated(obj: Asset) = Unit

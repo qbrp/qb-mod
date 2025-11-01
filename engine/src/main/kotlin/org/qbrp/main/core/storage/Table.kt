@@ -8,11 +8,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.bson.Document
-import org.koin.core.component.KoinComponent
 import org.koin.core.context.GlobalContext
 import org.qbrp.main.core.database.CoroutineDatabaseClient
 import org.qbrp.main.core.components.serialization.Identifiable
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 
 open class Table(val tableName: String,
                  databaseName: String,

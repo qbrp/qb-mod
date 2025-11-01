@@ -8,21 +8,21 @@ import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
-import org.qbrp.main.core.mc.commands.CommandRegistryEntry
+import org.qbrp.main.core.fabricmc.commands.CommandRegistryEntry
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.chat.ChatAPI
 import org.qbrp.main.engine.chat.addons.groups.ChatGroupsAPI
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.Priorities
 import org.qbrp.main.core.modules.EngineModule
-import org.qbrp.main.core.utils.networking.messages.Message
-import org.qbrp.main.core.utils.networking.messages.Messages
-import org.qbrp.main.core.utils.networking.messages.types.Signal
-import org.qbrp.main.core.utils.networking.messages.types.StringContent
-import org.qbrp.main.core.utils.networking.messaging.NetworkUtil
+import org.qbrp.main.core.util.networking.messages.Message
+import org.qbrp.main.core.util.networking.messages.Messages
+import org.qbrp.main.core.util.networking.messages.types.Signal
+import org.qbrp.main.core.util.networking.messages.types.StringContent
+import org.qbrp.main.core.util.networking.messaging.NetworkUtil
 import java.util.concurrent.CompletableFuture
 import org.koin.core.component.get
-import org.qbrp.main.core.mc.commands.CommandsAPI
+import org.qbrp.main.core.fabricmc.commands.CommandsAPI
 
 @Autoload(Priorities.ADDON)
 class Ignore: EngineModule("chat-addon-ignore"), CommandRegistryEntry {

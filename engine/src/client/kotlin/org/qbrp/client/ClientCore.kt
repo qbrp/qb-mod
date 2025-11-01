@@ -1,14 +1,12 @@
 package org.qbrp.client
 
-import dev.felnull.specialmodelloader.api.event.SpecialModelLoaderEvents
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.screen.ingame.HandledScreens
 import org.koin.core.component.get
+import org.qbrp.client.core.mc.registerClientItems
 import org.qbrp.main.core.Core
 import org.qbrp.main.ApplicationLayer
-import org.qbrp.main.core.mc.registry.GameRegistries
 
-object ClientCore: ApplicationLayer("org.qbrp.client.core") {
+object ClientCore : ApplicationLayer("org.qbrp.client.core") {
     fun getServerIp(): String? {
         val client = MinecraftClient.getInstance()
         val networkHandler = client.networkHandler
@@ -18,7 +16,7 @@ object ClientCore: ApplicationLayer("org.qbrp.client.core") {
     }
 
     override fun initialize() {
-        Core.get<GameRegistries>().enable()
+        registerClientItems()
         super.initialize()
     }
 }

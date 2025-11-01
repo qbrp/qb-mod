@@ -1,7 +1,6 @@
 package org.qbrp.main.engine.controls.model.player
 
-import org.qbrp.main.core.components.extensions.require
-import org.qbrp.main.core.dataformats.StringId
+import org.qbrp.main.core.util.StringId
 import org.qbrp.main.engine.controls.dsl.InteractionDSL
 import org.qbrp.main.engine.controls.dsl.InteractionScope
 import org.qbrp.main.engine.controls.dsl.finish
@@ -12,8 +11,6 @@ import org.qbrp.main.engine.controls.entity.conditions.AvailableResult
 import org.qbrp.main.engine.controls.model.container.condition.ItemInDistanceCondition
 import org.qbrp.main.engine.controls.model.item.ItemInteractable
 import org.qbrp.main.engine.controls.model.player.condition.ItemInCarrierCondition
-import org.qbrp.main.engine.props.components.PropManager
-import org.qbrp.main.engine.props.components.PropManager.Companion.propSpawnAvailable
 
 object PropInteractions {
     val SPAWN_PROP = interaction<ItemCarrierInteractable, ItemInteractable> {

@@ -9,6 +9,5 @@ interface InteractionSystem {
     fun requestList(request: InteractionListRequest)
     fun toggleAlternateMode(player: ServerPlayerObject)
     fun setIntent(player: ServerPlayerObject, intent: Intent)
-    fun setInteractionMode(player: ServerPlayerObject, mode: InteractionMode)
-    fun setNoClip(player: ServerPlayerObject, value: Boolean)
+    fun update()
 }

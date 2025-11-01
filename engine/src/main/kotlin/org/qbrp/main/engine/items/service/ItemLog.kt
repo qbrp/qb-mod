@@ -1,20 +1,15 @@
 package org.qbrp.main.engine.items.service
 
-import klite.publicProperties
 import org.qbrp.main.core.assets.prefabs.Prefab
 import org.qbrp.main.core.components.Component
 import org.qbrp.main.core.components.ComponentManager
-import org.qbrp.main.core.components.extensions.add
-import org.qbrp.main.core.utils.log.Logger
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.Logger
+import org.qbrp.main.core.util.log.LoggerUtil
 import org.qbrp.main.engine.items.components.meta.Meta
-import org.qbrp.main.engine.items.model.ItemInstantiateContext
 import org.qbrp.main.engine.items.model.ItemObject
-import org.qbrp.main.engine.items.model.ItemState
 import org.qbrp.main.engine.items.model.ItemStateImpl
 import org.qbrp.main.engine.items.model.ServerItemObject
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
 import kotlin.reflect.full.memberProperties
 
 data class Node(val name: String, val properties: List<Property>)

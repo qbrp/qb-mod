@@ -17,7 +17,6 @@ import org.qbrp.client.render.window.Window
 import org.qbrp.main.core.components.AnyComponent
 import org.qbrp.main.core.components.AssociatedComponentState
 import org.qbrp.main.core.components.ComponentManager
-import org.qbrp.main.core.components.construct.CtxComponentBuilderOperator
 import org.qbrp.main.core.components.state.ComponentState
 import org.qbrp.main.core.events.allFalse
 import java.util.concurrent.CopyOnWriteArrayList
@@ -32,8 +31,8 @@ open class View(
     protected open var _pos: MutableVec2 = MutableVec2.of(DEFAULT_POS),
     var zIndex: ZIndex = ZIndex(0f),
     val componentManager: ViewState = ViewStateImpl(),
-) : ComponentManager by componentManager, CtxComponentBuilderOperator<ViewContext> {
-    override val componentContext: ViewContext get() = ViewContext(componentManager)
+) : ComponentManager by componentManager {
+    val componentContext: ViewContext get() = ViewContext(componentManager)
 
     init {
         componentManager.parent = this
@@ -132,6 +131,14 @@ open class View(
         }
     }
 
+    fun forceHoverExit() {
+        if (isSelfHover) {
+            isSelfHover = false
+            filterIsInstance<Hoverable>().forEach { it.onHoverExit() }
+        }
+        children.forEach { it.forceHoverExit() }
+    }
+
     fun updateMouseHover(
         mx: Float,
         my: Float,
@@ -152,18 +159,17 @@ open class View(
             val pos = child.pos
             val lx = mx - pos.x
             val ly = my - pos.y
-            if (!childClaimed) {
-                when (child.updateMouseHover(lx, ly)) {
-                    HitResult.SELF, HitResult.DESCENDANT -> {
-                        childClaimed = true
-                    }
-                    HitResult.NONE -> {}
-                }
+
+            val result = child.updateMouseHover(lx, ly)
+
+            if (!childClaimed && (result == HitResult.SELF || result == HitResult.DESCENDANT)) {
+                childClaimed = true
             } else {
-                child.updateMouseHover(lx, ly, exit = true)
+                if (child.isSelfHover) {
+                    child.forceHoverExit()
+                }
             }
         }
-
         val hitSelf = mx in -hoverGap..(width + hoverGap) && my in -hoverGap..(height + hoverGap)
 
         return when (hitBehavior) {

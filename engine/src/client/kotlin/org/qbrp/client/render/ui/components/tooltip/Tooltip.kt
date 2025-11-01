@@ -3,16 +3,16 @@ package org.qbrp.client.render.ui.components.tooltip
 import org.qbrp.client.render.Drawable
 import org.qbrp.client.render.dataformats.vec2
 import org.qbrp.client.render.screen.context.Draw2dContext
-import org.qbrp.main.mechanics.tooltip.TooltipColorProfile
-import org.qbrp.main.mechanics.tooltip.component.TooltipComponent
-import org.qbrp.main.mechanics.tooltip.TooltipViewData
+import org.qbrp.main.engine.tooltip.TooltipColorProfile
+import org.qbrp.main.engine.tooltip.component.TooltipComponent
+import org.qbrp.main.engine.tooltip.TooltipViewData
 import org.qbrp.client.render.tooltip.render.MainTooltipRenderer
 import org.qbrp.client.render.ui.components.layout.Constraints
 import org.qbrp.client.render.ui.components.layout.LayoutElement
 import org.qbrp.client.render.ui.components.layout.Size
 import org.qbrp.client.render.ui.view.ViewComponent
 import org.qbrp.client.render.ui.view.ViewContext
-import org.qbrp.main.core.utils.sumOf
+import org.qbrp.main.core.util.math.sumOf
 
 class Tooltip(ctx: ViewContext,
               var tooltip: TooltipViewData,

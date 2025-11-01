@@ -7,8 +7,8 @@ import org.qbrp.main.deprecated.resources.ServerResources
 import org.qbrp.deprecated.resources.data.Data
 import org.qbrp.deprecated.resources.parsing.Parser
 import org.qbrp.deprecated.resources.units.TextUnit
-import org.qbrp.main.core.utils.format.getExtension
-import org.qbrp.main.core.utils.format.removeExtensions
+import org.qbrp.main.core.util.format.getExtension
+import org.qbrp.main.core.util.format.removeExtensions
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path

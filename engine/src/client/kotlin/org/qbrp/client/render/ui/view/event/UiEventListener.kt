@@ -6,7 +6,8 @@ import org.qbrp.main.core.events.Event
 import org.qbrp.main.core.events.EventListener
 import org.qbrp.main.core.events.EventType
 
-open class UiEventListener<V: ViewComponent, E: Event, R>(eventType: EventType<E>,
-                                                          priority: Int,
-                                                          handler: ScreenEventHandler<V, E, R>
-): EventListener<E, List<R>>(eventType, priority, handler)
+open class UiEventListener<V : ViewComponent, E : Event, R : Any>(
+    eventType: EventType<E, Collection<R>>,
+    priority: Int,
+    handler: ScreenEventHandler<V, E, R>
+) : EventListener<E, Collection<R>>(eventType, priority, handler)

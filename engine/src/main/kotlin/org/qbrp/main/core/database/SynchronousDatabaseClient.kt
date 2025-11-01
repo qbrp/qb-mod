@@ -5,7 +5,7 @@ import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoDatabase
 import org.bson.Document
 import org.litote.kmongo.KMongo
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 
 class SynchronousDatabaseClient(private val url: String): DatabaseClient<MongoDatabase> {
     private var connected: Boolean = false

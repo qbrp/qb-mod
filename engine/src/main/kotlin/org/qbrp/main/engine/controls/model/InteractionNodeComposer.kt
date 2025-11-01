@@ -1,6 +1,6 @@
 package org.qbrp.main.engine.controls.model
 
-import org.qbrp.main.engine.containers.v2.api.ContainerService
+import org.qbrp.main.engine.containers.api.ContainerService
 import org.qbrp.main.engine.controls.entity.IconIds
 import org.qbrp.main.engine.controls.entity.display.EmptyNode
 import org.qbrp.main.engine.controls.entity.display.InteractableViewData
@@ -12,16 +12,14 @@ import org.qbrp.main.engine.controls.entity.interactions.InteractionContext
 import org.qbrp.main.engine.controls.model.inspect.InspectionInteractions
 import org.qbrp.main.engine.controls.model.player.InventoryInteractions
 import org.qbrp.main.engine.controls.entity.interactions.AvailableInteraction
-import org.qbrp.main.engine.controls.entity.interactions.InteractionKind
 import org.qbrp.main.engine.controls.entity.toIcon
 import org.qbrp.main.engine.controls.model.container.ContainerInteractable
 import org.qbrp.main.engine.controls.model.item.ItemInteractable
 import org.qbrp.main.engine.controls.model.player.CarryVarianceInteractable
 import org.qbrp.main.engine.controls.model.player.IdentifiableInteractable
 import org.qbrp.main.engine.controls.model.player.PropInteractions
-import org.qbrp.main.engine.players.inventory.hand.Hand
+import org.qbrp.main.engine.players.inventory.Hand
 import org.qbrp.main.engine.text.literal
-import org.qbrp.main.engine.text.toSequenceBuilder
 
 class InteractionNodeComposer(private val containerService: ContainerService) {
     data class Context(val actions: Map<Interactable, List<AvailableInteraction>>, val call: InteractionContext)
@@ -106,6 +104,10 @@ class InteractionNodeComposer(private val containerService: ContainerService) {
 
             interactions.mapToNodes(InventoryInteractions.SEE_INVENTORIES) { i ->
                 InteractionViewNode(i.identity, literal("Открыть инвентарь"), IconIds.BACKPACK.toIcon())
+            }
+
+            interactions.mapToNodes(InventoryInteractions.EQUIP) { i ->
+                InteractionViewNode(i.identity, literal("Экипировать"), IconIds.BACKPACK.toIcon())
             }
 
             interactions.mapToNodes(PropInteractions.SPAWN_PROP) { i ->

@@ -5,12 +5,10 @@ import org.qbrp.main.engine.controls.entity.conditions.AvailableResult
 import org.qbrp.main.engine.controls.entity.conditions.AvailableResult.No
 import org.qbrp.main.engine.controls.entity.conditions.AvailableResult.Yes
 import org.qbrp.main.engine.controls.entity.conditions.Condition
-import org.qbrp.main.engine.controls.entity.conditions.GenericCondition
 import org.qbrp.main.engine.controls.entity.interactable.Interactable
 import org.qbrp.main.engine.controls.entity.interactions.InteractionContext
 import org.qbrp.main.engine.controls.model.item.ItemInteractable
-import org.qbrp.main.engine.controls.model.player.ItemCarrierInteractable
-import org.qbrp.main.engine.players.inventory.hand.ItemCarrier
+import org.qbrp.main.engine.players.inventory.ItemCarrier
 
 typealias InteractionProvider<S, O, R> = (S, O, InteractionContext) -> R
 

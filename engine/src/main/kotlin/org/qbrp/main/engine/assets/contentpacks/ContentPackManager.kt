@@ -8,11 +8,8 @@ import org.qbrp.main.engine.assets.contentpacks.patches.PatchesAPI
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.Priorities
 import org.qbrp.main.core.modules.EngineModule
-import org.qbrp.main.core.utils.networking.InfoNames.CONTENTPACKS_ENABLED
-import org.qbrp.main.core.info.ServerInfoAPI
-import org.qbrp.main.core.mc.commands.CommandsAPI
+import org.qbrp.main.core.fabricmc.commands.CommandsAPI
 import org.qbrp.main.engine.assets.contentpacks.build.ContentPackBuildAPI
-import org.qbrp.main.engine.assets.contentpacks.commands.ContentPacksCommand
 import java.io.File
 import java.util.prefs.Preferences
 
@@ -37,9 +34,7 @@ class ContentPackManager : EngineModule("resourcepack-versions"), ContentPackMan
     }
 
     override fun onEnable() {
-        get<ServerInfoAPI>().COMPOSER.component(CONTENTPACKS_ENABLED, true)
         repository = getLocal()
-        get<CommandsAPI>().add(ContentPacksCommand(get()))
     }
 
     override fun generatePatchesToVersion(version: String) {

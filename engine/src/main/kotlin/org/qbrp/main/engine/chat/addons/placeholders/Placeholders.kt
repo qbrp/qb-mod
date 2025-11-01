@@ -10,6 +10,7 @@ import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.Priorities
 import org.qbrp.main.core.modules.EngineModule
+import org.qbrp.main.engine.players.displayName
 
 @Autoload(Priorities.ADDON + 1, both = true)
 class Placeholders: EngineModule("placeholders"), PlaceholdersAPI {
@@ -26,12 +27,12 @@ class Placeholders: EngineModule("placeholders"), PlaceholdersAPI {
 
     override fun onLoad() {
         MessageReceivedEvent.EVENT.register { message ->
-            val author = message.getAuthorEntity()
-            val name = author?.name?.string ?: SYSTEM_MESSAGE_AUTHOR
+            val author = message.author
+            val name = author?.username?.value ?: SYSTEM_MESSAGE_AUTHOR
+            val displayName = author?.displayName ?: SYSTEM_MESSAGE_AUTHOR
             message.getTagsBuilder()
                 .placeholder("playerName", name)
-                .placeholder("playerDisplayName", author?.displayName?.string ?: SYSTEM_MESSAGE_AUTHOR)
-                .placeholder("playerRpName", PlayersUtil.getPlayerSession(name)?.displayName!! )
+                .placeholder("playerDisplayName", displayName)
             ActionResult.PASS
         }
 
@@ -40,7 +41,7 @@ class Placeholders: EngineModule("placeholders"), PlaceholdersAPI {
             ActionResult.PASS
         }
 
-        MessageSendEvent.register( { _, message, receiver, _ ->
+        MessageSendEvent.register( { _, message, receiver, _, _ ->
             handle(message)
             ActionResult.PASS
         }, MessageSendEvent.Companion.Priority.LAST)

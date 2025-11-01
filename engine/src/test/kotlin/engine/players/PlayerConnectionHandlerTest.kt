@@ -18,15 +18,13 @@ import org.qbrp.main.core.mc.player.dataformats.Username
 import org.qbrp.main.core.mc.player.model.PlayerSnapshot
 import org.qbrp.main.core.mc.player.service.snapshot.MinecraftPlayerSnapshotService
 import org.qbrp.main.engine.players.accounts.Account
-import org.qbrp.main.engine.players.auth.SessionData
+import org.qbrp.main.network.player.ConnectionSession
 import org.qbrp.main.engine.players.model.ServerPlayerObject
-import org.qbrp.main.engine.players.model.networking.DisconnectReason
-import org.qbrp.main.engine.players.model.networking.ServerPlayerNetworkHandler
+import org.qbrp.main.network.player.DisconnectReason
 import org.qbrp.main.engine.players.model.service.PlayerFactory
 import org.qbrp.main.engine.players.model.service.PlayerSaver
 import org.qbrp.main.engine.players.model.service.ServerPlayerStorage
-import org.qbrp.main.engine.players.model.service.PlayerConnectionHandler
-import org.qbrp.main.engine.players.model.util.PlayerId
+import org.qbrp.main.core.util.PlayerId
 import java.util.UUID
 
 class PlayerConnectionHandlerTest: TestEnv() {
@@ -62,7 +60,7 @@ class PlayerConnectionHandlerTest: TestEnv() {
         every { username } returns Username("test_player")
     }
     private val account = Account("test", "player123")
-    private val session = SessionData(UUID.randomUUID(), PlayerId("player123"))
+    private val session = ConnectionSession(UUID.randomUUID(), PlayerId("player123"))
     private val serverPlayer = mockk<ServerPlayerObject>(relaxed = true) {
         every { id } returns this@PlayerConnectionHandlerTest.session.playerId.value
         every { playerId } returns this@PlayerConnectionHandlerTest.session.playerId

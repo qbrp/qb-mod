@@ -2,7 +2,7 @@ package org.qbrp.main.engine.props.components
 
 /**
  *  Полные габариты куба, в метрах
- *  @see org.qbrp.main.engine.physics.dynamics.simulation.JoltShapeFactory.boxDimensions Преобразование в половинную форму
+ *  @see org.qbrp.main.engine.physics.system.jolt.JoltShapeFactory.boxDimensions Преобразование в половинную форму
  *  **/
 interface BoxDimensions {
     val length: Double

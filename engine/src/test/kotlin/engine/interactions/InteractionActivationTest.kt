@@ -18,7 +18,7 @@ import org.qbrp.main.engine.controls.entity.conditions.Condition
 import org.qbrp.main.engine.controls.entity.interactions.Executor
 import org.qbrp.main.engine.controls.entity.interactions.InteractionContext
 import org.qbrp.main.engine.players.model.ServerPlayerObject
-import org.qbrp.main.engine.players.model.networking.DisconnectReason
+import org.qbrp.main.network.player.DisconnectReason
 import java.util.UUID
 
 class InteractionActivationTest: TestEnv() {

@@ -3,7 +3,7 @@ package org.qbrp.main.core.assets.common.references
 import org.qbrp.main.core.assets.common.Asset
 import org.qbrp.main.core.assets.common.Key
 import org.qbrp.deprecated.resources.Savable
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import java.io.File
 
 class FilePathReference<T: Asset>(override val key: Key, private val factory: (File) -> T) : FileReference<T> {

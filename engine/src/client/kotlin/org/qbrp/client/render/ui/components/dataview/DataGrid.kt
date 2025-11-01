@@ -20,8 +20,10 @@ import org.qbrp.main.core.components.extensions.add
 import org.qbrp.main.core.components.extensions.require
 import kotlin.reflect.KClass
 
-class DataGrid<S: Any>(ctx: ViewContext,
-               val table: TableAdapter<S>): ViewComponent(ctx), Drawable {
+class DataGrid<S : Any>(
+    ctx: ViewContext,
+    val table: TableAdapter<S>
+) : ViewComponent(ctx), Drawable {
     private val transform = view.require<RectTransform>()
 
     override fun onTransform(ctx: Draw2dContext) {
@@ -52,11 +54,12 @@ class DataGrid<S: Any>(ctx: ViewContext,
     }
 }
 
-class DataGridClickListener<S: Any>(ctx: ViewContext,
-                                    private val autoGridLayout: AutoGridLayout,
-                                    private var dataGrid: DataGrid<S>,
-                                    private val uiContext: UiContext
-): ViewComponent(ctx), Clickable {
+class DataGridClickListener<S : Any>(
+    ctx: ViewContext,
+    private val autoGridLayout: AutoGridLayout,
+    private var dataGrid: DataGrid<S>,
+    private val uiContext: UiContext
+) : ViewComponent(ctx), Clickable {
     override fun onClick(button: Int, lx: Float, ly: Float): Boolean = with(uiContext) {
         autoGridLayout.elemAt(lx, ly)?.let {
             val rowIndex = it.gp.row

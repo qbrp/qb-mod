@@ -5,11 +5,11 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.module.Module
 import org.koin.dsl.module
-import org.qbrp.main.mechanics.tooltip.component.NameTooltipComponent
+import org.qbrp.main.engine.tooltip.component.NameTooltipComponent
 import org.qbrp.client.render.tooltip.components.NameTooltipRenderer
-import org.qbrp.main.mechanics.tooltip.component.PlainTextTooltipComponent
+import org.qbrp.main.engine.tooltip.component.PlainTextTooltipComponent
 import org.qbrp.client.render.tooltip.components.PlaintTextTooltipRenderer
-import org.qbrp.main.mechanics.tooltip.component.ProgressBarTooltipComponent
+import org.qbrp.main.engine.tooltip.component.ProgressBarTooltipComponent
 import org.qbrp.client.render.tooltip.components.ProgressBarTooltipRenderer
 import org.qbrp.client.render.tooltip.render.MainTooltipRenderer
 import org.qbrp.client.render.tooltip.render.TooltipBackgroundRenderer

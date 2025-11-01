@@ -5,10 +5,10 @@ import org.qbrp.main.engine.chat.core.system.ChatGroup
 import org.qbrp.client.ClientCore
 import org.qbrp.client.engine.chat.addons.ClientChatGroupsAPI
 import org.qbrp.client.engine.chat.system.events.ChatInputParseEvent
-import org.qbrp.main.core.utils.networking.messages.components.Component
-import org.qbrp.main.core.utils.networking.messages.types.*
-import org.qbrp.main.core.utils.format.Format
-import org.qbrp.main.core.utils.format.Format.formatMm
+import org.qbrp.main.core.util.networking.messages.components.Component
+import org.qbrp.main.core.util.networking.messages.types.*
+import org.qbrp.main.core.util.format.Format
+import org.qbrp.main.core.util.format.Format.formatMm
 
 class Typer() {
 

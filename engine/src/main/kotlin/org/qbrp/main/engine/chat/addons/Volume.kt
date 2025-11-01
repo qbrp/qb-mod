@@ -7,7 +7,6 @@ import net.minecraft.particle.ParticleTypes
 import net.minecraft.registry.Registries
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.registry.tag.TagKey
-import net.minecraft.server.MinecraftServer
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
@@ -17,7 +16,7 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
-import org.qbrp.main.core.mc.commands.CommandRegistryEntry
+import org.qbrp.main.core.fabricmc.commands.CommandRegistryEntry
 import org.qbrp.deprecated.resources.data.config.ConfigInitializationCallback
 import org.qbrp.deprecated.resources.data.config.ServerConfigData
 import org.qbrp.main.engine.chat.ChatAddon
@@ -28,18 +27,17 @@ import org.qbrp.main.engine.chat.core.events.MessageSendEvent
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.Priorities
-import org.qbrp.main.core.utils.networking.messages.types.IntContent
-import org.qbrp.main.core.utils.VectorUtil
-import org.qbrp.main.core.utils.format.Format.formatMm
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.networking.messages.types.IntContent
+import org.qbrp.main.core.util.format.Format.formatMm
+import org.qbrp.main.core.util.log.LoggerUtil
 import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.sin
 import kotlin.random.Random
 import org.koin.core.component.get
-import org.qbrp.main.core.mc.commands.CommandsAPI
-import org.qbrp.main.core.mc.player.getEntity
+import org.qbrp.main.core.fabricmc.commands.CommandsAPI
+import org.qbrp.main.core.util.math.tracePathAndModify
 
 @Autoload(Priorities.ADDON)
 class Volume(): ChatAddon("volume"), CommandRegistryEntry {
@@ -54,13 +52,14 @@ class Volume(): ChatAddon("volume"), CommandRegistryEntry {
 
     override fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         dispatcher.register(CommandManager.literal("overhear")
-            .executes() { ctx ->
-                val player = ctx.source.player ?: return@executes 0
-                val currentValue = overhearPlayers.getOrPut(player) { false }
-                overhearPlayers[player] = !currentValue
-                ctx.source.sendMessage("<gray>Режим подслушивания ${if (currentValue) "выключен" else "включен"}.".formatMm())
-                1
-            })
+                .executes() { ctx ->
+                    val player = ctx.source.player ?: return@executes 0
+                    val currentValue = overhearPlayers.getOrPut(player) { false }
+                    overhearPlayers[player] = !currentValue
+                    ctx.source.sendMessage("<gray>Режим подслушивания ${if (currentValue) "выключен" else "включен"}.".formatMm())
+                    1
+                }
+        )
     }
 
     private fun loadConfig() {
@@ -182,20 +181,21 @@ class Volume(): ChatAddon("volume"), CommandRegistryEntry {
 
             MessageTextTools.setTextContent(message, text.substring(charsHandled, text.length))
             message.apply {
-                setTags(getTagsBuilder()
-                    .placeholder("formatSep", config.getVolumeLevelFor(config.defaultVolume + volume).formatSep)
-                    .component("sourceX", IntContent(pos.x))
-                    .component("sourceY", IntContent(pos.y))
-                    .component("sourceZ", IntContent(pos.z))
-                    .component("volume", IntContent(config.defaultVolume + volume)))
+                setTags(
+                    getTagsBuilder()
+                        .placeholder("formatSep", config.getVolumeLevelFor(config.defaultVolume + volume).formatSep)
+                        .component("sourceX", IntContent(pos.x))
+                        .component("sourceY", IntContent(pos.y))
+                        .component("sourceZ", IntContent(pos.z))
+                        .component("volume", IntContent(config.defaultVolume + volume)))
             }
             ActionResult.PASS
         }
 
         // Изменение InventorySynchronizerImpl
-        MessageSendEvent.register { sender, message, receiver, networking ->
+        MessageSendEvent.register { sender, message, receiver, receiverEntity, networking ->
             val tags = message.getTags()
-            val receiver = receiver.getEntity(get())
+            val receiver = receiverEntity
             if (tags.getComponentData<Boolean>("handleVolume") != true) {
                 return@register ActionResult.PASS
             }
@@ -213,17 +213,17 @@ class Volume(): ChatAddon("volume"), CommandRegistryEntry {
             // Для каждого направления: сначала находим “продвинутый” origin, потом запускаем трассировку
             val volumeEdits = (offsetOrigins + originBase).map { dir ->
                 if (config.debug) sendParticlePacket(
-                    world    = receiver.world as ServerWorld,
-                    pos      = BlockPos(dir.x.toInt(), dir.y.toInt(), dir.z.toInt()),
-                    count    = 1,
-                    offsetX  = 0.0,
-                    offsetY  = 0.0,
-                    offsetZ  = 0.0,
-                    speed    = 0.0
+                    world = receiver.world as ServerWorld,
+                    pos = BlockPos(dir.x.toInt(), dir.y.toInt(), dir.z.toInt()),
+                    count = 1,
+                    offsetX = 0.0,
+                    offsetY = 0.0,
+                    offsetZ = 0.0,
+                    speed = 0.0
                 )
                 // 2) собственно считаем спад громкости
                 var edit = 0.0
-                VectorUtil.tracePathAndModify(dir, target) { pos ->
+                tracePathAndModify(dir, target) { pos ->
                     edit -= getBlockVolumeModifier(pos, receiver.world) + 0.1
                     true
                 }
@@ -251,7 +251,7 @@ class Volume(): ChatAddon("volume"), CommandRegistryEntry {
         }
 
         // Форматирование
-        MessageSendEvent.register() { sender, message, receiver, networking ->
+        MessageSendEvent.register() { sender, message, receiver, receiverEntity, networking ->
             val tags = message.getTags()
             if (tags.getComponentData<Boolean>("format") != true) { return@register ActionResult.PASS }
             val volume = tags.getComponentData<Int>("volume") ?: return@register ActionResult.PASS

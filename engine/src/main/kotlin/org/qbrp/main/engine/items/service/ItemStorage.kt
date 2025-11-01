@@ -1,7 +1,7 @@
 package org.qbrp.main.engine.items.service
 
 import net.minecraft.item.ItemStack
-import org.qbrp.main.core.game.storage.GlobalStorage
+import org.qbrp.main.core.util.storage.GlobalStorage
 import org.qbrp.main.engine.items.model.ItemObject
 
 class ItemStorage<T: ItemObject>(): GlobalStorage<T>() {

@@ -8,6 +8,7 @@ import org.qbrp.main.engine.controls.system.asSubject
 import org.qbrp.main.engine.controls.entity.interactions.AnyInteraction
 import org.qbrp.main.engine.controls.model.InteractionService
 import org.qbrp.main.engine.controls.model.inspect.InspectionInteractions
+import org.qbrp.main.engine.controls.model.player.InventoryInteractions
 import org.qbrp.main.engine.players.model.ServerPlayerObject
 import org.qbrp.main.engine.controls.model.player.PlayerInteractable
 import org.qbrp.main.engine.controls.model.player.PropInteractions
@@ -49,6 +50,9 @@ abstract class PlayerLookup(protected val player: ServerPlayerObject, val self: 
             //Базовые взаимодействия
             interactions.apply {
                 add(PropInteractions.SPAWN_PROP)
+                add(PropInteractions.GRAB_PROP)
+                add(PropInteractions.RELEASE_PROP)
+                add(InventoryInteractions.EQUIP)
             }
         }
     }

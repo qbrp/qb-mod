@@ -4,8 +4,7 @@ import net.minecraft.client.util.math.MatrixStack
 import org.qbrp.client.render.dataformats.Vec2
 import org.qbrp.client.render.screen.DefaultZIndexes
 import org.qbrp.client.render.ui.components.layout.Size
-import org.qbrp.main.core.mc.text.RenderableText
-import org.qbrp.main.engine.text.components.TextComponent
+import org.qbrp.main.core.fabricmc.text.RenderableText
 
 typealias TextRenderer = TextComponentRenderer<RenderableText>
 

@@ -1,6 +1,6 @@
 package org.qbrp.main.core.storage
 
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

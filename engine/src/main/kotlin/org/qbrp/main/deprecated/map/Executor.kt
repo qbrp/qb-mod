@@ -5,8 +5,8 @@ import net.minecraft.server.command.ServerCommandSource
 import org.qbrp.deprecated.Deps
 import org.qbrp.deprecated.TypeValidator
 import org.qbrp.deprecated.annotations.Arg
-import org.qbrp.main.core.mc.player.hasPermission
-import org.qbrp.main.core.utils.format.Format.formatMm
+import org.qbrp.main.core.fabricmc.player.hasPermission
+import org.qbrp.main.core.util.format.Format.formatMm
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 

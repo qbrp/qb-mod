@@ -2,7 +2,7 @@ package org.qbrp.main.engine.music.plasmo.playback.lavaplayer
 
 import org.qbrp.main.deprecated.resources.ServerResources
 import org.qbrp.deprecated.resources.data.StringData
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import su.plo.voice.lavaplayer.libs.com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler
 import su.plo.voice.lavaplayer.libs.com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
 import su.plo.voice.lavaplayer.libs.com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager

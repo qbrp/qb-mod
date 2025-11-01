@@ -1,18 +1,17 @@
 package org.qbrp.main.engine.controls.system.lookup
 
 import org.qbrp.main.core.components.extensions.get
-import org.qbrp.main.engine.containers.v2.components.Container
+import org.qbrp.main.engine.containers.components.Container
 import org.qbrp.main.engine.controls.entity.call.InteractionRequestContext
 import org.qbrp.main.engine.controls.model.InteractionService
 import org.qbrp.main.engine.controls.model.player.InventoryInteractions
 import org.qbrp.main.engine.controls.model.player.PlayerInteractable
-import org.qbrp.main.engine.controls.model.player.PropInteractions
 import org.qbrp.main.engine.controls.system.asObject
 import org.qbrp.main.engine.controls.system.asSubject
-import org.qbrp.main.engine.inventory.player.impl.ServerPlayerInventoryManager
 import org.qbrp.main.engine.items.model.ServerItemObject
 import org.qbrp.main.engine.players.inventory.CharacterInventory
-import org.qbrp.main.engine.players.inventory.creative.ItemListModule
+import org.qbrp.main.engine.players.inventory.ITEM_LIST_CONTAINER_ID
+import org.qbrp.main.engine.players.inventory.openCharacterInventory
 import org.qbrp.main.engine.players.model.ServerPlayerObject
 
 // HeldItem или рука > наведенный предмет
@@ -43,18 +42,15 @@ class InventoryLookup(
 
             // Добавляем все открытые игроком инвентари в объекты
             val containers = logicalPlayer.let {
-                val itemInventories = it
-                    .get<CharacterInventory>()
+                val characterInventory = it.get<CharacterInventory>()
+                val containers = characterInventory?.getContainers() ?: listOf()
+
+                val itemInventories = characterInventory
                     ?.carriedItems
                     ?.flatMap { it.model.filterIsInstance<Container>() }
                     ?.map { it.id }
                     ?: emptyList()
-                val openedInventories = it
-                    .get<ServerPlayerInventoryManager>()
-                    ?.openedInventories
-                    ?.map { it.containerId }
-                    ?: emptyList()
-                val ids = (itemInventories + openedInventories).distinct()
+                val ids = (itemInventories + containers).distinct()
                 ids
                     .map { interactionService.getContainerInteractable(it, player).asObject() }
             }
@@ -62,12 +58,10 @@ class InventoryLookup(
             objects.addAll(containers)
 
             // Взаимодействия с предметами
-            if (call.hoveredInventoryContainerId != ItemListModule.ITEM_LIST_CONTAINER_ID) {
+            if (call.hoveredInventoryContainerId != ITEM_LIST_CONTAINER_ID) {
                 interactions.addAll(listOf(InventoryInteractions.TAKE_ITEM, InventoryInteractions.PUT_ITEM))
                 interactions.add(InventoryInteractions.DELETE_ITEM)
                 interactions.add(InventoryInteractions.SEE_INVENTORIES)
-                interactions.add(PropInteractions.GRAB_PROP)
-                interactions.add(PropInteractions.RELEASE_PROP)
             }
 
             interactions.add(InventoryInteractions.COPY_ITEM)

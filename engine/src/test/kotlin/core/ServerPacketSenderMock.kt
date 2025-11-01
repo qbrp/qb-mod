@@ -6,7 +6,7 @@ import org.qbrp.main.core.mc.player.model.PlayerReference
 import org.qbrp.main.core.networking.Packet
 import org.qbrp.main.core.networking.sender.ServerPacketSender
 import org.qbrp.main.core.networking.acknowledge.PacketSendTask
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 
 class ServerPacketSenderMock: ServerPacketSender {
     private val sendTaskLogger = LoggerUtil.get("networking")

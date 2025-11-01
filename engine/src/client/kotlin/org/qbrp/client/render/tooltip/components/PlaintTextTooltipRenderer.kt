@@ -9,7 +9,7 @@ import org.qbrp.client.render.tooltip.render.TooltipComponentRenderer
 import org.qbrp.client.render.ui.components.layout.Size
 import org.qbrp.client.render.ui.components.tooltip.Tooltip
 import org.qbrp.client.render.window.Window
-import org.qbrp.main.mechanics.tooltip.component.PlainTextTooltipComponent
+import org.qbrp.main.engine.tooltip.component.PlainTextTooltipComponent
 
 class PlaintTextTooltipRenderer(private val textSplitter: TextSplitter,
                                 private val textRenderer: TextRenderer,

@@ -1,11 +1,10 @@
-package org.qbrp.main.core.utils.networking
+package org.qbrp.client.core.networking.v1
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.minecraft.util.Identifier
-import org.qbrp.client.core.networking.v1.ClientReceiverContext
-import org.qbrp.main.core.utils.networking.messages.Message
-import org.qbrp.main.core.utils.networking.messaging.Receiver
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.networking.messages.Message
+import org.qbrp.main.core.util.networking.messaging.Receiver
+import org.qbrp.main.core.util.log.LoggerUtil
 import kotlin.reflect.KClass
 
 class ClientReceiver(

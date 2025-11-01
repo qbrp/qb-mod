@@ -4,7 +4,7 @@ import net.minecraft.client.gui.hud.ChatHudLine
 import org.qbrp.main.engine.chat.addons.MessageIcon
 import org.qbrp.main.engine.chat.core.messages.ChatMessage
 import org.qbrp.client.engine.chat.system.events.TextUpdateCallback
-import org.qbrp.main.core.utils.format.Format.formatMm
+import org.qbrp.main.core.util.format.Format.formatMm
 
 data class HandledMessage(var message: ChatMessage) {
     private var _text: List<ChatHudLine.Visible> = Provider.buildChatHudLines(message)

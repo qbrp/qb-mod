@@ -17,7 +17,7 @@ class UIMessageProvider(val name: String) : Provider {
     private var ticksCompleted = 0
 
     init {
-        thread(isDaemon = true, name = "ChatUiUpdateThread") {
+        thread(isDaemon = true, name = "[Engine] Chat Ui Update Thread") {
             while (true) {
                 while (taskQueue.isNotEmpty()) {
                     taskQueue.poll()?.run()

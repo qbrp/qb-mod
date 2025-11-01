@@ -14,14 +14,11 @@ import org.qbrp.main.core.mc.player.service.attribute.MinecraftPlayerAttributeSe
 import org.qbrp.main.core.mc.player.service.snapshot.MinecraftPlayerSnapshotService
 import org.qbrp.main.core.networking.sender.ServerPacketSender
 import org.qbrp.main.engine.characters.model.AppearanceData
-import org.qbrp.main.engine.players.model.mapping.PlayerListMapper
-import org.qbrp.main.engine.players.model.networking.ServerPlayerNetworkHandler
-import org.qbrp.main.engine.players.model.service.PlayerConnectionHandler
 import org.qbrp.main.engine.players.model.service.PlayerFactory
 import org.qbrp.main.engine.players.model.service.PlayerSaver
 import org.qbrp.main.engine.players.model.service.PlayerSerializer
 import org.qbrp.main.engine.players.model.service.ServerPlayerStorage
-import org.qbrp.main.mechanics.characters.model.CharacterData
+import org.qbrp.main.engine.players.characters.entity.CharacterData
 
 abstract class PlayerTestEnv: TestEnv() {
     protected lateinit var connectionHandler: PlayerConnectionHandler

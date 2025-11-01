@@ -1,6 +1,6 @@
 package org.qbrp.client.render.ui.interaction.crosshair
 
-import org.qbrp.client.engine.interactions.service.ClientInteractionManager
+import org.qbrp.client.controls.ClientInteractionManager
 import org.qbrp.client.render.screen.context.Draw2dContext
 import org.qbrp.client.render.ui.components.effect.Blend
 import org.qbrp.client.render.ui.components.transform.old.HorizontalCentralisation

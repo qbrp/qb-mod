@@ -8,7 +8,7 @@ import org.qbrp.client.render.tooltip.render.TooltipComponentRenderer
 import org.qbrp.client.render.ui.components.layout.Size
 import org.qbrp.client.render.ui.components.tooltip.Tooltip
 import org.qbrp.main.engine.Colors
-import org.qbrp.main.mechanics.tooltip.component.ProgressBarTooltipComponent
+import org.qbrp.main.engine.tooltip.component.ProgressBarTooltipComponent
 
 class ProgressBarTooltipRenderer(private val textRenderer: TextRenderer): TooltipComponentRenderer<ProgressBarTooltipComponent> {
     private val annotationPos = vec2(0, 0)

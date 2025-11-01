@@ -2,7 +2,7 @@ package org.qbrp.client.render.tooltip.render
 
 import org.qbrp.client.render.dataformats.Vec2
 import org.qbrp.client.render.screen.context.Draw2dContext
-import org.qbrp.main.mechanics.tooltip.TooltipColorProfile
+import org.qbrp.main.engine.tooltip.TooltipColorProfile
 import org.qbrp.client.render.ui.components.layout.Size
 import kotlin.math.ceil
 import kotlin.math.floor

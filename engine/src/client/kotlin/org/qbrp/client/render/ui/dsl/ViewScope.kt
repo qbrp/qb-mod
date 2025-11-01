@@ -34,7 +34,7 @@ import org.qbrp.client.render.ui.view.ViewComponent
 import org.qbrp.client.render.ui.view.ViewContext
 import org.qbrp.main.engine.text.components.TextComponent
 import org.qbrp.main.engine.text.literal
-import org.qbrp.main.mechanics.tooltip.TooltipColorProfile
+import org.qbrp.main.engine.tooltip.TooltipColorProfile
 
 typealias ViewComponentInit = (ViewContext) -> ViewComponent
 typealias ViewBuildContinue = ViewScope.() -> Unit

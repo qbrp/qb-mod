@@ -3,7 +3,6 @@ package org.qbrp.main.engine.chat.core.system
 import net.minecraft.text.LiteralTextContent
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
-import org.qbrp.main.core.utils.format.Format.stripFormatting
 
 object TextTagsTransformer {
     fun getTextTags(text: String): List<String> {

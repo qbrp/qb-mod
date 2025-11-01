@@ -6,7 +6,7 @@ import org.qbrp.main.core.assets.FileSystem
 import org.qbrp.main.core.assets.common.Asset
 import org.qbrp.main.core.assets.common.Key
 import org.qbrp.main.core.components.serialization.Serialization
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createType

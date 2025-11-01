@@ -11,7 +11,7 @@ import org.qbrp.deprecated.annotations.Command
 import org.qbrp.deprecated.annotations.Execute
 import org.qbrp.deprecated.annotations.Provider
 import org.qbrp.deprecated.annotations.SubCommand
-import org.qbrp.main.core.mc.commands.CommandRegistryEntry
+import org.qbrp.main.core.fabricmc.commands.CommandRegistryEntry
 import org.qbrp.main.engine.music.plasmo.MusicStorage
 import org.qbrp.main.engine.music.plasmo.model.audio.TracksSuggestionProvider
 import org.qbrp.main.engine.music.plasmo.model.priority.Priorities
@@ -19,8 +19,8 @@ import org.qbrp.main.engine.music.plasmo.model.priority.Priority
 import org.qbrp.main.engine.music.plasmo.model.selectors.Selector
 import org.qbrp.main.engine.music.plasmo.model.selectors.SelectorBuilder
 import org.qbrp.main.engine.music.plasmo.model.selectors.SelectorsProvider
-import org.qbrp.main.core.utils.CoroutinesUtil
-import org.qbrp.main.core.utils.format.Format.formatMm
+import org.qbrp.main.core.util.format.Format.formatMm
+import org.qbrp.main.core.util.runAsyncCommand
 
 @Command(name = "playlists")
 class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : CommandRegistryEntry {
@@ -239,9 +239,16 @@ class PlaylistCommand(val priorities: Priorities, val storage: MusicStorage) : C
                 fun execute(context: CommandContext<ServerCommandSource>, deps: Deps) {
                     try {
                         val playlist = (deps.get("storage") as MusicStorage).getPlayable(playlistName)
-                        CoroutinesUtil.runAsyncCommand(context,
-                            operation = { playlist?.sessionManager?.doForSessionsAsync { p, session -> session.queue.setPosition(pos); session.createRadio() } },
-                            callback = { context.source.sendMessage("Трек был перемещен.".formatMm()) } )
+                        runAsyncCommand(context,
+                            operation = {
+                                playlist?.sessionManager?.doForSessionsAsync { p, session ->
+                                    session.queue.setPosition(
+                                        pos
+                                    ); session.createRadio()
+                                }
+                            },
+                            callback = { context.source.sendMessage("Трек был перемещен.".formatMm()) }
+                        )
                     } catch (e: Exception) {
                         context.source.sendError("Ошибка: ${e.message}".formatMm())
                     }

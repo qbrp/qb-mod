@@ -1,8 +1,7 @@
 package org.qbrp.main.engine.controls.dsl
 
 import org.koin.core.context.GlobalContext
-import org.qbrp.main.core.mc.player.permission.Permission
-import org.qbrp.main.core.mc.player.permission.PermissionService
+import org.qbrp.main.core.fabricmc.player.Permission
 import org.qbrp.main.engine.controls.entity.InteractableTypes
 import org.qbrp.main.engine.controls.entity.conditions.AvailableResult
 import org.qbrp.main.engine.controls.entity.conditions.Condition
@@ -13,28 +12,22 @@ import org.qbrp.main.engine.controls.entity.interactions.Interaction
 import org.qbrp.main.engine.controls.entity.interactions.InteractionContext
 import org.qbrp.main.engine.controls.entity.interactions.InteractionKind
 import org.qbrp.main.engine.controls.model.player.condition.PermissionCondition
-import org.qbrp.main.engine.text.components.TextComponent
 import kotlin.reflect.KClass
 
 @DslMarker annotation class InteractionDSL
 
-class InteractionDslContext(val permissionService: PermissionService)
-
 @InteractionDSL
-context(ctx: InteractionDslContext)
 fun <Sub: Interactable, Obj: Interactable> interaction(
     subjectClass: KClass<Sub>,
     objectClass: KClass<Obj>,
     build: InteractionScope<Sub, Obj>.() -> Unit
 ): InteractionNode<Sub, Obj> {
-    return InteractionScope<Sub, Obj>(subjectClass, objectClass, ctx).apply { build() }.buildNode()
+    return InteractionScope<Sub, Obj>(subjectClass, objectClass).apply { build() }.buildNode()
 }
 
 @InteractionDSL
 inline fun <reified Sub: Interactable, reified Obj: Interactable> interaction(noinline build: InteractionScope<Sub, Obj>.() -> Unit): InteractionNode<Sub, Obj> {
-    return with(GlobalContext.get().get<InteractionDslContext>()) {
-        interaction(Sub::class, Obj::class, build)
-    }
+    return interaction(Sub::class, Obj::class, build)
 }
 
 fun <Sub: Interactable, Obj: Interactable> InteractionNode<Sub, Obj>.finish(): Interaction<Sub, Obj> {
@@ -70,7 +63,6 @@ data class InteractionNode<Sub: Interactable, Obj: Interactable>(
 class InteractionScope<Sub: Interactable, Obj: Interactable>(
     private val subjectClass: KClass<Sub>,
     private val objectClass: KClass<Obj>,
-    private val context: InteractionDslContext,
 ) {
     private var subjectType: InteractableType<Sub>? = null
     private var objectType: InteractableType<Obj>? = null
@@ -123,7 +115,7 @@ class InteractionScope<Sub: Interactable, Obj: Interactable>(
     }
 
     fun permission(permission: Permission) {
-        condition(PermissionCondition(permission, context.permissionService))
+        condition(PermissionCondition(permission))
     }
 
     fun condition(condition: Condition<Sub, Obj>) {

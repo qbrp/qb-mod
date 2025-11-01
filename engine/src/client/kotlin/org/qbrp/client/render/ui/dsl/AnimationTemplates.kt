@@ -9,6 +9,7 @@ import org.qbrp.client.render.ui.components.layout.Edges
 import org.qbrp.client.render.ui.view.View
 import org.qbrp.main.core.components.extensions.add
 import org.qbrp.main.core.components.extensions.get
+import org.qbrp.main.core.components.extensions.getAs
 import org.qbrp.main.core.components.extensions.getOrAdd
 import org.qbrp.main.core.components.extensions.remove
 
@@ -64,18 +65,18 @@ fun AssociatedAnimationScope.hoverSlideUp(
             dragInitialized = true
         }
         blockInput.forEach { it.input = false }
-        view.getOrAdd(name = CUTOUT_KEY) {
+        view.getOrAdd(setName = CUTOUT_KEY) {
             Cutout(view.componentContext) { v ->
                 (cfg.scissor?.invoke(v)) ?: Edges(-v.width, 0f, v.width * 2f, v.height)
             }
         }
-        view.getOrAdd(name = SLIDE_KEY) { Translation(view.componentContext, vec2(0f, view.height * animation.value)) }
+        view.getOrAdd(setName = SLIDE_KEY) { Translation(view.componentContext, vec2(0f, view.height * animation.value)) }
         view.visible = true
     }
 
     onUpdate { view, t ->
         val translation = vec2(0f, view.height * t)
-        view.getComponentAs<Translation>(SLIDE_KEY)?.vec = translation
+        view.getAs<Translation>(SLIDE_KEY)?.vec = translation
     }
 
     onEnd { view, _ ->

@@ -8,18 +8,20 @@ import org.qbrp.main.core.Core
 import org.qbrp.main.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
 import org.qbrp.main.engine.chat.core.events.ChatFormatEvent
 import org.qbrp.main.engine.chat.core.events.MessageUpdateEvent
-import org.qbrp.main.core.utils.networking.messages.components.ClusterBuilder
-import org.qbrp.main.core.utils.networking.messages.components.Cluster
-import org.qbrp.main.core.utils.networking.messages.types.LongContent
-import org.qbrp.main.core.utils.networking.messages.types.StringContent
-import org.qbrp.main.core.utils.format.Format.formatMm
+import org.qbrp.main.core.util.networking.messages.components.ClusterBuilder
+import org.qbrp.main.core.util.networking.messages.components.Cluster
+import org.qbrp.main.core.util.networking.messages.types.LongContent
+import org.qbrp.main.core.util.networking.messages.types.StringContent
+import org.qbrp.main.core.util.format.Format.formatMm
 import org.qbrp.main.engine.players.model.service.ServerPlayerStorage
 import java.util.UUID
 
-open class ChatMessage(val authorName: String,
-                       private var text: String,
-                       val uuid: String = UUID.randomUUID().toString(),
-                       val timestamp: Long = System.currentTimeMillis()): ChatMessageData {
+open class ChatMessage(
+    val authorName: String,
+    private var text: String,
+    val uuid: String = UUID.randomUUID().toString(),
+    val timestamp: Long = System.currentTimeMillis()
+) : ChatMessageData {
     protected var metaTags: ChatMessageTagsBuilder = ChatMessageTagsBuilder()
     private val playerStorage by lazy { GlobalContext.get().get<ServerPlayerStorage>() }
 

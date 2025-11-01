@@ -9,7 +9,7 @@ import org.qbrp.main.engine.music.plasmo.view.View
 import org.qbrp.main.engine.music.plasmo.model.priority.Priority
 import org.qbrp.main.engine.music.plasmo.model.selectors.Selector
 import org.qbrp.main.engine.music.plasmo.playback.player.VoicePlayerState
-import org.qbrp.main.core.utils.log.LoggerUtil
+import org.qbrp.main.core.util.log.LoggerUtil
 import su.plo.voice.api.server.PlasmoVoiceServer
 import su.plo.voice.lavaplayer.libs.com.fasterxml.jackson.annotation.JsonIgnore
 

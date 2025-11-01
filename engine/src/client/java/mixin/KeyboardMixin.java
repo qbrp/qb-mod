@@ -3,7 +3,7 @@ package mixin;
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
-import org.qbrp.client.core.keybinds.KeyboardMixinAccess;
+import org.qbrp.client.controls.KeyboardEventsMixinAccess;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,13 +20,13 @@ public class KeyboardMixin {
             ),
             cancellable = true)
     private void beforeScreenGet(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci) {
-        if (KeyboardMixinAccess.INSTANCE.emitKeyEvent(key, action)) { ci.cancel(); };
+        if (KeyboardEventsMixinAccess.INSTANCE.emitKeyEvent(key, action)) { ci.cancel(); };
         if (action == GLFW.GLFW_PRESS) {
-            if (KeyboardMixinAccess.INSTANCE.emitKeyPressEvent(key)) { ci.cancel(); };
+            if (KeyboardEventsMixinAccess.INSTANCE.emitKeyPressEvent(key)) { ci.cancel(); };
         } else if (action == GLFW.GLFW_RELEASE) {
-            if (KeyboardMixinAccess.INSTANCE.emitKeyReleaseEvent(key)) { ci.cancel(); };
+            if (KeyboardEventsMixinAccess.INSTANCE.emitKeyReleaseEvent(key)) { ci.cancel(); };
         } else if (action == GLFW.GLFW_REPEAT) {
-            if (KeyboardMixinAccess.INSTANCE.emitKeyRepeatEvent(key)) { ci.cancel(); };
+            if (KeyboardEventsMixinAccess.INSTANCE.emitKeyRepeatEvent(key)) { ci.cancel(); };
         }
     }
 

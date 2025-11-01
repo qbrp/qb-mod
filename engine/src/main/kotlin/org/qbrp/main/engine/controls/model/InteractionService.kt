@@ -2,10 +2,10 @@ package org.qbrp.main.engine.controls.model
 
 import org.qbrp.main.core.components.extensions.get
 import org.qbrp.main.core.components.extensions.require
-import org.qbrp.main.core.dataformats.StringId
-import org.qbrp.main.core.mc.player.dataformats.MinecraftPlayerId
+import org.qbrp.main.core.util.StringId
+import org.qbrp.main.core.fabricmc.player.MinecraftPlayerId
 import org.qbrp.main.engine.containers.util.ContainerId
-import org.qbrp.main.engine.containers.v2.api.ContainerService
+import org.qbrp.main.engine.containers.api.ContainerService
 import org.qbrp.main.engine.controls.entity.IconIds
 import org.qbrp.main.engine.controls.entity.InteractableTypes
 import org.qbrp.main.engine.controls.entity.display.InteractionIcon
@@ -27,7 +27,8 @@ import org.qbrp.main.engine.controls.model.player.CarryVarianceInteractableImpl
 import org.qbrp.main.engine.controls.model.player.ItemCarrierInteractable
 import org.qbrp.main.engine.controls.model.player.ItemCarrierInteractableImpl
 import org.qbrp.main.engine.players.characters.components.CharactersBank
-import org.qbrp.main.engine.players.inventory.hand.ItemCarrier
+import org.qbrp.main.engine.players.inventory.ItemCarrier
+import org.qbrp.main.engine.players.model.location
 import org.qbrp.main.engine.text.components.TextComponent
 import org.qbrp.main.engine.text.literal
 import org.qbrp.main.engine.world.location.Location

@@ -2,10 +2,7 @@ package org.qbrp.main.engine.containers.util
 
 import kotlinx.serialization.Serializable
 import org.qbrp.main.core.components.serialization.Identifiable
-import org.qbrp.main.core.game.IDGenerator
-import org.qbrp.main.engine.players.inventory.hand.Hand
-import org.qbrp.main.engine.players.model.util.PlayerId
-import java.util.UUID
+import org.qbrp.main.core.util.IDGenerator
 
 @Serializable
 data class ContainerId(val raw: String) : Identifiable {

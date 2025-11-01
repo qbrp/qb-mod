@@ -1,6 +1,7 @@
 package mixin.player;
 
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -11,6 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayNetworkHandler.class)
@@ -40,4 +42,18 @@ public class ServerPlayNetworkHandlerMixin {
         }
     }
 
+    @Inject(
+            method = "onPlayerMove",
+            at = @At(value = "HEAD"),
+            cancellable = true
+    )
+    private void disablePlayerMovePacketHandler(PlayerMoveC2SPacket packet, CallbackInfo ci) {
+        ci.cancel();
+    }
+
+    @Redirect(
+            method = "tick",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;updatePositionAndAngles(DDDFF)V")
+    )
+    private void disablePlayerMovementTick(ServerPlayerEntity instance, double v1, double v2, double v3, float v4, float v5) {}
 }

@@ -1,9 +1,9 @@
 package org.qbrp.client.core.networking.utils
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
-import org.qbrp.main.core.game.storage.Storage
+import org.qbrp.main.core.util.storage.Storage
 
-fun Storage<*>.enableClear() {
+fun Storage<*>.clearOnDisconnect() {
     ClientPlayConnectionEvents.DISCONNECT.register { _, _, ->
         clear()
     }

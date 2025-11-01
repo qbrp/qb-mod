@@ -10,10 +10,10 @@ import org.qbrp.client.engine.chat.ClientChatAddon
 import org.qbrp.client.engine.chat.system.LinearMessageProvider
 import org.qbrp.main.core.modules.Autoload
 import org.qbrp.main.core.modules.Priorities
-import org.qbrp.main.core.utils.networking.ClientReceiver
-import org.qbrp.main.core.utils.networking.messages.Messages
-import org.qbrp.main.core.utils.networking.messages.types.Signal
-import org.qbrp.main.core.utils.networking.messages.types.StringContent
+import org.qbrp.client.core.networking.v1.ClientReceiver
+import org.qbrp.main.core.util.networking.messages.Messages
+import org.qbrp.main.core.util.networking.messages.types.Signal
+import org.qbrp.main.core.util.networking.messages.types.StringContent
 
 @Autoload(Priorities.ADDON, EnvType.CLIENT)
 class Ignore: ClientChatAddon("ignore") {

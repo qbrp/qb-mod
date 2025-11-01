@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 import org.qbrp.main.core.components.ComponentRegistry
 import org.qbrp.main.core.components.DataComponent
 import org.qbrp.main.core.components.extensions.add
-import org.qbrp.main.core.dataformats.StringId
+import org.qbrp.main.core.util.StringId
 import org.qbrp.main.core.events.on
 import org.qbrp.main.core.game.IDGenerator
 import org.qbrp.main.core.game.storage.Storage

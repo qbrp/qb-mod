@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.Nulls
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.qbrp.main.core.components.serialization.Identifiable
-import org.qbrp.main.mechanics.characters.model.CharacterData
+import org.qbrp.main.engine.players.characters.entity.CharacterData
 
 @Serializable
 class Account(@SerialName("id") val accountId: String,

@@ -2,7 +2,7 @@ package org.qbrp.main.core.components.objects
 
 import kotlinx.serialization.Serializable
 import org.qbrp.main.core.components.serialization.Identifiable
-import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
+import org.qbrp.main.core.util.networking.messages.components.ClusterEntry
 
 @Serializable
 abstract class BaseEntity<T : BaseEntity<T>>(

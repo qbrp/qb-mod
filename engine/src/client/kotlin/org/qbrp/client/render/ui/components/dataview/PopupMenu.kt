@@ -28,7 +28,7 @@ import org.qbrp.main.core.components.extensions.add
 import org.qbrp.main.core.components.extensions.get
 import org.qbrp.main.core.components.extensions.require
 import org.qbrp.main.engine.text.components.TextComponent
-import org.qbrp.main.mechanics.tooltip.TooltipViewData
+import org.qbrp.main.engine.tooltip.TooltipViewData
 
 // Menu
 

@@ -10,8 +10,7 @@ import org.qbrp.main.core.modules.Priorities
 import org.qbrp.main.engine.Engine
 import org.qbrp.main.engine.assets.contentpacks.ContentPackManagerAPI
 import org.qbrp.main.core.modules.EngineModule
-import org.qbrp.main.core.info.ServerInfoAPI
-import org.qbrp.main.core.utils.networking.messages.components.ClusterEntry
+import org.qbrp.main.core.util.networking.messages.components.ClusterEntry
 import java.net.InetSocketAddress
 
 @Autoload(Priorities.MODULE - 3)
@@ -29,7 +28,6 @@ class WebServerModule: EngineModule("web-server") {
 
     override fun onLoad() {
         start()
-        get<ServerInfoAPI>().COMPOSER.component(DOWNLOAD_PORT, port)
     }
 
     fun validateVersionPath(path: String): String {

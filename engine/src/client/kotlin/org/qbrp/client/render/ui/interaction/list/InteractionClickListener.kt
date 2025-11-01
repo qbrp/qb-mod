@@ -1,7 +1,7 @@
 package org.qbrp.client.render.ui.interaction.list
 
 import org.lwjgl.glfw.GLFW
-import org.qbrp.client.engine.interactions.service.ClientInteractionManager
+import org.qbrp.client.controls.ClientInteractionManager
 import org.qbrp.client.render.dataformats.Vec2
 import org.qbrp.client.render.ui.UiContext
 import org.qbrp.client.render.ui.components.dataview.PopupMenuItem

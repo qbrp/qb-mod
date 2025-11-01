@@ -51,11 +51,13 @@ data class ComponentJsonField(
     }
 
     companion object {
-        fun from(component: AnyComponent,
-                 name: Name,
-                 context: ComponentMapContext,
-                 serializers: SerializersRegistry,
-                 mapper: ComponentDtoMapper = GlobalContext.get().get()): ComponentJsonField {
+        fun from(
+            component: AnyComponent,
+            name: Name,
+            context: ComponentMapContext,
+            serializers: SerializersRegistry,
+            mapper: ComponentDtoMapper = GlobalContext.get().get()
+        ): ComponentJsonField {
             val entry = mapper.toDto(component, context)
             val serializer = serializers.getSerializationStrategy<DTO>(mapper.getSerializerKey(component))
             val json = Json.encodeToJsonElement(serializer, entry)
