@@ -22,36 +22,41 @@ data class ServerConfigData(
 
     data class Chat(
         val chatGroups: List<ChatGroup> = listOf(),
+        val nicknameMessage: String = "{playerDisplayName} <gray>({playerName})</gray>",
         val joinMessage: String = "+ {player}",
         val leaveMessage: String = "- {player}",
         val commands: Commands = Commands(),
         val volume: Volume = Volume(),
     ) {
-        data class Commands(val formatMe: String = "{playerDisplayName} &e* &f{text}",
-                            val formatDo: String = "{playerDisplayName} &d( &f{text} &d)",
-                            val formatGdo: String = "{playerDisplayName} &d( &f{text} &d)",
-                            val formatRoll: String = "{playerDisplayName} &b* &f{text} &b- &a{roll}%",
-                            val formatPm: String = "<#554436>(( <#F4A460><bold>ᴘᴍ</bold> <#c97e3d>{playerName} <#F4A460>▸ <#c97e3d><recipientName><#F4A460>: {text} <#554436>))")
+        data class Commands(
+            val formatMe: String = "{playerDisplayName} &e* &f{text}",
+            val formatDo: String = "{playerDisplayName} &d( &f{text} &d)",
+            val formatGdo: String = "{playerDisplayName} &d( &f{text} &d)",
+            val formatRoll: String = "{playerDisplayName} &b* &f{text} &b- &a{roll}%",
+            val formatPm: String = "<#554436>(( <#F4A460><bold>ᴘᴍ</bold> <#c97e3d>{playerName} <#F4A460>▸ <#c97e3d><recipientName><#F4A460>: {text} <#554436>))"
+        )
 
-        data class Volume(val volumePrefixes: Map<String, Int> = mapOf(),
-                          val blockVolumes: Map<String, Double> = mapOf(),
-                          val tagVolumes: Map<String, Double> = mapOf(),
-                          val volumeLevels: List<VolumeLevel> = listOf(
-                              VolumeLevel(0, "<dark_gray>", "<yellow>"),
-                              VolumeLevel(5, "<gray>", "<yellow>"),
-                              VolumeLevel(15, "<white>", ""),
-                              VolumeLevel(25, "<red>", "<red>"),
-                              VolumeLevel(40, "<red><bold>", "<red>"),
-                              VolumeLevel(80, "<dark_red><bold>", "<red>")
-                          ),
-                          val defaultVolumeBlockModifier: Double = 5.0,
-                          val defaultVolume: Int = 25,
-                          val distortionLevel: Int = 10,
-                          val maxDistortion: Int = 60,
-                          val minDistortion: Int = 60,
-                          val minVolume: Int = 5,
-                          val minOverhearVolume: Int = 0,
-                          val artifacts: List<String> = listOf("#", "-", "...", "*", "~", "^")) {
+        data class Volume(
+            val volumePrefixes: Map<String, Int> = mapOf(),
+            val blockVolumes: Map<String, Double> = mapOf(),
+            val tagVolumes: Map<String, Double> = mapOf(),
+            val volumeLevels: List<VolumeLevel> = listOf(
+                VolumeLevel(0, "<dark_gray>", "<yellow>"),
+                VolumeLevel(5, "<gray>", "<yellow>"),
+                VolumeLevel(15, "<white>", ""),
+                VolumeLevel(25, "<red>", "<red>"),
+                VolumeLevel(40, "<red><bold>", "<red>"),
+                VolumeLevel(80, "<dark_red><bold>", "<red>")
+            ),
+            val defaultVolumeBlockModifier: Double = 5.0,
+            val defaultVolume: Int = 25,
+            val distortionLevel: Int = 10,
+            val maxDistortion: Int = 60,
+            val minDistortion: Int = 60,
+            val minVolume: Int = 5,
+            val minOverhearVolume: Int = 0,
+            val artifacts: List<String> = listOf("#", "-", "...", "*", "~", "^")
+        ) {
             fun getVolumeLevelFor(volume: Int): VolumeLevel {
                 return volumeLevels.findLast { volume > it.value } ?: volumeLevels.first()
             }

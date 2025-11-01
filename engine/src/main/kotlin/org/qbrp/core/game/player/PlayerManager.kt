@@ -3,6 +3,7 @@ package org.qbrp.core.game.player
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
+import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.command.ServerCommandSource
@@ -28,17 +29,24 @@ import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.game.registry.ServerModCommand
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.data.config.ConfigUpdateCallback
+import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.chat.core.events.MessageReceivedEvent
 import org.qbrp.system.database.DatabaseService
+import org.qbrp.system.utils.format.Format.asMiniMessage
+import org.qbrp.system.utils.format.Format.miniMessage
 
 @Command("playermanager")
 object PlayerManager : ServerModCommand {
     private lateinit var defaultSpeeds: Map<GameMode, Int>
 
+    private val config
+        get() = ServerResources.getConfig()
+    val databaseService = DatabaseService(config.databases.nodeUri, "players")
+        .also { it.connect() }
+
     val players: MutableMap<String, ServerPlayerSession> = mutableMapOf()
     val playersList
         get() = players.values.toList()
-    val databaseService = DatabaseService(ServerResources.getConfig().databases.nodeUri, "players").also { it.connect() }
 
     init {
         ConfigUpdateCallback.EVENT.register {
@@ -68,14 +76,30 @@ object PlayerManager : ServerModCommand {
             } else
                 ActionResult.PASS
         }
+
+        UseEntityCallback.EVENT.register { player, world, hand, entity, hitResult ->
+            val entityIsPlayer = entity is ServerPlayerEntity
+            if (entityIsPlayer) {
+                val session = getPlayerSession(entity)
+                player.sendMessage(
+                    config.chat.nicknameMessage
+                        .replace("{playerName}", player.name.string)
+                        .replace("{playerDisplayName}", session.getDisplayName())
+                        .asMiniMessage()
+                )
+            }
+
+            ActionResult.PASS
+        }
     }
 
     private fun loadDefaultSpeeds() {
+        val playersConfig = config.players
         defaultSpeeds = mapOf(
-            GameMode.SURVIVAL to ServerResources.getConfig().players.defaultSurvivalSpeed,
-            GameMode.CREATIVE to ServerResources.getConfig().players.defaultCreativeSpeed,
-            GameMode.SPECTATOR to ServerResources.getConfig().players.defaultSpectatorSpeed,
-            GameMode.ADVENTURE to ServerResources.getConfig().players.defaultCreativeSpeed,
+            GameMode.SURVIVAL to playersConfig.defaultSurvivalSpeed,
+            GameMode.CREATIVE to playersConfig.defaultCreativeSpeed,
+            GameMode.SPECTATOR to playersConfig.defaultSpectatorSpeed,
+            GameMode.ADVENTURE to playersConfig.defaultCreativeSpeed,
         )
     }
 
