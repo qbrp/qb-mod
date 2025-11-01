@@ -2,10 +2,12 @@ package org.qbrp.core.game.player
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.util.ActionResult
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.Vec3d
@@ -19,16 +21,18 @@ import org.qbrp.core.game.commands.annotations.Command
 import org.qbrp.core.game.commands.annotations.Execute
 import org.qbrp.core.game.commands.annotations.SubCommand
 import org.qbrp.core.game.commands.templates.CallbackCommand
+import org.qbrp.core.game.player.events.PlayerChangeGameModeEvent
 import org.qbrp.core.game.player.registration.LoginCommand
 import org.qbrp.core.game.player.registration.RegistrationCommand
 import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.game.registry.ServerModCommand
 import org.qbrp.core.resources.ServerResources
 import org.qbrp.core.resources.data.config.ConfigUpdateCallback
+import org.qbrp.engine.chat.core.events.MessageReceivedEvent
 import org.qbrp.system.database.DatabaseService
 
 @Command("playermanager")
-object PlayerManager: ServerModCommand {
+object PlayerManager : ServerModCommand {
     private lateinit var defaultSpeeds: Map<GameMode, Int>
 
     val players: MutableMap<String, ServerPlayerSession> = mutableMapOf()
@@ -41,6 +45,29 @@ object PlayerManager: ServerModCommand {
             loadDefaultSpeeds()
         }
         loadDefaultSpeeds()
+
+        ServerTickEvents.END_WORLD_TICK.register { server ->
+            playersList.forEach {
+                it.handler.handleTick()
+            }
+        }
+
+        MessageReceivedEvent.EVENT.register() { message ->
+            val player = message.getAuthorEntity()?.let { getPlayerSession(it) }
+            if (player?.isAuthorized() != true) {
+                ActionResult.FAIL
+            } else {
+                ActionResult.PASS
+            }
+        }
+
+        PlayerChangeGameModeEvent.EVENT.register() { player, gameMode ->
+            val session = getPlayerSession(player)
+            if (!session.isAuthorized() && gameMode != GameMode.SPECTATOR) {
+                ActionResult.FAIL
+            } else
+                ActionResult.PASS
+        }
     }
 
     private fun loadDefaultSpeeds() {

@@ -7,8 +7,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
+import net.minecraft.util.ActionResult
 import org.qbrp.core.game.player.registration.LoginResult
 import org.qbrp.core.game.player.registration.PlayerRegistrationCallback
+import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.system.database.DatabaseService
 import org.qbrp.system.networking.messages.Messages
 import org.qbrp.system.networking.messaging.NetworkManager
@@ -45,6 +47,13 @@ data class ServerPlayerSession(
 
     private fun sendRegistrationMessage() =
         NetworkManager.sendSignal(entity, Messages.REGISTRATION_REQUEST)
+
+    fun onAnyMessage(message: ChatMessage) {
+        if (message.getAuthorEntity() == entity && !isAuthorized()) {
+            ActionResult.FAIL
+        } else
+            ActionResult.PASS
+    }
 
     fun setSpeed(speed: Int) {
         this.speed = speed
