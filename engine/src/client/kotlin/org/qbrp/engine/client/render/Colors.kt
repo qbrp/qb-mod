@@ -1,11 +1,5 @@
 package org.qbrp.engine.client.render
 
-import icyllis.modernui.graphics.Color
-import icyllis.modernui.text.Spannable
-import icyllis.modernui.text.SpannableString
-import icyllis.modernui.text.style.ForegroundColorSpan
-import org.qbrp.system.utils.format.ConsoleColors
-
 object Colors {
     const val DARK_BACKGROUND = 0x40000000.toInt()
     fun rgb(r: Int, g: Int, b: Int): Int {

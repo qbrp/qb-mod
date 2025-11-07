@@ -83,12 +83,7 @@ dependencies {
 
     include(implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")!!)
 
-    // ModernUI зависимости
-    implementation("icyllis.modernui:ModernUI-Core:${project.property("modernui_core_version")}")
-    implementation("icyllis.modernui:ModernUI-Markdown:${project.property("modernui_markdown_version")}")
-    modImplementation("icyllis.modernui:ModernUI-Fabric:1.20.1-${project.property("modernui_version")}")
-
-    // PlasmoVoice API и дополнительные библиотеки
+     // PlasmoVoice API и дополнительные библиотеки
     implementation("su.plo.voice.api:server:${project.property("voice_api_version")}")
     compileOnly("su.plo.voice.api:client:${project.property("voice_api_version")}")
     implementation("su.plo:pv-addon-lavaplayer-lib:${project.property("pv_addon_lavaplayer_lib_version")}")

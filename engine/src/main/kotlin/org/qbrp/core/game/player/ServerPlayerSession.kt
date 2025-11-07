@@ -22,9 +22,9 @@ data class ServerPlayerSession(
     var speed: Int? = 1
 ) {
     lateinit var account: Account
+    var usernameHidden = false
     val database = Database()
     val handler = PlayerHandler(this)
-    //val interactionManager = InteractionManager(this)
 
     fun onDisconnect() {
         // Вызываем сохранение аккаунта в отдельном потоке

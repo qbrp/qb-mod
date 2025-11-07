@@ -4,7 +4,7 @@ import net.minecraft.client.MinecraftClient
 import org.qbrp.engine.chat.addons.tools.MessageTextTools
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.client.core.resources.ClientResources
-import org.qbrp.engine.client.core.resources.data.ChatData.MessageDTO
+import org.qbrp.engine.client.core.resources.ChatData.MessageDTO
 import org.qbrp.engine.client.engine.chat.system.events.MessageAddedEvent
 import org.qbrp.system.utils.format.Format.asMiniMessage
 import org.qbrp.system.utils.log.Loggers

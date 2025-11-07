@@ -9,7 +9,6 @@ import net.minecraft.world.World
 import org.koin.core.component.get
 import org.koin.core.module.Module
 import org.koin.dsl.module
-import org.qbrp.core.visual.VisualDataStorage
 import org.qbrp.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
 import org.qbrp.engine.chat.core.system.ChatGroup
 import org.qbrp.engine.chat.core.system.ChatGroupsStorage
@@ -65,15 +64,6 @@ class ChatModuleClient(): QbModule("chat"), ClientChatAPI {
         MAX_MESSAGE_LENGTH = ServerInformation.VIEWER?.getComponentData<Int>("engine.maxMessageLength") ?: 456
     }
 
-    override fun isPlayerWriting(player: PlayerEntity): Boolean { return VisualDataStorage.getPlayer(player.name.string)?.isWriting == true }
-
-    override fun getWritingPlayers(world: World): List<PlayerEntity> {
-        return world.players
-            .mapNotNull { player ->
-                val data = VisualDataStorage.getPlayer(player.name.string)
-                if (data?.isWriting == true) player else null
-            }
-    }
     override fun endTyping(player: PlayerEntity) { networking.sendEndTypingStatus() }
     override fun startTyping(player: PlayerEntity) { networking.sendStartTypingStatus()}
 

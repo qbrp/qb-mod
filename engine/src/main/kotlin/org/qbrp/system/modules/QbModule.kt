@@ -14,15 +14,10 @@ import org.qbrp.system.networking.messaging.NetworkManager
 
 abstract class QbModule(private val name: String) : KoinComponent {
     var priority: Int = 5
-    var serverState: Boolean = true
     private val dependencies: MutableList<() -> Boolean> = mutableListOf()
 
     protected fun dependsOn(condition: () -> Boolean) {
         dependencies.add(condition)
-    }
-
-    fun sendStateInformation(player: ServerPlayerEntity) {
-        NetworkManager.sendMessage(player, Message(Messages.moduleUpdate(name), BooleanContent(isEnabled())))
     }
 
     open fun getName(): String = name
@@ -36,6 +31,6 @@ abstract class QbModule(private val name: String) : KoinComponent {
     open fun isEnabled(): Boolean {
         val isNotDisabled = if (FabricLoader.getInstance().environmentType != EnvType.CLIENT) !ServerResources.getConfig().disabledModules.contains(getName()) else true
         val allDependenciesMet = dependencies.all { it() } // Проверка всех условий
-        return isNotDisabled && allDependenciesMet && serverState
+        return isNotDisabled && allDependenciesMet
     }
 }

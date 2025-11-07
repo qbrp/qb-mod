@@ -11,7 +11,7 @@ import org.koin.dsl.module
 import org.qbrp.core.components.DataComponent
 import org.qbrp.core.components.GsonOptionalDeserializer
 import org.qbrp.core.game.events.Handlers
-import org.qbrp.core.game.events.ServerReceivers
+import org.qbrp.core.game.events.registerServerReceivers
 import org.qbrp.core.game.player.PlayerManager
 import org.qbrp.core.game.registry.CommandsRepository
 import org.qbrp.core.keybinds.ServerKeybindCallback
@@ -41,7 +41,7 @@ class ServerCore : DedicatedServerModInitializer {
         ServerResources.buildResources()
         ServerResources.buildContent()
         Handlers.registerServerEvents()
-        AudioManager.registerSources()
+        //AudioManager.registerSources()
         Regions.load()
         PlayerManager.loadCommand()
         ServerLifecycleEvents.SERVER_STARTED.register { server ->
@@ -54,7 +54,7 @@ class ServerCore : DedicatedServerModInitializer {
             ConfigUpdateCallback.EVENT.invoker().onConfigUpdated(ServerResources.getConfig())
             informationMessage.print()
         }
-        ServerReceivers.register()
+        registerServerReceivers()
     }
 
     fun initializeMainModules(server: MinecraftServer) {

@@ -1,8 +1,5 @@
 package org.qbrp.engine.chat.core.messages
 
-import icyllis.modernui.text.SpannableString
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import net.minecraft.server.PlayerManager
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
@@ -17,7 +14,6 @@ import org.qbrp.system.networking.messages.types.LongContent
 import org.qbrp.system.networking.messages.types.StringContent
 import org.qbrp.system.utils.format.Format.asMiniMessage
 import org.qbrp.system.utils.format.Format.miniMessage
-import org.qbrp.system.utils.format.Format.formatAsSpans
 import java.util.UUID
 
 open class ChatMessage(val authorName: String,
@@ -86,8 +82,6 @@ open class ChatMessage(val authorName: String,
     fun sendException(text: String) {
         ChatException(this, text).send()
     }
-
-    override fun getTextSpans(): SpannableString = text.formatAsSpans()
 
     companion object {
         fun create(text: Text, author: String = SYSTEM_MESSAGE_AUTHOR): ChatMessage {

@@ -7,7 +7,6 @@ import net.minecraft.client.util.InputUtil
 import org.lwjgl.glfw.GLFW
 import org.qbrp.engine.client.EngineClient
 import org.qbrp.engine.client.engine.chat.ClientChatAPI
-import org.qbrp.engine.client.render.Render
 import org.qbrp.engine.client.system.networking.ClientNetworkManager
 
 class KeybindsManager {

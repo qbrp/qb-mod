@@ -17,7 +17,6 @@ import org.qbrp.system.networking.messages.components.Cluster
 import org.qbrp.system.networking.messages.types.Signal
 
 class ClientChatNetworking(val storage: MessageStorage): ChatNetworking() {
-
     fun registerReceivers() {
         ClientReceiver<ClientReceiverContext>(SEND_MESSAGE, Cluster::class) { message, context, receiver ->
             EngineClient.getAPI<ClientChatAPI>()?.handleMessageFromServer(message)

@@ -54,30 +54,7 @@ class ChatScreenMixin extends Screen {
         if (player != null) {
             Objects.requireNonNull((ChatModuleClient) EngineClient.Companion.getModuleManager().getModule("chat")).getAPI().startTyping(player);
         }
-        this.chatField.setMaxLength(456);
     }
-//        this.chatField = new TransfromTextFieldWidget(this.client.advanceValidatingTextRenderer, 4, this.height - 12, this.width - 4, 12, Text.translatable("chat.editBox")) {
-//            protected MutableText getNarrationMessage() {
-//                return super.getNarrationMessage().append(chatInputSuggestor.getNarration());
-//            }
-//        };
-//        this.chatField.setDrawsBackground(false);
-//        this.chatField.setText(this.originalChatText);
-//        this.chatField.setChangedListener(this::onChatFieldUpdate);
-//        this.chatField.setFocusUnlocked(false);
-//        this.addSelectableChild(this.chatField);
-//        this.chatInputSuggestor = new ChatInputSuggestor(this.client, this, this.chatField, this.textRenderer, false, false, 1, 10, true, -805306368);
-//        this.chatInputSuggestor.refresh();
-//        this.setInitialFocus(this.chatField);
-//        if (this.chatField instanceof TransfromTextFieldWidget) {
-//            ((TransfromTextFieldWidget) this.chatField).setRenderedTextTransformer(text ->
-//                    Objects.requireNonNull(EngineClient.Companion.getChatModuleAPI())
-//                            .getTextTransformer()
-//                            .getColorTransformedMessage(text)
-//            );
-//            ((TransfromTextFieldWidget) this.chatField).setupCustomRenderer();
-//        }
-//    }
 
     @Inject(method = "removed", at = @At("HEAD"))
     private void onChatClose(CallbackInfo ci) {
@@ -91,29 +68,6 @@ class ChatScreenMixin extends Screen {
     public String getTypingMessage() {
         return chatField.getText();
     }
-
-//    @Redirect(
-//            method = "render",
-//            at = @At(
-//                    value = "INVOKE",
-//            target = "Lnet/minecraft/client/gui/DrawContext;fill(IIIII)V"
-//        )
-//    )
-//    private void redirectFill(DrawContext context, int x1, int y1, int x2, int y2, int color) {
-//        int bgColor = this.client.options.getTextBackgroundColor(Integer.MIN_VALUE);
-//        Typer.TypingMessageContext typingContext = Objects.requireNonNull(EngineClient.Companion.getChatModuleAPI()).getTypingContextFromText(chatField.getText());
-//        String tagsNames = typingContext.calculateMetaInfoNames();
-//
-//        if (getTypingMessage() != null && !tagsNames.isEmpty()) {
-//            int textWidth = typingContext.calculateMetaInfoWidth(this.client.textRenderer);
-//            chatField.setX(textWidth + 11);
-//            context.fill(x1 + textWidth + 6, y1, x2, y2, bgColor);
-//            return;
-//        } else {
-//            chatField.setX(4);
-//        }
-//        context.fill(x1, y1, x2, y2, bgColor);
-//    }
 
     @ModifyArgs(
             method = "render",

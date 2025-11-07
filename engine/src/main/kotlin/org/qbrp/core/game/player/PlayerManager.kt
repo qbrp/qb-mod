@@ -14,6 +14,7 @@ import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.GameMode
 import net.minecraft.world.RaycastContext
+import org.checkerframework.checker.units.qual.h
 import org.qbrp.core.ServerCore
 import org.qbrp.core.game.commands.CommandBuilder
 import org.qbrp.core.game.commands.Deps
@@ -32,6 +33,11 @@ import org.qbrp.core.resources.data.config.ConfigUpdateCallback
 import org.qbrp.core.resources.data.config.ServerConfigData
 import org.qbrp.engine.chat.core.events.MessageReceivedEvent
 import org.qbrp.system.database.DatabaseService
+import org.qbrp.system.networking.messages.Message
+import org.qbrp.system.networking.messages.Messages
+import org.qbrp.system.networking.messages.components.Cluster
+import org.qbrp.system.networking.messages.components.ClusterBuilder
+import org.qbrp.system.networking.messaging.NetworkManager
 import org.qbrp.system.utils.format.Format.asMiniMessage
 import org.qbrp.system.utils.format.Format.miniMessage
 
@@ -75,21 +81,6 @@ object PlayerManager : ServerModCommand {
                 ActionResult.FAIL
             } else
                 ActionResult.PASS
-        }
-
-        UseEntityCallback.EVENT.register { player, world, hand, entity, hitResult ->
-            val entityIsPlayer = entity is ServerPlayerEntity
-            if (entityIsPlayer) {
-                val session = getPlayerSession(entity)
-                player.sendMessage(
-                    config.chat.nicknameMessage
-                        .replace("{playerName}", player.name.string)
-                        .replace("{playerDisplayName}", session.getDisplayName())
-                        .asMiniMessage()
-                )
-            }
-
-            ActionResult.PASS
         }
     }
 

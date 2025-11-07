@@ -1,10 +1,8 @@
-package org.qbrp.engine.client.core.resources.data
+package org.qbrp.engine.client.core.resources
 
-import icyllis.modernui.text.SpannableString
 import net.minecraft.text.Text
 import org.qbrp.core.resources.data.Data
 import org.qbrp.engine.chat.core.messages.ChatMessageData
-import org.qbrp.system.utils.format.Format.formatAsSpans
 import org.qbrp.system.utils.format.Format.formatMinecraft
 
 class ChatData(
@@ -16,7 +14,6 @@ class ChatData(
     fun addMessage(message: MessageDTO) = messages.add(message)
 
     data class MessageDTO(val processedText: String, val author: String, val id: String): ChatMessageData {
-        override fun getTextSpans(): SpannableString = processedText.formatAsSpans()
         override fun getVanillaText(): Text = processedText.formatMinecraft()
     }
 }

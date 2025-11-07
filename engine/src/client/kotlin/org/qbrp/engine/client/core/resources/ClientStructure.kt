@@ -1,38 +1,17 @@
 package org.qbrp.engine.client.core.resources
 
-import icyllis.modernui.graphics.Image
 import org.qbrp.core.resources.structure.ImagesStructure
-import org.qbrp.engine.client.core.resources.data.ClientConfigData
 import org.qbrp.core.resources.structure.Structure
 import org.qbrp.core.resources.units.ContentUnit
-import org.qbrp.core.resources.units.TextureUnit
-import org.qbrp.engine.client.core.resources.data.ChatData
-import org.qbrp.engine.client.core.resources.data.MainMenuImagesData
-import org.qbrp.system.utils.keys.Key
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class ClientStructure(path: File): Structure(path) {
+    private lateinit var chatLogSession: ContentUnit
     val config = open("config.json", ClientConfigData::class.java).data as ClientConfigData
     val mainMenu = addBranch("main_menu")
-    private val mainMenuImages = ImagesStructure("images", mainMenu)
-    private val mainMenuImageDescriptions = mainMenu.open("descriptions.json", MainMenuImagesData::class.java).data as MainMenuImagesData
-
-    init {
-        mainMenuImages.openImages()
-    }
-
     val chatLogs = addBranch("chat_logs")
-    private lateinit var chatLogSession: ContentUnit
-
-    fun getMenuImageDescriptions(): List<MainMenuImagesData.ImageDescription> {
-        return mainMenuImageDescriptions.images
-    }
-
-    fun getMenuImage(index: Int): Image {
-        return (mainMenuImages.content(Key("image$index")) as TextureUnit).createMuiImage()
-    }
 
     fun setAutoLoginCode(code: String) {
         config.account.code = code

@@ -1,13 +1,10 @@
-package org.qbrp.engine.client.core.resources.data
+package org.qbrp.engine.client.core.resources
 
-import com.google.gson.annotations.SerializedName
 import org.qbrp.core.resources.data.Data
-import java.nio.file.Path
-import java.nio.file.Paths
 
 data class ClientConfigData(
     val resources: Resources = Resources(),
-    val account: Account  = Account()
+    val account: Account = Account()
 ) : Data()
 {
     override fun toFile(): String {

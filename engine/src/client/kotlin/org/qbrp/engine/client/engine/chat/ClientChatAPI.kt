@@ -3,7 +3,6 @@ package org.qbrp.engine.client.engine.chat
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.world.World
-import org.qbrp.core.visual.VisualDataStorage
 import org.qbrp.engine.chat.ChatModule.Companion.SYSTEM_MESSAGE_AUTHOR
 import org.qbrp.engine.chat.core.messages.ChatMessage
 import org.qbrp.engine.chat.core.messages.ChatMessageTagsBuilder
@@ -17,9 +16,7 @@ import org.qbrp.system.modules.ModuleAPI
 import org.qbrp.system.networking.messages.Message
 import org.qbrp.system.networking.messages.components.readonly.ClusterViewer
 
-interface ClientChatAPI: ModuleAPI {
-    fun isPlayerWriting(player: PlayerEntity): Boolean
-    fun getWritingPlayers(world: World): List<PlayerEntity>
+interface ClientChatAPI : ModuleAPI {
     fun endTyping(player: PlayerEntity)
     fun startTyping(player: PlayerEntity)
     fun createMessageFromContext(context: Typer.TypingMessageContext): ChatMessage

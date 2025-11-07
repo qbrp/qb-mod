@@ -1,6 +1,4 @@
 package org.qbrp.core.resources.units
-import icyllis.modernui.graphics.BitmapFactory
-import icyllis.modernui.graphics.Image
 import org.qbrp.core.resources.data.pack.TextureData
 import org.qbrp.core.resources.ServerResources
 import java.nio.file.Files
@@ -22,9 +20,5 @@ class TextureUnit(
         } catch (e: Exception) {
             ServerResources.getLogger().error("Ошибка при копировании файла: ${e.message}")
         }
-    }
-
-    fun createMuiImage(): Image {
-        return Image.createTextureFromBitmap(BitmapFactory.decodeFile(path.toFile()))
     }
 }

@@ -7,7 +7,6 @@ import org.qbrp.engine.client.EngineClient
 import org.qbrp.engine.client.core.resources.ClientResources
 
 class RegistrationManager {
-
     fun autoLogin() {
         val code = ClientResources.root.getAutoLoginCode()
         login(code)

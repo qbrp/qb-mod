@@ -30,5 +30,4 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     public void getCustomPlayerListName(CallbackInfoReturnable<Text> callbackInfoReturnable) {
         callbackInfoReturnable.setReturnValue(getDisplayName());
     }
-
 }

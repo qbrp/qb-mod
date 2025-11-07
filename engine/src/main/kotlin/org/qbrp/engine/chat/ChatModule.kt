@@ -25,14 +25,9 @@ import org.qbrp.system.utils.log.Loggers
 class ChatModule() : QbModule("chat"), ChatAPI {
     companion object {
         const val SYSTEM_MESSAGE_AUTHOR = "system"
-        var MAX_MESSAGE_LENGTH = 456
     }
 
     private val logger = Loggers.get("chatModule")
-
-    override fun load() {
-        ServerInformation.COMPOSER.component("engine.maxMessageLength", MAX_MESSAGE_LENGTH)
-    }
 
     override fun getAPI(): ChatAPI = this
 

@@ -19,12 +19,6 @@ open class ModuleManager: KoinComponent {
         return modules.last()
     }
 
-    fun sendModuleInformation(player: ServerPlayerEntity) {
-        modules.forEach {
-            it.sendStateInformation(player)
-        }
-    }
-
     fun isModuleEnabled(name: String): Boolean {
         return modules.find { it.getName() == name }?.isEnabled() == true
     }
